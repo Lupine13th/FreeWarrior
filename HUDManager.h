@@ -132,7 +132,6 @@ class HUDManager : public GameComponent		//HUD全体管理
 private:
 	std::unordered_map<string, HUDObject*> m_HUDList;
 public:
-	// GameComponent を介して継承されました
 	void initAction() override;
 	bool frameAction() override;
 	void finishAction() override;
