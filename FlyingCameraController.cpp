@@ -204,8 +204,8 @@ void FlyingCameraController::ChangeCameraPosition()	//カメラ位置の変更
 
 		if (BFMng->GetEnemyCharacterList()[AIMng->GetMoveAiCount()]->AIMove == EnemyMove::Attack && AIMng->GetDelayCount() > 1.5f)
 		{
-			x = BFMng->GetEnemyCharacterList()[AIMng->GetMoveAiCount()]->targetAIPos->charaPosX;
-			y = BFMng->GetEnemyCharacterList()[AIMng->GetMoveAiCount()]->targetAIPos->charaPosY;
+			x = BFMng->GetEnemyCharacterList()[AIMng->GetMoveAiCount()]->targetAISquare->charaPosX;
+			y = BFMng->GetEnemyCharacterList()[AIMng->GetMoveAiCount()]->targetAISquare->charaPosY;
 		}
 
 		int index = x + y * 10;

@@ -12,6 +12,8 @@
 #include <climits>
 #include <windows.h>
 #include <cstdio>
+#include <queue>
+#include <map>
 
 #define DEBUG_FLOAT(val) { char buf[128]; sprintf_s(buf, "%f\n", val); OutputDebugStringA(buf); }
 
@@ -35,10 +37,6 @@ bool EnemyAIManager::frameAction()
 		if (!m_Firsttime)
 		{
 			p_engine->GetSoundManager()->playBGM(1);
-			for (int i = 0; i < nextPosList.size(); i++)
-			{
-				nextPosList[i] = 0.0f;
-			}
 			m_Firsttime = true;
 		}
 		if (!BFMng->GetEnemyCharacterList().empty())
@@ -49,136 +47,164 @@ bool EnemyAIManager::frameAction()
 
 				if (!currentEnemy->Dead)
 				{
-					Squares* targetPos = GetnearCharaPos(currentEnemy->CharaRenge, BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->charaPosX, BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->charaPosY);	//攻撃可能なキャラの位置を取得
-					if (targetPos != nullptr)	//行動を攻撃に設定
+					//Squares* targetPos = GetnearCharaPos(currentEnemy->CharaRenge, BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->charaPosX, BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->charaPosY);	//攻撃可能なキャラの位置を取得
+					//if (targetPos != nullptr)	//行動を攻撃に設定
+					//{
+					//	currentEnemy->AIMove = EnemyMove::Attack;
+					//	currentEnemy->targetAISquare = targetPos;
+					//}
+					//else if (targetPos == nullptr && currentEnemy->CharaAI != AIroutine::Defence)	//行動を移動に設定
+					//{
+					//	currentEnemy->AIMove = EnemyMove::Move;
+					//	Squares* target = GetnearCharaPos(15, BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->charaPosX, BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->charaPosY);
+					//	float MovePosX = 0;
+					//	float MovePosY = 0;
+
+					//	m_MoveCount = 0;
+
+					//	for (int j = 0; j < currentEnemy->CharaMoveRenge; j++)	//機動力の回数だけ回す
+					//	{
+					//		Squares* inRengeCharacterPos = nullptr;
+					//		if (target->charaPosX - 1 > BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->charaPosX)
+					//		{
+					//			MovePosX++;
+					//			m_MoveCount++;
+					//			inRengeCharacterPos = GetnearCharaPos(currentEnemy->CharaRenge, BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->charaPosX + MovePosX, BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->charaPosY + MovePosY);
+					//		}
+					//		else if (target->charaPosX + 1 < BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->charaPosX)
+					//		{
+					//			MovePosX--;
+					//			m_MoveCount++;
+					//			inRengeCharacterPos = GetnearCharaPos(currentEnemy->CharaRenge, BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->charaPosX + MovePosX, BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->charaPosY + MovePosY);
+					//		}
+
+					//		if (inRengeCharacterPos != nullptr)	//もし攻撃可能なキャラの位置が見つかったら抜ける
+					//		{
+					//			break;
+					//		}
+
+					//		if (m_MoveCount == currentEnemy->CharaMoveRenge)	//行動可能回数に達したら抜ける
+					//		{
+					//			break;
+					//		}
+
+					//		if (target->charaPosY - 1 > BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->charaPosY)
+					//		{
+					//			MovePosY++;
+					//			m_MoveCount++;
+					//			inRengeCharacterPos = GetnearCharaPos(currentEnemy->CharaRenge, BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->charaPosX + MovePosX, BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->charaPosY + MovePosY);
+					//		}
+					//		else if (target->charaPosY + 1 < BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->charaPosY)
+					//		{
+					//			MovePosY--;
+					//			m_MoveCount++;
+					//			inRengeCharacterPos = GetnearCharaPos(currentEnemy->CharaRenge, BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->charaPosX + MovePosX, BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->charaPosY + MovePosY);
+					//		}
+
+					//		if (inRengeCharacterPos != nullptr)	//もし攻撃可能なキャラの位置が見つかったら抜ける
+					//		{
+					//			break;
+					//		}
+
+					//		if (m_MoveCount == currentEnemy->CharaMoveRenge)	//行動可能回数に達したら抜ける
+					//		{
+					//			break;
+					//		}
+					//	}
+
+					//	DEBUG_FLOAT(currentEnemy->CharaPos + (MovePosX + MovePosY * 10));
+
+					//	for (int j = 0; j < nextPosList.size(); j++)	//移動先が他の敵と被っていないか確認
+					//	{
+					//		if (nextPosList[j] == currentEnemy->CharaPos + (MovePosX + MovePosY * 10))
+					//		{
+					//			if (MovePosX > 0)
+					//			{
+					//				MovePosX--;
+					//				break;
+					//			}
+					//			else if (MovePosX < 0)
+					//			{
+					//				MovePosX++;
+					//				break;
+					//			}
+
+					//			if (MovePosY > 0)
+					//			{
+					//				MovePosY--;
+					//				break;
+					//			}
+					//			else if (MovePosY < 0)
+					//			{
+					//				MovePosY++;
+					//				break;
+					//			}
+					//		}
+					//	}
+
+					//	while (BFMng->GetFieldSquaresList()[currentEnemy->CharaPos + (MovePosX + MovePosY * 10)]->chara != nullptr)	//移動先にキャラがいる場合は動かせるまで調整
+					//	{
+					//		if (MovePosX > 0)
+					//		{
+					//			MovePosX--;
+					//		}
+					//		else if (MovePosX < 0)
+					//		{
+					//			MovePosX++;
+					//		}
+					//		else if (MovePosY > 0)
+					//		{
+					//			MovePosY--;
+					//		}
+					//		else if (MovePosY < 0)
+					//		{
+					//			MovePosY++;
+					//		}
+					//		else
+					//		{
+					//			// これ以上動かせない場合は無限ループ回避のために抜ける
+					//			break;
+					//		}
+					//	}
+					//	
+					//	currentEnemy->targetAISquare = target;
+
+					//	nextPosList[i] = currentEnemy->CharaPos + (MovePosX + MovePosY * 10);
+
+					//	currentEnemy->nextAIPosX = MovePosX;
+					//	currentEnemy->nextAIPosY = MovePosY;
+					//}
+					//else
+					//{
+					//	currentEnemy->AIMove = EnemyMove::Wait;
+					//}
+					
+					//AI行動の生成
+					vector<EnemyAction> possibleActions = GeneratePossibleActions(currentEnemy);	
+
+					//生成した行動の評価
+					EnemyAction bestAction = SelectBestAction(currentEnemy, possibleActions);
+
+					//最も評価の高い行動を設定
+					switch (bestAction.m_ActionType)
 					{
-						currentEnemy->AIMove = EnemyMove::Attack;
-						currentEnemy->targetAIPos = targetPos;
-					}
-					else if (targetPos == nullptr && currentEnemy->CharaAI != AIroutine::Defence)	//行動を移動に設定
-					{
-						currentEnemy->AIMove = EnemyMove::Move;
-						Squares* target = GetnearCharaPos(15, BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->charaPosX, BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->charaPosY);
-						float MovePosX = 0;
-						float MovePosY = 0;
-
-						m_MoveCount = 0;
-
-						for (int j = 0; j < currentEnemy->CharaMoveRenge; j++)	//機動力の回数だけ回す
-						{
-							Squares* inRengeCharacterPos = nullptr;
-							if (target->charaPosX - 1 > BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->charaPosX)
-							{
-								MovePosX++;
-								m_MoveCount++;
-								inRengeCharacterPos = GetnearCharaPos(currentEnemy->CharaRenge, BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->charaPosX + MovePosX, BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->charaPosY + MovePosY);
-							}
-							else if (target->charaPosX + 1 < BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->charaPosX)
-							{
-								MovePosX--;
-								m_MoveCount++;
-								inRengeCharacterPos = GetnearCharaPos(currentEnemy->CharaRenge, BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->charaPosX + MovePosX, BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->charaPosY + MovePosY);
-							}
-
-							if (inRengeCharacterPos != nullptr)	//もし攻撃可能なキャラの位置が見つかったら抜ける
-							{
-								break;
-							}
-
-							if (m_MoveCount == currentEnemy->CharaMoveRenge)	//行動可能回数に達したら抜ける
-							{
-								break;
-							}
-
-							if (target->charaPosY - 1 > BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->charaPosY)
-							{
-								MovePosY++;
-								m_MoveCount++;
-								inRengeCharacterPos = GetnearCharaPos(currentEnemy->CharaRenge, BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->charaPosX + MovePosX, BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->charaPosY + MovePosY);
-							}
-							else if (target->charaPosY + 1 < BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->charaPosY)
-							{
-								MovePosY--;
-								m_MoveCount++;
-								inRengeCharacterPos = GetnearCharaPos(currentEnemy->CharaRenge, BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->charaPosX + MovePosX, BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->charaPosY + MovePosY);
-							}
-
-							if (inRengeCharacterPos != nullptr)	//もし攻撃可能なキャラの位置が見つかったら抜ける
-							{
-								break;
-							}
-
-							if (m_MoveCount == currentEnemy->CharaMoveRenge)	//行動可能回数に達したら抜ける
-							{
-								break;
-							}
-						}
-
-						DEBUG_FLOAT(currentEnemy->CharaPos + (MovePosX + MovePosY * 10));
-
-						for (int j = 0; j < nextPosList.size(); j++)	//移動先が他の敵と被っていないか確認
-						{
-							if (nextPosList[j] == currentEnemy->CharaPos + (MovePosX + MovePosY * 10))
-							{
-								if (MovePosX > 0)
-								{
-									MovePosX--;
-									break;
-								}
-								else if (MovePosX < 0)
-								{
-									MovePosX++;
-									break;
-								}
-
-								if (MovePosY > 0)
-								{
-									MovePosY--;
-									break;
-								}
-								else if (MovePosY < 0)
-								{
-									MovePosY++;
-									break;
-								}
-							}
-						}
-
-						while (BFMng->GetFieldSquaresList()[currentEnemy->CharaPos + (MovePosX + MovePosY * 10)]->chara != nullptr)	//移動先にキャラがいる場合は動かせるまで調整
-						{
-							if (MovePosX > 0)
-							{
-								MovePosX--;
-							}
-							else if (MovePosX < 0)
-							{
-								MovePosX++;
-							}
-							else if (MovePosY > 0)
-							{
-								MovePosY--;
-							}
-							else if (MovePosY < 0)
-							{
-								MovePosY++;
-							}
-							else
-							{
-								// これ以上動かせない場合は無限ループ回避のために抜ける
-								break;
-							}
-						}
-						
-						currentEnemy->targetAIPos = target;
-
-						nextPosList[i] = currentEnemy->CharaPos + (MovePosX + MovePosY * 10);
-
-						currentEnemy->nextAIPosX = MovePosX;
-						currentEnemy->nextAIPosY = MovePosY;
-					}
-					else
-					{
-						currentEnemy->AIMove = EnemyMove::Wait;
+						case AIActionType::Wait:
+							currentEnemy->AIMove = EnemyMove::Wait;
+							currentEnemy->targetAISquare = nullptr;
+							currentEnemy->targetAICharacterID = -1;
+							currentEnemy->moveAISquareID = -1;
+							break;
+						case AIActionType::Attack:
+							currentEnemy->AIMove = EnemyMove::Attack;
+							currentEnemy->targetAISquare = BFMng->GetFieldSquaresList()[bestAction.m_TargetSqureaID];
+							currentEnemy->targetAICharacterID = bestAction.m_TargetCharacterID;
+							currentEnemy->moveAISquareID = -1;
+							break;
+						case AIActionType::Move:
+							currentEnemy->AIMove = EnemyMove::Move;
+							currentEnemy->targetAISquare = nullptr;
+							currentEnemy->moveAISquareID = bestAction.m_MoveSquareID;
+							break;
 					}
 				}
 			}
@@ -210,11 +236,14 @@ bool EnemyAIManager::frameAction()
 
 	//==========敵の行動実行==========
 
+	FieldCharacter* currentEnemy = BFMng->GetEnemyCharacterList()[m_MoveAIcount];
+
 	if (BFMng->GetCurrentTurn() == Turn::EnemyMove && m_DelayCount == 0.0f)	//アニメーション設定
 	{
-		if (BFMng->GetEnemyCharacterList()[m_MoveAIcount]->Dead)	//もし死んでいたらスキップ
+
+		if (currentEnemy->Dead)	//もし死んでいたらスキップ
 		{
-			ResetAI(BFMng->GetEnemyCharacterList()[m_MoveAIcount]);
+			ResetAI(currentEnemy);
 			m_DelayCount = 0.0f;
 			if (m_MoveAIcount < BFMng->GetEnemyCharacterList().size())
 			{
@@ -227,15 +256,15 @@ bool EnemyAIManager::frameAction()
 			}
 			return true;
 		}
-		switch (BFMng->GetEnemyCharacterList()[m_MoveAIcount]->AIMove)	//アニメーションの設定
+		switch (currentEnemy->AIMove)	//アニメーションの設定
 		{
 		default:
 			break;
 		case EnemyMove::Attack:
-			BFMng->GetFieldSquaresList()[BFMng->GetEnemyCharacterList()[m_MoveAIcount]->CharaPos]->fbxD->SetAnime(L"ATTACK01");
+			BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->fbxD->SetAnime(L"ATTACK01");
 			break;
 		case EnemyMove::Move:
-			BFMng->GetFieldSquaresList()[BFMng->GetEnemyCharacterList()[m_MoveAIcount]->CharaPos]->fbxD->SetAnime(L"WALK01");
+			BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->fbxD->SetAnime(L"WALK01");
 			break;
 		case EnemyMove::None:
 		case EnemyMove::Wait:
@@ -255,30 +284,30 @@ bool EnemyAIManager::frameAction()
 		{
 			int NowPos = -1;
 			int NextPos = -1;
-			switch (BFMng->GetEnemyCharacterList()[m_MoveAIcount]->AIMove)
+			switch (currentEnemy->AIMove)
 			{
 			case EnemyMove::Attack:	//攻撃処理
-				if (BFMng->GetFieldSquaresList()[BFMng->GetEnemyCharacterList()[m_MoveAIcount]->targetAIPos->GetSquareID()]->chara != nullptr)	
+				if (BFMng->GetFieldSquaresList()[currentEnemy->targetAISquare->GetSquareID()]->chara != nullptr)	
 				{
-					BFMng->SetAttackingCharacterSquares(BFMng->GetFieldSquaresList()[BFMng->GetEnemyCharacterList()[m_MoveAIcount]->CharaPos]);
-					BFMng->GetFieldSquaresList()[BFMng->GetEnemyCharacterList()[m_MoveAIcount]->CharaPos]->SetAnimation(Animations::Attack, BFMng->GetEnemyCharacterList()[m_MoveAIcount]->CharaAdmin, BFMng->GetFieldSquaresList()[BFMng->GetEnemyCharacterList()[m_MoveAIcount]->CharaPos], BFMng->GetEnemyCharacterList()[m_MoveAIcount]->targetAIPos);
-					BFMng->Attack(BFMng->GetEnemyCharacterList()[m_MoveAIcount], BFMng->GetAlliesCharacterList()[BFMng->GetFieldSquaresList()[BFMng->GetEnemyCharacterList()[m_MoveAIcount]->targetAIPos->GetSquareID()]->ThereCharaID]);
+					BFMng->SetAttackingCharacterSquares(BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]);
+					BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->SetAnimation(Animations::Attack, currentEnemy->CharaAdmin, BFMng->GetFieldSquaresList()[currentEnemy->CharaPos], currentEnemy->targetAISquare);
+					BFMng->Attack(currentEnemy, BFMng->GetAlliesCharacterList()[currentEnemy->targetAICharacterID]);
 				}
 				else	//攻撃対象がいなかった場合の処理（念のため）
 				{
-					//BFMng->GetFieldSquaresList()[BFMng->GetEnemyCharacterList()[m_MoveAIcount]->CharaPos]->SetAnimation(Animations::Attack, BFMng->GetEnemyCharacterList()[m_MoveAIcount]->CharaAdmin, BFMng->GetFieldSquaresList()[BFMng->GetEnemyCharacterList()[m_MoveAIcount]->CharaPos], BFMng->GetEnemyCharacterList()[m_MoveAIcount]->targetAIPos);
+					//BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->SetAnimation(Animations::Attack, currentEnemy->CharaAdmin, BFMng->GetFieldSquaresList()[currentEnemy->CharaPos], currentEnemy->targetAISquare);
 				}
 				m_OnlyOneTime = true;
 				break;
 			case EnemyMove::Move:	//移動処理
-				NowPos = BFMng->GetEnemyCharacterList()[m_MoveAIcount]->CharaPos;
-				NextPos = nextPosList[m_MoveAIcount];
-				BFMng->GetFieldSquaresList()[BFMng->GetEnemyCharacterList()[m_MoveAIcount]->CharaPos]->SetAnimation(Animations::Move, BFMng->GetEnemyCharacterList()[m_MoveAIcount]->CharaAdmin, BFMng->GetFieldSquaresList()[NowPos], BFMng->GetFieldSquaresList()[NextPos]);
-				BFMng->Move(NowPos, NextPos, BFMng->GetEnemyCharacterList()[m_MoveAIcount]->CharaID);
+				NowPos = currentEnemy->CharaPos;
+				NextPos = currentEnemy->moveAISquareID;
+				BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->SetAnimation(Animations::Move, currentEnemy->CharaAdmin, BFMng->GetFieldSquaresList()[NowPos], BFMng->GetFieldSquaresList()[NextPos]);
+				BFMng->Move(NowPos, NextPos, currentEnemy->CharaID);
 				m_OnlyOneTime = true;
 				break;
 			case EnemyMove::Wait:	//待機処理
-				BFMng->Wait(BFMng->GetEnemyCharacterList()[m_MoveAIcount]->CharaPos);
+				BFMng->Wait(currentEnemy->CharaPos);
 				m_DelayCount = 0.0f;
 				if (m_MoveAIcount < BFMng->GetEnemyCharacterList().size())
 				{
@@ -314,11 +343,11 @@ bool EnemyAIManager::frameAction()
 	else if (BFMng->GetCurrentTurn() == Turn::EnemyMove && m_DelayCount > 4.0f)	//行動終了処理
 	{
 		BFMng->CheckMoved();
-		if (BFMng->GetEnemyCharacterList()[m_MoveAIcount]->AIMove == EnemyMove::Attack && BFMng->GetFieldSquaresList()[BFMng->GetEnemyCharacterList()[m_MoveAIcount]->targetAIPos->GetSquareID()]->chara != nullptr)
+		if (currentEnemy->AIMove == EnemyMove::Attack && BFMng->GetFieldSquaresList()[currentEnemy->targetAISquare->GetSquareID()]->chara != nullptr)
 		{
-			BFMng->CheckDead(BFMng->GetAlliesCharacterList()[BFMng->GetFieldSquaresList()[BFMng->GetEnemyCharacterList()[m_MoveAIcount]->targetAIPos->GetSquareID()]->ThereCharaID]);
+			BFMng->CheckDead(BFMng->GetAlliesCharacterList()[BFMng->GetFieldSquaresList()[currentEnemy->targetAISquare->GetSquareID()]->ThereCharaID]);
 		}
-		ResetAI(BFMng->GetEnemyCharacterList()[m_MoveAIcount]);
+		ResetAI(currentEnemy);
 		m_DelayCount = 0.0f;
 		m_OnlyOneTime = false;
 		if (m_MoveAIcount < BFMng->GetEnemyCharacterList().size())
@@ -402,7 +431,7 @@ Squares* EnemyAIManager::GetnearCharaPos(float renge, float charaposX, float cha
 				{
 					if (BFMng->GetFieldSquaresList()[serchingpos]->chara->CharaAdmin == Admin::Rebel)
 					{
-						distance.push_back(((x + charaposX) - charaposX) * ((x + charaposX) - charaposX) + ((y + charaposY) - charaposY) * ((y + charaposY) - charaposY));
+						distance.push_back(std::abs(x) + std::abs(y));
 						index.push_back(BFMng->GetFieldSquaresList()[serchingpos]->chara->CharaPos);
 					}
 				}
@@ -428,13 +457,163 @@ Squares* EnemyAIManager::GetnearCharaPos(float renge, float charaposX, float cha
 	}
 }
 
+vector<EnemyAction> EnemyAIManager::GeneratePossibleActions(FieldCharacter* currentCharacter)
+{
+	vector<EnemyAction> actionList;	//生成された可能な行動
+	BattleFieldManager* BFMng = MyAccessHub::GetBFManager();
+
+	int fieldWidth = 10;
+	int fieldHeight = 15;
+
+	//待機アクションは常に可能
+	EnemyAction waitAction;
+	waitAction.m_ActionType = AIActionType::Wait;
+	actionList.push_back(waitAction);
+
+	//攻撃アクションの生成
+	Squares* targetPosition = GetnearCharaPos(currentCharacter->CharaRenge, BFMng->GetFieldSquaresList()[currentCharacter->CharaPos]->charaPosX, BFMng->GetFieldSquaresList()[currentCharacter->CharaPos]->charaPosY);
+	if (targetPosition != nullptr)
+	{
+		EnemyAction attackAction;
+		attackAction.m_ActionType = AIActionType::Attack;
+		attackAction.m_TargetSqureaID = targetPosition->GetSquareID();
+		attackAction.m_TargetCharacterID = targetPosition->chara->CharaID;
+
+		actionList.push_back(attackAction);
+	}
+
+	currentCharacter->m_NearestEnemySquare = GetnearCharaPos(15.0f, BFMng->GetFieldSquaresList()[currentCharacter->CharaPos]->charaPosX, BFMng->GetFieldSquaresList()[currentCharacter->CharaPos]->charaPosY);
+
+	//BFS(幅優先探索)による移動可能なマスの探索
+	queue<pair<int, int>> bfsQueue;	//探索用のキュー（マスIDと移動コストのペア）
+	map<int, int> visited;			//通ったことのあるマス（マスIDと移動コストのペア）
+	int startSquareID = currentCharacter->CharaPos;
+
+	bfsQueue.push({ startSquareID, 0 });
+	visited[startSquareID] = 0;
+
+	int dx[] = { 0, 0, -1, 1 };		//上下左右
+	int dy[] = { 1, -1, 0, 0 };		//上下左右
+
+	//移動可能なマスを探索
+	while (!bfsQueue.empty())
+	{
+		pair<int, int> currentPosition = bfsQueue.front();
+		bfsQueue.pop();
+
+		int currentSquareID = currentPosition.first;
+		int currentCost = currentPosition.second;
+
+		auto sqData = BFMng->GetFieldSquaresList()[currentSquareID];
+		bool isOccupied = (sqData->chara != nullptr && sqData->chara != currentCharacter);	//マスにキャラクターがいるか
+
+		if (!isOccupied)
+		{
+			if (currentSquareID != startSquareID)	//移動アクション(開始地点以外)
+			{
+				EnemyAction moveAction;
+				moveAction.m_ActionType = AIActionType::Move;
+				moveAction.m_MoveSquareID = currentSquareID;
+				actionList.push_back(moveAction);
+			}
+		}
+
+		//移動コストが機動力に収まる範囲であれば隣接マスを探索
+		if (currentCost < currentCharacter->CharaMoveRenge)
+		{
+			int currentPostionX = BFMng->GetFieldSquaresList()[currentSquareID]->charaPosX;
+			int currentPostionY = BFMng->GetFieldSquaresList()[currentSquareID]->charaPosY;
+
+			for (int i = 0; i < 4; i++)
+			{
+				int nextPositionX = currentPostionX + dx[i];
+				int nextPositionY = currentPostionY + dy[i];
+
+				if (nextPositionX >= 0 && nextPositionX < fieldWidth && nextPositionY >= 0 && nextPositionY < fieldHeight)
+				{
+					int nextSquareID = nextPositionX + (nextPositionY * fieldWidth);
+
+					//次のマスが移動可能か（空いている、もしくは自分のいるマスである）
+					bool isMovable = (BFMng->GetFieldSquaresList()[nextSquareID]->chara == nullptr || BFMng->GetFieldSquaresList()[nextSquareID]->chara == currentCharacter);
+
+					//既にvisitedにない、もしくはより低いコストで訪れた場合はキューに追加
+					if (isMovable && (visited.find(nextSquareID) == visited.end()))
+					{
+						visited[nextSquareID] = currentCost + 1;
+						bfsQueue.push({ nextSquareID, currentCost + 1 });
+					}
+				}
+			}
+		}
+	}
+
+	return actionList;
+}
+
+float EnemyAIManager::EvaluateAction(FieldCharacter* currentCharacter, const EnemyAction& action)
+{
+	float score = 0.0f;
+	float distance = 0.0f;
+	switch (action.m_ActionType)
+	{
+	case AIActionType::Attack:
+		// 攻撃行動 
+		if (action.m_TargetCharacterID != -1)
+		{
+			score += 1000.0f;
+		}
+		break;
+	case AIActionType::Move:
+		// TODO:移動行動の場合、敵に近づく移動ならスコアを上げる
+		distance = CalculateDistance(action.m_MoveSquareID, currentCharacter->m_NearestEnemySquare->GetSquareID());
+		score += 1000.0f - distance * 10.0f;
+		break;
+	case AIActionType::Wait:
+		score += 1.0f; // 待機は最も低く評価
+		break;
+	default:
+		break;
+	}
+	return score;
+}
+
+EnemyAction EnemyAIManager::SelectBestAction(FieldCharacter* currentEnemy, const std::vector<EnemyAction>& possibleActions)
+{
+	if (possibleActions.empty())
+	{
+		return EnemyAction(); // 行動不可
+	}
+
+	float bestScore = -FLT_MAX;
+	EnemyAction bestAction = possibleActions[0];
+
+	for (const auto& action : possibleActions)
+	{
+		float currentScore = EvaluateAction(currentEnemy, action);
+		if (currentScore > bestScore)
+		{
+			bestScore = currentScore;
+			bestAction = action;
+		}
+	}
+
+	return bestAction;
+}
+
+float EnemyAIManager::CalculateDistance(int currentID, int nextID)
+{
+	int currentX = currentID % 10;
+	int currentY = currentID / 10;
+	int nextX = nextID % 10;
+	int nextY = nextID / 10;
+
+	return std::abs(currentX - nextX) + std::abs(currentY - nextY);
+}
+
 void EnemyAIManager::ResetAI(FieldCharacter* chara)
 {
 	chara->AIMove = EnemyMove::None;
-	chara->AItargetID = -1;
-	chara->nextAIPosX = -1;
-	chara->nextAIPosY = -1;
-	chara->targetAIPos = nullptr;
+	chara->targetAISquare = nullptr;
 }
 
 void EnemyAIManager::OnChangeTurn()

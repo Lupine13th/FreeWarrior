@@ -70,10 +70,10 @@ public:
 
 	EnemyMove AIMove = EnemyMove::None;	//敵部隊のAI行動
 
-	float nextAIPosX = -1.0f;	//AI行動後リセット
-	float nextAIPosY = -1.0f;
-	Squares* targetAIPos = nullptr;
-	int AItargetID = -1;	//AI行動後リセットここまで
+	int moveAISquareID = -1;	//敵部隊の移動先マスID
+	int targetAICharacterID = -1;	//攻撃する敵部隊のID
+	Squares* targetAISquare = nullptr;	//攻撃する敵部隊のマス
+	Squares* m_NearestEnemySquare = nullptr;	//最も近い敵部隊のマス
 
 	std::vector<AbilityType> Abilities = //アビリティのリスト
 	{
