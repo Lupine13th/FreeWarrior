@@ -75,6 +75,7 @@ bool BattleFieldManager::frameAction()
 			m_Firsttime = true;
 			UpdateBattleField();
 			m_MovedCountHUD->ResetMovedCountUI();
+			ResetPlayerActionLogs();
 			m_CursorState = CursorState::Select;
 		}
 
@@ -775,6 +776,7 @@ bool BattleFieldManager::frameAction()
 						break;
 					case true:
 						m_Mode = Mode::FieldMode;
+						MyAccessHub::GetAIManager()->CreateLearningData(m_PlayerActionLogs);
 						m_TurnEnd = false;
 						m_TurnEndUI->ResetWaitCount();
 						AddTurnCount();
@@ -1297,6 +1299,60 @@ void BattleFieldManager::AddTurnCount()
 	m_TurnCount++;
 }
 
+void BattleFieldManager::CreateMoveLog(FieldCharacter* currentCharacter, int currentPos, int nextPos)
+{
+	PlayerActionLog playerActionLog;
+
+	playerActionLog.m_CharacterID = currentCharacter->CharaID;
+	playerActionLog.m_ActionName = ActionName::Move;
+	playerActionLog.m_DamageDealt = 0;
+	playerActionLog.m_MoveForward = nextPos / 10 - currentPos / 10;
+	playerActionLog.m_HPparcentage = currentCharacter->CharaSoldiers / currentCharacter->CharaMaxSoldiers;
+
+	m_PlayerActionLogs.push_back(playerActionLog);
+}
+
+void BattleFieldManager::CreateAttackLog(FieldCharacter* currentCharacter, float damage)
+{
+	PlayerActionLog playerActionLog;
+
+	playerActionLog.m_CharacterID = currentCharacter->CharaID;
+	playerActionLog.m_ActionName = ActionName::Attack;
+	playerActionLog.m_DamageDealt = damage;
+	playerActionLog.m_MoveForward = 0;
+	playerActionLog.m_HPparcentage = currentCharacter->CharaSoldiers / currentCharacter->CharaMaxSoldiers;
+
+	m_PlayerActionLogs.push_back(playerActionLog);
+}
+
+void BattleFieldManager::CreateAbilityLog(FieldCharacter* currentCharacter, ActionName abilityName, float damage)
+{
+	PlayerActionLog playerActionLog;
+
+	playerActionLog.m_CharacterID = currentCharacter->CharaID;
+	playerActionLog.m_ActionName = abilityName;
+	playerActionLog.m_DamageDealt = damage;
+	playerActionLog.m_MoveForward = 0;
+	playerActionLog.m_HPparcentage = currentCharacter->CharaSoldiers / currentCharacter->CharaMaxSoldiers;
+
+	m_PlayerActionLogs.push_back(playerActionLog);
+}
+
+void BattleFieldManager::CreateWaitLog(FieldCharacter* currentCharacter)
+{
+	PlayerActionLog playerActionLog;
+
+	playerActionLog.m_CharacterID = currentCharacter->CharaID;
+	playerActionLog.m_ActionName = ActionName::Wait;
+	playerActionLog.m_DamageDealt = 0;
+	playerActionLog.m_MoveForward = 0;
+	playerActionLog.m_HPparcentage = currentCharacter->CharaSoldiers / currentCharacter->CharaMaxSoldiers;
+
+	m_PlayerActionLogs.push_back(playerActionLog);
+}
+
+
+
 /// <summary>
 ///	現在経過したターン数を取得
 /// </summary>
@@ -1471,6 +1527,8 @@ void BattleFieldManager::Attack(FieldCharacter* attackingchara, FieldCharacter* 
 
 	m_IsAttacking = true;
 
+	CreateAttackLog(attackingchara, damage);
+
 	RefreshLogs(attackingchara, attackedchara, ActionName::Attack, damage, false);
 }
 
@@ -1504,6 +1562,8 @@ void BattleFieldManager::Move(int nowPos, int nextPos, float charaID)
 	}
 	m_PassedSquaresList.clear();
 
+	CreateMoveLog(m_AlliesCharacterList[charaID], nowPos, nextPos);
+
 	RefreshLogs(m_FieldSquaresList[nextPos]->chara, m_FieldSquaresList[nextPos]->chara, ActionName::Move, 0, false);
 }
 
@@ -1515,6 +1575,8 @@ void BattleFieldManager::Wait(int nowPos)
 	{
 		m_FieldSquaresList[nowPos]->chara->CharaMorales = m_FieldSquaresList[nowPos]->chara->CharaMaxMorales;
 	}
+
+	CreateWaitLog(m_FieldSquaresList[nowPos]->chara);
 
 	CheckMoved();
 	UpdateBattleField();

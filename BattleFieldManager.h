@@ -8,7 +8,6 @@
 #include <chrono>
 
 class Squares;
-//class StatusHUD;
 class StatusWords;
 class LogHUD;
 class LogHUDW;
@@ -83,6 +82,8 @@ enum class ActionName
 	ConcentratedFire,
 	BayonetCharge,
 	Scout,
+	Wait,
+	None
 };
 
 enum class CursorState
@@ -96,6 +97,16 @@ enum class AbillityMenuState
 	None,
 	Menu,
 	Target
+};
+
+struct PlayerActionLog
+{
+	ActionName m_ActionName = ActionName::None;		//行動の名前
+
+	int m_CharacterID = -1;							//味方のキャラクターリスト上のID
+	int m_MoveForward = 0;							//前進したマス数
+	float m_DamageDealt = 0.0f;						//与えたダメージ
+	float m_HPparcentage = 0.0f;					//行動後のHP割合
 };
 
 class BattleFieldManager:public GameComponent
@@ -119,6 +130,8 @@ private:
 	vector<int> m_EnemyRangeIDList = {};				//移動可能範囲内のマスIDリスト
 	int m_AbillityIndex = 0;							//使用するアビリティのインデックス
 	int m_AbillityCount = 0;
+
+	vector<PlayerActionLog> m_PlayerActionLogs;			//プレイヤーの行動ログ
 
 	float m_AttackingCount = 0.0f;						//攻撃アニメーションのカウント
 	const float kMaxAttackingCount = 3.1f;				//攻撃アニメーションのカウント最大値
@@ -182,7 +195,6 @@ public:
 	//==========Setter==========
 	void SetMenuUI(MenuUI* MenuUI);
 	void SetMenuSelectUI(MonitorSelectUI* MonitorSelectUI);
-	//void SetStatusHUD(StatusHUD* StatusHUD);
 	void SetStatusText(StatusWords* StatusWords);
 	void SetTerrainHUD(TerrainHUD* TerrainHUD);
 	void SetMenuText(MenuText* MenuText);
@@ -216,6 +228,10 @@ public:
 	{
 		m_AttackigCharacterSquare = squares;
 	};
+	void CreateMoveLog(FieldCharacter* currentCharacter, int currentPos, int nextPos);
+	void CreateAttackLog(FieldCharacter* currentCharacter, float damage);
+	void CreateAbilityLog(FieldCharacter* currentCharacter, ActionName ability, float damage);
+	void CreateWaitLog(FieldCharacter* currentCharacter);
 
 	//==========Getter==========
 	int GetTurnCount();
@@ -410,6 +426,10 @@ public:
 	void SetResult(bool win);
 	void SearchInRengeSquare(int charaPosition, float renge, vector<int>& idList);
 	void ResetAbillityMenu();
+	void ResetPlayerActionLogs()
+	{
+		m_PlayerActionLogs.clear();
+	}
 };
 
 

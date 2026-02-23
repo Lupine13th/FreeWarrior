@@ -5,6 +5,7 @@
 #include "BattleFieldManager.h"
 #include "EnemyTypes.h"
 #include "TimeManager.h"
+#include "json.hpp"
 
 #include <vector>
 
@@ -16,6 +17,22 @@ enum class AIActionType
 	Attack,
 	UseSkill, // スキル使用も考慮に入れる
 	Wait,
+};
+
+// プレイヤーの傾向のステート
+enum class PlayerTendency
+{
+	None,
+	Offensive, // 攻撃的
+	Defensive, // 防御的
+	NearDead,  // 瀕死
+	Leader,    // リーダー
+};
+
+struct LearningAIData
+{
+	PlayerTendency m_PlayerTendency = PlayerTendency::None;	//プレイヤーの傾向
+	int m_FocusAliesCharacterID = -1;						//攻撃、スキルの対象となるキャラクターID
 };
 
 struct EnemyAction
@@ -71,5 +88,107 @@ public:
 
 	//二点からマンハッタン距離を計算
 	float CalculateDistance(int currentID, int nextID);
+
+	void WriteJsonFile(nlohmann::json& json, const LearningAIData& data)
+	{
+		json = nlohmann::json
+		{
+			{"playerTendency", data.m_PlayerTendency},
+			{"focusAliesCharacterID", data.m_FocusAliesCharacterID}
+		};
+	}
+
+	void ReadJsonFile(const nlohmann::json& json, LearningAIData& data)
+	{
+		json.at("playerTendency").get_to(data.m_PlayerTendency);
+		json.at("focusAliesCharacterID").get_to(data.m_FocusAliesCharacterID);
+	}
+
+	void CreateLearningData(vector<PlayerActionLog> playerLogList)
+	{
+		LearningAIData aiData;
+
+		int offenciveCount = 0;	//攻撃、攻撃系スキル、前進の回数
+		int defensiveCount = 0;	//後退、待機、偵察スキルの回数
+		int minHPCharacterID = -1;	//HP割合が最も低いキャラクターのID
+		float minHPPercentage = 1.0f;	//HP割合の最小値
+		int maxDamageCharacterID = -1;	//与えたダメージが最も大きいキャラクターのID
+		float maxDamageCharacterDamage = 0.0f;	//そのキャラクターが与えたダメージの最大値
+
+		for (int i = 0; i < playerLogList.size(); i++)
+		{
+			if (playerLogList[i].m_ActionName == ActionName::Attack)
+			{
+				offenciveCount++;
+			}
+			else if (playerLogList[i].m_ActionName == ActionName::Wait)
+			{
+				defensiveCount++;
+			}
+			else if (playerLogList[i].m_ActionName == ActionName::ConcentratedFire)
+			{
+				offenciveCount++;
+			}
+			else if (playerLogList[i].m_ActionName == ActionName::BayonetCharge)
+			{
+				offenciveCount++;
+			}
+			else if (playerLogList[i].m_ActionName == ActionName::Scout)
+			{
+				defensiveCount++;
+			}
+			else if (playerLogList[i].m_ActionName == ActionName::Move)
+			{
+				if (playerLogList[i].m_MoveForward > 0)
+				{
+					offenciveCount++;
+				}
+				else if (playerLogList[i].m_MoveForward <= 0)
+				{
+					defensiveCount++;
+				}
+			}
+
+			if (playerLogList[i].m_HPparcentage < minHPPercentage)
+			{
+				minHPPercentage = playerLogList[i].m_HPparcentage;
+				minHPCharacterID = playerLogList[i].m_CharacterID;
+			}
+
+			if (playerLogList[i].m_DamageDealt > maxDamageCharacterDamage)
+			{
+				maxDamageCharacterDamage = playerLogList[i].m_DamageDealt;
+				maxDamageCharacterID = playerLogList[i].m_CharacterID;
+			}
+		}
+
+		if (minHPPercentage < 0.2f)
+		{
+			aiData.m_FocusAliesCharacterID = minHPCharacterID;
+			aiData.m_PlayerTendency = PlayerTendency::NearDead;
+			return;
+		}
+
+
+		if (offenciveCount >= defensiveCount)
+		{
+			aiData.m_FocusAliesCharacterID = -1;
+			aiData.m_PlayerTendency = PlayerTendency::Offensive;
+
+			if (maxDamageCharacterDamage > 30)
+			{
+				aiData.m_FocusAliesCharacterID = maxDamageCharacterID;
+				aiData.m_PlayerTendency = PlayerTendency::Leader;
+			}
+
+			return;
+		}
+		else
+		{
+			aiData.m_FocusAliesCharacterID = -1;
+			aiData.m_PlayerTendency = PlayerTendency::Defensive;
+			return;
+		}
+	}
 };
 

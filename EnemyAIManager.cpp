@@ -489,4 +489,3 @@ void EnemyAIManager::OnChangeTurn()
 	m_Firsttime = false;
 	m_MoveAIcount = 0;
 }
-

@@ -30,6 +30,8 @@ void Abilities::ConcentratedFire(FieldCharacter* attackingchara, FieldCharacter*
 	attackingchara->CharaMorales = attackingchara->CharaMorales - 20;
 	attackedchara->CharaSoldiers = attackedchara->CharaSoldiers - damage * 1.2f;
 
+	BFMng->CreateAbilityLog(attackingchara, ActionName::ConcentratedFire, damage * 1.2f);
+
 	BFMng->RefreshLogs(attackingchara, attackedchara, ActionName::ConcentratedFire, damage * 1.2f, false);
 }
 
@@ -56,6 +58,8 @@ void Abilities::BayonetCharge(FieldCharacter* attackingchara, FieldCharacter* at
 	attackingchara->CharaSoldiers = attackingchara->CharaSoldiers - attackingchara->CharaSoldiers * 0.1;
 	attackedchara->CharaSoldiers = attackedchara->CharaSoldiers - damage * 1.2f;
 
+	BFMng->CreateAbilityLog(attackingchara, ActionName::BayonetCharge, damage * 1.2f);
+
 	BFMng->RefreshLogs(attackingchara, attackedchara, ActionName::BayonetCharge, damage * 1.2f, false);
 }
 
@@ -79,4 +83,6 @@ bool Abilities::Scout(FieldCharacter* attackingchara, FieldCharacter* attackedch
 		BFMng->RefreshLogs(attackingchara, attackedchara, ActionName::Scout, 0, attackedchara->Detected);
 		return false;
 	}
+
+	BFMng->CreateAbilityLog(attackingchara, ActionName::Scout, 0.0f);
 }

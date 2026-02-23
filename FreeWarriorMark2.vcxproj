@@ -182,6 +182,7 @@
     <ClInclude Include="FBXCharacterData.h" />
     <ClInclude Include="FieldCharacter.h" />
     <ClInclude Include="ForestTerrain.h" />
+    <ClInclude Include="json.hpp" />
     <ClInclude Include="MenuText.h" />
     <ClInclude Include="HillTerrain.h" />
     <ClInclude Include="HUDManager.h" />
