@@ -8,6 +8,8 @@
 #include "json.hpp"
 
 #include <vector>
+#include <fstream> 
+#include <iomanip>
 
 // 行動の種類を拡張する
 enum class AIActionType
@@ -62,6 +64,12 @@ private:
 
 	EnemyMove Emove = EnemyMove::None;
 	AIMode Mode = AIMode::decide;
+
+	LearningAIData m_CurrentAIData;	//現在のAIデータ
+
+	nlohmann::json m_JsonData;	//AIデータのJSON
+
+	string m_JsonFilePath = "LearningAIData.json";	//AIデータの保存ファイルパス
 public:
 	void initAction() override;
 	bool frameAction() override;
@@ -89,19 +97,32 @@ public:
 	//二点からマンハッタン距離を計算
 	float CalculateDistance(int currentID, int nextID);
 
-	void WriteJsonFile(nlohmann::json& json, const LearningAIData& data)
+	void WriteJsonFile(const LearningAIData& data)
 	{
-		json = nlohmann::json
+		nlohmann::json jsonData = nlohmann::json
 		{
 			{"playerTendency", data.m_PlayerTendency},
 			{"focusAliesCharacterID", data.m_FocusAliesCharacterID}
 		};
+
+		std::ofstream file(m_JsonFilePath);
+		if (file.is_open())
+		{
+			file << std::setw(4) << jsonData << std::endl; // インデントを付けて保存
+			file.close();
+		}
 	}
 
-	void ReadJsonFile(const nlohmann::json& json, LearningAIData& data)
+	void ReadJsonFile(LearningAIData& data)
 	{
-		json.at("playerTendency").get_to(data.m_PlayerTendency);
-		json.at("focusAliesCharacterID").get_to(data.m_FocusAliesCharacterID);
+		std::ifstream file(m_JsonFilePath);
+		if (!file.is_open())	return;	//ファイルが開けない場合は終了
+
+		nlohmann::json jsonData;
+		file >> jsonData;
+
+		jsonData.at("playerTendency").get_to(data.m_PlayerTendency);
+		jsonData.at("focusAliesCharacterID").get_to(data.m_FocusAliesCharacterID);
 	}
 
 	void CreateLearningData(vector<PlayerActionLog> playerLogList)
@@ -166,6 +187,7 @@ public:
 		{
 			aiData.m_FocusAliesCharacterID = minHPCharacterID;
 			aiData.m_PlayerTendency = PlayerTendency::NearDead;
+			WriteJsonFile(aiData);
 			return;
 		}
 
@@ -181,12 +203,15 @@ public:
 				aiData.m_PlayerTendency = PlayerTendency::Leader;
 			}
 
+			WriteJsonFile(aiData);
 			return;
 		}
 		else
 		{
 			aiData.m_FocusAliesCharacterID = -1;
 			aiData.m_PlayerTendency = PlayerTendency::Defensive;
+
+			WriteJsonFile(aiData);
 			return;
 		}
 	}

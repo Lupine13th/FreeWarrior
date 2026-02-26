@@ -37,6 +37,7 @@ bool EnemyAIManager::frameAction()
 		if (!m_Firsttime)
 		{
 			p_engine->GetSoundManager()->playBGM(1);
+			ReadJsonFile(m_CurrentAIData);
 			m_Firsttime = true;
 		}
 		if (!BFMng->GetEnemyCharacterList().empty())
