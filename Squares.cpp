@@ -125,7 +125,7 @@ bool Squares::frameAction()
 				{
 					m_CharacterAnimationCount += m_TimeManager->GetDeltaTime();
 				}
-				else if (m_CharacterAnimationCount < 3.0f && !m_IsDamaged)
+				else if (m_CharacterAnimationCount < 3.0f && !m_IsDamaged)	//アニメーション中偵察成功時にダメージリアクションを行うため、m_IsDamagedで条件分岐
 				{
 					m_CharacterAnimationCount += m_TimeManager->GetDeltaTime();
 					if (BFMng->GetIsSucceedScout())
@@ -135,11 +135,11 @@ bool Squares::frameAction()
 					}
 					m_IsDamaged = true;
 				}
-				else if (m_CharacterAnimationCount < 3.0f && m_IsDamaged)
+				else if (m_CharacterAnimationCount < 3.0f && m_IsDamaged)	//アニメーションが終了したので時間経過
 				{
 					m_CharacterAnimationCount += m_TimeManager->GetDeltaTime();
 				}
-				else
+				else	//アニメーション終了
 				{
 					SetPreviousPosition();
 					BFMng->GetCameraChangerCompornent()->SetMainCamera();
@@ -316,5 +316,7 @@ void Squares::SetPreviousPosition()
 	NowChara->fbxD->setRotation(NowCharaRot.x, NowCharaRot.y, NowCharaRot.z);
 	NextChara->fbxD->setPosition(NextCharaPos.x, NextCharaPos.y, NextCharaPos.z);
 	NextChara->fbxD->setRotation(NextCharaRot.x, NextCharaRot.y, NextCharaRot.z);
+
+	MyAccessHub::GetHUDManager()->GetHUDObject("SuperiorityGaugeHUD")->SetAnimationState(AnimationState::Init);
 }
 

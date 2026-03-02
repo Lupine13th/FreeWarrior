@@ -136,6 +136,8 @@ private:
 	float m_AttackingCount = 0.0f;						//攻撃アニメーションのカウント
 	const float kMaxAttackingCount = 3.1f;				//攻撃アニメーションのカウント最大値
 
+	XMFLOAT2 m_StrengthValue = { 5.0f, 5.0f };			//(HPの割合から)互いの戦力
+
 	bool m_OpenLog = false;								//行動ログを開いているかどうか
 	bool m_Firsttime = false;							//初回のみの処理かどうか
 	bool m_OnlyOneTime = false;							//一回だけの処理
@@ -219,6 +221,7 @@ public:
 	void SetEnemyRengeSquareTexture();
 	void SetPlayerWin(bool win);
 	void SetCameraChangerCompornent(CameraChangerComponent* cameraChanger);
+	void SetStrengthValues();
 	void AddTurnCount();
 	void SetBattleCameraEnable(bool enable)
 	{
@@ -408,6 +411,11 @@ public:
 	{
 		return m_AttackedCharacter;
 	}
+	XMFLOAT2 GetStrengthValues()
+	{
+		return m_StrengthValue;
+	}
+
 	//==========Method==========
 	void ChangeTurnAllies();
 	void ChangeTurnEnemy();

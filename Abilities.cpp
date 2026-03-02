@@ -32,6 +32,8 @@ void Abilities::ConcentratedFire(FieldCharacter* attackingchara, FieldCharacter*
 
 	BFMng->CreateAbilityLog(attackingchara, ActionName::ConcentratedFire, damage * 1.2f);
 
+	BFMng->SetStrengthValues();
+
 	BFMng->RefreshLogs(attackingchara, attackedchara, ActionName::ConcentratedFire, damage * 1.2f, false);
 }
 
@@ -59,6 +61,8 @@ void Abilities::BayonetCharge(FieldCharacter* attackingchara, FieldCharacter* at
 	attackedchara->CharaSoldiers = attackedchara->CharaSoldiers - damage * 1.2f;
 
 	BFMng->CreateAbilityLog(attackingchara, ActionName::BayonetCharge, damage * 1.2f);
+
+	BFMng->SetStrengthValues();
 
 	BFMng->RefreshLogs(attackingchara, attackedchara, ActionName::BayonetCharge, damage * 1.2f, false);
 }

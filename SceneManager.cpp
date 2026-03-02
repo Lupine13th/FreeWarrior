@@ -199,6 +199,8 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"NewsPaperTexture", L"./Resources/textures/HUD/NewsPaporImage.png");		//新聞背景イメージ
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"DogtagTexture", L"./Resources/textures/HUD/DogtagImage.png");				//ドックタグイメージ
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"DogtagBaseTexture", L"./Resources/textures/HUD/DogtagBaseImage.png");		//ドックタグ背景イメージ
+				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"AliesGageTexture", L"./Resources/textures/HUD/AliesGageTexture.png");		//味方優勢ゲージイメージ
+				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"EnemyGageTexture", L"./Resources/textures/HUD/EnemyGageTexture.png");		//敵優勢ゲージイメージ
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"BrownTelevisionNoizeTexture", L"./Resources/textures/HUD/BrownTelevisionNoizeTexture.png");		//ブラウン管ノイズイメージ
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"BrownTelevisiomnBackGroundImage", L"./Resources/textures/HUD/BrownTelevisiomnBackGroundImage.png");	//ブラウン管背景イメージ
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"BrownTelevisiomnFrameImage", L"./Resources/textures/HUD/BrownTelevisiomnFrameImage.png");			//ブラウン管フレームイメージ

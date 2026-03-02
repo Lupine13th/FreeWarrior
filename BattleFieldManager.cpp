@@ -1294,6 +1294,24 @@ void BattleFieldManager::SetCameraChangerCompornent(CameraChangerComponent* came
 	m_CameraChangerCompornent = cameraChanger;
 }
 
+void BattleFieldManager::SetStrengthValues()
+{
+	float aliesStrength = 0.0f;
+	float enemyStrength = 0.0f;
+
+	for (int i = 0; i < m_AlliesCharacterList.size(); i++)
+	{
+		aliesStrength += m_AlliesCharacterList[i]->CharaSoldiers / m_AlliesCharacterList[i]->CharaMaxSoldiers;	//味方の全体のHP割合
+	}
+	for (int i = 0; i < m_EnemyCharacterList.size(); i++)
+	{
+		enemyStrength += m_EnemyCharacterList[i]->CharaSoldiers / m_EnemyCharacterList[i]->CharaMaxSoldiers;	//敵の全体のHP割合
+	}
+
+	m_StrengthValue.x = aliesStrength;
+	m_StrengthValue.y = enemyStrength;
+}
+
 void BattleFieldManager::AddTurnCount()
 {
 	m_TurnCount++;
@@ -1528,6 +1546,8 @@ void BattleFieldManager::Attack(FieldCharacter* attackingchara, FieldCharacter* 
 	m_IsAttacking = true;
 
 	CreateAttackLog(attackingchara, damage);
+
+	SetStrengthValues();
 
 	RefreshLogs(attackingchara, attackedchara, ActionName::Attack, damage, false);
 }

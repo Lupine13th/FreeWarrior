@@ -351,7 +351,14 @@ vector<EnemyAction> EnemyAIManager::GeneratePossibleActions(FieldCharacter* curr
 		actionList.push_back(attackAction);
 	}
 
+	//最も近いプレイヤーキャラクターの位置を取得
 	currentCharacter->m_NearestEnemySquare = GetnearCharaPos(15.0f, BFMng->GetFieldSquaresList()[currentCharacter->CharaPos]->charaPosX, BFMng->GetFieldSquaresList()[currentCharacter->CharaPos]->charaPosY);
+
+	//プレイヤーの傾向が瀕死、もしくはリーダーであれば、最も近いプレイヤーキャラクターの位置を最優先で設定
+	if (m_CurrentAIData.m_PlayerTendency == PlayerTendency::NearDead || m_CurrentAIData.m_PlayerTendency == PlayerTendency::Leader)
+	{
+		currentCharacter->m_NearestEnemySquare = BFMng->GetFieldSquaresList()[m_CurrentAIData.m_FocusAliesCharacterID];
+	}
 
 	//BFS(幅優先探索)による移動可能なマスの探索
 	queue<pair<int, int>> bfsQueue;	//探索用のキュー（マスIDと移動コストのペア）

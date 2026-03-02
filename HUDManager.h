@@ -53,7 +53,7 @@ protected:
 	float m_DelayCount = 0.0f;
 	float m_MaxDelayCount = 0.0f;
 
-	XMFLOAT4 m_PatternRect = { 0.0f, 0.0f, 1.0f, 1.0f };
+	XMFLOAT4 m_PatternRect = { 0.0f, 0.0f, 1.0f, 1.0f };	//UV座標のRect　左上原点　単位はテクスチャ全体に対する割合
 
 	const vector<XMFLOAT2> kPageAreaList = 
 	{ 
@@ -298,7 +298,7 @@ public:
 	void finishAction() override;
 };
 
-class MainMenuHUD : public HUDTextObject
+class MainMenuHUD : public HUDTextObject		//メインメニューHUD
 {
 private:
 	const vector<const wchar_t*> kMenuTextList =
@@ -375,3 +375,26 @@ public:
 
 	void SetDamageEffect(float damageRatio);
 };
+
+class SuperiorityGaugeHUD : public HUDTextObject	//制圧ゲージのテキスト
+{
+private:
+	const float kGagePositionY = 250.0f;		//優勢ゲージのY座標
+	const float kGageLeftPosition = -150.0f;	//優勢ゲージの左端X座標
+	const float kGageRightPosition = 150.0f;	//優勢ゲージの右端X座標
+	float m_NextGagePercent = 0.0f;				//優勢ゲージの現在の割合　1.0fで味方完全優勢　0.0fで敵完全優勢
+	float m_CurrentGagePercent = 0.0f;			//現在のゲームのパーセント ゲージにアニメーションを付ける用
+	float m_AnimationCount = 0.0f;				//ゲージアニメーションのカウント
+	float m_GageSizeX = 0.0f;					//ゲージのX軸スケール
+	XMFLOAT2 m_StartGageSizeX = { 0.0f, 0.0f };				//ゲージアニメーション開始時のゲージのX軸スケール
+	XMFLOAT2 m_EndGageSizeX = { 0.0f, 0.0f };				//ゲージアニメーション終了時のゲージのX軸スケール
+
+	bool m_IsFirstTime = true;
+public:
+	void initAction() override;
+	bool frameAction() override;
+	void finishAction() override;
+
+	void SetGagePercent(XMFLOAT2 strengthValues);
+};
+

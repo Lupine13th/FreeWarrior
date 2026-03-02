@@ -103,7 +103,7 @@ bool MovedCountHUD::frameAction()
                     }
                 }
                 
-                pipe->AddRenderObject(m_Sprite[i].get());
+                //pipe->AddRenderObject(m_Sprite[i].get());
             }
             else    //i番目のキャラクターが行動済みの時
             {
@@ -114,7 +114,7 @@ bool MovedCountHUD::frameAction()
                         m_DogtagClosingCount += m_TimeManager->GetDeltaTime();
                         auto dogtagClosingPosY = kDogtagClosingPosY + m_DogtagClosingCount * 300.0f;
                         m_Sprite[i]->setPosition(kDogtagLeftPosX + kDogtagInterbal * i, dogtagClosingPosY, 2.0f);
-                        pipe->AddRenderObject(m_Sprite[i].get());
+                        //pipe->AddRenderObject(m_Sprite[i].get());
                     }
                     else
                     {
@@ -125,7 +125,7 @@ bool MovedCountHUD::frameAction()
             }
         }
 
-        pipe->AddRenderObject(m_BaseSprite.get());
+        //pipe->AddRenderObject(m_BaseSprite.get());
     }
     
     return true;

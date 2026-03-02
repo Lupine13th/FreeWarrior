@@ -5,19 +5,19 @@
 
 void HUDManager::initAction()
 {
-    MeterHUD* meterHUD = new MeterHUD();
+	MeterHUD* meterHUD = new MeterHUD();            //兵数・士気バーHUD
     getGameObject()->addComponent(meterHUD);
 	AddHUDObject("MeterHUD", meterHUD);
 
-	StatusHUD* statusHUDs = new StatusHUD();
+	StatusHUD* statusHUDs = new StatusHUD();        //ブラウン管テレビのキャラクター顔面カメラHUD
     getGameObject()->addComponent(statusHUDs);
     AddHUDObject("StatusHUD", statusHUDs);
 
-    StatusText* statusText = new StatusText();
+	StatusText* statusText = new StatusText();      //選択中キャラクターの名前を表示するテキストHUD
     getGameObject()->addComponent(statusText);
     AddHUDObject("StatusText", statusText);
 
-    AbilityHUD* abillityHUD = new AbilityHUD();
+    AbilityHUD* abillityHUD = new AbilityHUD();     
     getGameObject()->addComponent(abillityHUD);
     AddHUDObject("AbilityHUD", abillityHUD);
 
@@ -40,6 +40,10 @@ void HUDManager::initAction()
     DamageEffectHUD* damageEffectHUD = new DamageEffectHUD();
     getGameObject()->addComponent(damageEffectHUD);
     AddHUDObject("DamageEffectHUD", damageEffectHUD);
+
+    SuperiorityGaugeHUD* superiorityGaugeHUD = new SuperiorityGaugeHUD();
+    getGameObject()->addComponent(superiorityGaugeHUD);
+    AddHUDObject("SuperiorityGaugeHUD", superiorityGaugeHUD);
 }
 
 bool HUDManager::frameAction()
@@ -1324,13 +1328,13 @@ bool BattleCameraHUD::frameAction()
 
 		int count = 0;
 
-        Squares* attackerCharacterSquare = BFMng->GetAttackingCharacterSquares()->GetNowChara();
-        Squares* defenderCharacterSquare = BFMng->GetAttackingCharacterSquares()->GetNextChara();
+        FieldCharacter* attackerCharacterSquare = BFMng->GetAttackingCharacterSquares()->GetNowChara()->chara;
+        FieldCharacter* defenderCharacterSquare = BFMng->GetAttackingCharacterSquares()->GetNextChara()->chara;
 
         if (attackerCharacterSquare != nullptr && defenderCharacterSquare != nullptr)
         {
-            m_TextList["攻撃側"] = (attackerCharacterSquare->chara->CharaName.c_str());
-            m_TextList["防御側"] = (defenderCharacterSquare->chara->CharaName.c_str());
+            m_TextList["攻撃側"] = (attackerCharacterSquare->CharaName.c_str());
+            m_TextList["防御側"] = (defenderCharacterSquare->CharaName.c_str());
 
             count = MakeSpriteString(count, kAttackerTextPos.x, kAttackerTextPos.y, 30, 45, m_TextList["攻撃側"], XMFLOAT3(1.0f, 1.0f, 1.0f));
             count = MakeSpriteString(count, kDefenderTextPos.x, kDefenderTextPos.y, 30, 45, m_TextList["防御側"], XMFLOAT3(1.0f, 1.0f, 1.0f));
@@ -1509,4 +1513,112 @@ void DamageEffectHUD::SetDamageEffect(float damageRatio)
 		m_EffectCount = 3;
     }
     SetAnimationState(AnimationState::Run);
+}
+
+void SuperiorityGaugeHUD::initAction()
+{
+    for (int i = 0; i < 6; i++)
+    {
+        m_SpriteList.push_back(std::make_unique<SpriteCharacter>());
+        m_SpriteList[i] = std::make_unique<SpriteCharacter>();
+        m_SpriteList[i]->SetCameraLabel(L"HUDCamera", 0);
+        m_SpriteList[i]->setColor(1.0f, 1.0f, 1.0f, 1);
+        m_SpriteList[i]->SetGraphicsPipeLine(L"AlphaSprite");
+        m_SpriteList[i]->SetSpritePattern(0, 1, 1, m_PatternRect);
+        m_SpriteList[i]->setSpriteIndex(0);
+
+        switch (i)
+        {
+		case 0: //ゲージの背景
+            m_SpriteList[i]->setPosition(0.0f, kGagePositionY, OrderInLayer::BackGround);
+            m_SpriteList[i]->setScale(310.0f, 100.0f, 0.1f);
+            m_SpriteList[i]->setTextureId(L"DogtagBaseTexture");
+            break;
+        case 1: //味方ゲージ
+            m_SpriteList[i]->setPosition(0.0f, kGagePositionY, OrderInLayer::MoveObject);
+            m_SpriteList[i]->setScale(300.0f, 300.0f, 0.1f);
+            m_SpriteList[i]->setTextureId(L"AliesGageTexture");
+            break;
+		case 2: //敵ゲージ
+            m_SpriteList[i]->setPosition(0.0f, kGagePositionY, OrderInLayer::MoveObject);
+            m_SpriteList[i]->setScale(300.0f, 300.0f, 0.1f);
+            m_SpriteList[i]->setTextureId(L"EnemyGageTexture");
+            break;
+		case 3: //ゲージの節　左
+            m_SpriteList[i]->setPosition(-75.0f, kGagePositionY, OrderInLayer::Text);
+            m_SpriteList[i]->setScale(50.0f, 30.0f, 0.1f);
+            m_SpriteList[i]->setTextureId(L"MenuBaseTexture");
+            break;
+        case 4: //ゲージの節　中央
+            m_SpriteList[i]->setPosition(0.0f, kGagePositionY, OrderInLayer::Text);
+            m_SpriteList[i]->setScale(50.0f, 30.0f, 0.1f);
+            m_SpriteList[i]->setTextureId(L"MenuBaseTexture");
+            break;
+		case 5: //ゲージの節　右
+            m_SpriteList[i]->setPosition(75.0f, kGagePositionY, OrderInLayer::Text);
+            m_SpriteList[i]->setScale(50.0f, 30.0f, 0.1f);
+            m_SpriteList[i]->setTextureId(L"MenuBaseTexture");
+            break;
+        }
+    }
+
+    m_AnimationState = AnimationState::Init;
+}
+
+bool SuperiorityGaugeHUD::frameAction()
+{
+    MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+    GraphicsPipeLineObjectBase* pipeline = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
+
+    switch (m_AnimationState)
+    {
+    case AnimationState::Init:
+        SetGagePercent(BFMng->GetStrengthValues());
+		m_AnimationState = AnimationState::Run;
+        break;
+    case AnimationState::Run:
+        if (m_AnimationCount < 0.5f)
+        {
+			float t = m_AnimationCount / 0.5f; // 0から1への正規化された時間
+			m_GageSizeX = m_StartGageSizeX.x + (m_EndGageSizeX.x - m_StartGageSizeX.x) * t; // 線形補間
+
+			m_SpriteList[1]->setScale(m_GageSizeX, 300.0f, 0.1f);           //味方ゲージのサイズを更新
+			m_SpriteList[1]->setPosition(kGageLeftPosition + m_GageSizeX / 2, kGagePositionY, OrderInLayer::MoveObject); //味方ゲージの位置を更新
+			m_SpriteList[2]->setScale(300.0f - m_GageSizeX, 300.0f, 0.1f);  //敵ゲージのサイズを更新
+			m_SpriteList[2]->setPosition(kGageRightPosition - (300.0f - m_GageSizeX) / 2, kGagePositionY, OrderInLayer::MoveObject); //敵ゲージの位置を更新
+			m_AnimationCount += m_TimeManager->GetDeltaTime();
+        }
+        else
+        {
+            m_AnimationCount = 0.0f;
+			SetAnimationState(AnimationState::Finish);
+        }
+        break;
+    default:
+        break;
+    }
+
+    if (!BFMng->GetBattleCameraEnable())
+    {
+        for (int i = 0; i < m_SpriteList.size(); i++)
+        {
+            pipeline->AddRenderObject(m_SpriteList[i].get());
+        }
+    }
+    
+
+    return true;
+}
+
+void SuperiorityGaugeHUD::finishAction()
+{
+}
+
+void SuperiorityGaugeHUD::SetGagePercent(XMFLOAT2 strengthValues)
+{
+	m_CurrentGagePercent = m_NextGagePercent;                                       //ゲージの現在の割合を保存
+	m_NextGagePercent = strengthValues.x / (strengthValues.x + strengthValues.y);   //ゲージの割合を計算
+
+    m_StartGageSizeX = { 300.0f * m_CurrentGagePercent, 300.0f - 300.0f * m_CurrentGagePercent };   //ゲージの現在のサイズを計算
+    m_EndGageSizeX = { 300.0f * m_NextGagePercent , 300.0f - 300.0f * m_NextGagePercent };          //ゲージの現在のサイズを計算
 }
