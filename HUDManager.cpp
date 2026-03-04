@@ -1546,18 +1546,21 @@ void SuperiorityGaugeHUD::initAction()
             break;
 		case 3: //ゲージの節　左
             m_SpriteList[i]->setPosition(-75.0f, kGagePositionY, OrderInLayer::Text);
-            m_SpriteList[i]->setScale(50.0f, 30.0f, 0.1f);
-            m_SpriteList[i]->setTextureId(L"MenuBaseTexture");
+            m_SpriteList[i]->setScale(2.0f, 30.0f, 0.1f);
+            m_SpriteList[i]->setColor(1.0f, 1.0f, 0.0f, 1);
+            m_SpriteList[i]->setTextureId(L"Sprite00");
             break;
         case 4: //ゲージの節　中央
             m_SpriteList[i]->setPosition(0.0f, kGagePositionY, OrderInLayer::Text);
-            m_SpriteList[i]->setScale(50.0f, 30.0f, 0.1f);
-            m_SpriteList[i]->setTextureId(L"MenuBaseTexture");
+            m_SpriteList[i]->setScale(2.0f, 30.0f, 0.1f);
+            m_SpriteList[i]->setColor(1.0f, 1.0f, 0.0f, 1);
+            m_SpriteList[i]->setTextureId(L"Sprite00");
             break;
 		case 5: //ゲージの節　右
             m_SpriteList[i]->setPosition(75.0f, kGagePositionY, OrderInLayer::Text);
-            m_SpriteList[i]->setScale(50.0f, 30.0f, 0.1f);
-            m_SpriteList[i]->setTextureId(L"MenuBaseTexture");
+            m_SpriteList[i]->setScale(2.0f, 30.0f, 0.1f);
+            m_SpriteList[i]->setColor(1.0f, 1.0f, 0.0f, 1);
+            m_SpriteList[i]->setTextureId(L"Sprite00");
             break;
         }
     }
@@ -1582,10 +1585,15 @@ bool SuperiorityGaugeHUD::frameAction()
 			float t = m_AnimationCount / 0.5f; // 0から1への正規化された時間
 			m_GageSizeX = m_StartGageSizeX.x + (m_EndGageSizeX.x - m_StartGageSizeX.x) * t; // 線形補間
 
+			XMFLOAT4 aliesGagePatternRect = { 0.0f, 0.0f, m_GageSizeX / 300.0f, 1.0f }; //味方ゲージのパターン矩形を計算
+			XMFLOAT4 enemyGagePatternRect = { 0.0f, 0.0f, 1.0f - (m_GageSizeX / 300.0f), 1.0f }; //敵ゲージのパターン矩形を計算
+
 			m_SpriteList[1]->setScale(m_GageSizeX, 300.0f, 0.1f);           //味方ゲージのサイズを更新
+            m_SpriteList[1]->SetSpritePattern(0, 1, 1, aliesGagePatternRect);
 			m_SpriteList[1]->setPosition(kGageLeftPosition + m_GageSizeX / 2, kGagePositionY, OrderInLayer::MoveObject); //味方ゲージの位置を更新
 			m_SpriteList[2]->setScale(300.0f - m_GageSizeX, 300.0f, 0.1f);  //敵ゲージのサイズを更新
 			m_SpriteList[2]->setPosition(kGageRightPosition - (300.0f - m_GageSizeX) / 2, kGagePositionY, OrderInLayer::MoveObject); //敵ゲージの位置を更新
+            m_SpriteList[2]->SetSpritePattern(0, 1, 1, enemyGagePatternRect);
 			m_AnimationCount += m_TimeManager->GetDeltaTime();
         }
         else
