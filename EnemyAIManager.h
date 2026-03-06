@@ -170,20 +170,20 @@ public:
 				}
 			}
 
-			if (playerLogList[i].m_HPparcentage < minHPPercentage)
+			if (playerLogList[i].m_HPparcentage < minHPPercentage)	//最も低い兵力の部隊を更新
 			{
 				minHPPercentage = playerLogList[i].m_HPparcentage;
 				minHPCharacterID = playerLogList[i].m_CharacterID;
 			}
 
-			if (playerLogList[i].m_DamageDealt > maxDamageCharacterDamage)
+			if (playerLogList[i].m_DamageDealt > maxDamageCharacterDamage)	//最も高いダメージを与えた部隊を更新
 			{
 				maxDamageCharacterDamage = playerLogList[i].m_DamageDealt;
 				maxDamageCharacterID = playerLogList[i].m_CharacterID;
 			}
 		}
 
-		if (minHPPercentage < 0.2f)
+		if (minHPPercentage < 0.2f)		//最も兵力の低いキャラクターが2割未満
 		{
 			aiData.m_FocusAliesCharacterID = minHPCharacterID;
 			aiData.m_PlayerTendency = PlayerTendency::NearDead;
@@ -192,12 +192,12 @@ public:
 		}
 
 
-		if (offenciveCount >= defensiveCount)
+		if (offenciveCount >= defensiveCount)	//攻撃的な行動が多い場合
 		{
 			aiData.m_FocusAliesCharacterID = -1;
 			aiData.m_PlayerTendency = PlayerTendency::Offensive;
 
-			if (maxDamageCharacterDamage > 30)
+			if (maxDamageCharacterDamage > 30)	//最大ダメージが30を超えている場合、そのキャラクターを最優先で攻撃するリーダー傾向に設定
 			{
 				aiData.m_FocusAliesCharacterID = maxDamageCharacterID;
 				aiData.m_PlayerTendency = PlayerTendency::Leader;
@@ -206,7 +206,7 @@ public:
 			WriteJsonFile(aiData);
 			return;
 		}
-		else
+		else									//防御的な行動が多い場合
 		{
 			aiData.m_FocusAliesCharacterID = -1;
 			aiData.m_PlayerTendency = PlayerTendency::Defensive;

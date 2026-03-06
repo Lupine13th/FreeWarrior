@@ -268,23 +268,11 @@ Squares* EnemyAIManager::GetnearCharaPos(float renge, float charaposX, float cha
 	vector<float> index;
 	int minDistanceIndex = -1;
 	float minDistance = FLT_MAX;
+
 	for (int x = -renge; x <= renge; x++)
 	{
 		for (int y = -renge; y <= renge; y++)
 		{
-			//int serchingpos = (x + charaposX) + ((y + charaposY) * 10);
-			//if (serchingpos < 150 && serchingpos > -1)
-			//{
-			//	if (BFMng->GetFieldSquaresList()[serchingpos]->chara != nullptr)
-			//	{
-			//		if (BFMng->GetFieldSquaresList()[serchingpos]->chara->CharaAdmin == Admin::Rebel)
-			//		{
-			//			distance.push_back(((x + charaposX) - charaposX) * ((x + charaposX) - charaposX) + ((y + charaposY) - charaposY) * ((y + charaposY) - charaposY));
-			//			index.push_back(BFMng->GetFieldSquaresList()[serchingpos]->chara->CharaPos);
-			//		}
-			//	}
-			//}
-
 			int charaPosition = charaposX + (charaposY * 10);
 			int nx = BFMng->GetFieldSquaresList()[charaposX + charaposY * 10]->charaPosX + x;
 			int ny = BFMng->GetFieldSquaresList()[charaposX + charaposY * 10]->charaPosY + y;
@@ -434,15 +422,63 @@ float EnemyAIManager::EvaluateAction(FieldCharacter* currentCharacter, const Ene
 	{
 	case AIActionType::Attack:
 		// 攻撃行動 
+		
 		if (action.m_TargetCharacterID != -1)
 		{
-			score += 1000.0f;
+			switch (m_CurrentAIData.m_PlayerTendency)
+			{
+			case PlayerTendency::Leader:	//リーダーを優先して攻撃するAI
+				if (action.m_TargetCharacterID == m_CurrentAIData.m_FocusAliesCharacterID)
+				{
+					score += 2000.0f;
+				}
+				else
+				{
+					score += 1000.0f;
+				}
+				break;
+			case PlayerTendency::NearDead:	//瀕死のキャラクターを優先して攻撃するAI
+				if (action.m_TargetCharacterID == m_CurrentAIData.m_FocusAliesCharacterID)
+				{
+					score += 2000.0f;
+				}
+				else
+				{
+					score += 1000.0f;
+				}
+				break;
+			default:
+				score += 1000.0f;
+				break;
+			}
 		}
 		break;
 	case AIActionType::Move:
-		// 移動行動の場合、敵に近づく移動ならスコアを上げる
-		distance = CalculateDistance(action.m_MoveSquareID, currentCharacter->m_NearestEnemySquare->GetSquareID());
-		score += 1000.0f - distance * 10.0f;
+
+		Squares* targetSquare = GetnearCharaPos(currentCharacter->CharaRenge, action.m_MoveSquareID % 15, action.m_MoveSquareID / 15);
+
+		if (targetSquare == nullptr)	//移動先からの攻撃範囲で敵がいない場合
+		{
+			distance = CalculateDistance(action.m_MoveSquareID, currentCharacter->m_NearestEnemySquare->GetSquareID());
+
+			// 移動行動の場合、敵に近づく移動ならスコアを上げる
+			if (currentCharacter->CharaMaxSoldiers / currentCharacter->CharaSoldiers > 0.3f)
+			{
+				score += 1000.0f - distance * 10.0f;
+			}
+			else
+			{
+				score += distance * 30.0f;
+			}
+		}
+		else							//移動先からの攻撃範囲に敵がいる場合は一番遠いマスの評価が上がる
+		{
+			distance = CalculateDistance(action.m_MoveSquareID, currentCharacter->m_NearestEnemySquare->GetSquareID());
+
+			score += distance * 50.0f;
+		}
+
+		
 		break;
 	case AIActionType::Wait:
 		score += 1.0f; // 待機は最も低く評価
