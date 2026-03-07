@@ -430,7 +430,7 @@ bool StatusHUD::frameAction()
 		SetAnimationState(AnimationState::Run);
         break;
     case AnimationState::Run:
-        FlipAnimation(m_SpriteList[0].get());
+		FlipAnimation(m_SpriteList[0].get());   //テレビのノイズアニメーション
         index = 2;
         break;
     case AnimationState::Finish:
@@ -443,7 +443,7 @@ bool StatusHUD::frameAction()
                 if (selectSquare->chara == nullptr)
 					return true;
 
-                if (!selectSquare->chara->Detected && selectSquare->chara->CharaAdmin == Admin::Imperial)
+				if (!selectSquare->chara->Detected && selectSquare->chara->CharaAdmin == Admin::Imperial)   //未発見の帝国軍キャラクターを選択した場合はエラー表示
                 {
                     SetAnimationState(AnimationState::Init);
                     index = 2;
@@ -453,7 +453,7 @@ bool StatusHUD::frameAction()
                 if (targetSquare->chara == nullptr)
                     return true;
 
-                if (!targetSquare->chara->Detected && selectSquare->chara->CharaAdmin == Admin::Imperial)
+                if (!targetSquare->chara->Detected && targetSquare->chara->CharaAdmin == Admin::Imperial)   //未発見の帝国軍キャラクターを選択した場合はエラー表示
                 {
                     SetAnimationState(AnimationState::Init);
                     index = 2;
@@ -535,13 +535,13 @@ void StatusHUD::SetRender(int index)
 
     switch (index)
     {
-    case 2:
-        pipe->AddRenderObject(m_SpriteList[0].get());
-        pipe->AddRenderObject(m_SpriteList[1].get());
+    case 2: 
+        pipe->AddRenderObject(m_SpriteList[0].get());   //ノイズ描画
+		pipe->AddRenderObject(m_SpriteList[1].get());   //テレビフレーム描画
 		break;
     case 3:
-        pipe->AddRenderObject(m_SpriteList[1].get());
-        pipe->AddRenderObject(m_SpriteList[2].get());
+		pipe->AddRenderObject(m_SpriteList[1].get());   //テレビフレーム描画
+		pipe->AddRenderObject(m_SpriteList[2].get());   //キャラクター顔面カメラ描画
 		break;
     }
 }
@@ -1013,13 +1013,13 @@ void GuideHUD::initAction()
         }
     }
 	
-	m_TextList["フィールド"] = (L"方向キー:選択_スペースキー::決定_WASDキー:カメラ移動");
+	m_TextList["フィールド"] = (L"方向キー:選択_スペースキー:決定_WASDキー:カメラ移動");
 	m_TextList["フィールド2"] = (L"E/Qキー:カメラズームイン/アウト");
 	m_TextList["メニュー"] = (L"上下キー:カーソル移動_スペースキー:決定_エスケープキー:閉じる");
-	m_TextList["アビリティ"] = (L"左右キー:選択_スペースキー::決定_エスケープキー:閉じる");
+	m_TextList["アビリティ"] = (L"左右キー:選択_スペースキー:決定_エスケープキー:閉じる");
 	m_TextList["敵へアビリティ"] = (L"方向キー:選択_スペースキー::実行_エスケープキー:閉じる");
-	m_TextList["攻撃"] = (L"方向キー:選択_スペースキー::攻撃_エスケープキー:閉じる");
-	m_TextList["移動"] = (L"方向キー:選択_スペースキー::移動_エスケープキー:閉じる");
+	m_TextList["攻撃"] = (L"方向キー:選択_スペースキー:攻撃_エスケープキー:閉じる");
+	m_TextList["移動"] = (L"方向キー:選択_スペースキー:移動_エスケープキー:閉じる");
 }
 
 bool GuideHUD::frameAction()

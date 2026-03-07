@@ -20,6 +20,7 @@
 void EnemyAIManager::initAction()
 {
 	m_TimeManager = MyAccessHub::GetTimeManager();
+	BFMng = MyAccessHub::GetBFManager();
 }
 
 bool EnemyAIManager::frameAction()
@@ -38,6 +39,7 @@ bool EnemyAIManager::frameAction()
 		{
 			p_engine->GetSoundManager()->playBGM(1);
 			ReadJsonFile(m_CurrentAIData);
+			m_NextEnemyPositionList.clear();
 			m_Firsttime = true;
 		}
 		if (!BFMng->GetEnemyCharacterList().empty())
@@ -73,6 +75,7 @@ bool EnemyAIManager::frameAction()
 							currentEnemy->AIMove = EnemyMove::Move;
 							currentEnemy->targetAISquare = nullptr;
 							currentEnemy->moveAISquareID = bestAction.m_MoveSquareID;
+							m_NextEnemyPositionList.push_back(bestAction.m_MoveSquareID);
 							break;
 					}
 				}
@@ -418,6 +421,8 @@ float EnemyAIManager::EvaluateAction(FieldCharacter* currentCharacter, const Ene
 {
 	float score = 0.0f;
 	float distance = 0.0f;
+	Squares* targetSquare = nullptr;
+	vector<int> isOccupied;	//移動先に敵がいるかどうかのフラグ
 	switch (action.m_ActionType)
 	{
 	case AIActionType::Attack:
@@ -454,8 +459,8 @@ float EnemyAIManager::EvaluateAction(FieldCharacter* currentCharacter, const Ene
 		}
 		break;
 	case AIActionType::Move:
-
-		Squares* targetSquare = GetnearCharaPos(currentCharacter->CharaRenge, action.m_MoveSquareID % 15, action.m_MoveSquareID / 15);
+	{
+		targetSquare = GetnearCharaPos(currentCharacter->CharaRenge, action.m_MoveSquareID % 15, action.m_MoveSquareID / 15);
 
 		if (targetSquare == nullptr)	//移動先からの攻撃範囲で敵がいない場合
 		{
@@ -478,8 +483,23 @@ float EnemyAIManager::EvaluateAction(FieldCharacter* currentCharacter, const Ene
 			score += distance * 50.0f;
 		}
 
+		if (BFMng->GetFieldSquaresList()[action.m_MoveSquareID]->terrainname != Terrain::Plane)
+		{
+			score += 300.0f; // 平地以外のマスがあれば評価が上がる
+		}
+
+		if (!m_NextEnemyPositionList.empty())
+		{
+			auto isOccupied = std::find(m_NextEnemyPositionList.begin(), m_NextEnemyPositionList.end(), action.m_MoveSquareID);
+
+			if (isOccupied != m_NextEnemyPositionList.end())
+			{
+				score = 0.0f; // 他の敵が移動する予定のマスは選ばれないようにする
+			}
+		}
 		
 		break;
+	}
 	case AIActionType::Wait:
 		score += 1.0f; // 待機は最も低く評価
 		break;

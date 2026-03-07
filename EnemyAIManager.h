@@ -10,6 +10,8 @@
 #include <vector>
 #include <fstream> 
 #include <iomanip>
+#include <algorithm>
+#include <iterator>
 
 // 行動の種類を拡張する
 enum class AIActionType
@@ -24,17 +26,19 @@ enum class AIActionType
 // プレイヤーの傾向のステート
 enum class PlayerTendency
 {
-	None,
-	Offensive, // 攻撃的
-	Defensive, // 防御的
-	NearDead,  // 瀕死
-	Leader,    // リーダー
+	None,	
+	Offensive,	// 攻撃的
+	Defensive,	// 防御的
+	NearDead,	// 瀕死
+	Leader,		// リーダー
+	MAX,
 };
 
 struct LearningAIData
 {
 	PlayerTendency m_PlayerTendency = PlayerTendency::None;	//プレイヤーの傾向
 	int m_FocusAliesCharacterID = -1;						//攻撃、スキルの対象となるキャラクターID
+	int m_TurnCount = 0;									//ターン数
 };
 
 struct EnemyAction
@@ -58,6 +62,8 @@ private:
 
 	int m_MoveAIcount = 0;
 
+	vector<int> m_NextEnemyPositionList;	//次に攻撃する敵のIDリスト
+
 	float m_DelayCount = 0.0f;
 
 	TimeManager* m_TimeManager;
@@ -70,6 +76,8 @@ private:
 	nlohmann::json m_JsonData;	//AIデータのJSON
 
 	string m_JsonFilePath = "LearningAIData.json";	//AIデータの保存ファイルパス
+
+	BattleFieldManager* BFMng = nullptr;
 public:
 	void initAction() override;
 	bool frameAction() override;
@@ -99,13 +107,25 @@ public:
 
 	void WriteJsonFile(const LearningAIData& data)
 	{
-		nlohmann::json jsonData = nlohmann::json
+		nlohmann::json historyData;	//履歴データ
+
+		std::ifstream oldFile(m_JsonFilePath);	//既存のデータを読み込む
+		if (oldFile.is_open())
 		{
+			oldFile >> historyData;
+			oldFile.close();
+		}
+
+		nlohmann::json jsonData = nlohmann::json	//新しく保存するデータ
+		{
+			{"turnCount", data.m_TurnCount},
 			{"playerTendency", data.m_PlayerTendency},
 			{"focusAliesCharacterID", data.m_FocusAliesCharacterID}
 		};
 
-		std::ofstream file(m_JsonFilePath);
+		historyData["history"].push_back(jsonData);	//履歴データに追加
+
+		std::ofstream file(m_JsonFilePath);			//データを保存
 		if (file.is_open())
 		{
 			file << std::setw(4) << jsonData << std::endl; // インデントを付けて保存
@@ -115,19 +135,43 @@ public:
 
 	void ReadJsonFile(LearningAIData& data)
 	{
+		vector<int> tendencyCount((int)PlayerTendency::MAX, 0);		//プレイヤーの傾向のカウント PlayerTendencyの種類の分を0で初期化
 		std::ifstream file(m_JsonFilePath);
 		if (!file.is_open())	return;	//ファイルが開けない場合は終了
 
 		nlohmann::json jsonData;
 		file >> jsonData;
 
-		jsonData.at("playerTendency").get_to(data.m_PlayerTendency);
-		jsonData.at("focusAliesCharacterID").get_to(data.m_FocusAliesCharacterID);
+		if (jsonData.contains("history") && jsonData["history"].is_array())
+		{
+			for (int i = 0; i < BFMng->GetTurnCount(); i++)
+			{
+				jsonData["history"][i]["playerTendency"].get_to(tendencyCount[i]); 
+			}
+
+			auto maxTendency = std::max_element(tendencyCount.begin(), tendencyCount.end());	//最も多い傾向を見つける
+
+			data.m_PlayerTendency = static_cast<PlayerTendency>(std::distance(tendencyCount.begin(), maxTendency));	//最も多い傾向をAIデータに設定
+			data.m_FocusAliesCharacterID = jsonData["history"].back()["focusAliesCharacterID"].get<int>();			//最後の行動のfocusAliesCharacterIDをAIデータに設定
+		}
+	}
+
+	void ClearJsonFile()
+	{
+		std::ofstream file(m_JsonFilePath);
+		if (file.is_open())
+		{
+			nlohmann::json emptyData = { {"history", nlohmann::json::array()} };	//空の履歴データ
+			file << std::setw(4) << emptyData << std::endl;							//インデントを付けて保存
+			file.close();
+		}
 	}
 
 	void CreateLearningData(vector<PlayerActionLog> playerLogList)
 	{
 		LearningAIData aiData;
+
+		aiData.m_TurnCount = BFMng->GetTurnCount();
 
 		int offenciveCount = 0;	//攻撃、攻撃系スキル、前進の回数
 		int defensiveCount = 0;	//後退、待機、偵察スキルの回数

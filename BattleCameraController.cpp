@@ -1,5 +1,6 @@
 ﻿#include "MyAccessHub.h"
 #include "BattleCameraController.h"
+#include "FBXCharacterData.h"
 #include "CameraComponent.h"
 #include "GameObject.h"
 
@@ -85,9 +86,23 @@ void BattleCameraController::initAction()
 
 bool BattleCameraController::frameAction()
 {
-	Squares* selectSquare = m_BattleFieldManager->GetFieldSquaresList()[m_BattleFieldManager->GetSelectID()];
+	Squares* selectSquare = nullptr;
 
-	if (m_BattleCameraState == BattleCameraType::ScoutingCamera && selectSquare->chara != nullptr)
+	switch (m_BattleFieldManager->GetCursorState())
+	{
+	default:
+		break;
+	case CursorState::Select:
+		selectSquare = m_BattleFieldManager->GetFieldSquaresList()[m_BattleFieldManager->GetSelectID()];
+		break;
+	case CursorState::Target:
+		selectSquare = m_BattleFieldManager->GetFieldSquaresList()[m_BattleFieldManager->GetTargetID()];
+		break;
+	}
+
+	FBXCharacterData* fbxD = selectSquare->fbxD;
+
+	if (m_BattleCameraState == BattleCameraType::ScoutingCamera && selectSquare->chara != nullptr && fbxD != nullptr)	//ヌルチェック
 	{
 		switch (selectSquare->chara->CharaKind)
 		{

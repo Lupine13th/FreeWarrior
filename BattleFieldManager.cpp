@@ -40,6 +40,8 @@ void BattleFieldManager::initAction()
 	m_HUDManager = MyAccessHub::GetHUDManager();
 	m_TimeManager = MyAccessHub::GetTimeManager();
 
+	MyAccessHub::GetAIManager()->ClearJsonFile();
+
 	p_engine->GetSoundManager()->playBGM(0);
 }
 

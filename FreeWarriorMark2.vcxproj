@@ -199,7 +199,6 @@
     <ClInclude Include="ReadyCharacterHUDW.h" />
     <ClInclude Include="ResultUI.h" />
     <ClInclude Include="RiverTerrain.h" />
-    <ClInclude Include="SoldierHUD.h" />
     <ClInclude Include="SquareColor.h" />
     <ClInclude Include="SquareGenerator.h" />
     <ClInclude Include="Squares.h" />
@@ -271,7 +270,6 @@
     <ClCompile Include="ReadyCharacterHUDW.cpp" />
     <ClCompile Include="ResultUI.cpp" />
     <ClCompile Include="RiverTerrain.cpp" />
-    <ClCompile Include="SoldierHUD.cpp" />
     <ClCompile Include="Squares.cpp" />
     <ClCompile Include="TimeManager.cpp" />
     <ClCompile Include="TitleScene.cpp" />

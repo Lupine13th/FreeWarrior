@@ -59,8 +59,8 @@ enum class Mode
 
 enum class TargetMode
 {
-	EnemyTarget,
-	SquareTarget,
+	EnemyTarget,	//攻撃対象選択モード
+	SquareTarget,	//移動先選択モード
 	AliesTarget,
 	None
 };

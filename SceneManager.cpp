@@ -22,7 +22,6 @@
 #include "HillTerrain.h"
 #include "RiverTerrain.h"
 #include "TowerTerrain.h"
-#include "SoldierHUD.h"
 #include "MovedCountHUD.h"
 #include "LogHUD.h"
 #include "LogHUDW.h"
@@ -781,7 +780,6 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 				MenuUI* m_MoniterRender = new MenuUI();
 				MonitorSelectUI* m_MoniSelRender = new MonitorSelectUI();
 				TurnUI* m_TurnUI = new TurnUI();
-				SoldierHUD* m_SoldierHUD = new SoldierHUD();
 				MovedCountHUD* m_MovedCountHUD = new MovedCountHUD();
 				LogHUD* m_LogHUD = new LogHUD();
 				LogHUDW* m_LogHUDW = new LogHUDW();
@@ -798,7 +796,6 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 				cameraObj->addComponent(m_MoniterRender);
 				cameraObj->addComponent(m_MoniSelRender);
 				cameraObj->addComponent(m_TurnUI);
-				cameraObj->addComponent(m_SoldierHUD);
 				cameraObj->addComponent(m_MovedCountHUD);
 				cameraObj->addComponent(m_LogHUD);
 				cameraObj->addComponent(m_LogHUDW);
