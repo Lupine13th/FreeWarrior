@@ -452,6 +452,9 @@ float EnemyAIManager::EvaluateAction(FieldCharacter* currentCharacter, const Ene
 					score += 1000.0f;
 				}
 				break;
+			case PlayerTendency::Offensive:	//攻撃的なプレイヤーに対しては攻撃行動の評価が低くなる
+				score += 700.0f;
+				break;
 			default:
 				score += 1000.0f;
 				break;
@@ -466,8 +469,8 @@ float EnemyAIManager::EvaluateAction(FieldCharacter* currentCharacter, const Ene
 		{
 			distance = CalculateDistance(action.m_MoveSquareID, currentCharacter->m_NearestEnemySquare->GetSquareID());
 
-			// 移動行動の場合、敵に近づく移動ならスコアを上げる
-			if (currentCharacter->CharaMaxSoldiers / currentCharacter->CharaSoldiers > 0.3f)
+			//部隊の兵数が少なければ敵から距離を取るようにする　多ければ近づくようにする
+			if (currentCharacter->CharaSoldiers / currentCharacter->CharaMaxSoldiers > 0.3f)
 			{
 				score += 1000.0f - distance * 10.0f;
 			}
@@ -485,7 +488,7 @@ float EnemyAIManager::EvaluateAction(FieldCharacter* currentCharacter, const Ene
 
 		if (BFMng->GetFieldSquaresList()[action.m_MoveSquareID]->terrainname != Terrain::Plane)
 		{
-			score += 300.0f; // 平地以外のマスがあれば評価が上がる
+			score += 100.0f;			//平地以外のマスがあれば評価が上がる
 		}
 
 		if (!m_NextEnemyPositionList.empty())
@@ -494,7 +497,7 @@ float EnemyAIManager::EvaluateAction(FieldCharacter* currentCharacter, const Ene
 
 			if (isOccupied != m_NextEnemyPositionList.end())
 			{
-				score = 0.0f; // 他の敵が移動する予定のマスは選ばれないようにする
+				score = 0.0f;			//他の敵が移動する予定のマスは選ばれないようにする
 			}
 		}
 		
@@ -519,9 +522,13 @@ EnemyAction EnemyAIManager::SelectBestAction(FieldCharacter* currentEnemy, const
 	float bestScore = -FLT_MAX;
 	EnemyAction bestAction = possibleActions[0];
 
+	vector<float> scoreList;	//各行動のスコアのリスト
+
 	for (const auto& action : possibleActions)
 	{
 		float currentScore = EvaluateAction(currentEnemy, action);
+		scoreList.push_back(currentScore);
+
 		if (currentScore > bestScore)
 		{
 			bestScore = currentScore;

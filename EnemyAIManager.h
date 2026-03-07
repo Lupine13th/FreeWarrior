@@ -128,7 +128,7 @@ public:
 		std::ofstream file(m_JsonFilePath);			//データを保存
 		if (file.is_open())
 		{
-			file << std::setw(4) << jsonData << std::endl; // インデントを付けて保存
+			file << std::setw(4) << historyData << std::endl; // インデントを付けて保存
 			file.close();
 		}
 	}

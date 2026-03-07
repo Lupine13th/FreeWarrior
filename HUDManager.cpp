@@ -461,7 +461,7 @@ bool StatusHUD::frameAction()
 				break;
         }
 
-        if (BFMng->GetHUDEnableCondition())
+        if (BFMng->GetHUDEnableCondition() && !BFMng->GetBattleCameraEnable())
         {
             p_scene->SetActiveCameraCompornent(L"ScoutingCamera", true);
         }
@@ -1606,7 +1606,7 @@ bool SuperiorityGaugeHUD::frameAction()
         break;
     }
 
-    if (!BFMng->GetBattleCameraEnable())
+    if (!BFMng->GetBattleCameraEnable() && BFMng->GetHUDEnableCondition())
     {
         for (int i = 0; i < m_SpriteList.size(); i++)
         {

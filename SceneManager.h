@@ -54,7 +54,7 @@ public:
 	HRESULT initSceneController() override;
 	HRESULT changeGameScene(UINT scene) override;
 
-	const PlayStates kPlayStates = PlayStates::Debug;	//デバッグかリリースか
+	const PlayStates kPlayStates = PlayStates::Release;	//デバッグかリリースか
 
 	GameComponent* getKeyComponent()
 	{
