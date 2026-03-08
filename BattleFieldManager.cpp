@@ -369,7 +369,7 @@ bool BattleFieldManager::frameAction()
 
 							Wait(m_SelectID);
 
-							p_engine->GetSoundManager()->play(3);
+							ResetHUDs(3);
 							break;
 						case 4:
 							m_Mode = Mode::FieldMode;
@@ -724,12 +724,14 @@ bool BattleFieldManager::frameAction()
 							{
 							case AbilityType::Scout:
 								m_FieldSquaresList[m_SelectID]->SetAnimation(Animations::Scout, m_FieldSquaresList[m_SelectID]->chara->CharaAdmin, m_FieldSquaresList[m_SelectID], m_FieldSquaresList[m_TargetID]);
-								p_engine->GetSoundManager()->play(9);
+								//p_engine->GetSoundManager()->play(9);
+								ResetHUDs(9);
 								break;
 							case AbilityType::ConcentratedFire:
 							case AbilityType::BayonetCharge:
 								m_FieldSquaresList[m_SelectID]->SetAnimation(Animations::Attack, m_FieldSquaresList[m_SelectID]->chara->CharaAdmin, m_FieldSquaresList[m_SelectID], m_FieldSquaresList[m_TargetID]);
-								p_engine->GetSoundManager()->play(3);
+								//p_engine->GetSoundManager()->play(3);
+								ResetHUDs(3);
 								break;
 							}
 							
@@ -738,7 +740,7 @@ bool BattleFieldManager::frameAction()
 							ResetFieldFromMove();
 							m_FieldSquaresList[m_SelectID]->chara->Moved = true;
 							ResetAbillityMenu();
-							
+							UpdateBattleField();
 						}
 					}
 					else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_CANCEL))
@@ -1069,11 +1071,11 @@ void BattleFieldManager::CheckDead(FieldCharacter* chara)
 
 	if (m_EnemyKillCount == 5)
 	{
-		SetResult(true);
+		SetResult(false);
 	}
 	else if (m_PlayerKillCount == 5)
 	{
-		SetResult(false);
+		SetResult(true);
 	}
 }
 
@@ -1114,7 +1116,7 @@ void BattleFieldManager::CheckMoved()
 	}
 }
 
-void BattleFieldManager::SetResult(bool win)
+void BattleFieldManager::SetResult(bool win)	//勝敗の設定
 {
 	m_PlayerWin = win;
 	m_CurrentTurn = Turn::Result;

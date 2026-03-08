@@ -59,7 +59,7 @@ void MonitorSelectUI::initAction()
 
     for (int i = 0; i < 7; i++)
     {
-        if (i < 5)
+		if (i < 5)          //ニキシー管の部分
         {
             m_sprite[i] = std::make_unique<SpriteCharacter>();
             m_sprite[i]->setTextureId(L"NixieBaseTexture");
@@ -70,7 +70,7 @@ void MonitorSelectUI::initAction()
             m_sprite[i]->setScale(250.0f, 250.0f, 1.0f);
             m_sprite[i]->setSpriteIndex(0);
         }
-        else if (i == 5)
+		else if (i == 5)    //メニューの部分
         {
             m_sprite[i] = std::make_unique<SpriteCharacter>();
             m_sprite[i]->setTextureId(L"MenuBaseTexture");
@@ -81,7 +81,7 @@ void MonitorSelectUI::initAction()
             m_sprite[i]->setScale(200.0f, 330.0f, 1.0f);
             m_sprite[i]->setSpriteIndex(0);
         }
-        else if (i == 6)
+		else if (i == 6)    //ゲージの部分
         {
             m_sprite[i] = std::make_unique<SpriteCharacter>();
             m_sprite[i]->setTextureId(L"NixieGageTexture");
@@ -111,67 +111,70 @@ bool MonitorSelectUI::frameAction()
 
     if (BFMng->GetMenuUI()->MenuUIenable)
     {
-        if (firstAnim && !Animation)    //メニューUIが出てくるアニメ―ション
+        if (!CloseAnimation)
         {
-            if (firstAnimCount < 0.5f)
+            if (firstAnim && !Animation)    //メニューUIが出てくるアニメ―ション
             {
-                persent = (0.5f - firstAnimCount) / 0.5f;
-                MenuBaseposx = -480.0f - 500.0f * persent;
-                NixieBaseposx = -350.0f - 500.0f * persent;
-                firstAnimCount += m_TimeManager->GetDeltaTime();
-            }
-            else if (firstAnimCount > 0.5f)
-            {
-                firstAnimCount = 0.0f;
-                firstAnim = false;
-                MenuBaseposx = -480.0f;
-                NixieBaseposx = -350.0f;
-                ResetAnim();
-            }
+                if (firstAnimCount < 0.5f)
+                {
+                    persent = (0.5f - firstAnimCount) / 0.5f;
+					Gageposx = -700.0f;
+                    MenuBaseposx = -480.0f - 500.0f * persent;
+                    NixieBaseposx = -350.0f - 500.0f * persent;
+                    firstAnimCount += m_TimeManager->GetDeltaTime();
+                }
+                else if (firstAnimCount > 0.5f)
+                {
+                    firstAnimCount = 0.0f;
+                    firstAnim = false;
+                    MenuBaseposx = -480.0f;
+                    NixieBaseposx = -350.0f;
+                    ResetAnim();
+                }
 
-            m_sprite[0]->setPosition(NixieBaseposx, 140.0f, 1.0f);
-            m_sprite[1]->setPosition(NixieBaseposx, 60.0f, 1.0f);
-            m_sprite[2]->setPosition(NixieBaseposx, -20.0f, 1.0f);
-            m_sprite[3]->setPosition(NixieBaseposx, -100.0f, 1.0f);
-            m_sprite[4]->setPosition(NixieBaseposx, -180.0f, 1.0f);
-            m_sprite[5]->setPosition(MenuBaseposx, 60.0f, 0.5f);
+                m_sprite[0]->setPosition(NixieBaseposx, 140.0f, 1.0f);
+                m_sprite[1]->setPosition(NixieBaseposx, 60.0f, 1.0f);
+                m_sprite[2]->setPosition(NixieBaseposx, -20.0f, 1.0f);
+                m_sprite[3]->setPosition(NixieBaseposx, -100.0f, 1.0f);
+                m_sprite[4]->setPosition(NixieBaseposx, -180.0f, 1.0f);
+                m_sprite[5]->setPosition(MenuBaseposx, 60.0f, 0.5f);
+                m_sprite[6]->setPosition(Gageposx, 60.0f, 0.5f);
 
-            for (int i = 0; i < 6; i++)
-            {
-                pipe->AddRenderObject(m_sprite[i].get());
+                for (int i = 0; i < m_sprite.size(); i++)
+                {
+                    pipe->AddRenderObject(m_sprite[i].get());
+                }
             }
-        }
-        else if (!firstAnim && Animation)   //メニューUIのバーのアニメーション
-        {
-            if (AnimCount < 0.5f)
+            else if (!firstAnim && Animation)   //メニューUIのバーのアニメーション
             {
-                persent = (0.5f - AnimCount) / 0.5f;
-                Gageposx = -350.0f - 350.0f * persent;
-                AnimCount += m_TimeManager->GetDeltaTime();
-            }
-            else if (AnimCount > 0.5f)
-            {
-                AnimCount = 0.0f;
-                Animation = false;
-                Gageposx = -350.0f;
-            }
+                if (AnimCount < 0.5f)
+                {
+                    persent = (0.5f - AnimCount) / 0.5f;
+                    Gageposx = -350.0f - 350.0f * persent;
+                    AnimCount += m_TimeManager->GetDeltaTime();
+                }
+                else if (AnimCount > 0.5f)
+                {
+                    AnimCount = 0.0f;
+                    Animation = false;
+                    Gageposx = -350.0f;
+                }
 
-            for (int i = 0; i < m_sprite.size(); i++)
+                for (int i = 0; i < m_sprite.size(); i++)
+                {
+                    pipe->AddRenderObject(m_sprite[i].get());
+                }
+            }
+            else
             {
-                pipe->AddRenderObject(m_sprite[i].get());
+                for (int i = 0; i < m_sprite.size(); i++)
+                {
+                    pipe->AddRenderObject(m_sprite[i].get());
+                }
             }
         }
         else
         {
-            for (int i = 0; i < m_sprite.size(); i++)
-            {
-                pipe->AddRenderObject(m_sprite[i].get());
-            }
-        }
-
-        if (CloseAnimation)
-        {
-
             if (closeAnimCount < 0.5f)
             {
                 persent = closeAnimCount / 0.5f;
@@ -197,7 +200,10 @@ bool MonitorSelectUI::frameAction()
 
             for (int i = 0; i < 6; i++)
             {
-                pipe->AddRenderObject(m_sprite[i].get());
+                if (i != 6)
+                {
+                    pipe->AddRenderObject(m_sprite[i].get());
+                }
             }
         }
         

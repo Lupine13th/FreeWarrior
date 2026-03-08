@@ -469,15 +469,20 @@ bool StatusHUD::frameAction()
         {
             p_scene->SetActiveCameraCompornent(L"ScoutingCamera", false);
         }
+
+        if (BFMng->GetMode() == Mode::TurnEndMode)
+        {
+            p_scene->SetActiveCameraCompornent(L"ScoutingCamera", false);
+        }
         break;
     }
 
-    if (BFMng->GetHUDEnableCondition() && BFMng->GetFieldSquaresList()[BFMng->GetSelectID()]->chara != nullptr && BFMng->GetCursorState() == CursorState::Select)
+    if (BFMng->GetHUDEnableCondition() && BFMng->GetFieldSquaresList()[BFMng->GetSelectID()]->chara != nullptr && BFMng->GetCursorState() == CursorState::Select && BFMng->GetMode() != Mode::TurnEndMode)
     {
         SetLabelColor();
         SetRender(index);
     }
-    else if (BFMng->GetHUDEnableCondition() && BFMng->GetFieldSquaresList()[BFMng->GetTargetID()]->chara != nullptr && BFMng->GetCursorState() == CursorState::Target)
+    else if (BFMng->GetHUDEnableCondition() && BFMng->GetFieldSquaresList()[BFMng->GetTargetID()]->chara != nullptr && BFMng->GetCursorState() == CursorState::Target && BFMng->GetMode() != Mode::TurnEndMode)
     {
         SetLabelColor();
         SetRender(index);
