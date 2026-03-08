@@ -39,7 +39,14 @@ bool EnemyAIManager::frameAction()
 		{
 			p_engine->GetSoundManager()->playBGM(1);
 			ReadJsonFile(m_CurrentAIData);
-			m_NextEnemyPositionList.clear();
+			m_NextOccupiedPositionList.clear();	//次のターンの敵の位置を保存するリストをクリア
+			for (int i = 0; i < BFMng->GetAlliesCharacterList().size(); i++)	//
+			{
+				if (!BFMng->GetAlliesCharacterList()[i]->Dead)
+				{
+					m_NextOccupiedPositionList.push_back(BFMng->GetAlliesCharacterList()[i]->CharaPos);	//次のターンのキャラクターの位置を保存するリストに味方の位置を追加
+				}
+			}
 			m_Firsttime = true;
 		}
 		if (!BFMng->GetEnemyCharacterList().empty())
@@ -75,7 +82,7 @@ bool EnemyAIManager::frameAction()
 							currentEnemy->AIMove = EnemyMove::Move;
 							currentEnemy->targetAISquare = nullptr;
 							currentEnemy->moveAISquareID = bestAction.m_MoveSquareID;
-							m_NextEnemyPositionList.push_back(bestAction.m_MoveSquareID);
+							m_NextOccupiedPositionList.push_back(bestAction.m_MoveSquareID);
 							break;
 					}
 				}
@@ -215,7 +222,7 @@ bool EnemyAIManager::frameAction()
 	else if (BFMng->GetCurrentTurn() == Turn::EnemyMove && m_DelayCount > 4.0f)	//行動終了処理
 	{
 		BFMng->CheckMoved();
-		if (currentEnemy->AIMove == EnemyMove::Attack && BFMng->GetFieldSquaresList()[currentEnemy->targetAISquare->GetSquareID()]->chara != nullptr)
+		if (currentEnemy->AIMove == EnemyMove::Attack && BFMng->GetFieldSquaresList()[currentEnemy->targetAISquare->GetSquareID()]->chara != nullptr)	//攻撃した相手がまだいる場合は、死亡していないか確認
 		{
 			BFMng->CheckDead(BFMng->GetAlliesCharacterList()[BFMng->GetFieldSquaresList()[currentEnemy->targetAISquare->GetSquareID()]->ThereCharaID]);
 		}
@@ -439,7 +446,7 @@ float EnemyAIManager::EvaluateAction(FieldCharacter* currentCharacter, const Ene
 				}
 				else
 				{
-					score += 1000.0f;
+					score += 1500.0f;
 				}
 				break;
 			case PlayerTendency::NearDead:	//瀕死のキャラクターを優先して攻撃するAI
@@ -449,21 +456,21 @@ float EnemyAIManager::EvaluateAction(FieldCharacter* currentCharacter, const Ene
 				}
 				else
 				{
-					score += 1000.0f;
+					score += 1500.0f;
 				}
 				break;
 			case PlayerTendency::Offensive:	//攻撃的なプレイヤーに対しては攻撃行動の評価が低くなる
-				score += 700.0f;
+				score += 1200.0f;
 				break;
 			default:
-				score += 1000.0f;
+				score += 1500.0f;
 				break;
 			}
 		}
 		break;
 	case AIActionType::Move:
 	{
-		targetSquare = GetnearCharaPos(currentCharacter->CharaRenge, action.m_MoveSquareID % 15, action.m_MoveSquareID / 15);
+		targetSquare = GetnearCharaPos(currentCharacter->CharaRenge, action.m_MoveSquareID % 10, action.m_MoveSquareID / 10);	//移動先からの攻撃範囲に敵がいるかどうか
 
 		if (targetSquare == nullptr)	//移動先からの攻撃範囲で敵がいない場合
 		{
@@ -472,30 +479,35 @@ float EnemyAIManager::EvaluateAction(FieldCharacter* currentCharacter, const Ene
 			//部隊の兵数が少なければ敵から距離を取るようにする　多ければ近づくようにする
 			if (currentCharacter->CharaSoldiers / currentCharacter->CharaMaxSoldiers > 0.3f)
 			{
-				score += 1000.0f - distance * 10.0f;
+				score += 1000.0f - distance * 5.0f;
 			}
 			else
 			{
-				score += distance * 30.0f;
+				score += distance * 10.0f;
 			}
 		}
 		else							//移動先からの攻撃範囲に敵がいる場合は一番遠いマスの評価が上がる
 		{
-			distance = CalculateDistance(action.m_MoveSquareID, currentCharacter->m_NearestEnemySquare->GetSquareID());
+			distance = CalculateDistance(action.m_MoveSquareID, targetSquare->GetSquareID());
 
-			score += distance * 50.0f;
+			score += 1000.0f + distance * 5.0f;
 		}
 
-		if (BFMng->GetFieldSquaresList()[action.m_MoveSquareID]->terrainname != Terrain::Plane)
+		if (BFMng->GetFieldSquaresList()[action.m_MoveSquareID]->terrainname != Terrain::Plane && BFMng->GetFieldSquaresList()[currentCharacter->CharaPos]->terrainname == Terrain::Plane)
 		{
-			score += 100.0f;			//平地以外のマスがあれば評価が上がる
+			switch (m_CurrentAIData.m_PlayerTendency)
+			{
+				case PlayerTendency::Offensive:	//攻撃的なプレイヤーに対しては平地以外のマスの評価が上がる
+					score += 300.0f;
+					break;
+			}
 		}
 
-		if (!m_NextEnemyPositionList.empty())
+		if (!m_NextOccupiedPositionList.empty())
 		{
-			auto isOccupied = std::find(m_NextEnemyPositionList.begin(), m_NextEnemyPositionList.end(), action.m_MoveSquareID);
+			auto isOccupied = std::find(m_NextOccupiedPositionList.begin(), m_NextOccupiedPositionList.end(), action.m_MoveSquareID);
 
-			if (isOccupied != m_NextEnemyPositionList.end())
+			if (isOccupied != m_NextOccupiedPositionList.end())
 			{
 				score = 0.0f;			//他の敵が移動する予定のマスは選ばれないようにする
 			}

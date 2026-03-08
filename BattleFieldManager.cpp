@@ -223,7 +223,7 @@ bool BattleFieldManager::frameAction()
 					case 0:
 						for (int i = 0; i < m_AlliesCharacterList.size(); i++)
 						{
-							if (m_AlliesCharacterList[i] != nullptr)
+							if (!m_AlliesCharacterList[i]->Dead )
 							{
 								Wait(m_AlliesCharacterList[i]->CharaPos);
 							}
@@ -809,7 +809,7 @@ bool BattleFieldManager::frameAction()
 	{
 		auto charaPositionSquare = m_FieldSquaresList[m_AlliesCharacterList[i]->CharaPos]->SqPos;
 
-		if (!m_AlliesCharacterList[i]->Moved && m_CurrentTurn == Turn::Allies)
+		if (!m_AlliesCharacterList[i]->Moved && !m_AlliesCharacterList[i]->Dead && m_CurrentTurn == Turn::Allies)	//移動していない味方キャラがいる場合、サークルエフェクトを再生
 		{
 			MyAccessHub::GetEffectGenerator()->GetEffectObject(L"Circle0" + to_wstring(i))->PlayEffect(XMFLOAT3(charaPositionSquare.x, charaPositionSquare.y + 2.0f, charaPositionSquare.z), XMFLOAT3(90.0f, 0.0f, 0.0f), 0.5f);
 		}
@@ -1044,6 +1044,11 @@ void BattleFieldManager::DeleteChara(int deadCharaPos)
 
 void BattleFieldManager::CheckDead(FieldCharacter* chara)
 {
+	if (chara->Dead)
+	{
+		return;
+	}
+
 	if (chara->CharaSoldiers < 1.0f)
 	{
 		chara->CharaSoldiers = 0;

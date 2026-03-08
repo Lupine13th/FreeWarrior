@@ -101,8 +101,15 @@ bool Squares::frameAction()
 					m_IsFirstAnimation = false;
 					m_IsAnimating = false;
 					m_IsDamaged = false;
-					NowChara->fbxD->SetAnime(L"WAIT01");
-					NextChara->fbxD->SetAnime(L"WAIT01");
+					if (NowChara->fbxD != nullptr)
+					{
+						NowChara->fbxD->SetAnime(L"WAIT01");
+					}
+
+					if (NextChara->fbxD != nullptr)
+					{
+						NextChara->fbxD->SetAnime(L"WAIT01");
+					}
 					Fcam->ChangeCameraPosition();
 				}
 			}
@@ -148,8 +155,15 @@ bool Squares::frameAction()
 					m_IsFirstAnimation = false;
 					m_IsAnimating = false;
 					m_IsDamaged = false;
-					NowChara->fbxD->SetAnime(L"WAIT01");
-					NextChara->fbxD->SetAnime(L"WAIT01");
+					if (NowChara->fbxD != nullptr)
+					{
+						NowChara->fbxD->SetAnime(L"WAIT01");
+					}
+
+					if (NextChara->fbxD != nullptr)
+					{
+						NextChara->fbxD->SetAnime(L"WAIT01");
+					}
 					Fcam->ChangeCameraPosition();
 				}
 			}
@@ -312,10 +326,17 @@ void Squares::SetBattlePosition()
 
 void Squares::SetPreviousPosition()
 {
-	NowChara->fbxD->setPosition(NowCharaPos.x, NowCharaPos.y, NowCharaPos.z);
-	NowChara->fbxD->setRotation(NowCharaRot.x, NowCharaRot.y, NowCharaRot.z);
-	NextChara->fbxD->setPosition(NextCharaPos.x, NextCharaPos.y, NextCharaPos.z);
-	NextChara->fbxD->setRotation(NextCharaRot.x, NextCharaRot.y, NextCharaRot.z);
+	if (NowChara->fbxD != nullptr)
+	{
+		NowChara->fbxD->setPosition(NowCharaPos.x, NowCharaPos.y, NowCharaPos.z);
+		NowChara->fbxD->setRotation(NowCharaRot.x, NowCharaRot.y, NowCharaRot.z);
+	}
+
+	if (NextChara->fbxD != nullptr)
+	{
+		NextChara->fbxD->setPosition(NextCharaPos.x, NextCharaPos.y, NextCharaPos.z);
+		NextChara->fbxD->setRotation(NextCharaRot.x, NextCharaRot.y, NextCharaRot.z);
+	}
 
 	MyAccessHub::GetHUDManager()->GetHUDObject("SuperiorityGaugeHUD")->SetAnimationState(AnimationState::Init);
 }

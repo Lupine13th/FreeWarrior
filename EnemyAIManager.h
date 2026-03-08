@@ -62,7 +62,7 @@ private:
 
 	int m_MoveAIcount = 0;
 
-	vector<int> m_NextEnemyPositionList;	//次に攻撃する敵のIDリスト
+	vector<int> m_NextOccupiedPositionList;	//次に攻撃する敵のIDリスト
 
 	float m_DelayCount = 0.0f;
 
@@ -153,6 +153,11 @@ public:
 
 			data.m_PlayerTendency = static_cast<PlayerTendency>(std::distance(tendencyCount.begin(), maxTendency));	//最も多い傾向をAIデータに設定
 			data.m_FocusAliesCharacterID = jsonData["history"].back()["focusAliesCharacterID"].get<int>();			//最後の行動のfocusAliesCharacterIDをAIデータに設定
+
+			if ((data.m_PlayerTendency == PlayerTendency::NearDead || data.m_PlayerTendency == PlayerTendency::Leader) && data.m_FocusAliesCharacterID == -1)	//瀕死やリーダーの傾向で、特に注目するキャラクターがいない場合は、防御的な傾向に変更する
+			{
+				data.m_PlayerTendency = PlayerTendency::Defensive;
+			}
 		}
 	}
 
