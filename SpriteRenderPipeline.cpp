@@ -22,7 +22,6 @@ HRESULT SpriteRenderPipeline::InitPipeLineStateObject(ID3D12Device2* d3dDev)
         featureData.HighestVersion = D3D_ROOT_SIGNATURE_VERSION_1_0;    //失敗した場合は最大バージョンを1.0に
     }
 
-    //RootSignatureはCommandQueueごとに作成するけども、今回CommandQueueはこんなふうになっている
     CD3DX12_DESCRIPTOR_RANGE1 ranges[1];
     CD3DX12_ROOT_PARAMETER1 rootParameters[8];
 
@@ -290,23 +289,30 @@ ID3D12GraphicsCommandList* SpriteRenderPipeline::ExecuteRender()
             cmdList->SetGraphicsRootConstantBufferView(5, p_viewMtx->GetGPUVirtualAddress());
             cmdList->SetGraphicsRootConstantBufferView(6, p_prjMtx->GetGPUVirtualAddress());
 
-            if (currentLabel == L"AttackerCamera")
+            if (currentLabel == L"AttackerCamera")  //攻撃アニメーション時の上半分のカメラ
             {
                 D3D12_VIEWPORT viewport = { 0.0f, 0.0f, (FLOAT)myEngine->GetWidth(), (FLOAT)myEngine->GetHeight() / 2.0f, 0.5f, 1.0f };
                 cmdList->RSSetViewports(1, &viewport);
                 D3D12_RECT scissorRect = { 0, 0, (LONG)myEngine->GetWidth(), (LONG)myEngine->GetHeight() / 2 };
                 cmdList->RSSetScissorRects(1, &scissorRect);
             }
-            else if (currentLabel == L"DefenderCamera")
+            else if (currentLabel == L"DefenderCamera") //攻撃アニメーション時の下半分のカメラ
             {
                 D3D12_VIEWPORT viewport = { 0.0f, (FLOAT)myEngine->GetHeight() / 2.0f, (FLOAT)myEngine->GetWidth(), (FLOAT)myEngine->GetHeight() / 2.0f, 0.5f, 1.0f };
                 cmdList->RSSetViewports(1, &viewport);
                 D3D12_RECT scissorRect = { 0, (LONG)myEngine->GetHeight() / 2, (LONG)myEngine->GetWidth(), (LONG)myEngine->GetHeight() };
                 cmdList->RSSetScissorRects(1, &scissorRect);
             }
-            else if (currentLabel == L"HUDCamera")
+			else if (currentLabel == L"HUDCamera")  //HUD・UI用のカメラ
             {
-                D3D12_VIEWPORT viewport = { 0.0f, 0.0f, (FLOAT)myEngine->GetWidth(), (FLOAT)myEngine->GetHeight(), 0.0f, 0.5f };
+				D3D12_VIEWPORT viewport = { 0.0f, 0.0f, (FLOAT)myEngine->GetWidth(), (FLOAT)myEngine->GetHeight(), 0.0f, 0.2f };    //HUD・UIは絶対に手前に描画したいので、Z値の範囲を0.0f～0.2fにしている
+                cmdList->RSSetViewports(1, &viewport);
+                D3D12_RECT scissorRect = { 0, 0, (LONG)myEngine->GetWidth(), (LONG)myEngine->GetHeight() };
+                cmdList->RSSetScissorRects(1, &scissorRect);
+            }
+            else if (currentLabel == L"BackGroundHUDCamera")  //HUD・UIの背景用カメラ
+            {
+                D3D12_VIEWPORT viewport = { 0.0f, 0.0f, (FLOAT)myEngine->GetWidth(), (FLOAT)myEngine->GetHeight(), 0.2f, 0.5f };    //HUD・UIだけど偵察カメラよりも奥に描画したいのでZ値の範囲を0.2f～0.5fにしている
                 cmdList->RSSetViewports(1, &viewport);
                 D3D12_RECT scissorRect = { 0, 0, (LONG)myEngine->GetWidth(), (LONG)myEngine->GetHeight() };
                 cmdList->RSSetScissorRects(1, &scissorRect);

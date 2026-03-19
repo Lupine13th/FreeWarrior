@@ -25,7 +25,7 @@ void BattleCameraController::initAction()
 	XMVECTOR At; //見る場所
 	XMVECTOR Up;
 
-	switch (m_BattleCameraState)
+	switch (m_BattleCameraState)	//SceneManagerでカメラの状態を設定している　その状態に応じてカメラの位置を変える
 	{
 	default:
 		break;
@@ -39,7 +39,7 @@ void BattleCameraController::initAction()
 			MakePerspectiveProjectionMatrix(
 				XMConvertToRadians(45.0f),  // FovAngleY (ラジアン)
 				(FLOAT)engine->GetWidth(),
-				(FLOAT)engine->GetHeight() / 2,
+				(FLOAT)engine->GetHeight() / 2,	//ExecuteRenderで描画領域を縦方向に半分にしているため、描画範囲も半分にする
 				0.01f,
 				1000.0f
 			)
@@ -55,13 +55,13 @@ void BattleCameraController::initAction()
 			MakePerspectiveProjectionMatrix(
 				XMConvertToRadians(45.0f),  // FovAngleY (ラジアン)
 				(FLOAT)engine->GetWidth(),
-				(FLOAT)engine->GetHeight() / 2,
+				(FLOAT)engine->GetHeight() / 2,	//ExecuteRenderで描画領域を縦方向に半分にしているため、描画範囲も半分にする
 				0.01f,
 				1000.0f
 			)
 		);
 		break;
-	case BattleCameraType::ScoutingCamera:
+	case BattleCameraType::ScoutingCamera:	//左上部のキャラの顔を映すカメラ
 		Eye = XMVectorSet(0.0f, 10.0f, 5.0f, 0.0f);
 		At = XMVectorSet(0.0f, 0.0f, 10.0f, 0.0f);
 		Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
@@ -73,7 +73,7 @@ void BattleCameraController::initAction()
 				160.0f,
 				120.0f,
 				0.01f,
-				1000.0f
+				10.0f	//映るのは顔あたりでいいので描画距離を短く
 			)
 		);
 		break;

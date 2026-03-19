@@ -377,7 +377,7 @@ void StatusHUD::initAction()
     m_AnimationPages = 10;
     m_FlipDuration = 0.05f;
 
-    m_SpriteList.resize(3);
+    m_SpriteList.resize(4);
 
     for (int i = 0; i < m_SpriteList.size(); i++)
     {
@@ -404,6 +404,12 @@ void StatusHUD::initAction()
             m_SpriteList[i]->setPosition(380.0f, 200.0f, OrderInLayer::Text + 0.2f);
             m_SpriteList[i]->setScale(200.0f, 200.0f, 0.1f);
             m_SpriteList[i]->setTextureId(L"BrownTelevisiomnFrameImage");
+            break;
+        case 3:     //テレビの背景
+            m_SpriteList[i]->setPosition(380.0f, 200.0f, OrderInLayer::Text + 0.2f);
+            m_SpriteList[i]->SetCameraLabel(L"BackGroundHUDCamera", 0); //背景用ラベルに切り替え
+            m_SpriteList[i]->setScale(200.0f, 200.0f, 0.1f);
+            m_SpriteList[i]->setTextureId(L"Sprite00");
             break;
         }
     }
@@ -547,6 +553,7 @@ void StatusHUD::SetRender(int index)
     case 3:
 		pipe->AddRenderObject(m_SpriteList[1].get());   //テレビフレーム描画
 		pipe->AddRenderObject(m_SpriteList[2].get());   //キャラクター顔面カメラ描画
+		pipe->AddRenderObject(m_SpriteList[3].get());   //キャラクター背景カメラ描画
 		break;
     }
 }

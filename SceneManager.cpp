@@ -746,14 +746,14 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 #pragma endregion
 
 #pragma region BattleCamera
-				GameObject* attackerCameraObject = new GameObject(new CharacterData());
+				GameObject* attackerCameraObject = new GameObject(new CharacterData());				//戦闘画面の攻撃側カメラ生成
 				BattleCameraController* attackerCameraContoroller = new BattleCameraController();
 				attackerCameraContoroller->SetCameraState(BattleCameraType::AttackerCamera);
 				m_CameraComponents[L"AttackerCamera"] = attackerCameraContoroller;
 				attackerCameraObject->addComponent(attackerCameraContoroller);
 				engine->AddGameObject(attackerCameraObject);
 
-				GameObject* defenderCameraObject = new GameObject(new CharacterData());
+				GameObject* defenderCameraObject = new GameObject(new CharacterData());				//戦闘画面の防御側カメラ生成
 				BattleCameraController* defenderCameraContoroller = new BattleCameraController();
 				defenderCameraContoroller->SetCameraState(BattleCameraType::DefenderCamera);
 				m_CameraComponents[L"DefenderCamera"] = defenderCameraContoroller;
@@ -761,7 +761,7 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 				engine->AddGameObject(defenderCameraObject);
 
 				GameObject* scoutingCameraObject = new GameObject(new CharacterData());
-				BattleCameraController* scoutingCameraContoroller = new BattleCameraController();
+				BattleCameraController* scoutingCameraContoroller = new BattleCameraController();	//左上部のキャラクターの顔を映すカメラ生成
 				scoutingCameraContoroller->SetCameraState(BattleCameraType::ScoutingCamera);
 				m_CameraComponents[L"ScoutingCamera"] = scoutingCameraContoroller;
 				scoutingCameraObject->addComponent(scoutingCameraContoroller);
@@ -790,7 +790,8 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 				TurnEndW* m_TurnEndW = new TurnEndW();
 				ResultUI* m_ResultUI = new ResultUI();
 
-				m_CameraComponents[L"HUDCamera"] = m_UIRender;
+				m_CameraComponents[L"HUDCamera"] = m_UIRender;	//HUD用カメラをメニューに渡す
+				m_CameraComponents[L"BackGroundHUDCamera"] = m_UIRender;	//同じ範囲を描画するので、背景用もここに渡す
 
 				cameraObj->addComponent(m_UIRender);
 				cameraObj->addComponent(m_MoniterRender);

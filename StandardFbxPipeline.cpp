@@ -288,7 +288,7 @@ ID3D12GraphicsCommandList* StandardFbxPipeline::ExecuteRender()
             }
             else if (currentLabel == L"ScoutingCamera")
             {
-                D3D12_VIEWPORT viewport = { 780.0f, 11.0f, 160.0f, 120.0f, 0.0f, 0.5f };
+				D3D12_VIEWPORT viewport = { 780.0f, 11.0f, 160.0f, 120.0f, 0.0f, 0.2f };    //FBXで手前に描画されてほしいのはこれだけなので、Z値の範囲を0.2fまでにしている。
                 cmdList->RSSetViewports(1, &viewport);
                 D3D12_RECT scissorRect = { 780.0f, 11.0f, 940.0f, 131.0f };
                 cmdList->RSSetScissorRects(1, &scissorRect);
