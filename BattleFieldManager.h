@@ -38,7 +38,6 @@ class Abilities;
 #include "OpeningAnimHUD.h"
 #include "MenuText.h"
 #include "ResultUI.h"
-#include "MovedCountHUD.h"
 #include "TurnUI.h"
 #include "HUDManager.h"
 #include "CameraChangerComponent.h"
@@ -434,6 +433,8 @@ public:
 	void SetResult(bool win);
 	void SearchInRengeSquare(int charaPosition, float renge, vector<int>& idList);
 	void ResetAbillityMenu();
+
+	//プレイヤー行動傾向の記録をリセット
 	void ResetPlayerActionLogs()
 	{
 		m_PlayerActionLogs.clear();

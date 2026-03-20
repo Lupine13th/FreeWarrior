@@ -123,9 +123,10 @@ bool BattleReadyScene::frameAction()
     SceneManager* scene = static_cast<SceneManager*>(engine->GetSceneController());
     KeyBindComponent* keyBind = static_cast<KeyBindComponent*>(scene->getKeyComponent());
 
-    lightingcount += m_TimeManager->GetDeltaTime();
+    lightingcount += m_TimeManager->GetDeltaTime();     //点滅カウント
 
-    if (lightingcount > 0.5f && lightingcount < 1.0f)
+    //0.5秒ごとに点滅
+    if (lightingcount > 0.5f && lightingcount < 1.0f)  
     {
         lighting = false;
     }
@@ -142,21 +143,21 @@ bool BattleReadyScene::frameAction()
         {
         case ReadySceneState::Init:
             m_InitCount += m_TimeManager->GetDeltaTime();
-            if (m_InitCount > kMaxInitCount)
+            if (m_InitCount > kMaxInitCount)    //メニュー表示までのアニメーション
             {
                 m_ReadySceneState = ReadySceneState::Menu;
                 m_InitCount = 0.0f;
             }
             break;
         case ReadySceneState::Menu:
-            if (keyBind->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK) && !ready)
+            if (keyBind->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK) && !ready)     //準備完了ボタン以外の時にスペースキーを入力
             {
                 engine->GetSoundManager()->play(12);
                 ResetCount();
                 infieldcharacterMenuW->ResetAnimation();
                 m_ReadySceneState = ReadySceneState::InField;
             }
-            else if (keyBind->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_BACK))
+            else if (keyBind->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_BACK))    //十字キー下入力時
             {
                 menuIndex++;
                 if (menuIndex > 5)
@@ -170,7 +171,7 @@ bool BattleReadyScene::frameAction()
                 ResetCount();
                 engine->GetSoundManager()->play(11);
             }
-            else if (keyBind->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_FORWARD))
+            else if (keyBind->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_FORWARD)) //十字キー上入力時
             {
                 menuIndex--;
                 if (menuIndex < 0)
@@ -184,9 +185,10 @@ bool BattleReadyScene::frameAction()
                 ResetCount();
                 engine->GetSoundManager()->play(11);
             }
-            else if (keyBind->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK) && ready)
+            else if (keyBind->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK) && ready) //準備完了ボタンの時にスペースキー入力時
             {
-                for (int i = 0; i < RDAlliesCharacterList.size(); i++)
+                //味方と敵のリストにそれぞれ入れていく
+                for (int i = 0; i < RDAlliesCharacterList.size(); i++)  
                 {
                     if (RDAlliesCharacterList[i] != nullptr)
                     {
@@ -201,7 +203,7 @@ bool BattleReadyScene::frameAction()
                     {
                         switch (scene->kPlayStates)
                         {
-                        case PlayStates::Debug:
+                        case PlayStates::Debug:                             //デバッグ時、敵が近くなる
                             RDEnemyCharacterList[i]->CharaPos = i * 2 + 50;
                             break;
                         case PlayStates::Release:
@@ -215,7 +217,7 @@ bool BattleReadyScene::frameAction()
                 engine->GetSoundManager()->play(5);
                 m_ReadySceneState = ReadySceneState::Loading;
             }
-            else if (keyBind->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_DEBUG))
+            else if (keyBind->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_DEBUG))   //エンターキー入力時
             {
                 for (int i = 0; i < 5; i++)
                 {
@@ -227,10 +229,10 @@ bool BattleReadyScene::frameAction()
                 }
             }
             break;
-        case ReadySceneState::InField:
-            if (keyBind->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK))
+        case ReadySceneState::InField:  //出撃する部隊を選択する画面
+            if (keyBind->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK))                       //スペースキー入力時         
             {
-                if (InFieldAlliesCharacterList[m_InFieldCharacterMenuIndex] != nullptr && !InFieldAlliesCharacterList[m_InFieldCharacterMenuIndex]->Selected)
+                if (InFieldAlliesCharacterList[m_InFieldCharacterMenuIndex] != nullptr && !InFieldAlliesCharacterList[m_InFieldCharacterMenuIndex]->Selected)   //その部隊が選択済みでは無い
                 {
                     InFieldAlliesCharacterList[m_InFieldCharacterMenuIndex]->Selected = true;
                     RDAlliesCharacterList[menuIndex] = InFieldAlliesCharacterList[m_InFieldCharacterMenuIndex];
@@ -240,7 +242,7 @@ bool BattleReadyScene::frameAction()
                     m_ReadySceneState = ReadySceneState::Menu;
                 }
             }
-            else if (keyBind->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_BACK) && !ready)
+            else if (keyBind->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_BACK) && !ready)      //十字キー下入力時  
             {
                 m_InFieldCharacterMenuIndex++;
                 if (m_InFieldCharacterMenuIndex > 9)
@@ -249,7 +251,7 @@ bool BattleReadyScene::frameAction()
                 }
                 engine->GetSoundManager()->play(11);
             }
-            else if (keyBind->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_FORWARD) && !ready)
+            else if (keyBind->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_FORWARD) && !ready)   //十字キー上入力時  
             {
                 m_InFieldCharacterMenuIndex--;
                 if (m_InFieldCharacterMenuIndex < 0)
@@ -258,7 +260,7 @@ bool BattleReadyScene::frameAction()
                 }
                 engine->GetSoundManager()->play(11);
             }
-            else if (keyBind->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_CANCEL))
+            else if (keyBind->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_CANCEL))                  //エスケープキー入力時  
             {
                 engine->GetSoundManager()->play(12);
                 rdcharacterHUDW->ResetAnimation();
@@ -267,7 +269,7 @@ bool BattleReadyScene::frameAction()
                 m_ReadySceneState = ReadySceneState::Menu;
             }
             break;
-        case ReadySceneState::Loading:
+        case ReadySceneState::Loading:  //ロード画面
             m_LoadCount += m_TimeManager->GetDeltaTime();
             if (m_LoadCount > kMaxLoadCount)
             {
@@ -275,7 +277,7 @@ bool BattleReadyScene::frameAction()
                 m_LoadCount = 0.0f;
             }
             break;
-        case ReadySceneState::Finish:
+        case ReadySceneState::Finish:   //シーン切り替え開始
             //sta = 1;
             MyAccessHub::getMyGameEngine()->GetSceneController()->OrderNextScene((UINT)m_nextScene);
             m_FinishCount += m_TimeManager->GetDeltaTime();

@@ -22,10 +22,10 @@ void BattleFieldManager::initAction()
 	MyGameEngine* p_engine = MyAccessHub::getMyGameEngine();
 	SceneManager* p_scene = static_cast<SceneManager*>(MyAccessHub::getMyGameEngine()->GetSceneController());
 
-	m_AlliesCharacterList.resize(5);
-	m_EnemyCharacterList.resize(5);
+	m_AlliesCharacterList.resize(5);	//一旦5枠確保
+	m_EnemyCharacterList.resize(5);		//一旦5枠確保
 
-	switch (p_scene->kPlayStates)
+	switch (p_scene->kPlayStates)		//動作環境次第で始めるシーンを切り替え
 	{
 	default:
 		break;
@@ -57,28 +57,27 @@ bool BattleFieldManager::frameAction()
 
 	if (m_CurrentTurn == Turn::First)
 	{
-		if (m_OpeningAnimHUD->OPAnimCount > 5.2f)
+		if (m_OpeningAnimHUD->OPAnimCount > 5.2f)	//オープニングアニメ終了後
 		{
 			SetCurrentTurn(Turn::Allies);
 		}
 	}
-	else if (m_CurrentTurn == Turn::Allies)
+	else if (m_CurrentTurn == Turn::Allies)			//プレイヤーが画面を動かせる時に動作する
 	{
-		if (!m_Firsttime)
+		if (!m_Firsttime)	//初回のみ
 		{
 			m_Lifecount = 0;
-			for (int i = 0; i < m_AlliesCharacterList.size(); i++)
+			for (int i = 0; i < m_AlliesCharacterList.size(); i++)	//現在生き残っているユニットの数を算出
 			{
 				if (!m_AlliesCharacterList[i]->Dead)
 				{
-					m_Lifecount++;
+					m_Lifecount++;	
 				}
 			}
 			m_Firsttime = true;
-			UpdateBattleField();
-			m_MovedCountHUD->ResetMovedCountUI();
-			ResetPlayerActionLogs();
-			m_CursorState = CursorState::Select;
+			UpdateBattleField();					//マスの色を調整
+			ResetPlayerActionLogs();				//プレイヤー行動傾向の記録をリセット
+			m_CursorState = CursorState::Select;	//カーソルを「選択中」にする
 		}
 
 		switch (keycomp->getCurrentInputType())
@@ -89,45 +88,45 @@ bool BattleFieldManager::frameAction()
 			{
 				//==================================Fieldモード=====================================
 			case Mode::FieldMode:
-				if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_LEFT))
+				if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_LEFT))			//十字キーの左を入力
 				{
-					m_SelectPos[(int)Vector::X]--;
+					m_SelectPos[(int)Vector::X]--;																								//カーソルを左に移動
 					if (m_SelectPos[(int)Vector::X] < 0)
 					{
 						m_SelectPos[(int)Vector::X] = 0;
 					}
 					ResetHUDs(-1);
 				}
-				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_RIGHT))
+				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_RIGHT))	//十字キーの右を入力
 				{
-					m_SelectPos[(int)Vector::X]++;
+					m_SelectPos[(int)Vector::X]++;																								//カーソルを右に移動
 					if (m_SelectPos[(int)Vector::X] > 9)
 					{
 						m_SelectPos[(int)Vector::X] = 9;
 					}
 					ResetHUDs(-1);
 				}
-				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_BACK))
+				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_BACK))	//十字キーの下を入力
 				{
-					m_SelectPos[(int)Vector::Y]--;
+					m_SelectPos[(int)Vector::Y]--;																								//カーソルを下(手前)に移動
 					if (m_SelectPos[(int)Vector::Y] < 0)
 					{
 						m_SelectPos[(int)Vector::Y] = 0;
 					}
 					ResetHUDs(-1);
 				}
-				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_FORWARD))
+				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_FORWARD))	//十字キーの上を入力
 				{
-					m_SelectPos[(int)Vector::Y]++;
+					m_SelectPos[(int)Vector::Y]++;																								//カーソルを上(奥)に移動
 					if (m_SelectPos[(int)Vector::Y] > 14)
 					{
 						m_SelectPos[(int)Vector::Y] = 14;
 					}
 					ResetHUDs(-1);
 				}
-				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK))
+				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK))			//スペースキーを入力
 				{
-					if (!m_MenuUI->MenuUIenable && m_FieldSquaresList[m_SelectID]->chara != nullptr && m_FieldSquaresList[m_SelectID]->chara->CharaAdmin == Admin::Rebel && !m_FieldSquaresList[m_SelectID]->chara->Moved && !m_FieldSquaresList[m_SelectID]->chara->Dead)
+					if (!m_MenuUI->MenuUIenable && m_FieldSquaresList[m_SelectID]->chara != nullptr && m_FieldSquaresList[m_SelectID]->chara->CharaAdmin == Admin::Rebel && !m_FieldSquaresList[m_SelectID]->chara->Moved && !m_FieldSquaresList[m_SelectID]->chara->Dead)	//カーソルが味方部隊をさしている時
 					{
 						p_engine->GetSoundManager()->play(3);
 						m_MenuUI->MenuUIenable = true;
@@ -153,16 +152,15 @@ bool BattleFieldManager::frameAction()
 
 						if (m_InRangeEnemyList.size() > 0)	//攻撃範囲内に敵がいる場合
 						{
-							m_MenuSelectIndex = 0;
+							m_MenuSelectIndex = 0;			//攻撃コマンドにカーソルを合わせる
 						}
 						else								//攻撃範囲内に敵がいない場合
 						{
-							m_MenuSelectIndex = 1;
+							m_MenuSelectIndex = 1;			//移動コマンドにカーソルを合わせる
 						}
 
-						m_MenuSelectUI->OpenAnim();
-						m_MenuText->OpenMenuText();
-						m_MovedCountHUD->ResetAnimCount();
+						m_MenuSelectUI->OpenAnim();			//メニュー展開アニメ起動
+						m_MenuText->OpenMenuText();			//メニューテキスト表示までのカウント起動
 						m_Mode = Mode::MenuMode;
 					}
 				}
@@ -177,14 +175,14 @@ bool BattleFieldManager::frameAction()
 						m_OpenLog = true;
 					}
 				}
-				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_CANCEL))
+				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_CANCEL))		//エスケープキー入力
 				{
-					m_Mode = Mode::SideMenuMode;
+					m_Mode = Mode::SideMenuMode;	//サイドメニュー展開
 					m_SideMenuSelectIndex = 0;
 				}
 
 				//=============================デバッグ用ボタン=================================
-				else if (p_scene->kPlayStates == PlayStates::Debug || p_scene->kPlayStates == PlayStates::Release)
+				else if (p_scene->kPlayStates == PlayStates::Debug || p_scene->kPlayStates == PlayStates::Release)	//エンターキー入力
 				{
 					if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_DEBUG))
 					{
@@ -198,29 +196,29 @@ bool BattleFieldManager::frameAction()
 				//==================================Fieldモード=====================================
 
 			case Mode::SideMenuMode:
-				if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_FORWARD))
+				if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_FORWARD))		//十字キーの上を入力
 				{
-					m_SideMenuSelectIndex--;
+					m_SideMenuSelectIndex--;																									//メニューのカーソルを上に移動
 					if (m_SideMenuSelectIndex < 0)
 					{
 						m_SideMenuSelectIndex = 0;
 					}
 					ResetHUDs(2);
 				}
-				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_BACK))
+				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_BACK))	//十字キーの下を入力
 				{
-					m_SideMenuSelectIndex++;
+					m_SideMenuSelectIndex++;																									//メニューのカーソルを下に移動
 					if (m_SideMenuSelectIndex > 2)
 					{
 						m_SideMenuSelectIndex = 2;
 					}
 					ResetHUDs(2);
 				}
-				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK))
+				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK))			//スペースキーを入力
 				{
 					switch (m_SideMenuSelectIndex)
 					{
-					case 0:
+					case 0:																														//ターン終了コマンド
 						for (int i = 0; i < m_AlliesCharacterList.size(); i++)
 						{
 							if (!m_AlliesCharacterList[i]->Dead )
@@ -231,10 +229,10 @@ bool BattleFieldManager::frameAction()
 						m_Mode = Mode::FieldMode;
 						UpdateBattleField();
 						break;
-					case 1:
+					case 1:																														//ゲーム終了コマンド
 						PostQuitMessage(0);
 						break;
-					case 2:
+					case 2:																														//メニューを閉じるコマンド
 						m_Mode = Mode::FieldMode;
 						break;
 					}
@@ -244,7 +242,7 @@ bool BattleFieldManager::frameAction()
 
 				//==================================Menuモード=====================================
 			case Mode::MenuMode:
-				if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_BACK))
+				if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_BACK))			//十字キーの上を入力
 				{
 					m_MenuSelectIndex++;
 					if (m_MenuSelectIndex > 4)
@@ -262,7 +260,7 @@ bool BattleFieldManager::frameAction()
 					p_engine->GetSoundManager()->play(2);
 				}
 
-				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_FORWARD))
+				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_FORWARD))	//十字キーの下を入力
 				{
 					m_MenuSelectIndex--;
 					if (m_InRangeEnemyList.size() == 0)
@@ -288,7 +286,7 @@ bool BattleFieldManager::frameAction()
 					p_engine->GetSoundManager()->play(2);
 				}
 
-				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK))
+				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK))			//スペースキーを入力
 				{
 					if (m_FieldSquaresList[m_SelectID]->ThereCharaID != -1)
 					{
@@ -296,7 +294,7 @@ bool BattleFieldManager::frameAction()
 						{
 						default:
 							break;
-						case 0:
+						case 0:																													//攻撃コマンド
 							m_Mode = Mode::AttackMode;
 
 							m_TargetID = m_SelectID;
@@ -315,7 +313,7 @@ bool BattleFieldManager::frameAction()
 
 							p_engine->GetSoundManager()->play(3);
 							break;
-						case 1:
+						case 1:																													//移動コマンド
 							m_Mode = Mode::MoveMode;
 
 							m_TargetID = m_SelectID;
@@ -341,7 +339,7 @@ bool BattleFieldManager::frameAction()
 
 							p_engine->GetSoundManager()->play(3);
 							break;
-						case 2:
+						case 2:																													//行動コマンド
 							m_Mode = Mode::AbilityMode;
 
 							m_TargetID = m_SelectID;
@@ -361,7 +359,7 @@ bool BattleFieldManager::frameAction()
 
 							p_engine->GetSoundManager()->play(3);
 							break;
-						case 3:
+						case 3:																													//待機コマンド
 							m_Mode = Mode::FieldMode;
 							m_MenuSelectUI->ResetAnim();
 							m_MenuUI->CloseMenuAnim();
@@ -371,7 +369,7 @@ bool BattleFieldManager::frameAction()
 
 							ResetHUDs(3);
 							break;
-						case 4:
+						case 4:																													//メニューを閉じる
 							m_Mode = Mode::FieldMode;
 							m_MenuSelectUI->ResetAnim();
 
@@ -385,15 +383,12 @@ bool BattleFieldManager::frameAction()
 
 					}
 				}
-				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_CANCEL))
+				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_CANCEL))		//エスケープキーを入力
 				{
 					m_Mode = Mode::FieldMode;
 					m_MenuSelectUI->ResetAnim();
-
 					m_MenuUI->CloseMenuAnim();
-
 					m_MenuSelectUI->CloseAnim();
-
 					p_engine->GetSoundManager()->play(6);
 				}
 				break;
@@ -406,9 +401,9 @@ bool BattleFieldManager::frameAction()
 			case Mode::AttackMode:
 				m_FieldSquaresList[m_SelectID]->fbxD->SetAnime(L"ATTACK01");
 
-				if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_LEFT))	//左が押されたらtrue
+				if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_LEFT))			//十字キーの左を入力
 				{
-					m_TargetPos[(int)Vector::X]--;
+					m_TargetPos[(int)Vector::X]--;																								//ターゲットカーソルを左に移動
 					if (m_TargetPos[(int)Vector::X] < 0)
 					{
 						m_TargetPos[(int)Vector::X] = 0;
@@ -419,9 +414,9 @@ bool BattleFieldManager::frameAction()
 					}
 					ResetHUDs(2);
 				}
-				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_RIGHT))	//右が押されたらtrue
+				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_RIGHT))	//十字キーの右を入力
 				{
-					m_TargetPos[(int)Vector::X]++;
+					m_TargetPos[(int)Vector::X]++;																								//ターゲットカーソルを右に移動
 					if (m_TargetPos[(int)Vector::X] > 9)
 					{
 						m_TargetPos[(int)Vector::X] = 9;
@@ -432,9 +427,9 @@ bool BattleFieldManager::frameAction()
 					}
 					ResetHUDs(2);
 				}
-				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_BACK))	//左が押されたらtrue
+				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_BACK))	//十字キーの下を入力
 				{
-					m_TargetPos[(int)Vector::Y]--;
+					m_TargetPos[(int)Vector::Y]--;																								//ターゲットカーソルを下に移動
 					if (m_TargetPos[(int)Vector::Y] < 0)
 					{
 						m_TargetPos[(int)Vector::Y] = 0;
@@ -445,9 +440,9 @@ bool BattleFieldManager::frameAction()
 					}
 					ResetHUDs(2);
 				}
-				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_FORWARD))
+				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_FORWARD))	//十字キーの上を入力
 				{
-					m_TargetPos[(int)Vector::Y]++;
+					m_TargetPos[(int)Vector::Y]++;																								//ターゲットカーソルを上に移動
 					if (m_TargetPos[(int)Vector::Y] > 14)
 					{
 						m_TargetPos[(int)Vector::Y] = 14;
@@ -458,9 +453,9 @@ bool BattleFieldManager::frameAction()
 					}
 					ResetHUDs(2);
 				}
-				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK))
+				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK))			//スペースキーを入力
 				{
-					if (m_FieldSquaresList[m_TargetID]->chara != nullptr && m_FieldSquaresList[m_TargetID]->chara->CharaAdmin != m_FieldSquaresList[m_SelectID]->chara->CharaAdmin)
+					if (m_FieldSquaresList[m_TargetID]->chara != nullptr && m_FieldSquaresList[m_TargetID]->chara->CharaAdmin != m_FieldSquaresList[m_SelectID]->chara->CharaAdmin)	//ターゲットカーソルが敵のいる位置にある
 					{
 						SetAttackingCharacterSquares(m_FieldSquaresList[m_SelectID]);
 						m_FieldSquaresList[m_SelectID]->SetAnimation(Animations::Attack, m_FieldSquaresList[m_SelectID]->chara->CharaAdmin, m_FieldSquaresList[m_SelectID], m_FieldSquaresList[m_TargetID]);
@@ -472,12 +467,12 @@ bool BattleFieldManager::frameAction()
 						ResetHUDs(3);
 					}
 				}
-				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_CANCEL))
+				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_CANCEL))		//エスケープキーを入力
 				{
-					m_FieldSquaresList[m_TargetID]->SetSquaresColor(SquareColor::NotCursor);
+					m_FieldSquaresList[m_TargetID]->SetSquaresColor(SquareColor::NotCursor);													//メニューを閉じる
 					m_Mode = Mode::FieldMode;
 					ResetFieldFromMove();
-					m_FieldSquaresList[m_SelectID]->fbxD->SetAnime(L"WAIT01");
+					m_FieldSquaresList[m_SelectID]->fbxD->SetAnime(L"WAIT01");																	//待機アニメーション
 					ResetHUDs(6);
 				}
 				break;
@@ -490,11 +485,11 @@ bool BattleFieldManager::frameAction()
 				//==================================Moveモード=====================================
 
 			case Mode::MoveMode:
-				m_FieldSquaresList[m_SelectID]->fbxD->SetAnime(L"WALK01");
+				m_FieldSquaresList[m_SelectID]->fbxD->SetAnime(L"WALK01");	//移動アニメーション
 
-				if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_LEFT))	//左が押されたらtrue
+				if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_LEFT))			//十字キーの左を入力
 				{
-					m_TargetPos[(int)Vector::X]--;
+					m_TargetPos[(int)Vector::X]--;																								//ターゲットカーソルを左に移動
 					if (m_TargetPos[(int)Vector::X] < 0)
 					{
 						m_TargetPos[(int)Vector::X] = 0;
@@ -508,10 +503,9 @@ bool BattleFieldManager::frameAction()
 					}
 					ResetHUDs(2);
 				}
-
-				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_RIGHT))	//右が押されたらtrue
+				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_RIGHT))	//十字キーの右を入力
 				{
-					m_TargetPos[(int)Vector::X]++;
+					m_TargetPos[(int)Vector::X]++;																								//ターゲットカーソルを右に移動
 					if (m_TargetPos[(int)Vector::X] > 9)
 					{
 						m_TargetPos[(int)Vector::X] = 9;
@@ -525,10 +519,9 @@ bool BattleFieldManager::frameAction()
 					}
 					ResetHUDs(2);
 				}
-
-				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_BACK))	//左が押されたらtrue
+				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_BACK))	//十字キーの下を入力
 				{
-					m_TargetPos[(int)Vector::Y]--;
+					m_TargetPos[(int)Vector::Y]--;																								//ターゲットカーソルを下に移動
 					if (m_TargetPos[(int)Vector::Y] < 0)
 					{
 						m_TargetPos[(int)Vector::Y] = 0;
@@ -542,10 +535,9 @@ bool BattleFieldManager::frameAction()
 					}
 					ResetHUDs(2);
 				}
-
-				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_FORWARD))	//右が押されたらtrue
+				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_FORWARD))	//十字キーの上を入力
 				{
-					m_TargetPos[(int)Vector::Y]++;
+					m_TargetPos[(int)Vector::Y]++;																								//ターゲットカーソルを上に移動
 					if (m_TargetPos[(int)Vector::Y] > 14)
 					{
 						m_TargetPos[(int)Vector::Y] = 14;
@@ -559,11 +551,13 @@ bool BattleFieldManager::frameAction()
 					}
 					ResetHUDs(2);
 				}
-
-				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK) && m_SelectID != m_TargetID && m_FieldSquaresList[m_TargetID]->chara == nullptr)
+				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK) && m_SelectID != m_TargetID && m_FieldSquaresList[m_TargetID]->chara == nullptr)	//スペースキーを入力＆ターゲットカーソルの位置に誰もいない
 				{
 					m_FieldSquaresList[m_SelectID]->SetAnimation(Animations::Move, m_FieldSquaresList[m_SelectID]->chara->CharaAdmin, m_FieldSquaresList[m_SelectID], m_FieldSquaresList[m_TargetID]);
-					Move(m_SelectID, m_TargetID, m_AlliesCharacterList[m_FieldSquaresList[m_SelectID]->ThereCharaID]->CharaID);
+
+					//移動処理
+					Move(m_SelectID, m_TargetID, m_AlliesCharacterList[m_FieldSquaresList[m_SelectID]->ThereCharaID]->CharaID);	
+
 					m_FieldSquaresList[m_TargetID]->SetSquaresColor(SquareColor::NotCursor);
 					ResetFieldFromMove();
 					m_Mode = Mode::FieldMode;
@@ -572,12 +566,12 @@ bool BattleFieldManager::frameAction()
 					ResetHUDs(3);
 				}
 
-				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_CANCEL))
+				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_CANCEL))	//エスケープキー入力時
 				{
-					m_FieldSquaresList[m_TargetID]->SetSquaresColor(SquareColor::NotCursor);
+					m_FieldSquaresList[m_TargetID]->SetSquaresColor(SquareColor::NotCursor);												//メニューを閉じる
 					ResetFieldFromMove();
 					m_Mode = Mode::FieldMode;
-					m_FieldSquaresList[m_SelectID]->fbxD->SetAnime(L"WAIT01");
+					m_FieldSquaresList[m_SelectID]->fbxD->SetAnime(L"WAIT01");																//待機アニメーション
 
 					m_PassedSquaresList.clear();
 					ResetHUDs(6);
@@ -590,14 +584,14 @@ bool BattleFieldManager::frameAction()
 
 			//==================================Abilityモード=====================================
 			case Mode::AbilityMode:
-				m_FieldSquaresList[m_SelectID]->fbxD->SetAnime(L"ATTACK01");
+				m_FieldSquaresList[m_SelectID]->fbxD->SetAnime(L"ATTACK01");																//攻撃アニメーション
 				switch (m_TargetMode)
 				{
-				case TargetMode::None:
+				case TargetMode::None:																										//ターゲットモードが無い＝メニュー展開中
 					
 					m_AbillityCount = 0;
 
-					for (int i = 0; i < 3; i++)
+					for (int i = 0; i < 3; i++)																								//部隊の持つ行動の種類をカウント
 					{
 						if (m_AlliesCharacterList[m_FieldSquaresList[m_SelectID]->ThereCharaID]->Abilities[i] != AbilityType::None)
 						{
@@ -605,29 +599,29 @@ bool BattleFieldManager::frameAction()
 						}
 					}
 
-					if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_RIGHT))
+					if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_RIGHT))		//十字キー右を押したとき
 					{
-						m_AbillityIndex++;
+						m_AbillityIndex++;																											//行動を切り替え(右を選択)
 						if (m_AbillityIndex > m_AbillityCount - 1)
 						{
 							m_AbillityIndex = m_AbillityCount - 1;
 						}
 						p_engine->GetSoundManager()->play(2);
 					}
-					else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_LEFT))
+					else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_LEFT))	//十字キー左を押したとき
 					{
-						m_AbillityIndex--;
+						m_AbillityIndex--;																											//行動を切り替え(左を選択)
 						if (m_AbillityIndex < 0)
 						{
 							m_AbillityIndex = 0;
 						}
 						p_engine->GetSoundManager()->play(2);
 					}
-					else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK))
+					else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK))			//スペースキーを押したとき
 					{
-						if (m_AlliesCharacterList[m_FieldSquaresList[m_SelectID]->ThereCharaID]->Abilities[m_AbillityIndex] != AbilityType::None)
+						if (m_AlliesCharacterList[m_FieldSquaresList[m_SelectID]->ThereCharaID]->Abilities[m_AbillityIndex] != AbilityType::None)	//ヌルチェック
 						{
-							switch (m_AlliesCharacterList[m_FieldSquaresList[m_SelectID]->ThereCharaID]->Abilities[m_AbillityIndex])
+							switch (m_AlliesCharacterList[m_FieldSquaresList[m_SelectID]->ThereCharaID]->Abilities[m_AbillityIndex])				//選択中のアビリティに応じてカーソルの種類を変える(現在は敵をターゲットとする行動しかない)
 							{
 							default:
 								break;
@@ -648,22 +642,19 @@ bool BattleFieldManager::frameAction()
 							UpdateBattleField();
 						}
 					}
-					else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_CANCEL))
+					else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_CANCEL))		//エスケープキーを押したとき
 					{
-						if (m_FieldSquaresList[m_TargetID]->chara != nullptr)
-						{
-							m_Mode = Mode::FieldMode;
-							m_AbillityMenuState = AbillityMenuState::None;
-							m_AbillityIndex = 0;
+						m_Mode = Mode::FieldMode;						//メニューを閉じる
+						m_AbillityMenuState = AbillityMenuState::None;
+						m_AbillityIndex = 0;
 
-							p_engine->GetSoundManager()->play(6);
+						p_engine->GetSoundManager()->play(6);
 
-							UpdateBattleField();
-						}
+						UpdateBattleField();
 					}
 					break;
-				case TargetMode::EnemyTarget:
-					if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_LEFT))	//左が押されたらtrue
+				case TargetMode::EnemyTarget:																										//敵に対する行動
+					if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_LEFT))			//十字キー左を押したとき
 					{
 						m_TargetPos[(int)Vector::X]--;
 						if (m_TargetPos[(int)Vector::X] < 0)
@@ -676,7 +667,7 @@ bool BattleFieldManager::frameAction()
 						}
 						ResetHUDs(2);
 					}
-					else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_RIGHT))	//右が押されたらtrue
+					else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_RIGHT))	//十字キー右を押したとき
 					{
 						m_TargetPos[(int)Vector::X]++;
 						if (m_TargetPos[(int)Vector::X] > 9)
@@ -689,7 +680,7 @@ bool BattleFieldManager::frameAction()
 						}
 						ResetHUDs(2);
 					}
-					else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_BACK))	//左が押されたらtrue
+					else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_BACK))	//十字キー下を押したとき
 					{
 						m_TargetPos[(int)Vector::Y]--;
 						if (m_TargetPos[(int)Vector::Y] < 0)
@@ -702,7 +693,7 @@ bool BattleFieldManager::frameAction()
 						}
 						ResetHUDs(2);
 					}
-					else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_FORWARD))
+					else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_FORWARD))	//十字キー上を押したとき
 					{
 						m_TargetPos[(int)Vector::Y]++;
 						if (m_TargetPos[(int)Vector::Y] > 14)
@@ -715,12 +706,12 @@ bool BattleFieldManager::frameAction()
 						}
 						ResetHUDs(2);
 					}
-					else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK))
+					else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK))			//スペースキーを押したとき
 					{
 						if (m_FieldSquaresList[m_TargetID]->chara != nullptr && m_FieldSquaresList[m_TargetID]->chara->CharaAdmin != m_FieldSquaresList[m_SelectID]->chara->CharaAdmin)
 						{
 							SetAttackingCharacterSquares(m_FieldSquaresList[m_SelectID]);
-							switch ((m_AlliesCharacterList[m_FieldSquaresList[m_SelectID]->ThereCharaID]->Abilities[m_AbillityIndex]))
+							switch ((m_AlliesCharacterList[m_FieldSquaresList[m_SelectID]->ThereCharaID]->Abilities[m_AbillityIndex]))				//選択中のアビリティに応じて戦闘アニメーションを切り替える
 							{
 							case AbilityType::Scout:
 								m_FieldSquaresList[m_SelectID]->SetAnimation(Animations::Scout, m_FieldSquaresList[m_SelectID]->chara->CharaAdmin, m_FieldSquaresList[m_SelectID], m_FieldSquaresList[m_TargetID]);
@@ -743,13 +734,13 @@ bool BattleFieldManager::frameAction()
 							UpdateBattleField();
 						}
 					}
-					else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_CANCEL))
+					else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_CANCEL))		//エスケープキーを押したとき
 					{
-						m_FieldSquaresList[m_TargetID]->SetSquaresColor(SquareColor::NotCursor);
+						m_FieldSquaresList[m_TargetID]->SetSquaresColor(SquareColor::NotCursor);													//メニューを閉じる
 						ResetFieldFromMove();
 						m_Mode = Mode::FieldMode;
 						m_TargetMode = TargetMode::None;
-						m_FieldSquaresList[m_SelectID]->fbxD->SetAnime(L"WAIT01");
+						m_FieldSquaresList[m_SelectID]->fbxD->SetAnime(L"WAIT01");																	//待機アニメーション
 						m_AbillityIndex = 0;
 						ResetHUDs(6);
 					}
@@ -763,24 +754,24 @@ bool BattleFieldManager::frameAction()
 			//==================================TurnEndモード=====================================
 
 			case Mode::TurnEndMode:
-				if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_RIGHT))
+				if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_RIGHT))			//十字キー右を押したとき
 				{
-					m_TurnEnd = true;
+					m_TurnEnd = true;																												//ターンエンド処理へ
 				}
-				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_LEFT))
+				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_LEFT))		//十字キー左を押したとき
 				{
-					m_TurnEnd = false;
+					m_TurnEnd = false;																												//一旦戻る(現状、意味は無い)
 				}
-				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK))
+				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK))				//スペースキーを押したとき
 				{
 					switch (m_TurnEnd)
 					{
 					case false:
-						m_Mode = Mode::FieldMode;
+						m_Mode = Mode::FieldMode;																									//一旦戻る(現状、意味は無い)
 						break;
 					case true:
-						m_Mode = Mode::FieldMode;
-						MyAccessHub::GetAIManager()->CreateLearningData(m_PlayerActionLogs);
+						m_Mode = Mode::FieldMode;																									//ターンエンド処理
+						MyAccessHub::GetAIManager()->CreateLearningData(m_PlayerActionLogs);														//学習データを作成
 						m_TurnEnd = false;
 						m_TurnEndUI->ResetWaitCount();
 						AddTurnCount();
@@ -796,7 +787,7 @@ bool BattleFieldManager::frameAction()
 		}//AlliesTurn
 	}
 
-	if (m_IsAttacking)
+	if (m_IsAttacking)	//攻撃アニメーション中
 	{
 		m_AttackingCount += m_TimeManager->GetDeltaTime();
 		if (m_AttackingCount > kMaxAttackingCount)
@@ -807,7 +798,7 @@ bool BattleFieldManager::frameAction()
 		}
 	}
 
-	for (int i = 0; i < m_AlliesCharacterList.size(); i++)
+	for (int i = 0; i < m_AlliesCharacterList.size(); i++)	//サークルエフェクトは必要かのループ
 	{
 		auto charaPositionSquare = m_FieldSquaresList[m_AlliesCharacterList[i]->CharaPos]->SqPos;
 
@@ -825,7 +816,8 @@ void BattleFieldManager::finishAction()
 
 }
 
-void BattleFieldManager::UpdateBattleField()	//マスの色更新とターン終了の確認
+//マスの色更新とターン終了の確認
+void BattleFieldManager::UpdateBattleField()
 {
 	SceneManager* p_scene = static_cast<SceneManager*>(MyAccessHub::getMyGameEngine()->GetSceneController());
 	FlyingCameraController* Fcam = MyAccessHub::GetFlyingCameraController();
@@ -1231,7 +1223,7 @@ void BattleFieldManager::SetEnemyRengeSquareTexture()
 	}
 }
 
-void BattleFieldManager::ResetFieldFromMove()
+void BattleFieldManager::ResetFieldFromMove()	//移動モードになった際などの後にマスの色を元に戻す処理
 {
 	for (int i = 0; i < m_ChangedSquaresList.size(); i++)
 	{
@@ -1516,11 +1508,11 @@ void BattleFieldManager::Attack(FieldCharacter* attackingchara, FieldCharacter* 
 {
 	int damage = 0;
 
-	m_AttackedCharacter = attackedchara;
+	m_AttackedCharacter = attackedchara;	//防御している部隊をメンバ変数に代入(後からCheckDeadを行うため)
 
 	if (m_FieldSquaresList[attackingchara->CharaPos]->terrainname == Terrain::Forest || m_FieldSquaresList[attackingchara->CharaPos]->terrainname == Terrain::Tower)
 	{
-		damage = attackingchara->CharaPower * 1.2;
+		damage = attackingchara->CharaPower * 1.2;	//攻撃側が森林、監視塔の地形にいる場合、ダメージ増加
 	}
 	else
 	{
@@ -1529,32 +1521,32 @@ void BattleFieldManager::Attack(FieldCharacter* attackingchara, FieldCharacter* 
 
 	if (attackedchara->CharaDiffence != 0.0f)
 	{
-		damage = damage * (1.0f - attackedchara->CharaDiffence / 100);
+		damage = damage * (1.0f - attackedchara->CharaDiffence / 100);	//部隊の装甲値に応じてダメージ減衰
 	}
 	
 
 	if (!attackedchara->Detected)
 	{
-		damage = damage * 0.75;
+		damage = damage * 0.75;	//偵察出来ていない場合、ダメージ減衰
 	}
 	if (m_FieldSquaresList[attackedchara->CharaPos]->terrainname == Terrain::Hills || m_FieldSquaresList[attackedchara->CharaPos]->terrainname == Terrain::River)
 	{
-		damage = damage * 0.75;
+		damage = damage * 0.75;	//防御側が丘陵、河川地形にいる場合、ダメージ減衰
 	}
 
 	if (damage > attackedchara->CharaSoldiers)
 	{
-		damage = attackedchara->CharaSoldiers;
+		damage = attackedchara->CharaSoldiers;	//オーバーフローを起こさないように
 	}
 
-	m_DamageHUD->SetDamage(damage, attackedchara->CharaMaxSoldiers, attackedchara->CharaSoldiers);
+	m_DamageHUD->SetDamage(damage, attackedchara->CharaMaxSoldiers, attackedchara->CharaSoldiers);	//ダメージUIを起動
 
 	attackedchara->CharaSoldiers = attackedchara->CharaSoldiers - damage;
 	attackingchara->Moved = true;
 
 	m_IsAttacking = true;
 
-	CreateAttackLog(attackingchara, damage);
+	CreateAttackLog(attackingchara, damage);	//プレイヤーのログを制作
 
 	SetStrengthValues();
 
@@ -1563,12 +1555,14 @@ void BattleFieldManager::Attack(FieldCharacter* attackingchara, FieldCharacter* 
 
 void BattleFieldManager::Move(int nowPos, int nextPos, float charaID)
 {
-	m_FieldSquaresList[nextPos]->ThereCharaID = charaID;
-	m_FieldSquaresList[nextPos]->SqAdmin = m_FieldSquaresList[nowPos]->SqAdmin;
-	if (m_FieldSquaresList[nextPos]->SqAdmin == Admin::Rebel)
+	m_FieldSquaresList[nextPos]->ThereCharaID = charaID;							//移動先のマスに先にIDを入れる
+	m_FieldSquaresList[nextPos]->SqAdmin = m_FieldSquaresList[nowPos]->SqAdmin;		//マスの勢力も変える(後々制圧とかの要素を追加する)
+
+	//味方と敵がそれぞれ同じIDを持っている為、それぞれの処理を行う
+	if (m_FieldSquaresList[nextPos]->SqAdmin == Admin::Rebel)						
 	{
 		m_FieldSquaresList[nextPos]->chara = m_AlliesCharacterList[charaID];
-		if (nextPos / 140 > 1.0f)
+		if (nextPos / 140 > 1.0f)	//クリア条件
 		{
 			SetResult(true);
 		}
@@ -1578,34 +1572,32 @@ void BattleFieldManager::Move(int nowPos, int nextPos, float charaID)
 		m_FieldSquaresList[nextPos]->chara = m_EnemyCharacterList[charaID];
 	}
 	
-	m_FieldSquaresList[nextPos]->chara->Moved = true;
-	m_FieldSquaresList[nextPos]->chara->CharaPos = nextPos;
-	m_FieldSquaresList[nowPos]->ThereCharaID = -1;
+	m_FieldSquaresList[nextPos]->chara->Moved = true;								//行動済み
+	m_FieldSquaresList[nextPos]->chara->CharaPos = nextPos;							//部隊のデータ自身のいる座標も更新
+	m_FieldSquaresList[nowPos]->ThereCharaID = -1;									//前にいたマスを空にする
 	m_FieldSquaresList[nowPos]->SqAdmin = Admin::None;
 
-	XMFLOAT3 pos = GetCharaPos(m_FieldSquaresList[nextPos]);
-
-	for (int i = 0; i < m_PassedSquaresList.size(); i++)
+	for (int i = 0; i < m_PassedSquaresList.size(); i++)							//移動可能距離を計算するときに使ったリストをクリア
 	{
 		m_PassedSquaresList[i]->passed = false;
 	}
 	m_PassedSquaresList.clear();
 
-	CreateMoveLog(m_AlliesCharacterList[charaID], nowPos, nextPos);
+	CreateMoveLog(m_AlliesCharacterList[charaID], nowPos, nextPos);					//プレイヤーのログを制作
 
 	RefreshLogs(m_FieldSquaresList[nextPos]->chara, m_FieldSquaresList[nextPos]->chara, ActionName::Move, 0, false);
 }
 
 void BattleFieldManager::Wait(int nowPos)
 {
-	m_FieldSquaresList[nowPos]->chara->Moved = true;
-	m_FieldSquaresList[nowPos]->chara->CharaMorales += m_FieldSquaresList[nowPos]->chara->CharaMaxMorales * 0.2;
+	m_FieldSquaresList[nowPos]->chara->Moved = true;																//行動済み
+	m_FieldSquaresList[nowPos]->chara->CharaMorales += m_FieldSquaresList[nowPos]->chara->CharaMaxMorales * 0.2;	//待機すると士気が回復する
 	if (m_FieldSquaresList[nowPos]->chara->CharaMorales > m_FieldSquaresList[nowPos]->chara->CharaMaxMorales)
 	{
 		m_FieldSquaresList[nowPos]->chara->CharaMorales = m_FieldSquaresList[nowPos]->chara->CharaMaxMorales;
 	}
 
-	CreateWaitLog(m_FieldSquaresList[nowPos]->chara);
+	CreateWaitLog(m_FieldSquaresList[nowPos]->chara);																//プレイヤーのログを制作
 
 	CheckMoved();
 	UpdateBattleField();
