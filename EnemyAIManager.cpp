@@ -17,13 +17,13 @@
 
 #define DEBUG_FLOAT(val) { char buf[128]; sprintf_s(buf, "%f\n", val); OutputDebugStringA(buf); }
 
-void EnemyAIManager::initAction()
+void EnemyAIManager::InitAction()
 {
 	m_TimeManager = MyAccessHub::GetTimeManager();
 	BFMng = MyAccessHub::GetBFManager();
 }
 
-bool EnemyAIManager::frameAction()
+bool EnemyAIManager::FrameAction()
 {
 	BattleFieldManager* BFMng = MyAccessHub::GetBFManager();
 
@@ -243,7 +243,7 @@ bool EnemyAIManager::frameAction()
 	return true;
 }
 
-void EnemyAIManager::finishAction()
+void EnemyAIManager::FinishAction()
 {
 }
 

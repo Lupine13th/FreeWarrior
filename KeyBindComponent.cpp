@@ -21,7 +21,7 @@ KeyBindComponent::InputConfigData::~InputConfigData()
 	m_buttonMap.clear();
 }
 
-bool KeyBindComponent::frameAction()
+bool KeyBindComponent::FrameAction()
 {
 	m_mousePrePos = m_mousePos;
 	m_mousePos = m_inputMng->getMousePosition();
@@ -29,7 +29,7 @@ bool KeyBindComponent::frameAction()
 	return true;
 }
 
-void KeyBindComponent::finishAction()
+void KeyBindComponent::FinishAction()
 {
 }
 
@@ -152,7 +152,7 @@ LONG KeyBindComponent::getAnalogValue(INPUT_TYPES inputDev, ANALOG_IDS analogId)
 	return res;
 }
 
-void KeyBindComponent::initAction()
+void KeyBindComponent::InitAction()
 {
 	m_inputMng = MyAccessHub::getMyGameEngine()->GetInputManager();
 	m_currentInputType = INPUT_TYPES::KEYBOARD;
@@ -173,7 +173,7 @@ void KeyBindComponent::initAction()
 	m_configData[INPUT_TYPES::KEYBOARD]->m_buttonMap[BUTTON_IDS::BTN_CANCEL] = VK_ESCAPE;
 	m_configData[INPUT_TYPES::KEYBOARD]->m_buttonMap[BUTTON_IDS::BTN_TAB] = VK_TAB;
 	m_configData[INPUT_TYPES::KEYBOARD]->m_buttonMap[BUTTON_IDS::BTN_DEBUG] = VK_RETURN;
-	m_configData[INPUT_TYPES::KEYBOARD]->m_buttonMap[BUTTON_IDS::MOUSE_P] = 'P';
+	m_configData[INPUT_TYPES::KEYBOARD]->m_buttonMap[BUTTON_IDS::key_P] = 'P';
 	m_configData[INPUT_TYPES::KEYBOARD]->m_buttonMap[BUTTON_IDS::Key_E] = 'E';
 	m_configData[INPUT_TYPES::KEYBOARD]->m_buttonMap[BUTTON_IDS::Key_Q] = 'Q';
 }

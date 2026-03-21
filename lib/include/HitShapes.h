@@ -128,7 +128,7 @@ class HitTriangle : public HitAreaBase
 {
 private:
 	XMFLOAT3	m_vertexes[3];
-	XMVECTOR	m_normal;
+	XMVECTOR	m_Normal;
 
 	XMVECTOR	m_vectAB;
 	XMVECTOR	m_vectAC;
@@ -150,7 +150,7 @@ public:
 
 	XMVECTOR getNormal()
 	{
-		return m_normal;
+		return m_Normal;
 	}
 
 	XMVECTOR getVectAB()
@@ -341,7 +341,7 @@ class HitRayLine : public HitAreaBase
 private:
 	XMFLOAT3	m_start;
 	XMFLOAT3	m_end;
-	XMVECTOR	m_normal;
+	XMVECTOR	m_Normal;
 	float		m_length;
 	float		m_radius;	//断面の半径
 
@@ -365,7 +365,7 @@ public:
 
 	XMVECTOR getNormal()
 	{
-		return m_normal;
+		return m_Normal;
 	}
 
 	float getLength()

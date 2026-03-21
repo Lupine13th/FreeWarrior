@@ -132,9 +132,9 @@ class HUDManager : public GameComponent		//HUD全体管理
 private:
 	std::unordered_map<string, HUDObject*> m_HUDList;
 public:
-	void initAction() override;
-	bool frameAction() override;
-	void finishAction() override;
+	void InitAction() override;
+	bool FrameAction() override;
+	void FinishAction() override;
 
 	void AddHUDObject(string name, HUDObject* hudObj)
 	{
@@ -170,9 +170,9 @@ private:
 	float m_SoldierArrowEndPosX = 0.0f;
 	float m_MoraleArrowEndPosX = 0.0f;
 public:
-	void initAction() override;
-	bool frameAction() override;
-	void finishAction() override;
+	void InitAction() override;
+	bool FrameAction() override;
+	void FinishAction() override;
 
 	void AnimateBarsTo(FieldCharacter* targetChara);
 	void SetSoldiersPersent(FieldCharacter* targetChara);
@@ -184,9 +184,9 @@ class StatusHUD : public HUDObject		//右上部ステータスHUD
 private:
 	
 public:
-	void initAction() override;
-	bool frameAction() override;
-	void finishAction() override;
+	void InitAction() override;
+	bool FrameAction() override;
+	void FinishAction() override;
 
 	void SetLabelColor();
 	void SetRender(int index);
@@ -220,9 +220,9 @@ private:
 	float m_AnimationCount = 0.0f;
 	float m_AbillityNoteScale = 400.0f;
 public:
-	void initAction() override;
-	bool frameAction() override;
-	void finishAction() override;
+	void InitAction() override;
+	bool FrameAction() override;
+	void FinishAction() override;
 
 	void ResetHUD() override;
 };
@@ -232,9 +232,9 @@ class StatusText : public HUDTextObject		//ステータスHUD上のテキスト
 private:
 	const XMFLOAT2 kCharacterNameTextPos = { 320.0f, 155.0f };
 public:
-	void initAction() override;
-	bool frameAction() override;
-	void finishAction() override;
+	void InitAction() override;
+	bool FrameAction() override;
+	void FinishAction() override;
 };
 
 class GuideHUD : public HUDTextObject		//操作説明HUD
@@ -244,9 +244,9 @@ private:
 	const XMFLOAT2 kGuideTextPos2 = { -430.0f, -260.0f };
 	const XMFLOAT2 kGuideBackGroundPos = { -100.0f, -230.0f };
 public:
-	void initAction() override;
-	bool frameAction() override;
-	void finishAction() override;
+	void InitAction() override;
+	bool FrameAction() override;
+	void FinishAction() override;
 };
 
 class SideMenuHUD : public HUDTextObject	//サイドメニューHUD
@@ -263,9 +263,9 @@ private:
 
 	const XMFLOAT2 kSideMenuBackGroundPos = { 0.0f, 0.0f };
 public:
-	void initAction() override;
-	bool frameAction() override;
-	void finishAction() override;
+	void InitAction() override;
+	bool FrameAction() override;
+	void FinishAction() override;
 };
 
 class CurrentTerrainHUD : public HUDTextObject	//地形表示HUD
@@ -280,9 +280,9 @@ private:
 
 	const XMFLOAT2 kBackGroundPos = { 400.0f, -200.0f };
 public:
-	void initAction() override;
-	bool frameAction() override;
-	void finishAction() override;
+	void InitAction() override;
+	bool FrameAction() override;
+	void FinishAction() override;
 };
 
 class BattleCameraHUD : public HUDTextObject	//戦闘カメラHUD
@@ -293,9 +293,9 @@ private:
 
 	const XMFLOAT2 kBackGroundPos = { 0.0f, 0.0f };
 public:
-	void initAction() override;
-	bool frameAction() override;
-	void finishAction() override;
+	void InitAction() override;
+	bool FrameAction() override;
+	void FinishAction() override;
 };
 
 class MainMenuHUD : public HUDTextObject		//メインメニューHUD
@@ -351,9 +351,9 @@ private:
 	const float kTextPositionX = -410.0f;
 	const float kArrowPositionX = -450.0f;
 public:
-	void initAction() override;
-	bool frameAction() override;
-	void finishAction() override;
+	void InitAction() override;
+	bool FrameAction() override;
+	void FinishAction() override;
 };
 
 class DamageEffectHUD : public HUDObject	//ダメージエフェクトUI
@@ -369,9 +369,9 @@ private:
 	int m_EffectCount = 0;
 
 public:
-	void initAction() override;
-	bool frameAction() override;
-	void finishAction() override;
+	void InitAction() override;
+	bool FrameAction() override;
+	void FinishAction() override;
 
 	void SetDamageEffect(float damageRatio);
 };
@@ -391,9 +391,9 @@ private:
 
 	bool m_IsFirstTime = true;
 public:
-	void initAction() override;
-	bool frameAction() override;
-	void finishAction() override;
+	void InitAction() override;
+	bool FrameAction() override;
+	void FinishAction() override;
 
 	void SetGagePercent(XMFLOAT2 strengthValues);
 };

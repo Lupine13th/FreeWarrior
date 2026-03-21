@@ -8,7 +8,7 @@
 #include "SceneManager.h"
 #include "SpriteCharacter.h"
 
-void TurnEndUI::initAction()
+void TurnEndUI::InitAction()
 {
     MyGameEngine* engine = MyAccessHub::getMyGameEngine();
     CharacterData* chData = getGameObject()->getCharacterData();
@@ -51,7 +51,7 @@ void TurnEndUI::initAction()
     m_sprite[2]->setColor(1.0f, 1.0f, 1.0f, 1);
 }
 
-bool TurnEndUI::frameAction()
+bool TurnEndUI::FrameAction()
 {
     if (BFMng->GetMode() == Mode::TurnEndMode && BFMng->GetCurrentTurn() != Turn::Result && m_WaitCount < 3.0f)
     {
@@ -82,7 +82,7 @@ bool TurnEndUI::frameAction()
     return true;
 }
 
-void TurnEndUI::finishAction()
+void TurnEndUI::FinishAction()
 {
 }
 

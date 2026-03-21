@@ -189,9 +189,9 @@ private:
 
 	XMFLOAT4 logColors[8];
 public:
-	void initAction() override;
-	bool frameAction() override;
-	void finishAction() override;
+	void InitAction() override;
+	bool FrameAction() override;
+	void FinishAction() override;
 
 	//==========Setter==========
 	void SetMenuUI(MenuUI* MenuUI);

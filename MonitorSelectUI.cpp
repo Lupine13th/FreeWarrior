@@ -37,7 +37,7 @@ void MonitorSelectUI::CloseAnim()   //メニューの位置を画面外へ移動
     closeAnimCount = 0.0f;
 }
 
-void MonitorSelectUI::initAction()
+void MonitorSelectUI::InitAction()
 {
     MyGameEngine* engine = MyAccessHub::getMyGameEngine();
     CharacterData* chData = getGameObject()->getCharacterData();
@@ -102,7 +102,7 @@ void MonitorSelectUI::initAction()
     m_sprite[5]->setPosition(MenuBaseposx, 60.0f, 0.5f);
 }
 
-bool MonitorSelectUI::frameAction()
+bool MonitorSelectUI::FrameAction()
 {
 
     MyGameEngine* engine = MyAccessHub::getMyGameEngine();
@@ -233,6 +233,6 @@ bool MonitorSelectUI::frameAction()
 	return true;
 }
 
-void MonitorSelectUI::finishAction()
+void MonitorSelectUI::FinishAction()
 {
 }

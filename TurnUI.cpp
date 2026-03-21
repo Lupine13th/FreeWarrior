@@ -8,7 +8,7 @@
 #include "SpriteCharacter.h"
 #include "BattleFieldManager.h"
 
-void TurnUI::initAction()
+void TurnUI::InitAction()
 {
     m_Sprite = std::make_unique<SpriteCharacter>();
     
@@ -24,7 +24,7 @@ void TurnUI::initAction()
     m_Sprite->setTextureId(L"TurnHUDAllies00");
 }
 
-bool TurnUI::frameAction()
+bool TurnUI::FrameAction()
 {
     if (TurnUIenable && BFMng->GetCurrentTurn() != Turn::First)
     {
@@ -145,7 +145,7 @@ bool TurnUI::frameAction()
     return true;
 }
 
-void TurnUI::finishAction()
+void TurnUI::FinishAction()
 {
     SceneManager* scene = static_cast<SceneManager*>(MyAccessHub::getMyGameEngine()->GetSceneController());
     scene->RemoveCamera(this);

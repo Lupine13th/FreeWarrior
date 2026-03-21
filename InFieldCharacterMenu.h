@@ -11,8 +11,8 @@ private:
     std::vector<std::unique_ptr<SpriteCharacter>> m_sprite;
     BattleReadyScene* BRScene = MyAccessHub::GetBRScene();
 public:
-    virtual void initAction() override;
-    virtual bool frameAction() override;
-    virtual void finishAction() override;
+    virtual void InitAction() override;
+    virtual bool FrameAction() override;
+    virtual void FinishAction() override;
 };
 

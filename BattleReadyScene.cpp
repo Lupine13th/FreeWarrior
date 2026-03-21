@@ -32,7 +32,7 @@ void BattleReadyScene::ResetCount()
 	lighting = true;
 }
 
-void BattleReadyScene::initAction()
+void BattleReadyScene::InitAction()
 {
     MyGameEngine* engine = MyAccessHub::getMyGameEngine();
     CharacterData* chData = getGameObject()->getCharacterData();
@@ -113,7 +113,7 @@ void BattleReadyScene::initAction()
 	engine->GetSoundManager()->play(9);
 }
 
-bool BattleReadyScene::frameAction()
+bool BattleReadyScene::FrameAction()
 {
     MyGameEngine* engine = MyAccessHub::getMyGameEngine();
     GraphicsPipeLineObjectBase* pipe = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
@@ -299,6 +299,6 @@ bool BattleReadyScene::frameAction()
 	return true;
 }
 
-void BattleReadyScene::finishAction()
+void BattleReadyScene::FinishAction()
 {
 }

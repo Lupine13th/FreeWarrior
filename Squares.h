@@ -94,9 +94,9 @@ public:
 
 	Terrain terrainname = Terrain::Plane;
 
-	void initAction() override;
-	bool frameAction() override;
-	void finishAction() override;
+	void InitAction() override;
+	bool FrameAction() override;
+	void FinishAction() override;
 
 	void HitReaction();
 	void AttackReaction();

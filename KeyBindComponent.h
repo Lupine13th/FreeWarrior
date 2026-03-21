@@ -68,7 +68,7 @@ public:
 		MOUSE_R,
 		MOUSE_L,
 		MOUSE_C,
-		MOUSE_P,
+		key_P,
 	};
 
 	struct InputConfigData
@@ -81,8 +81,8 @@ public:
 		~InputConfigData();
 	};
 
-	bool frameAction() override;		//毎フレーム呼ばれる処理　falseを返すとこのコンポーネントは終了し削除される
-	void finishAction() override;		//終了時に呼ばれる処理
+	bool FrameAction() override;		//毎フレーム呼ばれる処理　falseを返すとこのコンポーネントは終了し削除される
+	void FinishAction() override;		//終了時に呼ばれる処理
 
 	bool getCurrentInputState(InputManager::BUTTON_STATE state, BUTTON_IDS buttonId);
 	LONG getCurrentAnalogValue(ANALOG_IDS analogId);
@@ -97,7 +97,7 @@ private:
 	XMINT2		m_mousePrePos;
 
 	InputManager* m_inputMng;
-	void initAction() override;		//コンポーネント初期化時に呼ばれる処理
+	void InitAction() override;		//コンポーネント初期化時に呼ばれる処理
 
 public:
 	INPUT_TYPES getCurrentInputType()

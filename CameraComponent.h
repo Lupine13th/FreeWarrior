@@ -7,90 +7,91 @@ using namespace DirectX;
 class CameraComponent : public GameComponent
 {
 private:
-	XMFLOAT3	m_normal;
-	XMFLOAT3	m_focus;
-	XMFLOAT3	m_direction;
+	XMFLOAT3	m_Normal;
+	XMFLOAT3	m_Focus;
+	XMFLOAT3	m_Direction;
 
-	float		m_near;
-	float		m_far;
-	float		m_fov;
+	float		m_Near;
+	float		m_Far;
+	float		m_Fov;
 
-	float		m_width;
-	float		m_height;
+	float		m_Width;
+	float		m_Height;
 
 	// Viewport
-	float m_viewportX = 0.0f;
-	float m_viewportY = 0.0f;
-	float m_viewportWidth = 0.0f;
-	float m_viewportHeight = 0.0f;
+	float m_ViewportX = 0.0f;
+	float m_ViewportY = 0.0f;
+	float m_ViewportWidth = 0.0f;
+	float m_ViewportHeight = 0.0f;
 
-	bool updateFlg;
+	bool m_UpdateFlg;
 
-	void initAction() override;		//コンポーネント初期化時に呼ばれる処理
 
 public:
-	bool frameAction() override;		//毎フレーム呼ばれる処理　falseを返すとこのコンポーネントは終了し削除される
-	void finishAction() override;		//終了時に呼ばれる処理
 
-	void changeCameraRatio(float width, float height);
-	void changeCameraPosition(float x, float y, float z);
-	void changeCameraRotation(float x, float y, float z);
-	void changeCameraFocus(float x, float y, float z);
-	void changeCameraDepth(float nearZ, float farZ);
-	void changeCameraFOVRadian(float fovRad);
+	void InitAction() override;		//コンポーネント初期化時に呼ばれる処理
+	bool FrameAction() override;		//毎フレーム呼ばれる処理　falseを返すとこのコンポーネントは終了し削除される
+	void FinishAction() override;		//終了時に呼ばれる処理
 
-	XMFLOAT3 getCameraNormal()
+	void ChangeCameraRatio(float width, float height);
+	void ChangeCameraPosition(float x, float y, float z);
+	void ChangeCameraRotation(float x, float y, float z);
+	void ChangeCameraFocus(float x, float y, float z);
+	void ChangeCameraDepth(float nearZ, float farZ);
+	void ChangeCameraFOVRadian(float fovRad);
+
+	XMFLOAT3 GetCameraNormal()
 	{
-		return m_normal;
+		return m_Normal;
 	}
 
-	XMFLOAT3 getCameraDirection()
+	XMFLOAT3 GetCameraDirection()
 	{
-		return m_direction;
+		return m_Direction;
 	}
 
-	XMFLOAT3 getCameraFocus()
+	XMFLOAT3 GetCameraFocus()
 	{
-		return m_focus;
+		return m_Focus;
 	}
 
-	float getViewRatio()
+	float GetViewRatio()
 	{
-		return m_width / m_height;
+		return m_Width / m_Height;
 	}
 
-	float getSetWidth()
+	float GetSetWidth()
 	{
-		return m_width;
+		return m_Width;
 	}
 
-	float getSetHeight()
+	float GetSetHeight()
 	{
-		return m_height;
+		return m_Height;
 	}
 
-	float getCameraFOVRad()
+	float GetCameraFOVRad()
 	{
-		return m_fov;
+		return m_Fov;
 	}
 
-	XMFLOAT2 getCameraRange()
+	XMFLOAT2 GetCameraRange()
 	{
-		return XMFLOAT2(m_near, m_far);
+		return XMFLOAT2(m_Near, m_Far);
 	}
 
 	void SetViewport(float x, float y, float width, float height)
 	{
-		m_viewportX = x;
-		m_viewportY = y;
-		m_viewportWidth = width;
-		m_viewportHeight = height;
-		updateFlg = true;
+		m_ViewportX = x;
+		m_ViewportY = y;
+		m_ViewportWidth = width;
+		m_ViewportHeight = height;
+		m_UpdateFlg = true;
 	}
 
 	XMFLOAT4 GetViewport() const
 	{
-		return XMFLOAT4(m_viewportX, m_viewportY, m_viewportWidth, m_viewportHeight);
+		return XMFLOAT4(m_ViewportX, m_ViewportY, m_ViewportWidth, m_ViewportHeight);
 	}
 
 };

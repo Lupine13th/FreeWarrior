@@ -7,7 +7,7 @@
 #include "SceneManager.h"
 #include "SpriteCharacter.h"
 
-void InFieldCharacterMenuImage::initAction()
+void InFieldCharacterMenuImage::InitAction()
 {
     MyGameEngine* engine = MyAccessHub::getMyGameEngine();
     CharacterData* chData = getGameObject()->getCharacterData();
@@ -35,7 +35,7 @@ void InFieldCharacterMenuImage::initAction()
     m_Sprite->setPosition(270.0f, 50.0f, 1.0f); // 表示位置を調整
 }
 
-bool InFieldCharacterMenuImage::frameAction()
+bool InFieldCharacterMenuImage::FrameAction()
 {
     if (BRScene->InFieldAlliesCharacterList[BRScene->m_InFieldCharacterMenuIndex] != nullptr)
     {
@@ -71,6 +71,6 @@ bool InFieldCharacterMenuImage::frameAction()
     return true;
 }
 
-void InFieldCharacterMenuImage::finishAction()
+void InFieldCharacterMenuImage::FinishAction()
 {
 }

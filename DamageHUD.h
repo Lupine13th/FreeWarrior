@@ -50,9 +50,9 @@ private:
 
 	DamegeAnimationState m_DamegeAnimationState = DamegeAnimationState::None;
 public:
-    virtual void initAction() override;
-    virtual bool frameAction() override;
-    virtual void finishAction() override;
+    virtual void InitAction() override;
+    virtual bool FrameAction() override;
+    virtual void FinishAction() override;
 
 	void SetDamage(float damage, float maxsol, float sol);
 

@@ -22,7 +22,6 @@
 #include "HillTerrain.h"
 #include "RiverTerrain.h"
 #include "TowerTerrain.h"
-#include "MovedCountHUD.h"
 #include "LogHUD.h"
 #include "LogHUDW.h"
 #include "BattleReadyScene.h"
@@ -727,11 +726,11 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 				cameraObj->addComponent(camComp);
 				engine->AddGameObject(cameraObj);
 				engine->SetCameraData(cameraObj->getCharacterData());
-				camComp->changeCameraRatio(engine->GetWidth(), engine->GetHeight());
+				camComp->ChangeCameraRatio(engine->GetWidth(), engine->GetHeight());
 				camComp->SetViewport(0.0f, 0.0f, (float)engine->GetWidth(), (float)engine->GetHeight());
-				camComp->changeCameraDepth(0.01f, 1000.0f);
-				camComp->changeCameraFOVRadian(DirectX::XMConvertToRadians(45.0f));
-				camComp->changeCameraPosition(20.0f, 20.0f, 20.0f);
+				camComp->ChangeCameraDepth(0.01f, 1000.0f);
+				camComp->ChangeCameraFOVRadian(DirectX::XMConvertToRadians(45.0f));
+				camComp->ChangeCameraPosition(20.0f, 20.0f, 20.0f);
 
 				FlyingCameraController* flyCam = new FlyingCameraController();
 				cameraObj->addComponent(flyCam);
@@ -780,7 +779,6 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 				MenuUI* m_MoniterRender = new MenuUI();
 				MonitorSelectUI* m_MoniSelRender = new MonitorSelectUI();
 				TurnUI* m_TurnUI = new TurnUI();
-				MovedCountHUD* m_MovedCountHUD = new MovedCountHUD();
 				LogHUD* m_LogHUD = new LogHUD();
 				LogHUDW* m_LogHUDW = new LogHUDW();
 				DamageHUD* m_DamageHUD = new DamageHUD();
@@ -797,7 +795,6 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 				cameraObj->addComponent(m_MoniterRender);
 				cameraObj->addComponent(m_MoniSelRender);
 				cameraObj->addComponent(m_TurnUI);
-				cameraObj->addComponent(m_MovedCountHUD);
 				cameraObj->addComponent(m_LogHUD);
 				cameraObj->addComponent(m_LogHUDW);
 				cameraObj->addComponent(m_DamageHUD);
@@ -820,7 +817,6 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 				BFMng->SetOpeningAnimHUD(m_OpeningAnimHUD);
 				BFMng->SetResultUI(m_ResultUI);
 				BFMng->SetTurnEndUI(m_TurnEndUI);
-				BFMng->SetMovedCountHUD(m_MovedCountHUD);
 				BFMng->SetTurnUI(m_TurnUI);
 				BFMng->SetAbiliteis(new Abilities());
 
@@ -828,31 +824,6 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 
 #pragma endregion
 
-#pragma region DEBUG
-
-				//GameObject* debugObject1;
-				//FBXCharacterData* debugFbx1 = new FBXCharacterData(); //FBX用CharacterData
-				//PlayerBase* debugPlayer1 = new ArtilleryPlayer();
-				//debugObject1 = new GameObject(debugFbx1); //FBXCharacterDataを持たせて初期化
-				//debugPlayer1->SetAdmin(Admin::Rebel);
-				//debugFbx1->setPosition(20.0f, 5.0f, -50.0f);
-				//debugFbx1->AddCameraLabel(L"AttackerCamera");
-				//debugFbx1->AddCameraLabel(L"DefenderCamera");
-				//debugObject1->addComponent(debugPlayer1);
-				//engine->AddGameObject(debugObject1);
-
-				//GameObject* debugObject2;
-				//FBXCharacterData* debugFbx2 = new FBXCharacterData(); //FBX用CharacterData
-				//PlayerBase* debugPlayer2 = new ArtilleryPlayer();
-				//debugObject2 = new GameObject(debugFbx2); //FBXCharacterDataを持たせて初期化
-				//debugPlayer2->SetAdmin(Admin::Imperial);
-				//debugFbx2->setPosition(20.0f, 5.0f, 50.0f);
-				//debugFbx2->AddCameraLabel(L"AttackerCamera");
-				//debugFbx2->AddCameraLabel(L"DefenderCamera");
-				//debugObject2->addComponent(debugPlayer2);
-				//engine->AddGameObject(debugObject2);
-
-#pragma endregion
 				engine->UploadCreatedTextures();
 		}
 			break;

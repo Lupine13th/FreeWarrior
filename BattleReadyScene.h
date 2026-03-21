@@ -47,9 +47,9 @@ public:
     vector<FieldCharacter*> RDAlliesCharacterList = { nullptr ,nullptr ,nullptr ,nullptr ,nullptr };
     vector<FieldCharacter*> RDEnemyCharacterList = { nullptr ,nullptr ,nullptr ,nullptr ,nullptr };
 
-    virtual void initAction() override;
-    virtual bool frameAction() override;
-    virtual void finishAction() override;
+    virtual void InitAction() override;
+    virtual bool FrameAction() override;
+    virtual void FinishAction() override;
 
     ReadyCharacterHUD* rdcharacterHUD;
     ReadyCharacterHUDW* rdcharacterHUDW;

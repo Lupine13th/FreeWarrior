@@ -72,9 +72,9 @@ void HitTriangle::setTriangle(const XMFLOAT3& a, const XMFLOAT3& b, const XMFLOA
 	m_vectAC = XMLoadFloat3(&ac);
 
 	XMVECTOR nml = XMVector3Cross(m_vectAB, m_vectAC);
-	m_normal = XMVector3Normalize(nml);
+	m_Normal = XMVector3Normalize(nml);
 
-	XMVECTOR dot = XMVector3Dot(XMLoadFloat3(&a), m_normal);
+	XMVECTOR dot = XMVector3Dot(XMLoadFloat3(&a), m_Normal);
 }
 
 void HitSphere::setSphereMinMax(const XMFLOAT3& min, const XMFLOAT3& max)
@@ -104,5 +104,5 @@ void HitRayLine::setLine(const XMFLOAT3& start, const XMFLOAT3& end, float radiu
 	m_length = sqrtf(dist_x * dist_x + dist_y * dist_y + dist_z * dist_z);
 
 	XMFLOAT3 vec = { dist_x / m_length, dist_y / m_length, dist_z / m_length};
-	m_normal = XMLoadFloat3(&vec);
+	m_Normal = XMLoadFloat3(&vec);
 }

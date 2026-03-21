@@ -1,6 +1,6 @@
 ﻿#include "PlayerFBXs.h"
 
-void InfantryPlayer::initAction()
+void InfantryPlayer::InitAction()
 {
 	FBXCharacterData* chdata = static_cast<FBXCharacterData*>(getGameObject()->getCharacterData());
 
@@ -56,7 +56,7 @@ void InfantryPlayer::initAction()
 
 }
 
-bool InfantryPlayer::frameAction()
+bool InfantryPlayer::FrameAction()
 {
 	if (IsAlive)
 	{
@@ -98,13 +98,13 @@ bool InfantryPlayer::frameAction()
 	}
 }
 
-void InfantryPlayer::finishAction()
+void InfantryPlayer::FinishAction()
 {
 
 }
 
 
-void ArtilleryPlayer::initAction()
+void ArtilleryPlayer::InitAction()
 {
 	FBXCharacterData* chdata = static_cast<FBXCharacterData*>(getGameObject()->getCharacterData());
 	chdata->SetGraphicsPipeLine(L"StaticFBX");
@@ -131,7 +131,7 @@ void ArtilleryPlayer::initAction()
 	chdata->GetMainFbx()->SetTextureUniqueFlag(true);
 }
 
-bool ArtilleryPlayer::frameAction()
+bool ArtilleryPlayer::FrameAction()
 {
 	if (IsAlive)
 	{
@@ -145,14 +145,14 @@ bool ArtilleryPlayer::frameAction()
 	}
 }
 
-void ArtilleryPlayer::finishAction()
+void ArtilleryPlayer::FinishAction()
 {
 }
 
 
 
 
-void MachinegunnerPlayer::initAction()
+void MachinegunnerPlayer::InitAction()
 {
 	FBXCharacterData* chdata = static_cast<FBXCharacterData*>(getGameObject()->getCharacterData());
 	chdata->SetGraphicsPipeLine(L"AnimationFBX");
@@ -182,7 +182,7 @@ void MachinegunnerPlayer::initAction()
 	chdata->GetAnimeFbx(L"DAMAGE01")->SetMeshUniqueFlag(true, true);
 }
 
-bool MachinegunnerPlayer::frameAction()
+bool MachinegunnerPlayer::FrameAction()
 {
 	if (IsAlive)
 	{
@@ -247,14 +247,14 @@ bool MachinegunnerPlayer::frameAction()
 	}
 }
 
-void MachinegunnerPlayer::finishAction()
+void MachinegunnerPlayer::FinishAction()
 {
 }
 
 
 
 
-void ScoutPlayer::initAction()
+void ScoutPlayer::InitAction()
 {
 	FBXCharacterData* chdata = static_cast<FBXCharacterData*>(getGameObject()->getCharacterData());
 
@@ -310,7 +310,7 @@ void ScoutPlayer::initAction()
 	}
 }
 
-bool ScoutPlayer::frameAction()
+bool ScoutPlayer::FrameAction()
 {
 	if (IsAlive)
 	{
@@ -353,14 +353,14 @@ bool ScoutPlayer::frameAction()
 	}
 }
 
-void ScoutPlayer::finishAction()
+void ScoutPlayer::FinishAction()
 {
 }
 
 
 
 
-void ArmoredPlayer::initAction()
+void ArmoredPlayer::InitAction()
 {
 	FBXCharacterData* chdata = static_cast<FBXCharacterData*>(getGameObject()->getCharacterData());
 	chdata->SetGraphicsPipeLine(L"StaticFBX");
@@ -386,7 +386,7 @@ void ArmoredPlayer::initAction()
 	chdata->GetMainFbx()->SetTextureUniqueFlag(true);
 }
 
-bool ArmoredPlayer::frameAction()
+bool ArmoredPlayer::FrameAction()
 {
 	if (IsAlive)
 	{
@@ -400,7 +400,7 @@ bool ArmoredPlayer::frameAction()
 	}
 }
 
-void ArmoredPlayer::finishAction()
+void ArmoredPlayer::FinishAction()
 {
 }
 

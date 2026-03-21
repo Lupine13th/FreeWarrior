@@ -31,9 +31,9 @@ private:
 
 	void StartGame();
 public:
-	void initAction() override;		//コンポーネント初期化時に呼ばれる処理
-	bool frameAction() override;	//毎フレーム呼ばれる処理
-	void finishAction() override;	//終了時に呼ばれる処理
+	void InitAction() override;		//コンポーネント初期化時に呼ばれる処理
+	bool FrameAction() override;	//毎フレーム呼ばれる処理
+	void FinishAction() override;	//終了時に呼ばれる処理
 
 	void ChangeCameraPosition();
 	void MoveCamera();

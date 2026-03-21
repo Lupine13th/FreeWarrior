@@ -29,9 +29,9 @@ private:
 public:
     bool TurnUIenable = true;
 
-    virtual void initAction() override;
-    virtual bool frameAction() override;
-    virtual void finishAction() override;
+    virtual void InitAction() override;
+    virtual bool FrameAction() override;
+    virtual void FinishAction() override;
 
     void ChangeHUDState();
 };

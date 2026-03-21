@@ -10,7 +10,7 @@
 
 using namespace std::chrono;
 
-void MenuUI::initAction()
+void MenuUI::InitAction()
 {
     MyGameEngine* engine = MyAccessHub::getMyGameEngine();
     CharacterData* chData = getGameObject()->getCharacterData();
@@ -56,7 +56,7 @@ void MenuUI::initAction()
     m_sprite[17]->setPosition(posx[0], posy[4], m_PosZ);
 }
 
-bool MenuUI::frameAction()
+bool MenuUI::FrameAction()
 {
     if (MenuUIenable)
     {
@@ -191,7 +191,7 @@ bool MenuUI::frameAction()
     return true;
 }
 
-void MenuUI::finishAction()
+void MenuUI::FinishAction()
 {
 	SceneManager* scene = static_cast<SceneManager*>(MyAccessHub::getMyGameEngine()->GetSceneController());
 	scene->RemoveCamera(this);

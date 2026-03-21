@@ -193,7 +193,6 @@
     <ClInclude Include="LogHUDW.h" />
     <ClInclude Include="MonitorSelectUI.h" />
     <ClInclude Include="MenuUI.h" />
-    <ClInclude Include="MovedCountHUD.h" />
     <ClInclude Include="OpeningAnimHUD.h" />
     <ClInclude Include="ReadyCharacterHUD.h" />
     <ClInclude Include="ReadyCharacterHUDW.h" />
@@ -263,7 +262,6 @@
     <ClCompile Include="LogHUDW.cpp" />
     <ClCompile Include="MonitorSelectUI.cpp" />
     <ClCompile Include="MenuUI.cpp" />
-    <ClCompile Include="MovedCountHUD.cpp" />
     <ClCompile Include="OpeningAnimHUD.cpp" />
     <ClCompile Include="PlayerFBXs.cpp" />
     <ClCompile Include="ReadyCharacterHUD.cpp" />

@@ -8,7 +8,7 @@
 #include "SceneManager.h"
 #include "SpriteCharacter.h"
 
-void DamageHUD::initAction()
+void DamageHUD::InitAction()
 {
     MyGameEngine* engine = MyAccessHub::getMyGameEngine();
     CharacterData* chData = getGameObject()->getCharacterData();
@@ -49,7 +49,7 @@ void DamageHUD::initAction()
     m_sprite[2]->setScale(OriginBarSizeX + 5.0f, 15.0f, 0.1f);
 }
 
-bool DamageHUD::frameAction()
+bool DamageHUD::FrameAction()
 {
     MyGameEngine* engine = MyAccessHub::getMyGameEngine();
     GraphicsPipeLineObjectBase* pipe = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
@@ -103,7 +103,7 @@ bool DamageHUD::frameAction()
     return true;
 }
 
-void DamageHUD::finishAction()
+void DamageHUD::FinishAction()
 {
 }
 

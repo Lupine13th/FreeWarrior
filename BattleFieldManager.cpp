@@ -17,7 +17,7 @@
 
 using namespace std::chrono;
 
-void BattleFieldManager::initAction()
+void BattleFieldManager::InitAction()
 {
 	MyGameEngine* p_engine = MyAccessHub::getMyGameEngine();
 	SceneManager* p_scene = static_cast<SceneManager*>(MyAccessHub::getMyGameEngine()->GetSceneController());
@@ -45,7 +45,7 @@ void BattleFieldManager::initAction()
 	p_engine->GetSoundManager()->playBGM(0);
 }
 
-bool BattleFieldManager::frameAction()
+bool BattleFieldManager::FrameAction()
 {
 	MyGameEngine* p_engine = MyAccessHub::getMyGameEngine();
 
@@ -811,7 +811,7 @@ bool BattleFieldManager::frameAction()
 	return true;
 }
 
-void BattleFieldManager::finishAction()
+void BattleFieldManager::FinishAction()
 {
 
 }

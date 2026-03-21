@@ -9,9 +9,9 @@ class TimeManager : public GameComponent
 {
 public:
 	// GameComponent を介して継承されました
-	void initAction() override;
-	bool frameAction() override;
-	void finishAction() override;
+	void InitAction() override;
+	bool FrameAction() override;
+	void FinishAction() override;
 
 	float GetDeltaTime() const;
 private:

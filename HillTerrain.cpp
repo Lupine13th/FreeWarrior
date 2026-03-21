@@ -1,7 +1,7 @@
 ﻿#include "HillTerrain.h"
 #include "FBXCharacterData.h" 
 
-void HillTerrain::initAction()
+void HillTerrain::InitAction()
 {
     FBXCharacterData* chdata = static_cast<FBXCharacterData*>(getGameObject()->getCharacterData());
     chdata->SetGraphicsPipeLine(L"StaticFBX");
@@ -12,7 +12,7 @@ void HillTerrain::initAction()
     chdata->GetMainFbx()->SetTextureUniqueFlag(true);
 }
 
-bool HillTerrain::frameAction()
+bool HillTerrain::FrameAction()
 {
 
     CharacterData* SqData = getGameObject()->getCharacterData();
@@ -21,6 +21,6 @@ bool HillTerrain::frameAction()
     return true;
 }
 
-void HillTerrain::finishAction()
+void HillTerrain::FinishAction()
 {
 }

@@ -93,9 +93,9 @@ private:
 
     XMFLOAT3 m_FoldNewsPaperLastPos = { 0.0f, 0.0f, 1.0f };
 public:
-    virtual void initAction() override;
-    virtual bool frameAction() override;
-    virtual void finishAction() override;
+    virtual void InitAction() override;
+    virtual bool FrameAction() override;
+    virtual void FinishAction() override;
 
     ResultStates GetResultState();
 

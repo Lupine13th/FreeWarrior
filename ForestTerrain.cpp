@@ -1,7 +1,7 @@
 ﻿#include "ForestTerrain.h"
 #include "FBXCharacterData.h" 
 
-void ForestTerrain::initAction()
+void ForestTerrain::InitAction()
 {
     FBXCharacterData* chdata = static_cast<FBXCharacterData*>(getGameObject()->getCharacterData());
     chdata->SetGraphicsPipeLine(L"StaticFBX"); 
@@ -12,13 +12,13 @@ void ForestTerrain::initAction()
     chdata->GetMainFbx()->SetTextureUniqueFlag(true);
 }
 
-bool ForestTerrain::frameAction()
+bool ForestTerrain::FrameAction()
 {
     CharacterData* SqData = getGameObject()->getCharacterData();
     SqData->GetPipeline()->AddRenderObject(SqData);
     return true;
 }
 
-void ForestTerrain::finishAction()
+void ForestTerrain::FinishAction()
 {
 }

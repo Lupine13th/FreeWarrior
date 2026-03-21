@@ -871,7 +871,7 @@ HRESULT FBXCharacterData::LoadMainFBX(const std::wstring fileName, const std::ws
 
 HRESULT FBXCharacterData::LoadAnimationFBX(const std::wstring fileName, const std::wstring id)
 {
-	//まず、このエンジン用のデータクラスであるFBXDataContainerを作っておく。uniqueポインタで。
+	//このエンジン用のデータクラスであるFBXDataContainerを作成
 	std::unique_ptr<FBXDataContainer> fbxCon = make_unique<FBXDataContainer>();
 	HRESULT res = fbxCon->LoadFBX(fileName, id); //FBXを読み込む。ここで分解等は完了
 	if (SUCCEEDED(res))
@@ -882,44 +882,6 @@ HRESULT FBXCharacterData::LoadAnimationFBX(const std::wstring fileName, const st
 		}
 		m_animeFbxMap[id] = move(fbxCon);
 	}
-	return res;
-
-	//// --- ① すでにロード済みならスキップ ---
-	//auto it = m_animeFbxMap.find(id);
-	//if (it != m_animeFbxMap.end() && it->second != nullptr)
-	//{
-	//	return S_OK;
-	//}
-
-	//// --- ② FBXデータコンテナ作成 ---
-	//std::unique_ptr<FBXDataContainer> fbxCon = std::make_unique<FBXDataContainer>();
-
-	//// --- ③ キャッシュファイルパス作成 ---
-	//fs::path cacheDir = L"Cache";
-	//fs::create_directories(cacheDir); // フォルダが無ければ作成
-	//fs::path cachePath = cacheDir / (id + L".bin");
-
-	//// --- ④ キャッシュファイルがあればロード ---
-	//if (fs::exists(cachePath))
-	//{
-	//	HRESULT res = fbxCon->LoadBinary(cachePath); // ★自作メソッド（下で例あり）
-	//	if (SUCCEEDED(res))
-	//	{
-	//		m_animeFbxMap[id] = std::move(fbxCon);
-	//		return res;
-	//	}
-	//}
-
-	//// --- ⑤ 通常のFBXロード ---
-	//HRESULT res = fbxCon->LoadFBX(fileName, id);
-
-	//if (SUCCEEDED(res))
-	//{
-	//	// --- ⑥ キャッシュ保存 ---
-	//	fbxCon->SaveBinary(cachePath); // ★自作メソッド（下で例あり）
-	//	m_animeFbxMap[id] = std::move(fbxCon);
-	//}
-
 	return res;
 }
 

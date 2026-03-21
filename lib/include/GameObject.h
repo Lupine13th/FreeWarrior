@@ -27,7 +27,7 @@ private:
 	bool m_activeFlg;
 	GameObject* m_gObject;
 
-	virtual void initAction() = 0;		//コンポーネント初期化時に呼ばれる処理
+	virtual void InitAction() = 0;		//コンポーネント初期化時に呼ばれる処理
 
 public:
 	virtual ~GameComponent() = default;
@@ -35,7 +35,7 @@ public:
 	{
 		m_gObject = objData;
 		m_activeFlg = true;
-		initAction();
+		InitAction();
 	}
 
 	bool isActive()
@@ -49,8 +49,8 @@ public:
 	}
 
 	//純粋仮想関数（メソッド）。このクラスでは実装出来ない　継承した別クラスで実装する必要がある
-	virtual bool frameAction() = 0;		//毎フレーム呼ばれる処理　falseを返すとこのコンポーネントは終了し削除される
-	virtual void finishAction() = 0;	//終了時に呼ばれる処理
+	virtual bool FrameAction() = 0;		//毎フレーム呼ばれる処理　falseを返すとこのコンポーネントは終了し削除される
+	virtual void FinishAction() = 0;	//終了時に呼ばれる処理
 
 	//==========HitSystem========
 	//ヒット時リアクション処理
@@ -100,7 +100,7 @@ public:
 
 	void removeComponent(GameComponent* com)	//GameObjectからコンポーネントを消す（処理を減らす）
 	{
-		com->finishAction();					//コンポーネントごとの終了処理
+		com->FinishAction();					//コンポーネントごとの終了処理
 		components.remove(com);
 		delete(com);							//コンポーネントのメモリ解放
 	}

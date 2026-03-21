@@ -6,7 +6,7 @@
 
 #include <D3D12Helper.h>
 
-void BattleCameraController::initAction()
+void BattleCameraController::InitAction()
 {
 	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
 	CharacterData* chData = getGameObject()->getCharacterData();
@@ -84,7 +84,7 @@ void BattleCameraController::initAction()
 }
 
 
-bool BattleCameraController::frameAction()
+bool BattleCameraController::FrameAction()
 {
 	Squares* selectSquare = nullptr;
 
@@ -123,7 +123,7 @@ bool BattleCameraController::frameAction()
     return true;
 }
 
-void BattleCameraController::finishAction()
+void BattleCameraController::FinishAction()
 {
     // 何か終了処理が必要な場合はここに記述
 }

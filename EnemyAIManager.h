@@ -79,9 +79,9 @@ private:
 
 	BattleFieldManager* BFMng = nullptr;
 public:
-	void initAction() override;
-	bool frameAction() override;
-	void finishAction() override;
+	void InitAction() override;
+	bool FrameAction() override;
+	void FinishAction() override;
 
 	bool checkEnemyData();
 

@@ -38,7 +38,7 @@ void MenuText::OpenMenuText()
 	TextCount = 0.0f;
 }
 
-void MenuText::initAction()
+void MenuText::InitAction()
 {
 	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
 	CharacterData* chData = getGameObject()->getCharacterData();
@@ -107,7 +107,7 @@ void MenuText::initAction()
 	}
 }
 
-bool MenuText::frameAction()
+bool MenuText::FrameAction()
 {
 	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
 	GraphicsPipeLineObjectBase* pipeLine = engine->GetPipelineManager()->GetPipeLineObject(L"Sprite");
@@ -185,7 +185,7 @@ bool MenuText::frameAction()
 	return true;
 }
 
-void MenuText::finishAction()
+void MenuText::FinishAction()
 {
 	m_sprites.clear();
 

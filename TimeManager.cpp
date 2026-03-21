@@ -5,11 +5,11 @@
 
 using namespace std;
 
-void TimeManager::initAction()
+void TimeManager::InitAction()
 {
 }
 
-bool TimeManager::frameAction()
+bool TimeManager::FrameAction()
 {
     auto now = std::chrono::steady_clock::now();
     float rawDelta = std::chrono::duration<float>(now - lastTime).count();
@@ -29,7 +29,7 @@ bool TimeManager::frameAction()
     return true;
 }
 
-void TimeManager::finishAction()
+void TimeManager::FinishAction()
 {
 }
 

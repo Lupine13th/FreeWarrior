@@ -1,7 +1,7 @@
 ﻿#include "RiverTerrain.h"
 #include "FBXCharacterData.h" 
 
-void RiverTerrain::initAction()
+void RiverTerrain::InitAction()
 {
     FBXCharacterData* chdata = static_cast<FBXCharacterData*>(getGameObject()->getCharacterData());
     chdata->SetGraphicsPipeLine(L"StaticFBX");
@@ -12,13 +12,13 @@ void RiverTerrain::initAction()
     chdata->GetMainFbx()->SetTextureUniqueFlag(true);
 }
 
-bool RiverTerrain::frameAction()
+bool RiverTerrain::FrameAction()
 {
     CharacterData* SqData = getGameObject()->getCharacterData();
     SqData->GetPipeline()->AddRenderObject(SqData);
     return true;
 }
 
-void RiverTerrain::finishAction()
+void RiverTerrain::FinishAction()
 {
 }

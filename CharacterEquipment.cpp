@@ -1,6 +1,6 @@
 ﻿#include "CharacterEquipment.h"
 
-void CharacterEquipment::initAction()
+void CharacterEquipment::InitAction()
 {
 	m_chData = static_cast<FBXCharacterData*>(getGameObject()->getCharacterData());
 	m_chData->SetGraphicsPipeLine(L"StaticFBX");
@@ -13,12 +13,12 @@ void CharacterEquipment::initAction()
 	InInit(m_chData);
 }
 
-bool CharacterEquipment::frameAction()
+bool CharacterEquipment::FrameAction()
 {
 	return InFrame();
 }
 
-void CharacterEquipment::finishAction()
+void CharacterEquipment::FinishAction()
 {
 	InFinish();
 }

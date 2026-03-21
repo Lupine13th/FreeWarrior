@@ -2,7 +2,7 @@
 #include "SceneManager.h"
 #include <DirectXMath.h>
 
-void MuzzleFlashEffect::initAction()
+void MuzzleFlashEffect::InitAction()
 {
 	m_TimeManager = MyAccessHub::GetTimeManager();
 	m_EffectSpriteCount = 1;
@@ -33,7 +33,7 @@ void MuzzleFlashEffect::initAction()
 	}
 }
 
-bool MuzzleFlashEffect::frameAction()
+bool MuzzleFlashEffect::FrameAction()
 {
 	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
 	GraphicsPipeLineObjectBase* pipeLine = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
@@ -99,7 +99,7 @@ bool MuzzleFlashEffect::frameAction()
 	return true;
 }
 
-void MuzzleFlashEffect::finishAction()
+void MuzzleFlashEffect::FinishAction()
 {
 }
 
@@ -216,13 +216,13 @@ void EffectGenerator::GenerateCircleEffect(wstring name)
 	engine->AddGameObject(circleEffectObject);
 }
 
-void EffectGenerator::initAction()
+void EffectGenerator::InitAction()
 {
 	SceneManager* scene = dynamic_cast<SceneManager*>(MyAccessHub::getMyGameEngine()->GetSceneController());
 	m_keyBind = dynamic_cast<KeyBindComponent*>(scene->getKeyComponent());
 }
 
-bool EffectGenerator::frameAction()
+bool EffectGenerator::FrameAction()
 {
 	//if (m_keyBind->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_DEBUG))
 	//{
@@ -231,11 +231,11 @@ bool EffectGenerator::frameAction()
 	return true;
 }
 
-void EffectGenerator::finishAction()
+void EffectGenerator::FinishAction()
 {
 }
 
-void ExplosiveEffect::initAction()
+void ExplosiveEffect::InitAction()
 {
 	m_TimeManager = MyAccessHub::GetTimeManager();
 	m_EffectSpriteCount = 12;
@@ -265,7 +265,7 @@ void ExplosiveEffect::initAction()
 	}
 }
 
-bool ExplosiveEffect::frameAction()
+bool ExplosiveEffect::FrameAction()
 {
 	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
 	GraphicsPipeLineObjectBase* pipeLine = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
@@ -331,11 +331,11 @@ bool ExplosiveEffect::frameAction()
 	return true;
 }
 
-void ExplosiveEffect::finishAction()
+void ExplosiveEffect::FinishAction()
 {
 }
 
-void LargeExplosiveEffect::initAction()
+void LargeExplosiveEffect::InitAction()
 {
 	m_TimeManager = MyAccessHub::GetTimeManager();
 	m_EffectSpriteCount = 12;
@@ -365,7 +365,7 @@ void LargeExplosiveEffect::initAction()
 	}
 }
 
-bool LargeExplosiveEffect::frameAction()
+bool LargeExplosiveEffect::FrameAction()
 {
 	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
 	GraphicsPipeLineObjectBase* pipeLine = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
@@ -431,11 +431,11 @@ bool LargeExplosiveEffect::frameAction()
 	return true;
 }
 
-void LargeExplosiveEffect::finishAction()
+void LargeExplosiveEffect::FinishAction()
 {
 }
 
-void CanonMuzzleFlashEffect::initAction()
+void CanonMuzzleFlashEffect::InitAction()
 {
 	m_TimeManager = MyAccessHub::GetTimeManager();
 	m_EffectSpriteCount = 12;
@@ -466,7 +466,7 @@ void CanonMuzzleFlashEffect::initAction()
 	}
 }
 
-bool CanonMuzzleFlashEffect::frameAction()
+bool CanonMuzzleFlashEffect::FrameAction()
 {
 	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
 	GraphicsPipeLineObjectBase* pipeLine = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
@@ -532,11 +532,11 @@ bool CanonMuzzleFlashEffect::frameAction()
 	return true;
 }
 
-void CanonMuzzleFlashEffect::finishAction()
+void CanonMuzzleFlashEffect::FinishAction()
 {
 }
 
-void ScoutEffect::initAction()
+void ScoutEffect::InitAction()
 {
 	m_TimeManager = MyAccessHub::GetTimeManager();
 	m_EffectSpriteCount = 1;
@@ -566,7 +566,7 @@ void ScoutEffect::initAction()
 	}
 }
 
-bool ScoutEffect::frameAction()
+bool ScoutEffect::FrameAction()
 {
 	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
 	GraphicsPipeLineObjectBase* pipeLine = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
@@ -637,12 +637,12 @@ bool ScoutEffect::frameAction()
 	return true;
 }
 
-void ScoutEffect::finishAction()
+void ScoutEffect::FinishAction()
 {
 	
 }
 
-void ScoutedEffect::initAction()
+void ScoutedEffect::InitAction()
 {
 	m_TimeManager = MyAccessHub::GetTimeManager();
 	m_EffectSpriteCount = 1;
@@ -672,7 +672,7 @@ void ScoutedEffect::initAction()
 	}
 }
 
-bool ScoutedEffect::frameAction()
+bool ScoutedEffect::FrameAction()
 {
 	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
 	GraphicsPipeLineObjectBase* pipeLine = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
@@ -738,11 +738,11 @@ bool ScoutedEffect::frameAction()
 	return true;
 }
 
-void ScoutedEffect::finishAction()
+void ScoutedEffect::FinishAction()
 {
 }
 
-void CircleEffect::initAction()
+void CircleEffect::InitAction()
 {
 	m_TimeManager = MyAccessHub::GetTimeManager();
 	m_EffectSpriteCount = 1;
@@ -771,7 +771,7 @@ void CircleEffect::initAction()
 	}
 }
 
-bool CircleEffect::frameAction()
+bool CircleEffect::FrameAction()
 {
 	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
 	GraphicsPipeLineObjectBase* pipeLine = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
@@ -837,6 +837,6 @@ bool CircleEffect::frameAction()
 	return true;
 }
 
-void CircleEffect::finishAction()
+void CircleEffect::FinishAction()
 {
 }

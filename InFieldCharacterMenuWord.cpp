@@ -44,7 +44,7 @@ int InFieldCharacterMenuWord::MakeSpriteString(int startIndex, float ltX, float 
 	return count;
 }
 
-void InFieldCharacterMenuWord::initAction()
+void InFieldCharacterMenuWord::InitAction()
 {
 	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
 	CharacterData* chData = getGameObject()->getCharacterData();
@@ -118,7 +118,7 @@ void InFieldCharacterMenuWord::initAction()
 	
 }
 
-bool InFieldCharacterMenuWord::frameAction()
+bool InFieldCharacterMenuWord::FrameAction()
 {
 	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
 	GraphicsPipeLineObjectBase* pipeLine = engine->GetPipelineManager()->GetPipeLineObject(L"Sprite");
@@ -322,7 +322,7 @@ bool InFieldCharacterMenuWord::frameAction()
     return true;
 }
 
-void InFieldCharacterMenuWord::finishAction()
+void InFieldCharacterMenuWord::FinishAction()
 {
 }
 

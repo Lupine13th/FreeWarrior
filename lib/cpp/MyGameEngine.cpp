@@ -205,33 +205,33 @@ HRESULT MyGameEngine::InitMyGameEngine(HINSTANCE hInst, HWND hwnd)
     // Describe and create a render target view (RTV) descriptor heap.
     D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
     rtvHeapDesc.NumDescriptors = FRAME_COUNT;
-    rtvHeapDesc.NodeMask = 0;                               //これはGPUが複数ある場合にどれ用の物なのか、の値。
-    rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;      //HEAPは色々同じやり方で作るので注意。これはRenderTargetView用と言うフラグ
-    rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;    //RTV用はフラグNONEで。
+    rtvHeapDesc.NodeMask = 0;                               //GPUが複数ある場合にどれ用の物なのか、の値。
+    rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;      //RenderTargetView用と言うフラグ
+    rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
     ThrowIfFailed(m_pd3dDevice->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(m_rtvHeap.GetAddressOf())));
 
     //RTVのバッファ本体を作る時に必要になるのでRTV用ヒープの連結サイズを取得しておく。
     m_rtvDescriptorSize = m_pd3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
-    // RTVHeapにRenderTargetViewの実体を作成していく。CreateRenderTargetViewね.
+    // RTVHeapにRenderTargetViewの実体を作成
     {
-        CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_rtvHeap->GetCPUDescriptorHandleForHeapStart());   //まずRTVHeapのハンドルを先頭にセット。
+        CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_rtvHeap->GetCPUDescriptorHandleForHeapStart());
 
         // バックバッファ数分ループ
         for (UINT n = 0; n < FRAME_COUNT; n++)
         {
-            ThrowIfFailed(m_pSwapChain->GetBuffer(n, IID_PPV_ARGS(m_renderTargets[n].GetAddressOf())));   //SwapChainからバッファを取得して・・・
+            ThrowIfFailed(m_pSwapChain->GetBuffer(n, IID_PPV_ARGS(m_renderTargets[n].GetAddressOf())));   //SwapChainからバッファを取得
             m_pd3dDevice->CreateRenderTargetView(m_renderTargets[n].Get(), nullptr, rtvHandle); //バッファに描画ターゲットとしてのViewを作成
-            //この処理自体はD3D11もほぼ同じ。書き込み先がRTVHeapのハンドルな所に注意。
+
             rtvHandle.Offset(1, m_rtvDescriptorSize);                                   //終わったらHeapハンドルをHeapサイズ分ずらす。
             NAME_D3D12_OBJECT_INDEXED(m_renderTargets, n);                              //Debugでエラー表示する時に名前が出るように。
 
-            //D3D12の新規要素「CommandAllocator」の作成。実行コマンドリストである「CommandList」を作るためのメモリ領域を確保するオブジェクトだ。
+            //CommandAllocatorの作成。実行コマンドリストである「CommandList」を作るためのメモリ領域を確保するオブジェクト
             ThrowIfFailed(m_pd3dDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(m_commandAllocators[n].GetAddressOf())));
         }
     }
 
-    //DepthStencilなんだけども、D3D12ではDepthStencilView Heapの作成
+    //D3D12ではDepthStencilView Heapの作成
     //Descriptor Heaps
     {
         //Depth Stencil
@@ -272,85 +272,6 @@ HRESULT MyGameEngine::InitMyGameEngine(HINSTANCE hInst, HWND hwnd)
 
         m_pd3dDevice->CreateDepthStencilView(m_pDepthStencil.Get(), &depthStencilDesc, m_dsvHeap->GetCPUDescriptorHandleForHeapStart());
     }
-
-
-
-    //==========ここまでがD3D12の「画面初期化」部分にあたる基礎構造、RenderPipeLineの作成。D3D11まではカプセル化されて一定の処理が自動で行われていたのが、
-    //==========D3D12でオブジェクトが個別化して必要に応じて切り替えられるようになったんだけど、逆に言えば描画において何をして何が起きるのか内容と順番を
-    //==========を理解して正しい描画コマンドの作成（つまりパイプライン）が出来ないとまともに描画が出来ない。難しいと言うのはここらへん。
-
-
-    //==========ここからは描画に使う各種リソース構造の作成になる。作成時の違いはポインタの先とクラスの型ぐらいだけでも使う時は結構違うので注意。
-
-
-    /*
-    //これはカメラコンポーネントに移動かなぁ。
-    //=======MVP Matrix
-    CD3DX12_HEAP_PROPERTIES upheap = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
-
-    CD3DX12_RESOURCE_DESC buffDesc = CD3DX12_RESOURCE_DESC::Buffer(((sizeof(XMMATRIX) * FRAME_COUNT) + 255) & ~255);    //256byte allignment
-    //(sizeof(XMMATRIX) + 255) & ~255;
-    ThrowIfFailed(m_pd3dDevice->CreateCommittedResource(
-        &upheap,
-        D3D12_HEAP_FLAG_NONE,
-        &buffDesc,
-        D3D12_RESOURCE_STATE_GENERIC_READ,
-        nullptr,
-        IID_PPV_ARGS(&m_pCBViewMatrix)));
-
-    NAME_D3D12_OBJECT(m_pCBViewMatrix); //Debugでエラー表示する時に名前が出るように。
-
-    //hr = m_pd3dDevice->CreateBuffer(&bd, nullptr, &m_pCBProjectionMatrix);
-    //if (FAILED(hr))
-    //    return hr;
-
-    ThrowIfFailed(m_pd3dDevice->CreateCommittedResource(
-        &upheap,
-        D3D12_HEAP_FLAG_NONE,
-        &buffDesc,
-        D3D12_RESOURCE_STATE_GENERIC_READ,
-        nullptr,
-        IID_PPV_ARGS(&m_pCBProjectionMatrix)));
-
-    NAME_D3D12_OBJECT(m_pCBProjectionMatrix); //Debugでエラー表示する時に名前が出るように。
-
-
-    //View マトリクスは手数が多いので難しい。
-    XMVECTOR Eye = XMVectorSet(0.0f, 0.0f, -20.0f, 0.0f);    //視点（カメラ）座標
-    XMVECTOR At = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);      //フォーカスする座標
-    XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);      //カメラの傾き 上方向がどっち向いているかの単位ベクトル
-    XMMATRIX ViewMat = XMMatrixLookAtLH(Eye, At, Up);       //Viewマトリクス（カメラから見た座標変換行列）作成
-    XMMATRIX cbView = XMMatrixTranspose(ViewMat);
-    //m_pImmediateContext->UpdateSubresource(m_pCBViewMatrix.Get(), 0, nullptr, &cbView, 0, 0);
-
-    {
-        uint8_t* memory = nullptr;
-        m_pCBViewMatrix->Map(0, nullptr, reinterpret_cast<void**>(&memory));
-        std::memcpy(memory, &cbView, sizeof(XMMATRIX));
-        m_pCBViewMatrix->Unmap(0, nullptr);
-    }
-
-    //Projection マトリクスも手で作ると理屈がわからないと難しいけども今回は簡単に。、
-    //XMMATRIX ProjectionMat = XMMatrixPerspectiveFovLH(XM_PIDIV4, width / (FLOAT)height, 0.01f, 100.0f);
-
-    //height 540 でWindowを作っているけどテクスチャ小さいので倍に描画したい　>　height 270で視野角をatanで出したいので135で計算してから二倍
-    //20はEyeとAtの距離
-    //XMMATRIX ProjectionMat = XMMatrixPerspectiveFovLH(atan2(135.0f, 20.0f) * 2.0f, (FLOAT)width / (FLOAT)height, 0.01f, 100.0f);
-
-    //と言うのを変数から算出 倍角（高さ半分）のさらに半分だから 0.25
-    XMMATRIX ProjectionMat = XMMatrixPerspectiveFovLH(atan2(static_cast<float>(height) * 0.25f, static_cast<float>(At.m128_f32[2] - Eye.m128_f32[2])) * 2.0f, (FLOAT)width / (FLOAT)height, 0.01f, 100.0f);
-    XMMATRIX cbProjection = XMMatrixTranspose(ProjectionMat);
-    //m_pImmediateContext->UpdateSubresource(m_pCBProjectionMatrix.Get(), 0, nullptr, &cbProjection, 0, 0);
-
-    {
-        uint8_t* memory = nullptr;
-        m_pCBProjectionMatrix->Map(0, nullptr, reinterpret_cast<void**>(&memory));
-        std::memcpy(memory, &cbProjection, sizeof(XMMATRIX));
-        m_pCBProjectionMatrix->Unmap(0, nullptr);
-    }
-
-    //=======MVP Matrix End
-*/
 
     //データ型的にはD3D11がD3D12になっただけなんだけども、CommandListにセットする必要があるのでメンバ化。
     //まぁ初期設定用CommandListを残しておく手もあるんだけど。
@@ -429,7 +350,6 @@ HRESULT MyGameEngine::InitMyGameEngine(HINSTANCE hInst, HWND hwnd)
     //タイマー初期設定
     if (!QueryPerformanceFrequency(&m_timerFreq))
     {
-        //これが失敗するようなスペックのWindowsはまず無いんだけども・・・
         return S_FALSE;
     }
 
@@ -820,10 +740,9 @@ void MyGameEngine::Render()
 
     m_initCommand->OMSetRenderTargets(1, &rtvHandle, FALSE, &dsvHandle);
 
-    // バックバッファのクリア。これがないと前の絵が残るぞ
+    // バックバッファのクリア。これがないと前の絵が残る
     m_initCommand->ClearRenderTargetView(rtvHandle, Colors::MidnightBlue, 0, nullptr);
-    // ステンシルバッファのクリア。ここは色々テクがあるがこれは全てクリアの記述
-    // これをクリアしていないと画面をクリアしてもZ値が残ってしまうので・・・
+    // ステンシルバッファのクリア
     m_initCommand->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 1, &m_scissorRect);
 
     // Indicate that the back buffer will now be used to present.

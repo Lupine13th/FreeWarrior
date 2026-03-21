@@ -19,9 +19,9 @@ private:
 
     const float DEG_TO_RAD = 3.1415926535f / 180.0f;
 public:
-    void initAction() override;
-    bool frameAction() override;
-    void finishAction() override;
+    void InitAction() override;
+    bool FrameAction() override;
+    void FinishAction() override;
 
     void UpdateCamera(XMVECTOR camera, XMVECTOR viewPoint);
     void UpdateCameraPositionFromobject(float rotateY, XMFLOAT3 basedPosition, float distance, float height);

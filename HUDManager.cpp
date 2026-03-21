@@ -3,7 +3,7 @@
 #include <iostream>
 #include <random>
 
-void HUDManager::initAction()
+void HUDManager::InitAction()
 {
 	MeterHUD* meterHUD = new MeterHUD();            //兵数・士気バーHUD
     getGameObject()->addComponent(meterHUD);
@@ -46,12 +46,12 @@ void HUDManager::initAction()
     AddHUDObject("SuperiorityGaugeHUD", superiorityGaugeHUD);
 }
 
-bool HUDManager::frameAction()
+bool HUDManager::FrameAction()
 {
 	return true;
 }
 
-void HUDManager::finishAction()
+void HUDManager::FinishAction()
 {
 }
 
@@ -61,7 +61,7 @@ void HUDManager::ResetHUDWhenMoveCursor()
     m_HUDList["StatusHUD"]->SetAnimationState(AnimationState::Init);
 }
 
-void MeterHUD::initAction()
+void MeterHUD::InitAction()
 {
     SetAnimationState(AnimationState::OnInit);
 
@@ -114,7 +114,7 @@ void MeterHUD::initAction()
     SetAnimationState(AnimationState::Init);
 }
 
-bool MeterHUD::frameAction()
+bool MeterHUD::FrameAction()
 {
     MyGameEngine* engine = MyAccessHub::getMyGameEngine();
     GraphicsPipeLineObjectBase* pipe = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
@@ -249,7 +249,7 @@ bool MeterHUD::frameAction()
 	return true;
 }
 
-void MeterHUD::finishAction()
+void MeterHUD::FinishAction()
 {
 }
 
@@ -370,7 +370,7 @@ void HUDObject::ResetHUD()
 	SetAnimationState(AnimationState::Init);
 }
 
-void StatusHUD::initAction()
+void StatusHUD::InitAction()
 {
     SetAnimationState(AnimationState::OnInit);
 
@@ -416,7 +416,7 @@ void StatusHUD::initAction()
     SetAnimationState(AnimationState::Init);
 }
 
-bool StatusHUD::frameAction()
+bool StatusHUD::FrameAction()
 {
     MyGameEngine* engine = MyAccessHub::getMyGameEngine();
     GraphicsPipeLineObjectBase* pipe = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
@@ -497,7 +497,7 @@ bool StatusHUD::frameAction()
     return true;
 }
 
-void StatusHUD::finishAction()
+void StatusHUD::FinishAction()
 {
 }
 
@@ -558,7 +558,7 @@ void StatusHUD::SetRender(int index)
     }
 }
 
-void StatusText::initAction()
+void StatusText::InitAction()
 {
     m_FontTextureId = L"JPNHUDTexture";
     m_FontWordList = m_WordList.m_chListJ;
@@ -566,7 +566,7 @@ void StatusText::initAction()
     SetFont(m_FontTextureId, m_FontWordList);
 }
 
-bool StatusText::frameAction()
+bool StatusText::FrameAction()
 {
     MyGameEngine* engine = MyAccessHub::getMyGameEngine();
     GraphicsPipeLineObjectBase* pipeLine = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
@@ -650,7 +650,7 @@ bool StatusText::frameAction()
     return true;
 }
 
-void StatusText::finishAction()
+void StatusText::FinishAction()
 {
 }
 
@@ -762,7 +762,7 @@ void HUDTextObject::SetFont(const wchar_t* fontTextureId, const wchar_t* fontWor
     }
 }
 
-void AbilityHUD::initAction()
+void AbilityHUD::InitAction()
 {
     m_FontTextureId = L"JPNHUDTexture";
     m_FontWordList = m_WordList.m_chListJ;
@@ -817,7 +817,7 @@ void AbilityHUD::initAction()
     SetAnimationState(AnimationState::Init);
 }
 
-bool AbilityHUD::frameAction()
+bool AbilityHUD::FrameAction()
 {
     if (BFMng->GetHUDEnableCondition() && BFMng->GetMode() == Mode::AbilityMode && BFMng->GetTargetMode() == TargetMode::None)
     {
@@ -987,7 +987,7 @@ bool AbilityHUD::frameAction()
     return true;
 }
 
-void AbilityHUD::finishAction()
+void AbilityHUD::FinishAction()
 {
 }
 
@@ -998,7 +998,7 @@ void AbilityHUD::ResetHUD()
 	m_AbillityNoteScale = kOriginAbillityNoteScale;
 }
 
-void GuideHUD::initAction()
+void GuideHUD::InitAction()
 {
     m_FontTextureId = L"JPNHUDTexture";
     m_FontWordList = m_WordList.m_chListJ;
@@ -1034,7 +1034,7 @@ void GuideHUD::initAction()
 	m_TextList["移動"] = (L"方向キー:選択_スペースキー:移動_エスケープキー:閉じる");
 }
 
-bool GuideHUD::frameAction()
+bool GuideHUD::FrameAction()
 {
     MyGameEngine* engine = MyAccessHub::getMyGameEngine();
     GraphicsPipeLineObjectBase* pipeLine = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
@@ -1084,11 +1084,11 @@ bool GuideHUD::frameAction()
     return true;
 }
 
-void GuideHUD::finishAction()
+void GuideHUD::FinishAction()
 {
 }
 
-void SideMenuHUD::initAction()
+void SideMenuHUD::InitAction()
 {
     m_FontTextureId = L"JPNHUDTexture";
     m_FontWordList = m_WordList.m_chListJ;
@@ -1127,7 +1127,7 @@ void SideMenuHUD::initAction()
     m_TextList["キャンセル"] = (L"キャンセル");
 }
 
-bool SideMenuHUD::frameAction()
+bool SideMenuHUD::FrameAction()
 {
     if (BFMng->GetMode() == Mode::SideMenuMode)
     {
@@ -1172,11 +1172,11 @@ bool SideMenuHUD::frameAction()
     return true;
 }
 
-void SideMenuHUD::finishAction()
+void SideMenuHUD::FinishAction()
 {
 }
 
-void CurrentTerrainHUD::initAction()
+void CurrentTerrainHUD::InitAction()
 {
     m_FontTextureId = L"JPNHUDTexture";
     m_FontWordList = m_WordList.m_chListJ;
@@ -1213,7 +1213,7 @@ void CurrentTerrainHUD::initAction()
     SetAnimationState(AnimationState::Init);
 }
 
-bool CurrentTerrainHUD::frameAction()
+bool CurrentTerrainHUD::FrameAction()
 {
     if (!BFMng->GetHUDEnableCondition() || m_AnimationState == AnimationState::Init)
     {
@@ -1294,11 +1294,11 @@ bool CurrentTerrainHUD::frameAction()
     return true;
 }
 
-void CurrentTerrainHUD::finishAction()
+void CurrentTerrainHUD::FinishAction()
 {
 }
 
-void BattleCameraHUD::initAction()
+void BattleCameraHUD::InitAction()
 {
     m_FontTextureId = L"JPNHUDTexture";
     m_FontWordList = m_WordList.m_chListJ;
@@ -1331,7 +1331,7 @@ void BattleCameraHUD::initAction()
     SetAnimationState(AnimationState::Init);
 }
 
-bool BattleCameraHUD::frameAction()
+bool BattleCameraHUD::FrameAction()
 {
     if (BFMng->GetBattleCameraEnable() == true)
     {
@@ -1361,11 +1361,11 @@ bool BattleCameraHUD::frameAction()
     return true;
 }
 
-void BattleCameraHUD::finishAction()
+void BattleCameraHUD::FinishAction()
 {
 }
 
-void MainMenuHUD::initAction()
+void MainMenuHUD::InitAction()
 {
     SetShaderResoruce();
 
@@ -1422,16 +1422,16 @@ void MainMenuHUD::initAction()
     SetAnimationState(AnimationState::Init);
 }
 
-bool MainMenuHUD::frameAction()
+bool MainMenuHUD::FrameAction()
 {
     return true;
 }
 
-void MainMenuHUD::finishAction()
+void MainMenuHUD::FinishAction()
 {
 }
 
-void DamageEffectHUD::initAction()
+void DamageEffectHUD::InitAction()
 {
     for (int i = 0; i < 3; i++)
     {
@@ -1464,7 +1464,7 @@ void DamageEffectHUD::initAction()
     }
 }
 
-bool DamageEffectHUD::frameAction()
+bool DamageEffectHUD::FrameAction()
 {
     MyGameEngine* engine = MyAccessHub::getMyGameEngine();
     GraphicsPipeLineObjectBase* pipeline = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
@@ -1506,7 +1506,7 @@ bool DamageEffectHUD::frameAction()
     return true;
 }
 
-void DamageEffectHUD::finishAction()
+void DamageEffectHUD::FinishAction()
 {
 }
 
@@ -1527,7 +1527,7 @@ void DamageEffectHUD::SetDamageEffect(float damageRatio)
     SetAnimationState(AnimationState::Run);
 }
 
-void SuperiorityGaugeHUD::initAction()
+void SuperiorityGaugeHUD::InitAction()
 {
     for (int i = 0; i < 6; i++)
     {
@@ -1580,7 +1580,7 @@ void SuperiorityGaugeHUD::initAction()
     m_AnimationState = AnimationState::Init;
 }
 
-bool SuperiorityGaugeHUD::frameAction()
+bool SuperiorityGaugeHUD::FrameAction()
 {
     MyGameEngine* engine = MyAccessHub::getMyGameEngine();
     GraphicsPipeLineObjectBase* pipeline = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
@@ -1630,7 +1630,7 @@ bool SuperiorityGaugeHUD::frameAction()
     return true;
 }
 
-void SuperiorityGaugeHUD::finishAction()
+void SuperiorityGaugeHUD::FinishAction()
 {
 }
 

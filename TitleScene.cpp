@@ -31,7 +31,7 @@ int TitleScene::MakeSpriteString(int startIndex, float ltX, float ltY, float wid
     return count;
 }		//正常
 
-void TitleScene::initAction()
+void TitleScene::InitAction()
 {
     MyGameEngine* engine = MyAccessHub::getMyGameEngine();
     CharacterData* chData = getGameObject()->getCharacterData();
@@ -136,7 +136,7 @@ void TitleScene::initAction()
     engine->GetSoundManager()->playBGM(8);
 }
 
-bool TitleScene::frameAction()
+bool TitleScene::FrameAction()
 {
     MyGameEngine* engine = MyAccessHub::getMyGameEngine();
     GraphicsPipeLineObjectBase* pipe = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
@@ -270,7 +270,7 @@ bool TitleScene::frameAction()
 	return true;
 }
 
-void TitleScene::finishAction()
+void TitleScene::FinishAction()
 {
 }
 

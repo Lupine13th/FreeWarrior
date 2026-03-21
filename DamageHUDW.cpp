@@ -33,7 +33,7 @@ int DamageHUDW::MakeSpriteString(int startIndex, float ltX, float ltY, float wid
 	return count;
 }		//正常
 
-void DamageHUDW::initAction()
+void DamageHUDW::InitAction()
 {
 	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
 	CharacterData* chData = getGameObject()->getCharacterData();
@@ -103,7 +103,7 @@ void DamageHUDW::initAction()
 	}
 }
 
-bool DamageHUDW::frameAction()
+bool DamageHUDW::FrameAction()
 {
 	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
 	GraphicsPipeLineObjectBase* pipeLine = engine->GetPipelineManager()->GetPipeLineObject(L"Sprite");
@@ -150,7 +150,7 @@ bool DamageHUDW::frameAction()
 	return true;
 }
 
-void DamageHUDW::finishAction()
+void DamageHUDW::FinishAction()
 {
 	m_sprites.clear();
 

@@ -27,7 +27,7 @@ int TurnEndW::MakeSpriteString(int startIndex, float ltX, float ltY, float width
 	return count;
 }		//正常
 
-void TurnEndW::initAction()
+void TurnEndW::InitAction()
 {
 	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
 	CharacterData* chData = getGameObject()->getCharacterData();
@@ -100,7 +100,7 @@ void TurnEndW::initAction()
 	}
 }
 
-bool TurnEndW::frameAction()
+bool TurnEndW::FrameAction()
 {
 	m_TurnEndUI = BFMng->GetTurnEndUI();
 	if (BFMng->GetMode() == Mode::TurnEndMode && m_TurnEndUI->GetCurrentCount() > 3.0f)
@@ -128,6 +128,6 @@ bool TurnEndW::frameAction()
 	return true;
 }
 
-void TurnEndW::finishAction()
+void TurnEndW::FinishAction()
 {
 }

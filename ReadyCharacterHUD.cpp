@@ -12,7 +12,7 @@ using namespace std::chrono;
 #include "BattleFieldManager.h"
 
 
-void ReadyCharacterHUD::initAction()
+void ReadyCharacterHUD::InitAction()
 {
     MyGameEngine* engine = MyAccessHub::getMyGameEngine();
     CharacterData* chData = getGameObject()->getCharacterData();
@@ -68,7 +68,7 @@ void ReadyCharacterHUD::initAction()
     m_sprite[5]->setPosition(-250.0f, -190.0f, 2.0f);
 }
 
-bool ReadyCharacterHUD::frameAction()
+bool ReadyCharacterHUD::FrameAction()
 {
     MyGameEngine* engine = MyAccessHub::getMyGameEngine();
     GraphicsPipeLineObjectBase* pipe = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
@@ -108,6 +108,6 @@ bool ReadyCharacterHUD::frameAction()
     return true;
 }
 
-void ReadyCharacterHUD::finishAction()
+void ReadyCharacterHUD::FinishAction()
 {
 }

@@ -13,7 +13,7 @@ bool GameObject::action()	//フレーム処理
 
 	for (auto comp : components)
 	{
-		if (comp->isActive() && !comp->frameAction())
+		if (comp->isActive() && !comp->FrameAction())
 		{
 			deleteComponents.push_back(comp);
 		}
@@ -39,7 +39,7 @@ void GameObject::cleanupGameObject()							//完全終了処理
 {
 	for (auto comp : components)
 	{
-		comp->finishAction();
+		comp->FinishAction();
 		delete(comp);
 	}
 

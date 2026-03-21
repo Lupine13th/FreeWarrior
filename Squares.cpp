@@ -11,7 +11,7 @@
 
 using namespace std::chrono;
 
-void Squares::initAction()
+void Squares::InitAction()
 {
 	CharacterData* SqData = getGameObject()->getCharacterData();
 	SqData->setScale(0.5f, 0.5f, 0.5f);
@@ -22,7 +22,7 @@ void Squares::initAction()
 	BFMng = MyAccessHub::GetBFManager();
 }
 
-bool Squares::frameAction()
+bool Squares::FrameAction()
 {
 	SceneManager* p_scene = static_cast<SceneManager*>(MyAccessHub::getMyGameEngine()->GetSceneController());
 	if (!firstcount)
@@ -174,7 +174,7 @@ bool Squares::frameAction()
 	return true;
 }
 
-void Squares::finishAction()
+void Squares::FinishAction()
 {
 
 }

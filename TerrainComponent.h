@@ -11,7 +11,7 @@ using namespace DirectX;
 class TerrainComponent : public GameComponent
 {
 public:
-	void initAction() override;
-	bool frameAction() override;
-	void finishAction() override;
+	void InitAction() override;
+	bool FrameAction() override;
+	void FinishAction() override;
 };

@@ -1,7 +1,7 @@
 ﻿#include "TowerTerrain.h"
 #include "FBXCharacterData.h" 
 
-void TowerTerrain::initAction()
+void TowerTerrain::InitAction()
 {
     FBXCharacterData* chdata = static_cast<FBXCharacterData*>(getGameObject()->getCharacterData());
     chdata->SetGraphicsPipeLine(L"StaticFBX");
@@ -15,13 +15,13 @@ void TowerTerrain::initAction()
     //=======Change Scene End
 }
 
-bool TowerTerrain::frameAction()
+bool TowerTerrain::FrameAction()
 {
     CharacterData* SqData = getGameObject()->getCharacterData();
     SqData->GetPipeline()->AddRenderObject(SqData);
     return true;
 }
 
-void TowerTerrain::finishAction()
+void TowerTerrain::FinishAction()
 {
 }

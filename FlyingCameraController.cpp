@@ -22,7 +22,7 @@ void FlyingCameraController::StartGame()	//ゲーム開始時のカメラアニ�
 	Opening = false;
 }
 
-void FlyingCameraController::initAction()
+void FlyingCameraController::InitAction()
 {
 	auto components = getGameObject()->getComponents();
 
@@ -36,12 +36,12 @@ void FlyingCameraController::initAction()
 		}
 	}
 
-	m_camera->changeCameraPosition(0.0f, 15.0f, -10.0f);
-	m_camera->changeCameraFocus(0.0f, 0.0f, 0.0f);
+	m_camera->ChangeCameraPosition(0.0f, 15.0f, -10.0f);
+	m_camera->ChangeCameraFocus(0.0f, 0.0f, 0.0f);
 
 }
 
-bool FlyingCameraController::frameAction()
+bool FlyingCameraController::FrameAction()
 {
 	SceneManager* p_scene = static_cast<SceneManager*>(MyAccessHub::getMyGameEngine()->GetSceneController());
 	KeyBindComponent* keycomp = static_cast<KeyBindComponent*>(p_scene->getKeyComponent());
@@ -147,7 +147,7 @@ bool FlyingCameraController::frameAction()
 	return true;
 }
 
-void FlyingCameraController::finishAction()
+void FlyingCameraController::FinishAction()
 {
 }
 
@@ -192,8 +192,8 @@ void FlyingCameraController::ChangeCameraPosition()	//カメラ位置の変更
 
 		// カメラをマスの上に追従
 		m_ZoomPercent = kMinZoom;
-		m_camera->changeCameraPosition(squarePos.x, squarePos.y + 15.0f * m_ZoomPercent, squarePos.z - 10.0f * m_ZoomPercent);
-		m_camera->changeCameraFocus(squarePos.x, squarePos.y, squarePos.z);
+		m_camera->ChangeCameraPosition(squarePos.x, squarePos.y + 15.0f * m_ZoomPercent, squarePos.z - 10.0f * m_ZoomPercent);
+		m_camera->ChangeCameraFocus(squarePos.x, squarePos.y, squarePos.z);
 		XMStoreFloat3(&m_MovingValue, XMVectorZero());
 	}
 	else if (BFMng->GetCurrentTurn() == Turn::EnemyMove)
@@ -214,14 +214,14 @@ void FlyingCameraController::ChangeCameraPosition()	//カメラ位置の変更
 
 		// カメラをマスの上に追従
 		m_ZoomPercent = kMinZoom;
-		m_camera->changeCameraPosition(squarePos.x, squarePos.y + 15.0f * m_ZoomPercent, squarePos.z - 10.0f * m_ZoomPercent);
-		m_camera->changeCameraFocus(squarePos.x, squarePos.y, squarePos.z);
+		m_camera->ChangeCameraPosition(squarePos.x, squarePos.y + 15.0f * m_ZoomPercent, squarePos.z - 10.0f * m_ZoomPercent);
+		m_camera->ChangeCameraFocus(squarePos.x, squarePos.y, squarePos.z);
 	}
 }
 
 void FlyingCameraController::MoveCamera()	//WASDでのカメラ移動
 {
-	XMFLOAT3 cameraFocusPosition = m_camera->getCameraFocus();
+	XMFLOAT3 cameraFocusPosition = m_camera->GetCameraFocus();
 
 	if (m_MovingValue.x > kMaxMovingValue)
 	{
@@ -240,8 +240,8 @@ void FlyingCameraController::MoveCamera()	//WASDでのカメラ移動
 		m_MovingValue.z = -kMaxMovingValue;
 	}
 
-	m_camera->changeCameraPosition(cameraFocusPosition.x + m_MovingValue.x, cameraFocusPosition.y + 15.0f * m_ZoomPercent, cameraFocusPosition.z - 10.0f * m_ZoomPercent + m_MovingValue.z);
-	m_camera->changeCameraFocus(cameraFocusPosition.x + m_MovingValue.x, cameraFocusPosition.y, cameraFocusPosition.z + m_MovingValue.z);
+	m_camera->ChangeCameraPosition(cameraFocusPosition.x + m_MovingValue.x, cameraFocusPosition.y + 15.0f * m_ZoomPercent, cameraFocusPosition.z - 10.0f * m_ZoomPercent + m_MovingValue.z);
+	m_camera->ChangeCameraFocus(cameraFocusPosition.x + m_MovingValue.x, cameraFocusPosition.y, cameraFocusPosition.z + m_MovingValue.z);
 } 
 
 void FlyingCameraController::SetBattleCam(Squares* attaking, Squares* attacked)	//バトルカメラ切り替え
@@ -278,11 +278,11 @@ void FlyingCameraController::SetBattleCam(Squares* attaking, Squares* attacked)	
 		midpos.z + perp.z * 15.0f
 	};
 	
-	m_camera->changeCameraPosition(cameraPos.x, cameraPos.y, cameraPos.z);
+	m_camera->ChangeCameraPosition(cameraPos.x, cameraPos.y, cameraPos.z);
 	SetCameraFocus(m_AttackingCharacterPos);
 }
 
 void FlyingCameraController::SetCameraFocus(XMFLOAT3 focusPos)
 {
-	m_camera->changeCameraFocus(focusPos.x, focusPos.y, focusPos.z);
+	m_camera->ChangeCameraFocus(focusPos.x, focusPos.y, focusPos.z);
 }

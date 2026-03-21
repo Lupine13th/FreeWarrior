@@ -3,7 +3,7 @@
 #include "SkyDomeComponent.h"
 #include "SceneManager.h"
 
-void SkyDomeComponent::initAction()
+void SkyDomeComponent::InitAction()
 {
 	CharacterData* chdata = getGameObject()->getCharacterData();
 	chdata->setScale(10.0f, 10.0f, 10.0f);
@@ -18,7 +18,7 @@ void SkyDomeComponent::initAction()
 	fbxChara->GetMainFbx()->SetTextureUniqueFlag(true);
 }
 
-bool SkyDomeComponent::frameAction()
+bool SkyDomeComponent::FrameAction()
 {
 	CharacterData* myData = getGameObject()->getCharacterData();
 
@@ -33,7 +33,7 @@ bool SkyDomeComponent::frameAction()
 	return true;
 }
 
-void SkyDomeComponent::finishAction()
+void SkyDomeComponent::FinishAction()
 {
 }
 

@@ -7,7 +7,7 @@
 #include "SceneManager.h"
 #include "SpriteCharacter.h"
 
-void LogHUD::initAction()
+void LogHUD::InitAction()
 {
     MyGameEngine* engine = MyAccessHub::getMyGameEngine();
     CharacterData* chData = getGameObject()->getCharacterData();
@@ -44,7 +44,7 @@ void LogHUD::initAction()
     }
 }
 
-bool LogHUD::frameAction()
+bool LogHUD::FrameAction()
 {
     if (BFMng->GetCurrentTurn() != Turn::First && BFMng->GetOpenLog())
     {
@@ -60,7 +60,7 @@ bool LogHUD::frameAction()
     return true;
 }
 
-void LogHUD::finishAction()
+void LogHUD::FinishAction()
 {
     SceneManager* scene = static_cast<SceneManager*>(MyAccessHub::getMyGameEngine()->GetSceneController());
     scene->RemoveCamera(this);

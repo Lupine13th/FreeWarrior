@@ -11,7 +11,7 @@
 
 using namespace std::chrono;
 
-void OpeningAnimHUD::initAction()
+void OpeningAnimHUD::InitAction()
 {
     MyGameEngine* engine = MyAccessHub::getMyGameEngine();
     CharacterData* chData = getGameObject()->getCharacterData();
@@ -63,7 +63,7 @@ void OpeningAnimHUD::initAction()
     o_sprite[4]->setPosition(FadePos.x, FadePos.y, 2.0f);
 }
 
-bool OpeningAnimHUD::frameAction()
+bool OpeningAnimHUD::FrameAction()
 {
     if (BFMng->GetCurrentTurn() == Turn::First)
     {
@@ -258,6 +258,6 @@ bool OpeningAnimHUD::frameAction()
     return true;
 }
 
-void OpeningAnimHUD::finishAction()
+void OpeningAnimHUD::FinishAction()
 {
 }

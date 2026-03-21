@@ -1,34 +1,36 @@
 ﻿#include "SceneManager.h"
 #include "CameraChangerComponent.h"
 
-void CameraChangerComponent::initAction()
+void CameraChangerComponent::InitAction()
 {
 	SceneManager* scene = dynamic_cast<SceneManager*>(MyAccessHub::getMyGameEngine()->GetSceneController());
 	m_keyBind = dynamic_cast<KeyBindComponent*>(scene->getKeyComponent());
 	m_currentCamera = -1;
 }
 
-bool CameraChangerComponent::frameAction()
+bool CameraChangerComponent::FrameAction()
 {
-	if (m_keyBind->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::MOUSE_P))
-	{
-		ChangeCamera();
-	}
+	//if (m_keyBind->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::key_P))	//デバッグ用　Pキーでカメラを手動切り替え
+	//{
+	//	ChangeCamera();
+	//}
 	return true;
 }
 
-void CameraChangerComponent::finishAction()
+void CameraChangerComponent::FinishAction()
 {
 	m_cameraComponents.clear();
 }
 
+//メインカメラ追加(メインカメラは現状一つしかないから、初期化用)
 void CameraChangerComponent::SetCameraController(GameComponent* camCon)
 {
 	m_cameraComponents.push_back(camCon);
 	camCon->setActive(false);
 }
 
-void CameraChangerComponent::ChangeCameraController(int index)
+//メインカメラ切り替え(メインカメラは現状一つしかないから、初期化用)
+void CameraChangerComponent::ChangeCameraController(int index)	
 {
 	if (index >= m_cameraComponents.size()) return;
 
@@ -44,6 +46,7 @@ void CameraChangerComponent::ChangeCameraController(int index)
 	}
 }
 
+//メイン・バトルカメラ切り替え
 void CameraChangerComponent::ChangeCamera()
 {
 	SceneManager* p_scene = static_cast<SceneManager*>(MyAccessHub::getMyGameEngine()->GetSceneController());
@@ -57,6 +60,7 @@ void CameraChangerComponent::ChangeCamera()
 	}
 }
 
+//バトルカメラ起動・メインカメラ削除
 void CameraChangerComponent::SetBattleCamera()
 {
 	SceneManager* p_scene = static_cast<SceneManager*>(MyAccessHub::getMyGameEngine()->GetSceneController());
@@ -67,13 +71,14 @@ void CameraChangerComponent::SetBattleCamera()
 	BFMng->SetBattleCameraEnable(true);
 }
 
+//メインカメラ起動・バトルカメラ削除
 void CameraChangerComponent::SetMainCamera()
 {
 	SceneManager* p_scene = static_cast<SceneManager*>(MyAccessHub::getMyGameEngine()->GetSceneController());
 	p_scene->SetActiveCameraCompornent(L"AttackerCamera", false);
 	p_scene->SetActiveCameraCompornent(L"DefenderCamera", false);
 	p_scene->SetActiveCameraCompornent(L"MainCamera", true);
-	//p_scene->SetActiveCameraCompornent(L"ScoutingCamera", true);
+	p_scene->SetActiveCameraCompornent(L"ScoutingCamera", true);
 	BFMng->SetBattleCameraEnable(false);
 }
 

@@ -29,9 +29,9 @@ public:
 	};
 
 	// GameComponent を介して継承されました
-	void initAction() override;
-	bool frameAction() override;
-	void finishAction() override;
+	void InitAction() override;
+	bool FrameAction() override;
+	void FinishAction() override;
 };
 
 class EffectObject : public GameComponent
@@ -121,9 +121,9 @@ private:
 
 public:
 	// EffectObject を介して継承されました
-	void initAction() override;
-	bool frameAction() override;
-	void finishAction() override;
+	void InitAction() override;
+	bool FrameAction() override;
+	void FinishAction() override;
 };
 
 class CanonMuzzleFlashEffect : public EffectObject
@@ -132,9 +132,9 @@ private:
 
 public:
 	// EffectObject を介して継承されました
-	void initAction() override;
-	bool frameAction() override;
-	void finishAction() override;
+	void InitAction() override;
+	bool FrameAction() override;
+	void FinishAction() override;
 };
 
 class ExplosiveEffect : public EffectObject
@@ -143,9 +143,9 @@ private:
 
 public:
 	// EffectObject を介して継承されました
-	void initAction() override;
-	bool frameAction() override;
-	void finishAction() override;
+	void InitAction() override;
+	bool FrameAction() override;
+	void FinishAction() override;
 };
 
 class LargeExplosiveEffect : public EffectObject
@@ -154,9 +154,9 @@ private:
 
 public:
 	// EffectObject を介して継承されました
-	void initAction() override;
-	bool frameAction() override;
-	void finishAction() override;
+	void InitAction() override;
+	bool FrameAction() override;
+	void FinishAction() override;
 };
 
 class ScoutEffect : public EffectObject
@@ -165,9 +165,9 @@ private:
 
 public:
 	// EffectObject を介して継承されました
-	void initAction() override;
-	bool frameAction() override;
-	void finishAction() override;
+	void InitAction() override;
+	bool FrameAction() override;
+	void FinishAction() override;
 };
 
 class ScoutedEffect : public EffectObject
@@ -176,9 +176,9 @@ private:
 
 public:
 	// EffectObject を介して継承されました
-	void initAction() override;
-	bool frameAction() override;
-	void finishAction() override;
+	void InitAction() override;
+	bool FrameAction() override;
+	void FinishAction() override;
 };
 
 class CircleEffect : public EffectObject
@@ -187,7 +187,7 @@ private:
 
 public:
 	// EffectObject を介して継承されました
-	void initAction() override;
-	bool frameAction() override;
-	void finishAction() override;
+	void InitAction() override;
+	bool FrameAction() override;
+	void FinishAction() override;
 };

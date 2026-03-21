@@ -10,7 +10,7 @@ using namespace std::chrono;
 #include "SceneManager.h"
 #include "SpriteCharacter.h"
 
-void InFieldCharacterMenu::initAction()
+void InFieldCharacterMenu::InitAction()
 {
     MyGameEngine* engine = MyAccessHub::getMyGameEngine();
     CharacterData* chData = getGameObject()->getCharacterData();
@@ -73,7 +73,7 @@ void InFieldCharacterMenu::initAction()
     m_sprite[9]->setPosition(-180.0f, -180.0f, 1.0f);
 }
 
-bool InFieldCharacterMenu::frameAction()
+bool InFieldCharacterMenu::FrameAction()
 {
     MyGameEngine* engine = MyAccessHub::getMyGameEngine();
     GraphicsPipeLineObjectBase* pipe = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
@@ -102,6 +102,6 @@ bool InFieldCharacterMenu::frameAction()
     return true;
 }
 
-void InFieldCharacterMenu::finishAction()
+void InFieldCharacterMenu::FinishAction()
 {
 }

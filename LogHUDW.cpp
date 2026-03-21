@@ -30,7 +30,7 @@ int LogHUDW::MakeSpriteString(int startIndex, float ltX, float ltY, float width,
 	return count;
 }
 
-void LogHUDW::initAction()
+void LogHUDW::InitAction()
 {
 	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
 	CharacterData* chData = getGameObject()->getCharacterData();
@@ -85,7 +85,7 @@ void LogHUDW::initAction()
 	}
 }
 
-bool LogHUDW::frameAction()
+bool LogHUDW::FrameAction()
 {
 
 	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
@@ -114,7 +114,7 @@ bool LogHUDW::frameAction()
 	return true;
 }
 
-void LogHUDW::finishAction()
+void LogHUDW::FinishAction()
 {
 	m_sprites.clear();
 

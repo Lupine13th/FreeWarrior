@@ -49,7 +49,7 @@ int ReadyCharacterHUDW::MakeSpriteString(int startIndex, float ltX, float ltY, f
 	return count;
 }
 
-void ReadyCharacterHUDW::initAction()
+void ReadyCharacterHUDW::InitAction()
 {
 	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
 	CharacterData* chData = getGameObject()->getCharacterData();
@@ -107,7 +107,7 @@ void ReadyCharacterHUDW::initAction()
 	CountList.resize(15);
 }
 
-bool ReadyCharacterHUDW::frameAction()
+bool ReadyCharacterHUDW::FrameAction()
 {
 	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
 	GraphicsPipeLineObjectBase* pipeLine = engine->GetPipelineManager()->GetPipeLineObject(L"Sprite");
@@ -368,7 +368,7 @@ bool ReadyCharacterHUDW::frameAction()
 	return true;
 }
 
-void ReadyCharacterHUDW::finishAction()
+void ReadyCharacterHUDW::FinishAction()
 {
 }
 

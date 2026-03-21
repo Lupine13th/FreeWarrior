@@ -93,9 +93,9 @@ private:
 
 	TitleState m_TitleState = TitleState::Menu;
 public:
-	virtual void initAction() override;
-	virtual bool frameAction() override;
-	virtual void finishAction() override;
+	virtual void InitAction() override;
+	virtual bool FrameAction() override;
+	virtual void FinishAction() override;
 
 	void SetNextScene(GAME_SCENES nextSc);
 };

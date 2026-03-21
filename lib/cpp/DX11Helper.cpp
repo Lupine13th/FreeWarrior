@@ -43,7 +43,6 @@ HRESULT CompileShaderFromFile(const WCHAR* szFileName, LPCSTR szEntryPoint, LPCS
 }
 
 //コンパイルしたVertexシェーダのバイナリからInputLayoutを生成
-//やってる事はDirectXが持っている関数を呼び出して後は単純な処理なので使いたい時はこの関数そのまま使っても良いぐらい。
 HRESULT CreateInputLayoutDescFromVertexShaderSignature(const void* shaderBinary, size_t binarySize, ID3D11Device* pD3DDevice, ID3D11InputLayout** pInputLayout)
 {
     // Reflect shader info

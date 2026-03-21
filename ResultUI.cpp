@@ -33,7 +33,7 @@ int ResultUI::MakeSpriteString(int startIndex, float ltX, float ltY, float width
     return count;
 }
 
-void ResultUI::initAction()
+void ResultUI::InitAction()
 {
     MyGameEngine* engine = MyAccessHub::getMyGameEngine();
     CharacterData* chData = getGameObject()->getCharacterData();
@@ -128,7 +128,7 @@ void ResultUI::initAction()
     }
 }
 
-bool ResultUI::frameAction()
+bool ResultUI::FrameAction()
 {
     MyGameEngine* engine = MyAccessHub::getMyGameEngine();
     GraphicsPipeLineObjectBase* spritePipeLine = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
@@ -465,7 +465,7 @@ bool ResultUI::frameAction()
     return true;
 }
 
-void ResultUI::finishAction()
+void ResultUI::FinishAction()
 {
 }
 
