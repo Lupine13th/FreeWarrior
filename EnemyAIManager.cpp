@@ -27,7 +27,7 @@ bool EnemyAIManager::FrameAction()
 {
 	BattleFieldManager* BFMng = MyAccessHub::GetBFManager();
 
-	MyGameEngine* p_engine = MyAccessHub::getMyGameEngine();
+	MyGameEngine* p_engine = MyAccessHub::GetMyGameEngine();
 
 	FlyingCameraController* Fcam = MyAccessHub::GetFlyingCameraController();
 

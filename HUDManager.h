@@ -152,7 +152,8 @@ public:
 	void ResetHUDWhenMoveCursor();
 };
 
-class MeterHUD : public HUDTextObject	//兵数・士気バーHUD
+//兵数・士気表示用ゲージのHUD
+class MeterHUD : public HUDTextObject	
 {
 private:
 	const float kSoldierArrowPosY = 55.0f;
@@ -179,7 +180,8 @@ public:
 	void SetMoralePersent(FieldCharacter* targetChara);
 };
 
-class StatusHUD : public HUDObject		//右上部ステータスHUD
+//「偵察カメラ」HUD
+class StatusHUD : public HUDObject
 {
 private:
 	
@@ -192,7 +194,8 @@ public:
 	void SetRender(int index);
 };
 
-class AbilityHUD : public HUDTextObject	//行動ノートHUD
+//アビリティ選択ノートHUD
+class AbilityHUD : public HUDTextObject	
 {
 private:
 	enum class AbilityHUDState

@@ -75,11 +75,11 @@ public:
 		m_blendMode = SPRITE_BLEND_MODE::ALPHA_BLEND;
 		m_filterMode = SPRITE_FILTER_MODE::NoFilter;
 
-		//m_pVertexBuffer = MyAccessHub::getMyGameEngine()->GetMeshManager()->getVertexBuffer(index_id);
+		//m_pVertexBuffer = MyAccessHub::GetMyGameEngine()->GetMeshManager()->getVertexBuffer(index_id);
 	}
 
-	void setTextureId(const wchar_t* texId);
-	HRESULT setSpritePatterns(XMUINT4* patterns, UINT numOfPatterns);
+	void SetTextureId(const wchar_t* texId);
+	HRESULT SetSpritePatterns(XMUINT4* patterns, UINT numOfPatterns);
 
 	//=======HUD MODE
 	HRESULT SetSpritePattern(UINT index, float w, float h, XMFLOAT4& pattern);
@@ -126,13 +126,13 @@ public:
 	}
 
 	//======Color Mix
-	void setColor(float r, float g, float b, float a);
-	void setColorMix(COLOR_MIX_OP op);	//数値代入ではなくしている。
-	void setAlphaMix(COLOR_MIX_OP op);
+	void SetColor(float r, float g, float b, float a);
+	void SetColorMix(COLOR_MIX_OP op);	//数値代入ではなくしている。
+	void SetAlphaMix(COLOR_MIX_OP op);
 
-	const XMFLOAT4* getColor();
-	UINT	getColorMix();
-	UINT	getAlphaMix();
+	const XMFLOAT4* GetColor();
+	UINT	GetColorMix();
+	UINT	GetAlphaMix();
 	//======Color Mix End
 
 };

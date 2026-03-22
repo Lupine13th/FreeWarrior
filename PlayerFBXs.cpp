@@ -2,7 +2,7 @@
 
 void InfantryPlayer::InitAction()
 {
-	FBXCharacterData* chdata = static_cast<FBXCharacterData*>(getGameObject()->getCharacterData());
+	FBXCharacterData* chdata = static_cast<FBXCharacterData*>(GetGameObject()->GetCharacterData());
 
 	float scaleValue = 0.03f;
 
@@ -12,17 +12,19 @@ void InfantryPlayer::InitAction()
 	chdata->AddCameraLabel(L"ScoutingCamera");
 	chdata->SetScaleValue(scaleValue);
 
-	if (m_admin == Admin::Rebel)
+	if (m_admin == Admin::Rebel)	//歩兵Fbxの登録　勢力ごとに違うからif分で分岐
 	{
 		chdata->LoadMainFBX(L"./Resources/fbx/rebelInfantry.fbx", L"RebelInfantry");
 		chdata->setScale(scaleValue, scaleValue, scaleValue);
 
-		//･｢･ﾋ･皈ﾇ｡ｼ･ｿ､ﾎﾅﾐﾏｿ
+		//アニメーションを登録
 		chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Rifle_Idle.fbx", L"WAIT01");
 		chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Rifle_Fire.fbx", L"ATTACK01");
 		chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Rifle_Run.fbx", L"WALK01");
 		chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Rifle_Dying.fbx", L"DYING01");
 		chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Rifle_Damage.fbx", L"DAMAGE01");
+
+		//初期アニメーション
 		chdata->SetAnime(L"WAIT01");
 
 		chdata->GetMainFbx()->SetMeshUniqueFlag(true, true);
@@ -36,13 +38,16 @@ void InfantryPlayer::InitAction()
 	else if (m_admin == Admin::Imperial)
 	{
 		chdata->LoadMainFBX(L"./Resources/fbx/imperialInfantry.fbx", L"ImperialInfantry");
-		chdata->setScale(0.03f, 0.03f, 0.03f);
+		chdata->setScale(scaleValue, scaleValue, scaleValue);
 
+		//アニメーションを登録
 		chdata->LoadAnimationFBX(L"./Resources/fbx/ImperialAnime/imperial_Rifle_Idle.fbx", L"WAIT01");
 		chdata->LoadAnimationFBX(L"./Resources/fbx/ImperialAnime/imperial_Rifle_Fire.fbx", L"ATTACK01");
 		chdata->LoadAnimationFBX(L"./Resources/fbx/ImperialAnime/imperial_Rifle_Run.fbx", L"WALK01");
 		chdata->LoadAnimationFBX(L"./Resources/fbx/ImperialAnime/imperial_Rifle_Dying.fbx", L"DYING01");
 		chdata->LoadAnimationFBX(L"./Resources/fbx/ImperialAnime/imperial_Rifle_Damage.fbx", L"DAMAGE01");
+
+		//初期アニメーション
 		chdata->SetAnime(L"WAIT01");
 
 		chdata->GetMainFbx()->SetMeshUniqueFlag(true, true);
@@ -58,9 +63,9 @@ void InfantryPlayer::InitAction()
 
 bool InfantryPlayer::FrameAction()
 {
-	if (IsAlive)
+	if (IsAlive)	//マトリクスの座標から装備品の座標を切り替える
 	{
-		m_chData = static_cast<FBXCharacterData*>(getGameObject()->getCharacterData());
+		m_chData = static_cast<FBXCharacterData*>(GetGameObject()->GetCharacterData());
 		m_chData->UpdateAnimation();
 
 		if (m_RightEquipment->GetCharacterData() == nullptr) return false;
@@ -106,7 +111,7 @@ void InfantryPlayer::FinishAction()
 
 void ArtilleryPlayer::InitAction()
 {
-	FBXCharacterData* chdata = static_cast<FBXCharacterData*>(getGameObject()->getCharacterData());
+	FBXCharacterData* chdata = static_cast<FBXCharacterData*>(GetGameObject()->GetCharacterData());
 	chdata->SetGraphicsPipeLine(L"StaticFBX");
 	chdata->AddCameraLabel(L"AttackerCamera");
 	chdata->AddCameraLabel(L"DefenderCamera");
@@ -135,7 +140,7 @@ bool ArtilleryPlayer::FrameAction()
 {
 	if (IsAlive)
 	{
-		CharacterData* SqData = getGameObject()->getCharacterData();
+		CharacterData* SqData = GetGameObject()->GetCharacterData();
 		SqData->GetPipeline()->AddRenderObject(SqData);
 		return true;
 	}
@@ -154,7 +159,7 @@ void ArtilleryPlayer::FinishAction()
 
 void MachinegunnerPlayer::InitAction()
 {
-	FBXCharacterData* chdata = static_cast<FBXCharacterData*>(getGameObject()->getCharacterData());
+	FBXCharacterData* chdata = static_cast<FBXCharacterData*>(GetGameObject()->GetCharacterData());
 	chdata->SetGraphicsPipeLine(L"AnimationFBX");
 	chdata->AddCameraLabel(L"AttackerCamera");
 	chdata->AddCameraLabel(L"DefenderCamera");
@@ -165,13 +170,15 @@ void MachinegunnerPlayer::InitAction()
 	chdata->setScale(scaleValue, scaleValue, scaleValue);
 	chdata->SetScaleValue(scaleValue);
 
-	//･｢･ﾋ･皈ﾇ｡ｼ･ｿ､ﾎﾅﾐﾏｿ
+	//アニメーションを登録
 	chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Machinegun_Idle.fbx", L"WAIT01");
 	chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Machinegun_Fire.fbx", L"ATTACK01");
 	chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Rifle_Run.fbx", L"WALK01");
 	chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Rifle_Dying.fbx", L"DYING01");
 	chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Rifle_Damage.fbx", L"DAMAGE01");
-	chdata->SetAnime(L"WAIT01"); //ｺﾆﾀｸｳｫｻﾏ
+
+	//初期アニメーション
+	chdata->SetAnime(L"WAIT01");
 
 	chdata->GetMainFbx()->SetMeshUniqueFlag(true, true);
 	chdata->GetMainFbx()->SetTextureUniqueFlag(true);
@@ -184,9 +191,9 @@ void MachinegunnerPlayer::InitAction()
 
 bool MachinegunnerPlayer::FrameAction()
 {
-	if (IsAlive)
+	if (IsAlive)		//マトリクスの座標から装備品の座標を切り替える
 	{
-		m_chData = static_cast<FBXCharacterData*>(getGameObject()->getCharacterData());
+		m_chData = static_cast<FBXCharacterData*>(GetGameObject()->GetCharacterData());
 		m_chData->UpdateAnimation();
 
 		if (m_RightEquipment->GetCharacterData() == nullptr) return false;
@@ -256,7 +263,7 @@ void MachinegunnerPlayer::FinishAction()
 
 void ScoutPlayer::InitAction()
 {
-	FBXCharacterData* chdata = static_cast<FBXCharacterData*>(getGameObject()->getCharacterData());
+	FBXCharacterData* chdata = static_cast<FBXCharacterData*>(GetGameObject()->GetCharacterData());
 
 	chdata->SetGraphicsPipeLine(L"AnimationFBX");
 	chdata->AddCameraLabel(L"AttackerCamera");
@@ -272,11 +279,14 @@ void ScoutPlayer::InitAction()
 		chdata->setScale(scaleValue, scaleValue, scaleValue);
 		chdata->SetScaleValue(scaleValue);
 
+		//アニメーションを登録
 		chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Scout_Idle.fbx", L"WAIT01");
 		chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Scout_Fire.fbx", L"ATTACK01");
 		chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Scout_Run.fbx", L"WALK01");
 		chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Scout_Dying.fbx", L"DYING01");
 		chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Scout_Damage.fbx", L"DAMAGE01");
+
+		//初期アニメーション
 		chdata->SetAnime(L"WAIT01");
 
 		chdata->GetMainFbx()->SetMeshUniqueFlag(true, true);
@@ -295,11 +305,14 @@ void ScoutPlayer::InitAction()
 		chdata->setScale(scaleValue, scaleValue, scaleValue);
 		chdata->SetScaleValue(scaleValue);
 
+		//アニメーションを登録
 		chdata->LoadAnimationFBX(L"./Resources/fbx/ImperialAnime/imperial_Scout_Idle.fbx", L"WAIT01");
 		chdata->LoadAnimationFBX(L"./Resources/fbx/ImperialAnime/imperial_Scout_Fire.fbx", L"ATTACK01");
 		chdata->LoadAnimationFBX(L"./Resources/fbx/ImperialAnime/imperial_Scout_Run.fbx", L"WALK01");
 		chdata->LoadAnimationFBX(L"./Resources/fbx/ImperialAnime/imperial_Scout_Dying.fbx", L"DYING01");
 		chdata->LoadAnimationFBX(L"./Resources/fbx/ImperialAnime/imperial_Scout_Damage.fbx", L"DAMAGE01");
+
+		//初期アニメーション
 		chdata->SetAnime(L"WAIT01");
 
 		chdata->GetMainFbx()->SetMeshUniqueFlag(true, true);
@@ -312,9 +325,9 @@ void ScoutPlayer::InitAction()
 
 bool ScoutPlayer::FrameAction()
 {
-	if (IsAlive)
+	if (IsAlive)		//マトリクスの座標から装備品の座標を切り替える
 	{
-		m_chData = static_cast<FBXCharacterData*>(getGameObject()->getCharacterData());
+		m_chData = static_cast<FBXCharacterData*>(GetGameObject()->GetCharacterData());
 		m_chData->UpdateAnimation();
 
 		if (m_RightEquipment == nullptr) return false;
@@ -362,7 +375,7 @@ void ScoutPlayer::FinishAction()
 
 void ArmoredPlayer::InitAction()
 {
-	FBXCharacterData* chdata = static_cast<FBXCharacterData*>(getGameObject()->getCharacterData());
+	FBXCharacterData* chdata = static_cast<FBXCharacterData*>(GetGameObject()->GetCharacterData());
 	chdata->SetGraphicsPipeLine(L"StaticFBX");
 	chdata->AddCameraLabel(L"AttackerCamera");
 	chdata->AddCameraLabel(L"DefenderCamera");
@@ -390,7 +403,7 @@ bool ArmoredPlayer::FrameAction()
 {
 	if (IsAlive)
 	{
-		CharacterData* SqData = getGameObject()->getCharacterData();
+		CharacterData* SqData = GetGameObject()->GetCharacterData();
 		SqData->GetPipeline()->AddRenderObject(SqData);
 		return true;
 	}

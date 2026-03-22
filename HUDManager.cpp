@@ -6,43 +6,43 @@
 void HUDManager::InitAction()
 {
 	MeterHUD* meterHUD = new MeterHUD();            //兵数・士気バーHUD
-    getGameObject()->addComponent(meterHUD);
+    GetGameObject()->addComponent(meterHUD);
 	AddHUDObject("MeterHUD", meterHUD);
 
 	StatusHUD* statusHUDs = new StatusHUD();        //ブラウン管テレビのキャラクター顔面カメラHUD
-    getGameObject()->addComponent(statusHUDs);
+    GetGameObject()->addComponent(statusHUDs);
     AddHUDObject("StatusHUD", statusHUDs);
 
 	StatusText* statusText = new StatusText();      //選択中キャラクターの名前を表示するテキストHUD
-    getGameObject()->addComponent(statusText);
+    GetGameObject()->addComponent(statusText);
     AddHUDObject("StatusText", statusText);
 
-    AbilityHUD* abillityHUD = new AbilityHUD();     
-    getGameObject()->addComponent(abillityHUD);
+    AbilityHUD* abillityHUD = new AbilityHUD();     //アビリティ用のノートHUD
+    GetGameObject()->addComponent(abillityHUD);
     AddHUDObject("AbilityHUD", abillityHUD);
 
-    GuideHUD* guideHUD = new GuideHUD();
-    getGameObject()->addComponent(guideHUD);
+    GuideHUD* guideHUD = new GuideHUD();            //画面下のガイドHUD
+    GetGameObject()->addComponent(guideHUD);
     AddHUDObject("GuideHUD", guideHUD);
 
-    SideMenuHUD* sideMenuHUD = new SideMenuHUD();
-    getGameObject()->addComponent(sideMenuHUD);
+    SideMenuHUD* sideMenuHUD = new SideMenuHUD();   //サイドメニューHUD
+    GetGameObject()->addComponent(sideMenuHUD);
     AddHUDObject("SideMenuHUD", sideMenuHUD);
 
-    CurrentTerrainHUD* currentTerrainHUD = new CurrentTerrainHUD();
-    getGameObject()->addComponent(currentTerrainHUD);
+    CurrentTerrainHUD* currentTerrainHUD = new CurrentTerrainHUD(); //カーソルを合わせたマスの地形を表示するHUD
+    GetGameObject()->addComponent(currentTerrainHUD);
     AddHUDObject("CurrentTerrainHUD", currentTerrainHUD);
 
-    BattleCameraHUD* battleCameraHUD = new BattleCameraHUD();
-    getGameObject()->addComponent(battleCameraHUD);
+    BattleCameraHUD* battleCameraHUD = new BattleCameraHUD();       //戦闘画面用HUD
+    GetGameObject()->addComponent(battleCameraHUD);
     AddHUDObject("BattleCameraHUD", battleCameraHUD);
 
-    DamageEffectHUD* damageEffectHUD = new DamageEffectHUD();
-    getGameObject()->addComponent(damageEffectHUD);
+    DamageEffectHUD* damageEffectHUD = new DamageEffectHUD();       //ダメージを受けた出血UI
+    GetGameObject()->addComponent(damageEffectHUD);
     AddHUDObject("DamageEffectHUD", damageEffectHUD);
 
-    SuperiorityGaugeHUD* superiorityGaugeHUD = new SuperiorityGaugeHUD();
-    getGameObject()->addComponent(superiorityGaugeHUD);
+    SuperiorityGaugeHUD* superiorityGaugeHUD = new SuperiorityGaugeHUD();   //勢力ゲージHUD
+    GetGameObject()->addComponent(superiorityGaugeHUD);
     AddHUDObject("SuperiorityGaugeHUD", superiorityGaugeHUD);
 }
 
@@ -78,7 +78,7 @@ void MeterHUD::InitAction()
     {
         m_SpriteList[i] = std::make_unique<SpriteCharacter>();
         m_SpriteList[i]->SetCameraLabel(L"HUDCamera", 0);
-        m_SpriteList[i]->setColor(1.0f, 1.0f, 1.0f, 1);
+        m_SpriteList[i]->SetColor(1.0f, 1.0f, 1.0f, 1);
         m_SpriteList[i]->SetGraphicsPipeLine(L"AlphaSprite");
         m_SpriteList[i]->SetSpritePattern(0, 1, 1, m_PatternRect);
         m_SpriteList[i]->setSpriteIndex(0);
@@ -88,22 +88,22 @@ void MeterHUD::InitAction()
         case 0:
             m_SpriteList[i]->setPosition(kArrowLeftPosX, kSoldierArrowPosY, OrderInLayer::MoveObject);
             m_SpriteList[i]->setScale(25.0f, 25.0f, 0.1f);
-            m_SpriteList[i]->setTextureId(L"SoldierBarArrowTexture");
+            m_SpriteList[i]->SetTextureId(L"SoldierBarArrowTexture");
             break;
         case 1:
             m_SpriteList[i]->setPosition(kArrowLeftPosX, kMoraleArrowPosY, OrderInLayer::MoveObject);
             m_SpriteList[i]->setScale(25.0f, 25.0f, 0.1f);
-            m_SpriteList[i]->setTextureId(L"SoldierBarArrowTexture");
+            m_SpriteList[i]->SetTextureId(L"SoldierBarArrowTexture");
             break;
         case 2:
             m_SpriteList[i]->setPosition(kMeterPositionX, kSoldierMeterPositionY, OrderInLayer::BackGround);
             m_SpriteList[i]->setScale(200.0f, 200.0f, 0.1f);
-            m_SpriteList[i]->setTextureId(L"SoldierTexture");
+            m_SpriteList[i]->SetTextureId(L"SoldierTexture");
             break;
         case 3:
             m_SpriteList[i]->setPosition(kMeterPositionX, kMoraleMeterPositionY, OrderInLayer::BackGround);
             m_SpriteList[i]->setScale(200.0f, 200.0f, 0.1f);
-            m_SpriteList[i]->setTextureId(L"MoraleTexture");
+            m_SpriteList[i]->SetTextureId(L"MoraleTexture");
             break;
         }
     }
@@ -116,7 +116,7 @@ void MeterHUD::InitAction()
 
 bool MeterHUD::FrameAction()
 {
-    MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+    MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
     GraphicsPipeLineObjectBase* pipe = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
 
     wstring soldiers;
@@ -350,8 +350,8 @@ void HUDObject::FlipAnimation(SpriteCharacter* sprite)
 
 void HUDObject::SetShaderResoruce()
 {
-    MyGameEngine* engine = MyAccessHub::getMyGameEngine();
-    CharacterData* chData = getGameObject()->getCharacterData();
+    MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
+    CharacterData* chData = GetGameObject()->GetCharacterData();
 
     engine->InitCameraConstantBuffer(chData);
 
@@ -383,7 +383,7 @@ void StatusHUD::InitAction()
     {
         m_SpriteList[i] = std::make_unique<SpriteCharacter>();
         m_SpriteList[i]->SetCameraLabel(L"HUDCamera", 0);
-        m_SpriteList[i]->setColor(1.0f, 1.0f, 1.0f, 1);
+        m_SpriteList[i]->SetColor(1.0f, 1.0f, 1.0f, 1);
         m_SpriteList[i]->SetGraphicsPipeLine(L"AlphaSprite");
         m_SpriteList[i]->SetSpritePattern(0, 1, 1, m_PatternRect);
         m_SpriteList[i]->setSpriteIndex(0);
@@ -393,23 +393,23 @@ void StatusHUD::InitAction()
         case 0:     //ブラウン管のノイズ
             m_SpriteList[i]->setPosition(380.0f, 200.0f, OrderInLayer::MoveObject);
             m_SpriteList[i]->setScale(160.0f, 120.0f, 0.1f);
-            m_SpriteList[i]->setTextureId(L"BrownTelevisionNoizeTexture");
+            m_SpriteList[i]->SetTextureId(L"BrownTelevisionNoizeTexture");
             break;
         case 2:     //テレビラベル
             m_SpriteList[i]->setPosition(380.0f, 155.0f, OrderInLayer::BackGround);
             m_SpriteList[i]->setScale(200.0f, 40.0f, 0.1f);
-            m_SpriteList[i]->setTextureId(L"Sprite00");
+            m_SpriteList[i]->SetTextureId(L"Sprite00");
             break;
         case 1:     //ブラウン管テレビフレーム
             m_SpriteList[i]->setPosition(380.0f, 200.0f, OrderInLayer::Text + 0.2f);
             m_SpriteList[i]->setScale(200.0f, 200.0f, 0.1f);
-            m_SpriteList[i]->setTextureId(L"BrownTelevisiomnFrameImage");
+            m_SpriteList[i]->SetTextureId(L"BrownTelevisiomnFrameImage");
             break;
         case 3:     //テレビの背景
-            m_SpriteList[i]->setPosition(380.0f, 200.0f, OrderInLayer::Text + 0.2f);
+            m_SpriteList[i]->setPosition(380.0f, 225.0f, OrderInLayer::Text + 0.2f);
             m_SpriteList[i]->SetCameraLabel(L"BackGroundHUDCamera", 0); //背景用ラベルに切り替え
-            m_SpriteList[i]->setScale(200.0f, 200.0f, 0.1f);
-            m_SpriteList[i]->setTextureId(L"Sprite00");
+            m_SpriteList[i]->setScale(200.0f, 150.0f, 0.1f);
+            m_SpriteList[i]->SetTextureId(L"Sprite00");
             break;
         }
     }
@@ -418,9 +418,9 @@ void StatusHUD::InitAction()
 
 bool StatusHUD::FrameAction()
 {
-    MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+    MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
     GraphicsPipeLineObjectBase* pipe = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
-    SceneManager* p_scene = static_cast<SceneManager*>(MyAccessHub::getMyGameEngine()->GetSceneController());
+    SceneManager* p_scene = static_cast<SceneManager*>(MyAccessHub::GetMyGameEngine()->GetSceneController());
 
     Squares* selectSquare = BFMng->GetFieldSquaresList()[BFMng->GetSelectID()];
     Squares* targetSquare = BFMng->GetFieldSquaresList()[BFMng->GetTargetID()];
@@ -513,10 +513,10 @@ void StatusHUD::SetLabelColor()
         switch (BFMng->GetFieldSquaresList()[BFMng->GetSelectID()]->chara->CharaAdmin)
         {
         case Admin::Rebel:
-            m_SpriteList[2]->setColor(0.0f, 0.0f, 1.0f, 1.0f);
+            m_SpriteList[2]->SetColor(0.0f, 0.0f, 1.0f, 1.0f);
             break;
         case Admin::Imperial:
-            m_SpriteList[2]->setColor(1.0f, 0.0f, 0.0f, 1.0f);
+            m_SpriteList[2]->SetColor(1.0f, 0.0f, 0.0f, 1.0f);
             break;
         }
         break;
@@ -528,10 +528,10 @@ void StatusHUD::SetLabelColor()
         switch (BFMng->GetFieldSquaresList()[BFMng->GetTargetID()]->chara->CharaAdmin)
         {
         case Admin::Rebel:
-            m_SpriteList[2]->setColor(0.0f, 0.0f, 1.0f, 1.0f);
+            m_SpriteList[2]->SetColor(0.0f, 0.0f, 1.0f, 1.0f);
             break;
         case Admin::Imperial:
-            m_SpriteList[2]->setColor(1.0f, 0.0f, 0.0f, 1.0f);
+            m_SpriteList[2]->SetColor(1.0f, 0.0f, 0.0f, 1.0f);
             break;
         }
         break;
@@ -541,7 +541,7 @@ void StatusHUD::SetLabelColor()
 
 void StatusHUD::SetRender(int index)
 {
-    MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+    MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
     GraphicsPipeLineObjectBase* pipe = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
 
     switch (index)
@@ -568,7 +568,7 @@ void StatusText::InitAction()
 
 bool StatusText::FrameAction()
 {
-    MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+    MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
     GraphicsPipeLineObjectBase* pipeLine = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
 
     Squares* selectSquare = BFMng->GetFieldSquaresList()[BFMng->GetSelectID()];
@@ -664,7 +664,7 @@ int HUDTextObject::MakeSpriteString(int startIndex, float ltX, float ltY, float 
         {
             m_WordSpriteList[count]->SetSpritePattern(0, width, height, m_FontMap[*str]);
             m_WordSpriteList[count]->setSpriteIndex(0);
-            m_WordSpriteList[count]->setColor(color.x, color.y, color.z, 1);
+            m_WordSpriteList[count]->SetColor(color.x, color.y, color.z, 1);
 
             m_WordSpriteList[count]->setPosition(ltX, ltY, 0.0f);
             count++;
@@ -702,7 +702,7 @@ int HUDTextObject::MakeSpriteStringRightAligned(int startIndex, float ltX, float
             m_WordSpriteList[count]->SetSpritePattern(0, width, height, m_FontMap[*str]);
             m_WordSpriteList[count]->setSpriteIndex(0);
             m_WordSpriteList[count]->setPosition(startX, ltY, 0.0f);
-            m_WordSpriteList[count]->setColor(color.x, color.y, color.z, 1);
+            m_WordSpriteList[count]->SetColor(color.x, color.y, color.z, 1);
             count++;
             startX += width + 2.0f;
         }
@@ -715,7 +715,7 @@ int HUDTextObject::MakeSpriteStringRightAligned(int startIndex, float ltX, float
 
 void HUDTextObject::SetFont(const wchar_t* fontTextureId, const wchar_t* fontWordList)
 {
-    MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+    MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
 
     SpriteCharacter* spc;
 
@@ -723,7 +723,7 @@ void HUDTextObject::SetFont(const wchar_t* fontTextureId, const wchar_t* fontWor
     {
         spc = new SpriteCharacter();
 
-        spc->setTextureId(fontTextureId);
+        spc->SetTextureId(fontTextureId);
         spc->SetCameraLabel(L"HUDCamera", 0);
 
         spc->SetGraphicsPipeLine(L"AlphaSprite");
@@ -773,7 +773,7 @@ void AbilityHUD::InitAction()
     {
         m_SpriteList.push_back(std::make_unique<SpriteCharacter>());
         m_SpriteList[i]->SetCameraLabel(L"HUDCamera", 0);
-        m_SpriteList[i]->setColor(1.0f, 1.0f, 1.0f, 1);
+        m_SpriteList[i]->SetColor(1.0f, 1.0f, 1.0f, 1);
         m_SpriteList[i]->SetGraphicsPipeLine(L"AlphaSprite");
         m_SpriteList[i]->SetSpritePattern(0, 1, 1, m_PatternRect);
         m_SpriteList[i]->setSpriteIndex(0);
@@ -783,26 +783,26 @@ void AbilityHUD::InitAction()
         case 0:
             m_SpriteList[i]->setPosition(0.0f, 0.0f, OrderInLayer::BackGround);
             m_SpriteList[i]->setScale(500.0f, 500.0f, 0.1f);
-            m_SpriteList[i]->setColor(1.0f, 1.0f, 1.0f, 1);
-            m_SpriteList[i]->setTextureId(L"AbillityBackGroundTexture");
+            m_SpriteList[i]->SetColor(1.0f, 1.0f, 1.0f, 1);
+            m_SpriteList[i]->SetTextureId(L"AbillityBackGroundTexture");
             break;
         case 1:
             m_SpriteList[i]->setPosition(0.0f, 0.0f, OrderInLayer::MoveObject);
             m_SpriteList[i]->setScale(400.0f, 400.0f, 0.1f);
-            m_SpriteList[i]->setColor(1.0f, 1.0f, 1.0f, 1);
-            m_SpriteList[i]->setTextureId(L"AbillityNoteTexture");
+            m_SpriteList[i]->SetColor(1.0f, 1.0f, 1.0f, 1);
+            m_SpriteList[i]->SetTextureId(L"AbillityNoteTexture");
             break;
         case 2:
             m_SpriteList[i]->setPosition(0.0f, 0.0f, OrderInLayer::MoveObject);
             m_SpriteList[i]->setScale(400.0f, 400.0f, 0.1f);
-            m_SpriteList[i]->setColor(1.0f, 1.0f, 1.0f, 1);
-            m_SpriteList[i]->setTextureId(L"AbillityNoteTexture");
+            m_SpriteList[i]->SetColor(1.0f, 1.0f, 1.0f, 1);
+            m_SpriteList[i]->SetTextureId(L"AbillityNoteTexture");
             break;
         case 3:
             m_SpriteList[i]->setPosition(0.0f, 0.0f, OrderInLayer::MoveObject);
             m_SpriteList[i]->setScale(400.0f, 400.0f, 0.1f);
-            m_SpriteList[i]->setColor(1.0f, 1.0f, 1.0f, 1);
-            m_SpriteList[i]->setTextureId(L"AbillityNoteTexture");
+            m_SpriteList[i]->SetColor(1.0f, 1.0f, 1.0f, 1);
+            m_SpriteList[i]->SetTextureId(L"AbillityNoteTexture");
             break;
         }
     }
@@ -821,7 +821,7 @@ bool AbilityHUD::FrameAction()
 {
     if (BFMng->GetHUDEnableCondition() && BFMng->GetMode() == Mode::AbilityMode && BFMng->GetTargetMode() == TargetMode::None)
     {
-        MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+        MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
         GraphicsPipeLineObjectBase* pipeline = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
 
         for (int i = m_ActiveTweenList.size() - 1; i >= 0; --i)
@@ -846,13 +846,13 @@ bool AbilityHUD::FrameAction()
                     switch (BFMng->GetAlliesCharacterList()[BFMng->GetFieldSquaresList()[BFMng->GetSelectID()]->ThereCharaID]->Abilities[i])
                     {
                     case AbilityType::ConcentratedFire:
-                        m_SpriteList[i + 1]->setTextureId(L"AbillityConcentratedFireTexture");
+                        m_SpriteList[i + 1]->SetTextureId(L"AbillityConcentratedFireTexture");
                         break;
                     case AbilityType::BayonetCharge:
-                        m_SpriteList[i + 1]->setTextureId(L"AbillityBayonetChargeTexture");
+                        m_SpriteList[i + 1]->SetTextureId(L"AbillityBayonetChargeTexture");
                         break;
                     case AbilityType::Scout:
-                        m_SpriteList[i + 1]->setTextureId(L"AbillityScoutTexture");
+                        m_SpriteList[i + 1]->SetTextureId(L"AbillityScoutTexture");
                         break;
                     }
                     abillityCount++;
@@ -938,19 +938,19 @@ bool AbilityHUD::FrameAction()
         case AnimationState::Run:
             for (int i = 1; i < 4; i++)
             {
-                m_SpriteList[i]->setColor(1.0f, 1.0f, 1.0f, 1);
+                m_SpriteList[i]->SetColor(1.0f, 1.0f, 1.0f, 1);
             }
 
             switch (BFMng->GetAbillityIndex())
             {
             case 0:
-                m_SpriteList[1]->setColor(1.0f, 0.5f, 0.5f, 1);
+                m_SpriteList[1]->SetColor(1.0f, 0.5f, 0.5f, 1);
                 break;
             case 1:
-                m_SpriteList[2]->setColor(1.0f, 0.5f, 0.5f, 1);
+                m_SpriteList[2]->SetColor(1.0f, 0.5f, 0.5f, 1);
                 break;
             case 2:
-                m_SpriteList[3]->setColor(1.0f, 0.5f, 0.5f, 1);
+                m_SpriteList[3]->SetColor(1.0f, 0.5f, 0.5f, 1);
                 break;
             }
             break;
@@ -1010,7 +1010,7 @@ void GuideHUD::InitAction()
         m_SpriteList.push_back(std::make_unique<SpriteCharacter>());
         m_SpriteList[i] = std::make_unique<SpriteCharacter>();
         m_SpriteList[i]->SetCameraLabel(L"HUDCamera", 0);
-        m_SpriteList[i]->setColor(1.0f, 1.0f, 1.0f, 1);
+        m_SpriteList[i]->SetColor(1.0f, 1.0f, 1.0f, 1);
         m_SpriteList[i]->SetGraphicsPipeLine(L"AlphaSprite");
         m_SpriteList[i]->SetSpritePattern(0, 1, 1, m_PatternRect);
         m_SpriteList[i]->setSpriteIndex(0);
@@ -1020,7 +1020,7 @@ void GuideHUD::InitAction()
         case 0:
             m_SpriteList[i]->setPosition(kGuideBackGroundPos.x, kGuideBackGroundPos.y, OrderInLayer::BackGround);
             m_SpriteList[i]->setScale(700.0f, 700.0f, 0.1f);
-            m_SpriteList[i]->setTextureId(L"WindowTexture");
+            m_SpriteList[i]->SetTextureId(L"WindowTexture");
             break;
         }
     }
@@ -1036,7 +1036,7 @@ void GuideHUD::InitAction()
 
 bool GuideHUD::FrameAction()
 {
-    MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+    MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
     GraphicsPipeLineObjectBase* pipeLine = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
 
     int count = 0;
@@ -1100,7 +1100,7 @@ void SideMenuHUD::InitAction()
         m_SpriteList.push_back(std::make_unique<SpriteCharacter>());
         m_SpriteList[i] = std::make_unique<SpriteCharacter>();
         m_SpriteList[i]->SetCameraLabel(L"HUDCamera", 0);
-        m_SpriteList[i]->setColor(1.0f, 1.0f, 1.0f, 1);
+        m_SpriteList[i]->SetColor(1.0f, 1.0f, 1.0f, 1);
         m_SpriteList[i]->SetGraphicsPipeLine(L"AlphaSprite");
         m_SpriteList[i]->SetSpritePattern(0, 1, 1, m_PatternRect);
         m_SpriteList[i]->setSpriteIndex(0);
@@ -1112,12 +1112,12 @@ void SideMenuHUD::InitAction()
         case 2:
             m_SpriteList[i]->setPosition(kSideMenuBackGroundPos.x, kTextPositionY[i], OrderInLayer::MoveObject);
             m_SpriteList[i]->setScale(400.0f, 50.0f, 0.1f);
-            m_SpriteList[i]->setTextureId(L"Sprite00");
+            m_SpriteList[i]->SetTextureId(L"Sprite00");
             break;
         case 3:
             m_SpriteList[i]->setPosition(kSideMenuBackGroundPos.x, kSideMenuBackGroundPos.y, OrderInLayer::BackGround);
             m_SpriteList[i]->setScale(600.0f, 600.0f, 0.1f);
-            m_SpriteList[i]->setTextureId(L"SideMenuTexture");
+            m_SpriteList[i]->SetTextureId(L"SideMenuTexture");
             break;
         }
     }
@@ -1131,7 +1131,7 @@ bool SideMenuHUD::FrameAction()
 {
     if (BFMng->GetMode() == Mode::SideMenuMode)
     {
-        MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+        MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
         GraphicsPipeLineObjectBase* pipeline = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
 
         int count = 0;
@@ -1190,7 +1190,7 @@ void CurrentTerrainHUD::InitAction()
         m_SpriteList.push_back(std::make_unique<SpriteCharacter>());
         m_SpriteList[i] = std::make_unique<SpriteCharacter>();
         m_SpriteList[i]->SetCameraLabel(L"HUDCamera", 0);
-        m_SpriteList[i]->setColor(1.0f, 1.0f, 1.0f, 1);
+        m_SpriteList[i]->SetColor(1.0f, 1.0f, 1.0f, 1);
         m_SpriteList[i]->SetGraphicsPipeLine(L"AlphaSprite");
         m_SpriteList[i]->SetSpritePattern(0, 1, 1, m_PatternRect);
         m_SpriteList[i]->setSpriteIndex(0);
@@ -1200,7 +1200,7 @@ void CurrentTerrainHUD::InitAction()
         case 0:
             m_SpriteList[i]->setPosition(kBackGroundPos.x, kBackGroundPos.y, OrderInLayer::BackGround);
             m_SpriteList[i]->setScale(200.0f, 200.0f, 0.1f);
-            m_SpriteList[i]->setTextureId(L"TerrainHUDTexture");
+            m_SpriteList[i]->SetTextureId(L"TerrainHUDTexture");
             break;
         }
     }
@@ -1226,7 +1226,7 @@ bool CurrentTerrainHUD::FrameAction()
         return true;
 	}
 
-    MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+    MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
     GraphicsPipeLineObjectBase* pipeline = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
 
     Squares* selectSquare = nullptr;
@@ -1310,7 +1310,7 @@ void BattleCameraHUD::InitAction()
         m_SpriteList.push_back(std::make_unique<SpriteCharacter>());
         m_SpriteList[i] = std::make_unique<SpriteCharacter>();
         m_SpriteList[i]->SetCameraLabel(L"HUDCamera", 0);
-        m_SpriteList[i]->setColor(1.0f, 1.0f, 1.0f, 1);
+        m_SpriteList[i]->SetColor(1.0f, 1.0f, 1.0f, 1);
         m_SpriteList[i]->SetGraphicsPipeLine(L"AlphaSprite");
         m_SpriteList[i]->SetSpritePattern(0, 1, 1, m_PatternRect);
         m_SpriteList[i]->setSpriteIndex(0);
@@ -1320,7 +1320,7 @@ void BattleCameraHUD::InitAction()
         case 0:
             m_SpriteList[i]->setPosition(kBackGroundPos.x, kBackGroundPos.y, OrderInLayer::BackGround);
             m_SpriteList[i]->setScale(960.0f, 950.0f, 0.1f);
-            m_SpriteList[i]->setTextureId(L"BattleCameraHUDTexture");
+            m_SpriteList[i]->SetTextureId(L"BattleCameraHUDTexture");
             break;
         }
     }
@@ -1335,7 +1335,7 @@ bool BattleCameraHUD::FrameAction()
 {
     if (BFMng->GetBattleCameraEnable() == true)
     {
-        MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+        MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
         GraphicsPipeLineObjectBase* pipeline = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
 
 		int count = 0;
@@ -1379,7 +1379,7 @@ void MainMenuHUD::InitAction()
         m_SpriteList.push_back(std::make_unique<SpriteCharacter>());
         m_SpriteList[i] = std::make_unique<SpriteCharacter>();
         m_SpriteList[i]->SetCameraLabel(L"HUDCamera", 0);
-        m_SpriteList[i]->setColor(1.0f, 1.0f, 1.0f, 1);
+        m_SpriteList[i]->SetColor(1.0f, 1.0f, 1.0f, 1);
         m_SpriteList[i]->SetGraphicsPipeLine(L"AlphaSprite");
         m_SpriteList[i]->SetSpritePattern(0, 1, 1, m_PatternRect);
         m_SpriteList[i]->setSpriteIndex(0);
@@ -1387,22 +1387,22 @@ void MainMenuHUD::InitAction()
         
         if (i < 18)
         {
-            m_SpriteList[i]->setTextureId(L"NixieTubesTexture");
+            m_SpriteList[i]->SetTextureId(L"NixieTubesTexture");
             m_SpriteList[i]->setScale(110.0f, 90.0f, 0.1f);
         }
         else if (i < 23)
         {
-            m_SpriteList[i]->setTextureId(L"NixieBaseTexture");
+            m_SpriteList[i]->SetTextureId(L"NixieBaseTexture");
             m_SpriteList[i]->setScale(250.0f, 250.0f, 1.0f);
         }
         else if (i < 24)
         {
-            m_SpriteList[i]->setTextureId(L"MenuBaseTexture");
+            m_SpriteList[i]->SetTextureId(L"MenuBaseTexture");
             m_SpriteList[i]->setScale(200.0f, 330.0f, 1.0f);
         }
         else if (i < 25)
         {
-            m_SpriteList[i]->setTextureId(L"NixieGageTexture");
+            m_SpriteList[i]->SetTextureId(L"NixieGageTexture");
             m_SpriteList[i]->setScale(300.0f, 300.0f, 1.0f);
         }
 
@@ -1438,7 +1438,7 @@ void DamageEffectHUD::InitAction()
         m_SpriteList.push_back(std::make_unique<SpriteCharacter>());
         m_SpriteList[i] = std::make_unique<SpriteCharacter>();
         m_SpriteList[i]->SetCameraLabel(L"HUDCamera", 0);
-        m_SpriteList[i]->setColor(1.0f, 1.0f, 1.0f, 1);
+        m_SpriteList[i]->SetColor(1.0f, 1.0f, 1.0f, 1);
         m_SpriteList[i]->SetGraphicsPipeLine(L"AlphaSprite");
         m_SpriteList[i]->SetSpritePattern(0, 1, 1, m_PatternRect);
         m_SpriteList[i]->setSpriteIndex(0);
@@ -1448,17 +1448,17 @@ void DamageEffectHUD::InitAction()
         case 0:
             m_SpriteList[i]->setPosition(kLowDamageEffectPosition.x, kLowDamageEffectPosition.y, OrderInLayer::BackGround);
             m_SpriteList[i]->setScale(kSmallDamageEffectScale, kSmallDamageEffectScale, 0.1f);
-            m_SpriteList[i]->setTextureId(L"DamagedEffectTexture");
+            m_SpriteList[i]->SetTextureId(L"DamagedEffectTexture");
             break;
         case 1:
             m_SpriteList[i]->setPosition(kMidDamageEffectPosition.x, kMidDamageEffectPosition.y, OrderInLayer::BackGround);
             m_SpriteList[i]->setScale(kLargeDamageEffectScale, kLargeDamageEffectScale, 0.1f);
-            m_SpriteList[i]->setTextureId(L"DamagedEffectTexture");
+            m_SpriteList[i]->SetTextureId(L"DamagedEffectTexture");
             break;
         case 2:
             m_SpriteList[i]->setPosition(kHighDamageEffectPosition.x, kHighDamageEffectPosition.y, OrderInLayer::BackGround);
             m_SpriteList[i]->setScale(kSmallDamageEffectScale, kSmallDamageEffectScale, 0.1f);
-            m_SpriteList[i]->setTextureId(L"DamagedEffectTexture");
+            m_SpriteList[i]->SetTextureId(L"DamagedEffectTexture");
             break;
         }
     }
@@ -1466,7 +1466,7 @@ void DamageEffectHUD::InitAction()
 
 bool DamageEffectHUD::FrameAction()
 {
-    MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+    MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
     GraphicsPipeLineObjectBase* pipeline = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
 
     switch (m_AnimationState)
@@ -1534,7 +1534,7 @@ void SuperiorityGaugeHUD::InitAction()
         m_SpriteList.push_back(std::make_unique<SpriteCharacter>());
         m_SpriteList[i] = std::make_unique<SpriteCharacter>();
         m_SpriteList[i]->SetCameraLabel(L"HUDCamera", 0);
-        m_SpriteList[i]->setColor(1.0f, 1.0f, 1.0f, 1);
+        m_SpriteList[i]->SetColor(1.0f, 1.0f, 1.0f, 1);
         m_SpriteList[i]->SetGraphicsPipeLine(L"AlphaSprite");
         m_SpriteList[i]->SetSpritePattern(0, 1, 1, m_PatternRect);
         m_SpriteList[i]->setSpriteIndex(0);
@@ -1544,35 +1544,35 @@ void SuperiorityGaugeHUD::InitAction()
 		case 0: //ゲージの背景
             m_SpriteList[i]->setPosition(0.0f, kGagePositionY, OrderInLayer::BackGround);
             m_SpriteList[i]->setScale(310.0f, 100.0f, 0.1f);
-            m_SpriteList[i]->setTextureId(L"DogtagBaseTexture");
+            m_SpriteList[i]->SetTextureId(L"DogtagBaseTexture");
             break;
         case 1: //味方ゲージ
             m_SpriteList[i]->setPosition(0.0f, kGagePositionY, OrderInLayer::MoveObject);
             m_SpriteList[i]->setScale(300.0f, 300.0f, 0.1f);
-            m_SpriteList[i]->setTextureId(L"AliesGageTexture");
+            m_SpriteList[i]->SetTextureId(L"AliesGageTexture");
             break;
 		case 2: //敵ゲージ
             m_SpriteList[i]->setPosition(0.0f, kGagePositionY, OrderInLayer::MoveObject);
             m_SpriteList[i]->setScale(300.0f, 300.0f, 0.1f);
-            m_SpriteList[i]->setTextureId(L"EnemyGageTexture");
+            m_SpriteList[i]->SetTextureId(L"EnemyGageTexture");
             break;
 		case 3: //ゲージの節　左
             m_SpriteList[i]->setPosition(-75.0f, kGagePositionY, OrderInLayer::Text);
             m_SpriteList[i]->setScale(2.0f, 30.0f, 0.1f);
-            m_SpriteList[i]->setColor(1.0f, 1.0f, 0.0f, 1);
-            m_SpriteList[i]->setTextureId(L"Sprite00");
+            m_SpriteList[i]->SetColor(1.0f, 1.0f, 0.0f, 1);
+            m_SpriteList[i]->SetTextureId(L"Sprite00");
             break;
         case 4: //ゲージの節　中央
             m_SpriteList[i]->setPosition(0.0f, kGagePositionY, OrderInLayer::Text);
             m_SpriteList[i]->setScale(2.0f, 30.0f, 0.1f);
-            m_SpriteList[i]->setColor(1.0f, 1.0f, 0.0f, 1);
-            m_SpriteList[i]->setTextureId(L"Sprite00");
+            m_SpriteList[i]->SetColor(1.0f, 1.0f, 0.0f, 1);
+            m_SpriteList[i]->SetTextureId(L"Sprite00");
             break;
 		case 5: //ゲージの節　右
             m_SpriteList[i]->setPosition(75.0f, kGagePositionY, OrderInLayer::Text);
             m_SpriteList[i]->setScale(2.0f, 30.0f, 0.1f);
-            m_SpriteList[i]->setColor(1.0f, 1.0f, 0.0f, 1);
-            m_SpriteList[i]->setTextureId(L"Sprite00");
+            m_SpriteList[i]->SetColor(1.0f, 1.0f, 0.0f, 1);
+            m_SpriteList[i]->SetTextureId(L"Sprite00");
             break;
         }
     }
@@ -1582,7 +1582,7 @@ void SuperiorityGaugeHUD::InitAction()
 
 bool SuperiorityGaugeHUD::FrameAction()
 {
-    MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+    MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
     GraphicsPipeLineObjectBase* pipeline = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
 
     switch (m_AnimationState)

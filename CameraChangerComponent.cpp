@@ -3,7 +3,7 @@
 
 void CameraChangerComponent::InitAction()
 {
-	SceneManager* scene = dynamic_cast<SceneManager*>(MyAccessHub::getMyGameEngine()->GetSceneController());
+	SceneManager* scene = dynamic_cast<SceneManager*>(MyAccessHub::GetMyGameEngine()->GetSceneController());
 	m_keyBind = dynamic_cast<KeyBindComponent*>(scene->getKeyComponent());
 	m_currentCamera = -1;
 }
@@ -49,7 +49,7 @@ void CameraChangerComponent::ChangeCameraController(int index)
 //メイン・バトルカメラ切り替え
 void CameraChangerComponent::ChangeCamera()
 {
-	SceneManager* p_scene = static_cast<SceneManager*>(MyAccessHub::getMyGameEngine()->GetSceneController());
+	SceneManager* p_scene = static_cast<SceneManager*>(MyAccessHub::GetMyGameEngine()->GetSceneController());
 	if (p_scene->getCameraComponent(L"AttackerCamera") != nullptr)
 	{
 		SetMainCamera();
@@ -63,7 +63,7 @@ void CameraChangerComponent::ChangeCamera()
 //バトルカメラ起動・メインカメラ削除
 void CameraChangerComponent::SetBattleCamera()
 {
-	SceneManager* p_scene = static_cast<SceneManager*>(MyAccessHub::getMyGameEngine()->GetSceneController());
+	SceneManager* p_scene = static_cast<SceneManager*>(MyAccessHub::GetMyGameEngine()->GetSceneController());
 	p_scene->SetActiveCameraCompornent(L"AttackerCamera", true);
 	p_scene->SetActiveCameraCompornent(L"DefenderCamera", true);
 	p_scene->SetActiveCameraCompornent(L"MainCamera", false);
@@ -74,7 +74,7 @@ void CameraChangerComponent::SetBattleCamera()
 //メインカメラ起動・バトルカメラ削除
 void CameraChangerComponent::SetMainCamera()
 {
-	SceneManager* p_scene = static_cast<SceneManager*>(MyAccessHub::getMyGameEngine()->GetSceneController());
+	SceneManager* p_scene = static_cast<SceneManager*>(MyAccessHub::GetMyGameEngine()->GetSceneController());
 	p_scene->SetActiveCameraCompornent(L"AttackerCamera", false);
 	p_scene->SetActiveCameraCompornent(L"DefenderCamera", false);
 	p_scene->SetActiveCameraCompornent(L"MainCamera", true);

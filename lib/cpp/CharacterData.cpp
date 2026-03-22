@@ -4,7 +4,7 @@
 
 void CharacterData::AddConstantBuffer(UINT buffSize, const void* initData)
 {
-	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
 	if (m_constantBuffers.size() <= m_cbuffCount)
 	{
 		m_constantBuffers.resize(m_cbuffCount + 5);
@@ -18,7 +18,7 @@ void CharacterData::AddConstantBuffer(UINT buffSize, const void* initData)
 
 void CharacterData::SetGraphicsPipeLine(std::wstring pipelineName)
 {
-	PipeLineManager* plMng = MyAccessHub::getMyGameEngine()->GetPipelineManager();
+	PipeLineManager* plMng = MyAccessHub::GetMyGameEngine()->GetPipelineManager();
 
 	m_pPipeLine = plMng->GetPipeLineObject(pipelineName);
 }

@@ -20,7 +20,7 @@ int ResultUI::MakeSpriteString(int startIndex, float ltX, float ltY, float width
         {
             m_WordSprites[count]->SetSpritePattern(0, width, height, m_FontMap[*str]);
             m_WordSprites[count]->setSpriteIndex(0);
-            m_WordSprites[count]->setColor(0, 0, 0, 1);
+            m_WordSprites[count]->SetColor(0, 0, 0, 1);
             m_WordSprites[count]->setPosition(ltX, ltY, 0.5f);
             count++;
         }
@@ -35,50 +35,50 @@ int ResultUI::MakeSpriteString(int startIndex, float ltX, float ltY, float width
 
 void ResultUI::InitAction()
 {
-    MyGameEngine* engine = MyAccessHub::getMyGameEngine();
-    CharacterData* chData = getGameObject()->getCharacterData();
+    MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
+    CharacterData* chData = GetGameObject()->GetCharacterData();
 
     XMFLOAT4 pattern(0.0f, 0.0f, 1.0f, 1.0f);
 
     m_FoldPaperSprite = std::make_unique<SpriteCharacter>();  //最初の折っている新聞
     m_FoldPaperSprite->SetCameraLabel(L"HUDCamera", 0);
-    m_FoldPaperSprite->setColor(1.0f, 1.0f, 1.0f, 1);
+    m_FoldPaperSprite->SetColor(1.0f, 1.0f, 1.0f, 1);
     m_FoldPaperSprite->SetGraphicsPipeLine(L"AlphaSprite");
     m_FoldPaperSprite->SetSpritePattern(0, 1, 1, pattern);
     m_FoldPaperSprite->setScale(200.0f, 200.0f, 0.1f);
     m_FoldPaperSprite->setPosition(m_FoldNewsPaperPos.x, m_FoldNewsPaperPos.y, m_FoldNewsPaperPos.z);
     m_FoldPaperSprite->setSpriteIndex(0);
-    m_FoldPaperSprite->setTextureId(L"NewsPaperTexture");
+    m_FoldPaperSprite->SetTextureId(L"NewsPaperTexture");
     
     m_NewsPaperSprite = std::make_unique<SpriteCharacter>();  //勝利or敗北の一枚
     m_NewsPaperSprite->SetCameraLabel(L"HUDCamera", 0);
-    m_NewsPaperSprite->setColor(1.0f, 1.0f, 1.0f, 1);
+    m_NewsPaperSprite->SetColor(1.0f, 1.0f, 1.0f, 1);
     m_NewsPaperSprite->SetGraphicsPipeLine(L"AlphaSprite");
     m_NewsPaperSprite->SetSpritePattern(0, 1, 1, pattern);
     m_NewsPaperSprite->setScale(500.0f, 500.0f, 0.1f);
     m_NewsPaperSprite->setPosition(0.0f, 0.0f, 1.0f);
     m_NewsPaperSprite->setSpriteIndex(0);
-    m_NewsPaperSprite->setTextureId(L"NewsPaperWinTexture"); //表示されるタイミングでまたイメージを切り替える
+    m_NewsPaperSprite->SetTextureId(L"NewsPaperWinTexture"); //表示されるタイミングでまたイメージを切り替える
 
     m_NewsPaperResultSprite = std::make_unique<SpriteCharacter>();  //勝利時のリザルト画面
     m_NewsPaperResultSprite->SetCameraLabel(L"HUDCamera", 0);
-    m_NewsPaperResultSprite->setColor(1.0f, 1.0f, 1.0f, 1);
+    m_NewsPaperResultSprite->SetColor(1.0f, 1.0f, 1.0f, 1);
     m_NewsPaperResultSprite->SetGraphicsPipeLine(L"AlphaSprite");
     m_NewsPaperResultSprite->SetSpritePattern(0, 1, 1, pattern);
     m_NewsPaperResultSprite->setScale(500.0f, 500.0f, 0.1f);
     m_NewsPaperResultSprite->setPosition(0.0f, 0.0f, 1.5f);
     m_NewsPaperResultSprite->setSpriteIndex(0);
-    m_NewsPaperResultSprite->setTextureId(L"NewsPaperWinResultTexture");
+    m_NewsPaperResultSprite->SetTextureId(L"NewsPaperWinResultTexture");
 
     m_Fadeprite = std::make_unique<SpriteCharacter>();  //背景が暗転する
     m_Fadeprite->SetCameraLabel(L"HUDCamera", 0);
-    m_Fadeprite->setColor(1.0f, 1.0f, 1.0f, 0.0f);
+    m_Fadeprite->SetColor(1.0f, 1.0f, 1.0f, 0.0f);
     m_Fadeprite->SetGraphicsPipeLine(L"AlphaSprite");
     m_Fadeprite->SetSpritePattern(0, 1, 1, pattern);
     m_Fadeprite->setScale(1000.0f, 600.0f, 0.1f);
     m_Fadeprite->setPosition(0.0f, 0.0f, 2.0f);
     m_Fadeprite->setSpriteIndex(0);
-    m_Fadeprite->setTextureId(L"Sprite00");
+    m_Fadeprite->SetTextureId(L"Sprite00");
 
     m_WordCount = 50;
 
@@ -88,10 +88,10 @@ void ResultUI::InitAction()
     {
         spc = new SpriteCharacter();
 
-        spc->setTextureId(L"JPNHUDTextureNP");
+        spc->SetTextureId(L"JPNHUDTextureNP");
         spc->SetCameraLabel(L"HUDCamera", 0);
 
-        spc->setColor(1, 1, 1, 1);
+        spc->SetColor(1, 1, 1, 1);
 
         spc->SetGraphicsPipeLine(L"AlphaSprite");
 
@@ -130,11 +130,11 @@ void ResultUI::InitAction()
 
 bool ResultUI::FrameAction()
 {
-    MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+    MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
     GraphicsPipeLineObjectBase* spritePipeLine = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
     GraphicsPipeLineObjectBase* wordPipeLine = engine->GetPipelineManager()->GetPipeLineObject(L"Sprite");
     BattleFieldManager* BFMng = MyAccessHub::GetBFManager();
-    SceneManager* p_scene = static_cast<SceneManager*>(MyAccessHub::getMyGameEngine()->GetSceneController());
+    SceneManager* p_scene = static_cast<SceneManager*>(MyAccessHub::GetMyGameEngine()->GetSceneController());
     KeyBindComponent* keycomp = static_cast<KeyBindComponent*>(p_scene->getKeyComponent());
 
     int count = 0;
@@ -171,7 +171,7 @@ bool ResultUI::FrameAction()
                 {
                     m_FadeAlpha = 1.0f;
                 }
-                m_Fadeprite->setColor(0, 0, 0, m_FadeAlpha);
+                m_Fadeprite->SetColor(0, 0, 0, m_FadeAlpha);
 
                 //新聞が下に落ちるアニメーション
                 m_FoldNewsPaperPos.y -= 15.0f;
@@ -200,27 +200,27 @@ bool ResultUI::FrameAction()
         case ResultStates::WinAnim:
             if (m_OpenAnimCount < kAnimSpace)
             {
-                m_NewsPaperSprite->setTextureId(L"NewsPaperWinTexture04");
+                m_NewsPaperSprite->SetTextureId(L"NewsPaperWinTexture04");
                 m_OpenAnimCount += m_TimeManager->GetDeltaTime();
             }
             else if (m_OpenAnimCount > kAnimSpace && m_OpenAnimCount < kAnimSpace * 2)
             {
-                m_NewsPaperSprite->setTextureId(L"NewsPaperWinTexture03");
+                m_NewsPaperSprite->SetTextureId(L"NewsPaperWinTexture03");
                 m_OpenAnimCount += m_TimeManager->GetDeltaTime();
             }
             else if (m_OpenAnimCount > kAnimSpace * 2 && m_OpenAnimCount < kAnimSpace * 3)
             {
-                m_NewsPaperSprite->setTextureId(L"NewsPaperWinTexture02");
+                m_NewsPaperSprite->SetTextureId(L"NewsPaperWinTexture02");
                 m_OpenAnimCount += m_TimeManager->GetDeltaTime();
             }
             else if (m_OpenAnimCount > kAnimSpace * 3 && m_OpenAnimCount < kAnimSpace * 4)
             {
-                m_NewsPaperSprite->setTextureId(L"NewsPaperWinTexture01");
+                m_NewsPaperSprite->SetTextureId(L"NewsPaperWinTexture01");
                 m_OpenAnimCount += m_TimeManager->GetDeltaTime();
             }
             else if (m_OpenAnimCount > kAnimSpace * 4)
             {
-                m_NewsPaperSprite->setTextureId(L"NewsPaperWinTexture");
+                m_NewsPaperSprite->SetTextureId(L"NewsPaperWinTexture");
             }
 
             if (m_OpenAnimCount > kAnimSpace * 4 && keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK))
@@ -233,27 +233,27 @@ bool ResultUI::FrameAction()
         case ResultStates::LoseAnim:
             if (m_OpenAnimCount < kAnimSpace)
             {
-                m_NewsPaperSprite->setTextureId(L"NewsPaperLoseTexture04");
+                m_NewsPaperSprite->SetTextureId(L"NewsPaperLoseTexture04");
                 m_OpenAnimCount += m_TimeManager->GetDeltaTime();
             }
             else if (m_OpenAnimCount > kAnimSpace && m_OpenAnimCount < kAnimSpace * 2)
             {
-                m_NewsPaperSprite->setTextureId(L"NewsPaperLoseTexture03");
+                m_NewsPaperSprite->SetTextureId(L"NewsPaperLoseTexture03");
                 m_OpenAnimCount += m_TimeManager->GetDeltaTime();
             }
             else if (m_OpenAnimCount > kAnimSpace * 2 && m_OpenAnimCount < kAnimSpace * 3)
             {
-                m_NewsPaperSprite->setTextureId(L"NewsPaperLoseTexture02");
+                m_NewsPaperSprite->SetTextureId(L"NewsPaperLoseTexture02");
                 m_OpenAnimCount += m_TimeManager->GetDeltaTime();
             }
             else if (m_OpenAnimCount > kAnimSpace * 3 && m_OpenAnimCount < kAnimSpace * 4)
             {
-                m_NewsPaperSprite->setTextureId(L"NewsPaperLoseTexture01");
+                m_NewsPaperSprite->SetTextureId(L"NewsPaperLoseTexture01");
                 m_OpenAnimCount += m_TimeManager->GetDeltaTime();
             }
             else if (m_OpenAnimCount > kAnimSpace * 4)
             {
-                m_NewsPaperSprite->setTextureId(L"NewsPaperLoseTexture");
+                m_NewsPaperSprite->SetTextureId(L"NewsPaperLoseTexture");
             }
             spritePipeLine->AddRenderObject(m_NewsPaperSprite.get());
             spritePipeLine->AddRenderObject(m_Fadeprite.get());
@@ -267,27 +267,27 @@ bool ResultUI::FrameAction()
             case ResultAnimState::Init:
                 if (m_ResultAnimCount < kAnimSpace)
                 {
-                    m_NewsPaperSprite->setTextureId(L"NewsPaperWinTextureAfter01");
+                    m_NewsPaperSprite->SetTextureId(L"NewsPaperWinTextureAfter01");
                 }
                 else if (m_ResultAnimCount > kAnimSpace && m_ResultAnimCount < kAnimSpace * 2)
                 {
-                    m_NewsPaperSprite->setTextureId(L"NewsPaperWinTextureAfter02");
+                    m_NewsPaperSprite->SetTextureId(L"NewsPaperWinTextureAfter02");
                 }
                 else if (m_ResultAnimCount > kAnimSpace * 2 && m_ResultAnimCount < kAnimSpace * 3)
                 {
-                    m_NewsPaperSprite->setTextureId(L"NewsPaperWinTextureAfter03");
+                    m_NewsPaperSprite->SetTextureId(L"NewsPaperWinTextureAfter03");
                 }
                 else if (m_ResultAnimCount > kAnimSpace * 3 && m_ResultAnimCount < kAnimSpace * 4)
                 {
-                    m_NewsPaperSprite->setTextureId(L"NewsPaperWinTextureAfter04");
+                    m_NewsPaperSprite->SetTextureId(L"NewsPaperWinTextureAfter04");
                 }
                 else if (m_ResultAnimCount > kAnimSpace * 4 && m_ResultAnimCount < kAnimSpace * 5)
                 {
-                    m_NewsPaperSprite->setTextureId(L"NewsPaperWinTextureAfter05");
+                    m_NewsPaperSprite->SetTextureId(L"NewsPaperWinTextureAfter05");
                 }
                 else if (m_ResultAnimCount > kAnimSpace * 5 && m_ResultAnimCount < kAnimSpace * 6)
                 {
-                    m_NewsPaperSprite->setTextureId(L"NewsPaperWinTextureAfter06");
+                    m_NewsPaperSprite->SetTextureId(L"NewsPaperWinTextureAfter06");
                 }
                 else if (m_ResultAnimCount > kAnimSpace * 6)
                 {

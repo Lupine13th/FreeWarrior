@@ -7,7 +7,7 @@
 
 void PipeLineManager::AddPipeLineObject(const std::wstring labelName, GraphicsPipeLineObjectBase* obj)
 {
-    if (SUCCEEDED(obj->InitPipeLineStateObject(MyAccessHub::getMyGameEngine()->GetDirect3DDevice())))
+    if (SUCCEEDED(obj->InitPipeLineStateObject(MyAccessHub::GetMyGameEngine()->GetDirect3DDevice())))
     {
         m_pipeLineDB[labelName].reset(obj);
     }
@@ -15,7 +15,7 @@ void PipeLineManager::AddPipeLineObject(const std::wstring labelName, GraphicsPi
 
 UINT PipeLineManager::Render()
 {
-    MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+    MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
     UINT renderCount = 1;
 
     m_renderCommandList.clear();

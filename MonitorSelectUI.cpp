@@ -16,7 +16,7 @@ void MonitorSelectUI::ResetAnim()   //バーの位置が画面外に戻る
 {
     Animation = true;
     Gageposx = -700.0f;
-    m_sprite[5]->setPosition(Gageposx, 143.0f, 1.5f);
+    m_Sprite[5]->setPosition(Gageposx, 143.0f, 1.5f);
     AnimCount = 0.0f;
 }
 
@@ -39,10 +39,10 @@ void MonitorSelectUI::CloseAnim()   //メニューの位置を画面外へ移動
 
 void MonitorSelectUI::InitAction()
 {
-    MyGameEngine* engine = MyAccessHub::getMyGameEngine();
-    CharacterData* chData = getGameObject()->getCharacterData();
+    MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
+    CharacterData* chData = GetGameObject()->GetCharacterData();
 
-    m_sprite.resize(7);
+    m_Sprite.resize(7);
 
     engine->InitCameraConstantBuffer(chData);
 
@@ -61,51 +61,51 @@ void MonitorSelectUI::InitAction()
     {
 		if (i < 5)          //ニキシー管の部分
         {
-            m_sprite[i] = std::make_unique<SpriteCharacter>();
-            m_sprite[i]->setTextureId(L"NixieBaseTexture");
-            m_sprite[i]->SetCameraLabel(L"HUDCamera", 0);
-            m_sprite[i]->setColor(1.0f, 1.0f, 1.0f, 1);
-            m_sprite[i]->SetGraphicsPipeLine(L"AlphaSprite");
-            m_sprite[i]->SetSpritePattern(0, 1, 1, pattern);
-            m_sprite[i]->setScale(250.0f, 250.0f, 1.0f);
-            m_sprite[i]->setSpriteIndex(0);
+            m_Sprite[i] = std::make_unique<SpriteCharacter>();
+            m_Sprite[i]->SetTextureId(L"NixieBaseTexture");
+            m_Sprite[i]->SetCameraLabel(L"HUDCamera", 0);
+            m_Sprite[i]->SetColor(1.0f, 1.0f, 1.0f, 1);
+            m_Sprite[i]->SetGraphicsPipeLine(L"AlphaSprite");
+            m_Sprite[i]->SetSpritePattern(0, 1, 1, pattern);
+            m_Sprite[i]->setScale(250.0f, 250.0f, 1.0f);
+            m_Sprite[i]->setSpriteIndex(0);
         }
 		else if (i == 5)    //メニューの部分
         {
-            m_sprite[i] = std::make_unique<SpriteCharacter>();
-            m_sprite[i]->setTextureId(L"MenuBaseTexture");
-            m_sprite[i]->SetCameraLabel(L"HUDCamera", 0);
-            m_sprite[i]->setColor(1.0f, 1.0f, 1.0f, 1);
-            m_sprite[i]->SetGraphicsPipeLine(L"AlphaSprite");
-            m_sprite[i]->SetSpritePattern(0, 1, 1, pattern);
-            m_sprite[i]->setScale(200.0f, 330.0f, 1.0f);
-            m_sprite[i]->setSpriteIndex(0);
+            m_Sprite[i] = std::make_unique<SpriteCharacter>();
+            m_Sprite[i]->SetTextureId(L"MenuBaseTexture");
+            m_Sprite[i]->SetCameraLabel(L"HUDCamera", 0);
+            m_Sprite[i]->SetColor(1.0f, 1.0f, 1.0f, 1);
+            m_Sprite[i]->SetGraphicsPipeLine(L"AlphaSprite");
+            m_Sprite[i]->SetSpritePattern(0, 1, 1, pattern);
+            m_Sprite[i]->setScale(200.0f, 330.0f, 1.0f);
+            m_Sprite[i]->setSpriteIndex(0);
         }
 		else if (i == 6)    //ゲージの部分
         {
-            m_sprite[i] = std::make_unique<SpriteCharacter>();
-            m_sprite[i]->setTextureId(L"NixieGageTexture");
-            m_sprite[i]->SetCameraLabel(L"HUDCamera", 0);
-            m_sprite[i]->setColor(1.0f, 1.0f, 1.0f, 1);
-            m_sprite[i]->SetGraphicsPipeLine(L"AlphaSprite");
-            m_sprite[i]->SetSpritePattern(0, 1, 1, pattern);
-            m_sprite[i]->setScale(300.0f, 300.0f, 1.0f);
-            m_sprite[i]->setSpriteIndex(0);
+            m_Sprite[i] = std::make_unique<SpriteCharacter>();
+            m_Sprite[i]->SetTextureId(L"NixieGageTexture");
+            m_Sprite[i]->SetCameraLabel(L"HUDCamera", 0);
+            m_Sprite[i]->SetColor(1.0f, 1.0f, 1.0f, 1);
+            m_Sprite[i]->SetGraphicsPipeLine(L"AlphaSprite");
+            m_Sprite[i]->SetSpritePattern(0, 1, 1, pattern);
+            m_Sprite[i]->setScale(300.0f, 300.0f, 1.0f);
+            m_Sprite[i]->setSpriteIndex(0);
         }
     }
 
-    m_sprite[0]->setPosition(NixieBaseposx, 140.0f, 1.0f);
-    m_sprite[1]->setPosition(NixieBaseposx, 60.0f, 1.0f);
-    m_sprite[2]->setPosition(NixieBaseposx, -20.0f, 1.0f);
-    m_sprite[3]->setPosition(NixieBaseposx, -100.0f, 1.0f);
-    m_sprite[4]->setPosition(NixieBaseposx, -180.0f, 1.0f);
-    m_sprite[5]->setPosition(MenuBaseposx, 60.0f, 0.5f);
+    m_Sprite[0]->setPosition(NixieBaseposx, 140.0f, 1.0f);
+    m_Sprite[1]->setPosition(NixieBaseposx, 60.0f, 1.0f);
+    m_Sprite[2]->setPosition(NixieBaseposx, -20.0f, 1.0f);
+    m_Sprite[3]->setPosition(NixieBaseposx, -100.0f, 1.0f);
+    m_Sprite[4]->setPosition(NixieBaseposx, -180.0f, 1.0f);
+    m_Sprite[5]->setPosition(MenuBaseposx, 60.0f, 0.5f);
 }
 
 bool MonitorSelectUI::FrameAction()
 {
 
-    MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+    MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
     GraphicsPipeLineObjectBase* pipe = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
     BattleFieldManager* BFMng = MyAccessHub::GetBFManager();
 
@@ -132,17 +132,17 @@ bool MonitorSelectUI::FrameAction()
                     ResetAnim();
                 }
 
-                m_sprite[0]->setPosition(NixieBaseposx, 140.0f, 1.0f);
-                m_sprite[1]->setPosition(NixieBaseposx, 60.0f, 1.0f);
-                m_sprite[2]->setPosition(NixieBaseposx, -20.0f, 1.0f);
-                m_sprite[3]->setPosition(NixieBaseposx, -100.0f, 1.0f);
-                m_sprite[4]->setPosition(NixieBaseposx, -180.0f, 1.0f);
-                m_sprite[5]->setPosition(MenuBaseposx, 60.0f, 0.5f);
-                m_sprite[6]->setPosition(Gageposx, 60.0f, 0.5f);
+                m_Sprite[0]->setPosition(NixieBaseposx, 140.0f, 1.0f);
+                m_Sprite[1]->setPosition(NixieBaseposx, 60.0f, 1.0f);
+                m_Sprite[2]->setPosition(NixieBaseposx, -20.0f, 1.0f);
+                m_Sprite[3]->setPosition(NixieBaseposx, -100.0f, 1.0f);
+                m_Sprite[4]->setPosition(NixieBaseposx, -180.0f, 1.0f);
+                m_Sprite[5]->setPosition(MenuBaseposx, 60.0f, 0.5f);
+                m_Sprite[6]->setPosition(Gageposx, 60.0f, 0.5f);
 
-                for (int i = 0; i < m_sprite.size(); i++)
+                for (int i = 0; i < m_Sprite.size(); i++)
                 {
-                    pipe->AddRenderObject(m_sprite[i].get());
+                    pipe->AddRenderObject(m_Sprite[i].get());
                 }
             }
             else if (!firstAnim && Animation)   //メニューUIのバーのアニメーション
@@ -160,16 +160,16 @@ bool MonitorSelectUI::FrameAction()
                     Gageposx = -350.0f;
                 }
 
-                for (int i = 0; i < m_sprite.size(); i++)
+                for (int i = 0; i < m_Sprite.size(); i++)
                 {
-                    pipe->AddRenderObject(m_sprite[i].get());
+                    pipe->AddRenderObject(m_Sprite[i].get());
                 }
             }
             else
             {
-                for (int i = 0; i < m_sprite.size(); i++)
+                for (int i = 0; i < m_Sprite.size(); i++)
                 {
-                    pipe->AddRenderObject(m_sprite[i].get());
+                    pipe->AddRenderObject(m_Sprite[i].get());
                 }
             }
         }
@@ -191,18 +191,18 @@ bool MonitorSelectUI::FrameAction()
                 NixieBaseposx = -350.0f - 500.0f;
             }
 
-            m_sprite[0]->setPosition(NixieBaseposx, 140.0f, 1.0f);
-            m_sprite[1]->setPosition(NixieBaseposx, 60.0f, 1.0f);
-            m_sprite[2]->setPosition(NixieBaseposx, -20.0f, 1.0f);
-            m_sprite[3]->setPosition(NixieBaseposx, -100.0f, 1.0f);
-            m_sprite[4]->setPosition(NixieBaseposx, -180.0f, 1.0f);
-            m_sprite[5]->setPosition(MenuBaseposx, 60.0f, 0.5f);
+            m_Sprite[0]->setPosition(NixieBaseposx, 140.0f, 1.0f);
+            m_Sprite[1]->setPosition(NixieBaseposx, 60.0f, 1.0f);
+            m_Sprite[2]->setPosition(NixieBaseposx, -20.0f, 1.0f);
+            m_Sprite[3]->setPosition(NixieBaseposx, -100.0f, 1.0f);
+            m_Sprite[4]->setPosition(NixieBaseposx, -180.0f, 1.0f);
+            m_Sprite[5]->setPosition(MenuBaseposx, 60.0f, 0.5f);
 
             for (int i = 0; i < 6; i++)
             {
                 if (i != 6)
                 {
-                    pipe->AddRenderObject(m_sprite[i].get());
+                    pipe->AddRenderObject(m_Sprite[i].get());
                 }
             }
         }
@@ -214,19 +214,19 @@ bool MonitorSelectUI::FrameAction()
         default:
             break;
         case 0:
-            m_sprite[6]->setPosition(Gageposx, 143.0f, 1.5f);
+            m_Sprite[6]->setPosition(Gageposx, 143.0f, 1.5f);
             break;
         case 1:
-            m_sprite[6]->setPosition(Gageposx, 63.0f, 1.5f);
+            m_Sprite[6]->setPosition(Gageposx, 63.0f, 1.5f);
             break;
         case 2:
-            m_sprite[6]->setPosition(Gageposx, -17.0f, 1.5f);
+            m_Sprite[6]->setPosition(Gageposx, -17.0f, 1.5f);
             break;
         case 3:
-            m_sprite[6]->setPosition(Gageposx, -97.0f, 1.5f);
+            m_Sprite[6]->setPosition(Gageposx, -97.0f, 1.5f);
             break; 
         case 4:
-            m_sprite[6]->setPosition(Gageposx, -177.0f, 1.5f);
+            m_Sprite[6]->setPosition(Gageposx, -177.0f, 1.5f);
             break; 
         }
     }

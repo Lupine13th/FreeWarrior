@@ -20,9 +20,9 @@ void MuzzleFlashEffect::InitAction()
 		spriteCharacter->setRotation(m_EffectRotation.x, m_EffectRotation.y, m_EffectRotation.z);
 		spriteCharacter->setPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
 		spriteCharacter->setScale(m_SpriteScale, m_SpriteScale, m_SpriteScale);
-		spriteCharacter->setColor(1, 1, 1, 1);
+		spriteCharacter->SetColor(1, 1, 1, 1);
 		spriteCharacter->SetGraphicsPipeLine(L"AlphaSprite");
-		spriteCharacter->setTextureId(L"MuzzleFlashTexture");
+		spriteCharacter->SetTextureId(L"MuzzleFlashTexture");
 		spriteCharacter->AddCameraLabel(L"AttackerCamera");
 		spriteCharacter->AddCameraLabel(L"DefenderCamera");
 		XMFLOAT4 uvPattern = { 0.0f, 0.0f, 1.0f, 1.0f };
@@ -35,7 +35,7 @@ void MuzzleFlashEffect::InitAction()
 
 bool MuzzleFlashEffect::FrameAction()
 {
-	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
 	GraphicsPipeLineObjectBase* pipeLine = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
 
 	if (m_IsPlaying)
@@ -105,14 +105,14 @@ void MuzzleFlashEffect::FinishAction()
 
 void EffectObject::DeleteEffect(wstring name)
 {
-	SceneManager* scene = dynamic_cast<SceneManager*>(MyAccessHub::getMyGameEngine()->GetSceneController());
-	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+	SceneManager* scene = dynamic_cast<SceneManager*>(MyAccessHub::GetMyGameEngine()->GetSceneController());
+	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
 	//for (SpriteCharacter* character : m_SpriteCharacterList) {
 	//	delete character;
 	//}
 	//m_SpriteCharacterList.clear();
 	//engine->RemoveGameObject(MyAccessHub::GetEffectGenerator()->GetEffectObject(name));
-	//this->getGameObject()->cleanupGameObject();
+	//this->GetGameObject()->cleanupGameObject();
 }
 
 void EffectObject::PlayEffect(XMFLOAT3 pos, XMFLOAT3 rot, float scale)
@@ -134,7 +134,7 @@ void EffectObject::StopEffect()
 
 void EffectGenerator::GenerateMuzzleFlashEffect(wstring name)
 {
-	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
 	CharacterData* muzzleFlashData = new CharacterData;
 	GameObject* muzzleFlashEffectObject = new GameObject(muzzleFlashData);
 	MuzzleFlashEffect* muzzleFlashEffect = new MuzzleFlashEffect;
@@ -146,7 +146,7 @@ void EffectGenerator::GenerateMuzzleFlashEffect(wstring name)
 
 void EffectGenerator::GenerateCanonMuzzleFlashEffect(wstring name)
 {
-	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
 	CharacterData* canonMuzzleFlashData = new CharacterData;
 	GameObject* canonMuzzleFlashEffectObject = new GameObject(canonMuzzleFlashData);
 	CanonMuzzleFlashEffect* canonMuzzleFlashEffect = new CanonMuzzleFlashEffect;
@@ -158,7 +158,7 @@ void EffectGenerator::GenerateCanonMuzzleFlashEffect(wstring name)
 
 void EffectGenerator::GenerateExplosiveEffect(wstring name)
 {
-	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
 	CharacterData* explosiveData = new CharacterData;
 	GameObject* explosiveEffectObject = new GameObject(explosiveData);
 	ExplosiveEffect* explosiveEffect = new ExplosiveEffect;
@@ -170,7 +170,7 @@ void EffectGenerator::GenerateExplosiveEffect(wstring name)
 
 void EffectGenerator::GenerateLargeExplosiveEffect(wstring name)
 {
-	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
 	CharacterData* largeExplosiveData = new CharacterData;
 	GameObject* largeExplosiveEffectObject = new GameObject(largeExplosiveData);
 	LargeExplosiveEffect* largeExplosiveEffect = new LargeExplosiveEffect;
@@ -182,7 +182,7 @@ void EffectGenerator::GenerateLargeExplosiveEffect(wstring name)
 
 void EffectGenerator::GenerateScoutEffect(wstring name)
 {
-	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
 	CharacterData* scoutData = new CharacterData;
 	GameObject* scoutEffectObject = new GameObject(scoutData);
 	ScoutEffect* scoutEffect = new ScoutEffect;
@@ -194,7 +194,7 @@ void EffectGenerator::GenerateScoutEffect(wstring name)
 
 void EffectGenerator::GenerateScoutedEffect(wstring name)
 {
-	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
 	CharacterData* scoutedData = new CharacterData;
 	GameObject* scoutedEffectObject = new GameObject(scoutedData);
 	ScoutedEffect* scoutedEffect = new ScoutedEffect;
@@ -206,7 +206,7 @@ void EffectGenerator::GenerateScoutedEffect(wstring name)
 
 void EffectGenerator::GenerateCircleEffect(wstring name)
 {
-	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
 	CharacterData* circleData = new CharacterData;
 	GameObject* circleEffectObject = new GameObject(circleData);
 	CircleEffect* circleEffect = new CircleEffect;
@@ -218,7 +218,7 @@ void EffectGenerator::GenerateCircleEffect(wstring name)
 
 void EffectGenerator::InitAction()
 {
-	SceneManager* scene = dynamic_cast<SceneManager*>(MyAccessHub::getMyGameEngine()->GetSceneController());
+	SceneManager* scene = dynamic_cast<SceneManager*>(MyAccessHub::GetMyGameEngine()->GetSceneController());
 	m_keyBind = dynamic_cast<KeyBindComponent*>(scene->getKeyComponent());
 }
 
@@ -253,9 +253,9 @@ void ExplosiveEffect::InitAction()
 		spriteCharacter->setRotation(m_EffectRotation.x, m_EffectRotation.y, m_EffectRotation.z);
 		spriteCharacter->setPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
 		spriteCharacter->setScale(m_SpriteScale, m_SpriteScale, m_SpriteScale);
-		spriteCharacter->setColor(1, 1, 1, 1);
+		spriteCharacter->SetColor(1, 1, 1, 1);
 		spriteCharacter->SetGraphicsPipeLine(L"AlphaSprite");
-		spriteCharacter->setTextureId(L"ExplosiveTexture");
+		spriteCharacter->SetTextureId(L"ExplosiveTexture");
 		spriteCharacter->AddCameraLabel(L"DefenderCamera");
 		XMFLOAT4 uvPattern = { 0.0f, 0.0f, 1.0f, 1.0f };
 		spriteCharacter->SetSpritePattern(0, 1.0f, 1.0f, uvPattern);
@@ -267,7 +267,7 @@ void ExplosiveEffect::InitAction()
 
 bool ExplosiveEffect::FrameAction()
 {
-	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
 	GraphicsPipeLineObjectBase* pipeLine = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
 
 	if (m_IsPlaying)
@@ -353,9 +353,9 @@ void LargeExplosiveEffect::InitAction()
 		spriteCharacter->setRotation(m_EffectRotation.x, m_EffectRotation.y, m_EffectRotation.z);
 		spriteCharacter->setPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
 		spriteCharacter->setScale(m_SpriteScale, m_SpriteScale, m_SpriteScale);
-		spriteCharacter->setColor(1, 1, 1, 1);
+		spriteCharacter->SetColor(1, 1, 1, 1);
 		spriteCharacter->SetGraphicsPipeLine(L"AlphaSprite");
-		spriteCharacter->setTextureId(L"LargeExplosiveTexture");
+		spriteCharacter->SetTextureId(L"LargeExplosiveTexture");
 		spriteCharacter->AddCameraLabel(L"DefenderCamera");
 		XMFLOAT4 uvPattern = { 0.0f, 0.0f, 1.0f, 1.0f };
 		spriteCharacter->SetSpritePattern(0, 1.0f, 1.0f, uvPattern);
@@ -367,7 +367,7 @@ void LargeExplosiveEffect::InitAction()
 
 bool LargeExplosiveEffect::FrameAction()
 {
-	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
 	GraphicsPipeLineObjectBase* pipeLine = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
 
 	if (m_IsPlaying)
@@ -453,9 +453,9 @@ void CanonMuzzleFlashEffect::InitAction()
 		spriteCharacter->setRotation(m_EffectRotation.x, m_EffectRotation.y, m_EffectRotation.z);
 		spriteCharacter->setPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
 		spriteCharacter->setScale(m_SpriteScale, m_SpriteScale, m_SpriteScale);
-		spriteCharacter->setColor(1, 1, 1, 1);
+		spriteCharacter->SetColor(1, 1, 1, 1);
 		spriteCharacter->SetGraphicsPipeLine(L"AlphaSprite");
-		spriteCharacter->setTextureId(L"MuzzleFlashTexture");
+		spriteCharacter->SetTextureId(L"MuzzleFlashTexture");
 		spriteCharacter->AddCameraLabel(L"AttackerCamera");
 		spriteCharacter->AddCameraLabel(L"DefenderCamera");
 		XMFLOAT4 uvPattern = { 0.0f, 0.0f, 1.0f, 1.0f };
@@ -468,7 +468,7 @@ void CanonMuzzleFlashEffect::InitAction()
 
 bool CanonMuzzleFlashEffect::FrameAction()
 {
-	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
 	GraphicsPipeLineObjectBase* pipeLine = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
 
 	if (m_IsPlaying)
@@ -554,9 +554,9 @@ void ScoutEffect::InitAction()
 		spriteCharacter->setRotation(m_EffectRotation.x, m_EffectRotation.y, m_EffectRotation.z);
 		spriteCharacter->setPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
 		spriteCharacter->setScale(m_SpriteScale, m_SpriteScale, m_SpriteScale);
-		spriteCharacter->setColor(1, 1, 1, 1);
+		spriteCharacter->SetColor(1, 1, 1, 1);
 		spriteCharacter->SetGraphicsPipeLine(L"AlphaSprite");
-		spriteCharacter->setTextureId(L"ScoutEffectTexture");
+		spriteCharacter->SetTextureId(L"ScoutEffectTexture");
 		spriteCharacter->AddCameraLabel(L"DefenderCamera");
 		XMFLOAT4 uvPattern = { 0.0f, 0.0f, 1.0f, 1.0f };
 		spriteCharacter->SetSpritePattern(0, 1.0f, 1.0f, uvPattern);
@@ -568,7 +568,7 @@ void ScoutEffect::InitAction()
 
 bool ScoutEffect::FrameAction()
 {
-	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
 	GraphicsPipeLineObjectBase* pipeLine = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
 
 	if (m_IsPlaying)
@@ -660,9 +660,9 @@ void ScoutedEffect::InitAction()
 		spriteCharacter->setRotation(m_EffectRotation.x, m_EffectRotation.y, m_EffectRotation.z);
 		spriteCharacter->setPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
 		spriteCharacter->setScale(m_SpriteScale, m_SpriteScale, m_SpriteScale);
-		spriteCharacter->setColor(1, 1, 1, 1);
+		spriteCharacter->SetColor(1, 1, 1, 1);
 		spriteCharacter->SetGraphicsPipeLine(L"AlphaSprite");
-		spriteCharacter->setTextureId(L"ScoutedEffectTexture");
+		spriteCharacter->SetTextureId(L"ScoutedEffectTexture");
 		spriteCharacter->AddCameraLabel(L"DefenderCamera");
 		XMFLOAT4 uvPattern = { 0.0f, 0.0f, 1.0f, 1.0f };
 		spriteCharacter->SetSpritePattern(0, 1.0f, 1.0f, uvPattern);
@@ -674,7 +674,7 @@ void ScoutedEffect::InitAction()
 
 bool ScoutedEffect::FrameAction()
 {
-	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
 	GraphicsPipeLineObjectBase* pipeLine = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
 
 	if (m_IsPlaying)
@@ -760,9 +760,9 @@ void CircleEffect::InitAction()
 		spriteCharacter->setRotation(m_EffectRotation.x, m_EffectRotation.y, m_EffectRotation.z);
 		spriteCharacter->setPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
 		spriteCharacter->setScale(m_SpriteScale, m_SpriteScale, m_SpriteScale);
-		spriteCharacter->setColor(0, 0, 1, 1);
+		spriteCharacter->SetColor(0, 0, 1, 1);
 		spriteCharacter->SetGraphicsPipeLine(L"AlphaSprite");
-		spriteCharacter->setTextureId(L"CircleTexture");
+		spriteCharacter->SetTextureId(L"CircleTexture");
 		XMFLOAT4 uvPattern = { 0.0f, 0.0f, 1.0f, 1.0f };
 		spriteCharacter->SetSpritePattern(0, 1.0f, 1.0f, uvPattern);
 		spriteCharacter->setSpriteIndex(0);
@@ -773,7 +773,7 @@ void CircleEffect::InitAction()
 
 bool CircleEffect::FrameAction()
 {
-	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
 	GraphicsPipeLineObjectBase* pipeLine = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
 
 	if (m_IsPlaying)

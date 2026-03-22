@@ -5,7 +5,7 @@
 
 void SkyDomeComponent::InitAction()
 {
-	CharacterData* chdata = getGameObject()->getCharacterData();
+	CharacterData* chdata = GetGameObject()->GetCharacterData();
 	chdata->setScale(10.0f, 10.0f, 10.0f);
 
 	chdata->SetGraphicsPipeLine(L"StaticFBX");
@@ -20,7 +20,7 @@ void SkyDomeComponent::InitAction()
 
 bool SkyDomeComponent::FrameAction()
 {
-	CharacterData* myData = getGameObject()->getCharacterData();
+	CharacterData* myData = GetGameObject()->GetCharacterData();
 
 	if (centerCharacter != nullptr)
 	{

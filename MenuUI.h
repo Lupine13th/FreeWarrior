@@ -2,6 +2,7 @@
 
 #include "GameObject.h"
 #include "SpriteCharacter.h"
+#include "TimeManager.h"
 
 #include <vector>
 #include <chrono>
@@ -10,7 +11,9 @@
 class MenuUI : public GameComponent
 {
 private:
-    vector<std::unique_ptr<SpriteCharacter>> m_sprite;
+    TimeManager* m_TimeManager;
+
+    vector<std::unique_ptr<SpriteCharacter>> m_Sprite;
 
     vector<float> posx = {-450.0f, -410.0f, -370.0f, -330.0f, -290.0f, -250.0f}; //0:1文字目 1:2文字目 2:3文字目 3:4文字目 4:5文字目
 

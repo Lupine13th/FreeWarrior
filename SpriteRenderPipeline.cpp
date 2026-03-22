@@ -146,7 +146,7 @@ HRESULT SpriteRenderPipeline::InitPipeLineStateObject(ID3D12Device2* d3dDev)
     ThrowIfFailed(d3dDev->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(m_pipeLineState.GetAddressOf())));
 
     UINT frameOffset = FRAME_COUNT * MAX_SPRITES;
-    MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+    MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
 
     UINT fixedSize = (sizeof(XMFLOAT4) + 255) & ~255;
 
@@ -179,7 +179,7 @@ HRESULT SpriteRenderPipeline::InitPipeLineStateObject(ID3D12Device2* d3dDev)
     //コマンドリスト用vector枠確保
     {
         m_cmdLists.resize(FRAME_COUNT);
-        MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+        MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
         for (int i = 0; i < FRAME_COUNT; i++)
         {
             // Create the command list.
@@ -210,7 +210,7 @@ HRESULT SpriteRenderPipeline::InitPipeLineStateObject(ID3D12Device2* d3dDev)
 
 ID3D12GraphicsCommandList* SpriteRenderPipeline::ExecuteRender()
 {
-    MyGameEngine* myEngine = MyAccessHub::getMyGameEngine();
+    MyGameEngine* myEngine = MyAccessHub::GetMyGameEngine();
     MeshManager* mshMng = myEngine->GetMeshManager();
     SceneManager* scene = static_cast<SceneManager*>(myEngine->GetSceneController());
 
@@ -270,7 +270,7 @@ ID3D12GraphicsCommandList* SpriteRenderPipeline::ExecuteRender()
 
     for (auto charaData : m_renderList) //renderList登録が出来ていない
     {
-        //SpriteCharacter* p_sprite = static_cast<SpriteCharacter*>(gameobj->getCharacterData());
+        //SpriteCharacter* p_sprite = static_cast<SpriteCharacter*>(gameobj->GetCharacterData());
         SpriteCharacter* p_sprite = static_cast<SpriteCharacter*>(charaData);
 
         const auto& cameralabelList = p_sprite->GetCameraLabelList();
@@ -283,7 +283,7 @@ ID3D12GraphicsCommandList* SpriteRenderPipeline::ExecuteRender()
                 continue;
             }
 
-            CharacterData* camChar = comp->getGameObject()->getCharacterData();
+            CharacterData* camChar = comp->GetGameObject()->GetCharacterData();
             ID3D12Resource* p_viewMtx = camChar->GetConstantBuffer(0);
             ID3D12Resource* p_prjMtx = camChar->GetConstantBuffer(1);
             cmdList->SetGraphicsRootConstantBufferView(5, p_viewMtx->GetGPUVirtualAddress());
@@ -338,9 +338,9 @@ ID3D12GraphicsCommandList* SpriteRenderPipeline::ExecuteRender()
             m_aSize[drawCount].x = (float)p_size->x;
             m_aSize[drawCount].y = (float)p_size->y;
 
-            const XMFLOAT4* p_color = p_sprite->getColor();
+            const XMFLOAT4* p_color = p_sprite->GetColor();
             m_aColor[drawCount] = *p_color;
-            m_aMix[drawCount] = { p_sprite->getColorMix(), p_sprite->getAlphaMix() };
+            m_aMix[drawCount] = { p_sprite->GetColorMix(), p_sprite->GetAlphaMix() };
 
             XMMATRIX AffineMat = XMMatrixTranspose(p_sprite->GetWorldMatrix());
             m_aAffin[drawCount] = AffineMat;

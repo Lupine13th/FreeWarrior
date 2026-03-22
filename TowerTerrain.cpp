@@ -3,7 +3,7 @@
 
 void TowerTerrain::InitAction()
 {
-    FBXCharacterData* chdata = static_cast<FBXCharacterData*>(getGameObject()->getCharacterData());
+    FBXCharacterData* chdata = static_cast<FBXCharacterData*>(GetGameObject()->GetCharacterData());
     chdata->SetGraphicsPipeLine(L"StaticFBX");
     chdata->LoadMainFBX(L"./Resources/fbx/TowerTerrain.fbx", L"TowerTer");
     //chdata->setPosition(0.0f, 0.0f, 0.0f); 
@@ -17,7 +17,7 @@ void TowerTerrain::InitAction()
 
 bool TowerTerrain::FrameAction()
 {
-    CharacterData* SqData = getGameObject()->getCharacterData();
+    CharacterData* SqData = GetGameObject()->GetCharacterData();
     SqData->GetPipeline()->AddRenderObject(SqData);
     return true;
 }

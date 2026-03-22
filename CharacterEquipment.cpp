@@ -2,7 +2,7 @@
 
 void CharacterEquipment::InitAction()
 {
-	m_chData = static_cast<FBXCharacterData*>(getGameObject()->getCharacterData());
+	m_chData = static_cast<FBXCharacterData*>(GetGameObject()->GetCharacterData());
 	m_chData->SetGraphicsPipeLine(L"StaticFBX");
 	m_chData->AddCameraLabel(L"AttackerCamera");
 	m_chData->AddCameraLabel(L"DefenderCamera");
@@ -35,7 +35,7 @@ bool RebelAssaltRifle::InFrame()
 {
 	if (m_IsAlive)
 	{
-		CharacterData* SqData = getGameObject()->getCharacterData();
+		CharacterData* SqData = GetGameObject()->GetCharacterData();
 		SqData->GetPipeline()->AddRenderObject(SqData);
 		return true;
 	}
@@ -66,7 +66,7 @@ bool ImperialAssaltRifle::InFrame()
 {
 	if (m_IsAlive)
 	{
-		CharacterData* SqData = getGameObject()->getCharacterData();
+		CharacterData* SqData = GetGameObject()->GetCharacterData();
 		SqData->GetPipeline()->AddRenderObject(SqData);
 		return true;
 	}
@@ -92,7 +92,7 @@ bool RebelMachinegun::InFrame()
 {
 	if (m_IsAlive)
 	{
-		CharacterData* SqData = getGameObject()->getCharacterData();
+		CharacterData* SqData = GetGameObject()->GetCharacterData();
 		SqData->GetPipeline()->AddRenderObject(SqData);
 		return true;
 	}
@@ -118,7 +118,7 @@ bool RebelScoutRifle::InFrame()
 {
 	if (m_IsAlive)
 	{
-		CharacterData* SqData = getGameObject()->getCharacterData();
+		CharacterData* SqData = GetGameObject()->GetCharacterData();
 		SqData->GetPipeline()->AddRenderObject(SqData);
 		return true;
 	}
@@ -144,7 +144,7 @@ bool ImperialScoutRifle::InFrame()
 {
 	if (m_IsAlive)
 	{
-		CharacterData* SqData = getGameObject()->getCharacterData();
+		CharacterData* SqData = GetGameObject()->GetCharacterData();
 		SqData->GetPipeline()->AddRenderObject(SqData);
 		return true;
 	}
@@ -171,7 +171,7 @@ bool Backpack::InFrame()
 {
 	if (m_IsAlive)
 	{
-		CharacterData* SqData = getGameObject()->getCharacterData();
+		CharacterData* SqData = GetGameObject()->GetCharacterData();
 		SqData->GetPipeline()->AddRenderObject(SqData);
 		return true;
 	}

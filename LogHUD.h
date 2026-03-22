@@ -12,12 +12,12 @@
 class LogHUD : public GameComponent
 {
 private:
-    //std::vector<std::unique_ptr<SpriteCharacter>> m_sprites;
+    //std::vector<std::unique_ptr<SpriteCharacter>> m_Sprites;
 
     BattleFieldManager* BFMng = MyAccessHub::GetBFManager();
 public:
 	//int LogCount = 0;   
-    std::vector<std::unique_ptr<SpriteCharacter>> m_sprites;
+    std::vector<std::unique_ptr<SpriteCharacter>> m_Sprites;
 
     virtual void InitAction() override;
     virtual bool FrameAction() override;

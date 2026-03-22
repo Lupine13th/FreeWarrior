@@ -16,10 +16,10 @@ int MenuText::MakeSpriteString(int startIndex, float ltX, float ltY, float width
 	{
 		if (std::find(wordList.m_chListJVT, m_chEnd, *str) != m_chEnd)
 		{
-			m_sprites[count]->SetSpritePattern(0, width, height, m_fontMap[*str]);
-			m_sprites[count]->setSpriteIndex(0);
+			m_Sprites[count]->SetSpritePattern(0, width, height, m_fontMap[*str]);
+			m_Sprites[count]->setSpriteIndex(0);
 
-			m_sprites[count]->setPosition(ltX, ltY, 1.0f);
+			m_Sprites[count]->setPosition(ltX, ltY, 1.0f);
 			count++;
 		}
 
@@ -40,8 +40,8 @@ void MenuText::OpenMenuText()
 
 void MenuText::InitAction()
 {
-	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
-	CharacterData* chData = getGameObject()->getCharacterData();
+	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
+	CharacterData* chData = GetGameObject()->GetCharacterData();
 
 	m_TimeManager = MyAccessHub::GetTimeManager();
 
@@ -55,7 +55,6 @@ void MenuText::InitAction()
 	XMMATRIX view = XMMatrixTranspose(MakeViewMatix(Eye, At, Up));
 	XMMATRIX proj = XMMatrixTranspose(MakeOrthographicPrjectionMatrix(engine->GetWidth(), engine->GetHeight(), 0.01f, 3.0f));
 
-
 	engine->UpdateShaderResourceOnGPU(chData->GetConstantBuffer(0), &view, sizeof(XMMATRIX));
 	engine->UpdateShaderResourceOnGPU(chData->GetConstantBuffer(1), &proj, sizeof(XMMATRIX));
 
@@ -67,13 +66,11 @@ void MenuText::InitAction()
 	{
 		spc = new SpriteCharacter();
 
-		spc->setTextureId(L"JPNHUDTextureVT");
+		spc->SetTextureId(L"JPNHUDTextureVT");
 		spc->SetCameraLabel(L"HUDCamera", 0);
-		spc->setColor(1,1,1,1);
-
+		spc->SetColor(1,1,1,1);
 		spc->SetGraphicsPipeLine(L"Sprite");
-
-		m_sprites.push_back(std::unique_ptr<SpriteCharacter>(spc));
+		m_Sprites.push_back(std::unique_ptr<SpriteCharacter>(spc));
 	}
 
 	//FontMap
@@ -109,7 +106,7 @@ void MenuText::InitAction()
 
 bool MenuText::FrameAction()
 {
-	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
 	GraphicsPipeLineObjectBase* pipeLine = engine->GetPipelineManager()->GetPipeLineObject(L"Sprite");
 
 	int count = 0;
@@ -138,6 +135,7 @@ bool MenuText::FrameAction()
 	//矢印表示
 	float arrowPositionY = 0.0f;
 
+	//メニューの矢印のY座標を更新
 	switch (BFMng->GetMenuSelectIndex())
 	{
 	default:
@@ -163,6 +161,7 @@ bool MenuText::FrameAction()
 
 	BattleFieldManager* BFMng = MyAccessHub::GetBFManager();
 
+	//テキストが表示されるまでのディレイ
 	if (BFMng->GetMenuUI()->MenuUIenable)
 	{
 		TextCount += m_TimeManager->GetDeltaTime();
@@ -174,11 +173,12 @@ bool MenuText::FrameAction()
 		}
 	}
 
+	//メニューが表示中＆ディレイ後だったら描画
 	if (BFMng->GetMenuUI()->MenuUIenable && m_IsEnable && !BFMng->GetMenuUI()->CloseAnim)
 	{
 		for (int i = 0; i < count; i++)
 		{
-			pipeLine->AddRenderObject(m_sprites[i].get());
+			pipeLine->AddRenderObject(m_Sprites[i].get());
 		}
 	}
 
@@ -187,9 +187,9 @@ bool MenuText::FrameAction()
 
 void MenuText::FinishAction()
 {
-	m_sprites.clear();
+	m_Sprites.clear();
 
-	SceneManager* scene = static_cast<SceneManager*>(MyAccessHub::getMyGameEngine()->GetSceneController());
+	SceneManager* scene = static_cast<SceneManager*>(MyAccessHub::GetMyGameEngine()->GetSceneController());
 	scene->RemoveCamera(this);
 
 }

@@ -12,10 +12,10 @@ int TurnEndW::MakeSpriteString(int startIndex, float ltX, float ltY, float width
 	{
 		if (std::find(wordList.m_chListJ, m_chEnd, *str) != m_chEnd)
 		{
-			m_sprites[count]->SetSpritePattern(0, width, height, m_fontMap[*str]);
-			m_sprites[count]->setSpriteIndex(0);
+			m_Sprites[count]->SetSpritePattern(0, width, height, m_fontMap[*str]);
+			m_Sprites[count]->setSpriteIndex(0);
 
-			m_sprites[count]->setPosition(ltX, ltY, 0.0f);
+			m_Sprites[count]->setPosition(ltX, ltY, 0.0f);
 			count++;
 		}
 
@@ -29,8 +29,8 @@ int TurnEndW::MakeSpriteString(int startIndex, float ltX, float ltY, float width
 
 void TurnEndW::InitAction()
 {
-	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
-	CharacterData* chData = getGameObject()->getCharacterData();
+	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
+	CharacterData* chData = GetGameObject()->GetCharacterData();
 
 	engine->InitCameraConstantBuffer(chData);
 
@@ -60,14 +60,14 @@ void TurnEndW::InitAction()
 	{
 		spc = new SpriteCharacter();
 
-		spc->setTextureId(L"JPNHUDTexture");
+		spc->SetTextureId(L"JPNHUDTexture");
 		spc->SetCameraLabel(L"HUDCamera", 0);
 
-		spc->setColor(0, 0, 0, 1);
+		spc->SetColor(0, 0, 0, 1);
 
 		spc->SetGraphicsPipeLine(L"Sprite");
 
-		m_sprites.push_back(std::unique_ptr<SpriteCharacter>(spc));
+		m_Sprites.push_back(std::unique_ptr<SpriteCharacter>(spc));
 	}
 
 	Texture2DContainer* tex = engine->GetTextureManager()->GetTexture(L"JPNHUDTexture");
@@ -105,7 +105,7 @@ bool TurnEndW::FrameAction()
 	m_TurnEndUI = BFMng->GetTurnEndUI();
 	if (BFMng->GetMode() == Mode::TurnEndMode && m_TurnEndUI->GetCurrentCount() > 3.0f)
 	{
-		MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+		MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
 		GraphicsPipeLineObjectBase* pipeLine = engine->GetPipelineManager()->GetPipeLineObject(L"Sprite");
 
 		int count = 0;
@@ -122,7 +122,7 @@ bool TurnEndW::FrameAction()
 
 		for (int i = 0; i < count; i++)
 		{
-			pipeLine->AddRenderObject(m_sprites[i].get());
+			pipeLine->AddRenderObject(m_Sprites[i].get());
 		}
 	}
 	return true;

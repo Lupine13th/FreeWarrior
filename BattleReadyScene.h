@@ -32,7 +32,7 @@ enum class ReadySceneState
 class BattleReadyScene : public GameComponent
 {
 private:
-    std::unique_ptr<SpriteCharacter> m_sprite;
+    std::unique_ptr<SpriteCharacter> m_Sprite;
 
     GAME_SCENES m_nextScene;
 

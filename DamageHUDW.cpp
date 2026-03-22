@@ -18,10 +18,10 @@ int DamageHUDW::MakeSpriteString(int startIndex, float ltX, float ltY, float wid
 	{
 		if (std::find(wordList.m_chListJVT, m_chEnd, *str) != m_chEnd)
 		{
-			m_sprites[count]->SetSpritePattern(0, width, height, m_fontMap[*str]);
-			m_sprites[count]->setSpriteIndex(0);
+			m_Sprites[count]->SetSpritePattern(0, width, height, m_fontMap[*str]);
+			m_Sprites[count]->setSpriteIndex(0);
 
-			m_sprites[count]->setPosition(ltX, ltY, 0.0f);
+			m_Sprites[count]->setPosition(ltX, ltY, 0.0f);
 			count++;
 		}
 
@@ -35,8 +35,8 @@ int DamageHUDW::MakeSpriteString(int startIndex, float ltX, float ltY, float wid
 
 void DamageHUDW::InitAction()
 {
-	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
-	CharacterData* chData = getGameObject()->getCharacterData();
+	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
+	CharacterData* chData = GetGameObject()->GetCharacterData();
 
 	engine->InitCameraConstantBuffer(chData);
 
@@ -61,15 +61,15 @@ void DamageHUDW::InitAction()
 	{
 		spc = new SpriteCharacter();
 
-		spc->setTextureId(L"JPNHUDTextureVT");
+		spc->SetTextureId(L"JPNHUDTextureVT");
 		spc->SetCameraLabel(L"HUDCamera", 0);
 
-		spc->setColor(1, 1, 1, 1);
+		spc->SetColor(1, 1, 1, 1);
 
 		//UI用のパイプラインは別にすべきなんだけども、記述量を減らしたいので使いまわし
 		spc->SetGraphicsPipeLine(L"Sprite");
 
-		m_sprites.push_back(std::unique_ptr<SpriteCharacter>(spc));
+		m_Sprites.push_back(std::unique_ptr<SpriteCharacter>(spc));
 	}
 
 	//FontMap
@@ -105,7 +105,7 @@ void DamageHUDW::InitAction()
 
 bool DamageHUDW::FrameAction()
 {
-	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
 	GraphicsPipeLineObjectBase* pipeLine = engine->GetPipelineManager()->GetPipeLineObject(L"Sprite");
 	auto damageHUD = BFMng->GetDamageHUD();
 
@@ -144,7 +144,7 @@ bool DamageHUDW::FrameAction()
 
 		for (int i = 0; i < count; i++)
 		{
-			pipeLine->AddRenderObject(m_sprites[i].get());
+			pipeLine->AddRenderObject(m_Sprites[i].get());
 		}
 	}
 	return true;
@@ -152,9 +152,9 @@ bool DamageHUDW::FrameAction()
 
 void DamageHUDW::FinishAction()
 {
-	m_sprites.clear();
+	m_Sprites.clear();
 
-	SceneManager* scene = static_cast<SceneManager*>(MyAccessHub::getMyGameEngine()->GetSceneController());
+	SceneManager* scene = static_cast<SceneManager*>(MyAccessHub::GetMyGameEngine()->GetSceneController());
 	scene->RemoveCamera(this);
 }
 

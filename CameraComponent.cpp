@@ -16,8 +16,8 @@ void CameraComponent::InitAction()
 	m_Focus.y = 0.0f;
 	m_Focus.z = 10.0f;
 
-	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
-	CharacterData* chData = getGameObject()->getCharacterData();
+	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
+	CharacterData* chData = GetGameObject()->GetCharacterData();
 
 	m_ViewportX = 0.0f;
 	m_ViewportY = 0.0f;
@@ -37,8 +37,8 @@ bool CameraComponent::FrameAction()
 		m_UpdateFlg = false;
 
 		//カメラマトリクスを更新
-		MyGameEngine* engine = MyAccessHub::getMyGameEngine();
-		CharacterData* chData = getGameObject()->getCharacterData();
+		MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
+		CharacterData* chData = GetGameObject()->GetCharacterData();
 
 		XMFLOAT3 pos = chData->getPosition();
 
@@ -67,7 +67,7 @@ bool CameraComponent::FrameAction()
 void CameraComponent::FinishAction()
 {
 	//====Change Scene
-	SceneManager* scene = static_cast<SceneManager*>(MyAccessHub::getMyGameEngine()->GetSceneController());
+	SceneManager* scene = static_cast<SceneManager*>(MyAccessHub::GetMyGameEngine()->GetSceneController());
 	scene->RemoveCamera(this);
 	//====Change Scene End
 }
@@ -86,7 +86,7 @@ void CameraComponent::ChangeCameraRatio(float width, float height)
 //カメラの位置を変更
 void CameraComponent::ChangeCameraPosition(float x, float y, float z)
 {	
-	CharacterData* chData = getGameObject()->getCharacterData();
+	CharacterData* chData = GetGameObject()->GetCharacterData();
 	chData->setPosition(x, y, z);
 
 	m_UpdateFlg = true;
@@ -94,7 +94,7 @@ void CameraComponent::ChangeCameraPosition(float x, float y, float z)
 
 void CameraComponent::ChangeCameraRotation(float x, float y, float z)
 {
-	CharacterData* chData = getGameObject()->getCharacterData();
+	CharacterData* chData = GetGameObject()->GetCharacterData();
 	chData->setRotation(x, y, z);
 
 	m_UpdateFlg = true;

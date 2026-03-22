@@ -13,8 +13,8 @@ using namespace std::chrono;
 
 void OpeningAnimHUD::InitAction()
 {
-    MyGameEngine* engine = MyAccessHub::getMyGameEngine();
-    CharacterData* chData = getGameObject()->getCharacterData();
+    MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
+    CharacterData* chData = GetGameObject()->GetCharacterData();
     m_TimeManager = MyAccessHub::GetTimeManager();
 
     engine->InitCameraConstantBuffer(chData);
@@ -36,29 +36,29 @@ void OpeningAnimHUD::InitAction()
     {
         o_sprite[i] = std::make_unique<SpriteCharacter>();
         o_sprite[i]->SetCameraLabel(L"HUDCamera", 0);
-        o_sprite[i]->setColor(1, 1, 1, 1);
+        o_sprite[i]->SetColor(1, 1, 1, 1);
         o_sprite[i]->SetGraphicsPipeLine(L"AlphaSprite");
         o_sprite[i]->SetSpritePattern(0, 1, 1, pattern);
         o_sprite[i]->setSpriteIndex(0);
     }
 
-    o_sprite[0]->setTextureId(L"RadioTexture");
+    o_sprite[0]->SetTextureId(L"RadioTexture");
     o_sprite[0]->setScale(RadioScale.x, RadioScale.y, 0.1f);
     o_sprite[0]->setPosition(RadioPos.x, RadioPos.y, 1.0f);
 
-    o_sprite[1]->setTextureId(L"PaporTexture");
+    o_sprite[1]->SetTextureId(L"PaporTexture");
     o_sprite[1]->setScale(RadioScale.x, RadioScale.y, 0.1f);
     o_sprite[1]->setPosition(RadioPos.x, RadioPos.y, 2.5f);
 
-    o_sprite[2]->setTextureId(L"TargetWinTexture");
+    o_sprite[2]->SetTextureId(L"TargetWinTexture");
     o_sprite[2]->setScale(TarWinScale.x, TarWinScale.y, 0.1f);
     o_sprite[2]->setPosition(TarWinPos.x, TarWinPos.y, 2.0f);
 
-    o_sprite[3]->setTextureId(L"TargetDefTexture");
+    o_sprite[3]->SetTextureId(L"TargetDefTexture");
     o_sprite[3]->setScale(TarDefScale.x, TarDefScale.y, 0.1f);
     o_sprite[3]->setPosition(TarDefPos.x, TarDefPos.y, 2.0f);
 
-    o_sprite[4]->setTextureId(L"FadeInTexture");
+    o_sprite[4]->SetTextureId(L"FadeInTexture");
     o_sprite[4]->setScale(FadeScale.x, FadeScale.y, 0.1f);
     o_sprite[4]->setPosition(FadePos.x, FadePos.y, 2.0f);
 }
@@ -67,9 +67,9 @@ bool OpeningAnimHUD::FrameAction()
 {
     if (BFMng->GetCurrentTurn() == Turn::First)
     {
-        MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+        MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
 
-        SceneManager* p_scene = static_cast<SceneManager*>(MyAccessHub::getMyGameEngine()->GetSceneController());
+        SceneManager* p_scene = static_cast<SceneManager*>(MyAccessHub::GetMyGameEngine()->GetSceneController());
 
         GraphicsPipeLineObjectBase* pipe = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
 

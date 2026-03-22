@@ -13,7 +13,8 @@ using namespace DirectX;
 
 using namespace std::chrono;
 
-void FlyingCameraController::StartGame()	//ゲーム開始時のカメラアニメーション
+//ゲーム開始時のカメラアニメーションを起動
+void FlyingCameraController::StartGame()	
 {
 	BattleFieldManager* BFMng = MyAccessHub::GetBFManager();
 
@@ -24,7 +25,7 @@ void FlyingCameraController::StartGame()	//ゲーム開始時のカメラアニ�
 
 void FlyingCameraController::InitAction()
 {
-	auto components = getGameObject()->getComponents();
+	auto components = GetGameObject()->getComponents();
 
 	m_camera = nullptr;
 	for (auto comp : components)
@@ -36,18 +37,18 @@ void FlyingCameraController::InitAction()
 		}
 	}
 
-	m_camera->ChangeCameraPosition(0.0f, 15.0f, -10.0f);
-	m_camera->ChangeCameraFocus(0.0f, 0.0f, 0.0f);
+	m_camera->ChangeCameraPosition(0.0f, 15.0f, -10.0f);	//カーソルの後方少し上に配置
+	m_camera->ChangeCameraFocus(0.0f, 0.0f, 0.0f);			//カーソルの位置に終点を合わせる
 
 }
 
 bool FlyingCameraController::FrameAction()
 {
-	SceneManager* p_scene = static_cast<SceneManager*>(MyAccessHub::getMyGameEngine()->GetSceneController());
+	SceneManager* p_scene = static_cast<SceneManager*>(MyAccessHub::GetMyGameEngine()->GetSceneController());
 	KeyBindComponent* keycomp = static_cast<KeyBindComponent*>(p_scene->getKeyComponent());
 	BattleFieldManager* BFMng = MyAccessHub::GetBFManager();
 
-	if (Opening && BFMng->GetCurrentTurn() == Turn::First)
+	if (Opening && BFMng->GetCurrentTurn() == Turn::First)	//ゲーム開始時のカメラアニメーション
 	{
 		if (OpeningCount < 2.5f)
 		{
@@ -66,12 +67,12 @@ bool FlyingCameraController::FrameAction()
 	}
 	else
 	{
-		if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_PRESS, KeyBindComponent::BUTTON_IDS::MOVE_LEFT))
+		if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_PRESS, KeyBindComponent::BUTTON_IDS::MOVE_LEFT))			//Aキーを入力
 		{
 			m_MovingValue.x -= 0.05f;
 			MoveCamera();
 		}
-		else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_PRESS, KeyBindComponent::BUTTON_IDS::MOVE_RIGHT))
+		else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_PRESS, KeyBindComponent::BUTTON_IDS::MOVE_RIGHT))		//Dキーを入力
 		{
 			m_MovingValue.x += 0.05f;
 			MoveCamera();
@@ -95,17 +96,17 @@ bool FlyingCameraController::FrameAction()
 			}
 		}
 
-		if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_PRESS, KeyBindComponent::BUTTON_IDS::MOVE_FORWARD))
+		if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_PRESS, KeyBindComponent::BUTTON_IDS::MOVE_FORWARD))		//Wキーを入力
 		{
 			m_MovingValue.z += 0.05f;
 			MoveCamera();
 		}
-		else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_PRESS, KeyBindComponent::BUTTON_IDS::MOVE_BACK))
+		else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_PRESS, KeyBindComponent::BUTTON_IDS::MOVE_BACK))		//Sキーを入力
 		{
 			m_MovingValue.z -= 0.05f;
 			MoveCamera();
 		}
-		else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_PRESS, KeyBindComponent::BUTTON_IDS::Key_E))
+		else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_PRESS, KeyBindComponent::BUTTON_IDS::Key_E))			//Eキーを入力
 		{
 			m_ZoomPercent -= kZoomSpeed;
 			if (m_ZoomPercent < kMaxZoom)
@@ -114,7 +115,7 @@ bool FlyingCameraController::FrameAction()
 			}
 			MoveCamera();
 		}
-		else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_PRESS, KeyBindComponent::BUTTON_IDS::Key_Q))
+		else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_PRESS, KeyBindComponent::BUTTON_IDS::Key_Q))			//Qキーを入力
 		{
 			m_ZoomPercent += kZoomSpeed;
 			if (m_ZoomPercent > kMinZoom)
@@ -151,17 +152,18 @@ void FlyingCameraController::FinishAction()
 {
 }
 
-void FlyingCameraController::ChangeCameraPosition()	//カメラ位置の変更
+//カメラ位置の変更
+void FlyingCameraController::ChangeCameraPosition()	
 {
 	BattleFieldManager* BFMng = MyAccessHub::GetBFManager();
 	EnemyAIManager* AIMng = MyAccessHub::GetAIManager();
 
-	if (BFMng->GetCurrentTurn() == Turn::Allies)
+	if (BFMng->GetCurrentTurn() == Turn::Allies)		//プレイヤー操作中のカメラ
 	{
 		int x = 0;
 		int y = 0;
 
-		switch (BFMng->GetMode())
+		switch (BFMng->GetMode())	//モードごとにカメラのフォーカス位置を切り替える
 		{
 		default:
 			break;
@@ -188,7 +190,7 @@ void FlyingCameraController::ChangeCameraPosition()	//カメラ位置の変更
 		}
 		int index = x + y * 10;
 
-		XMFLOAT3 squarePos = BFMng->GetFieldSquaresList()[index]->getGameObject()->getCharacterData()->getPosition();
+		XMFLOAT3 squarePos = BFMng->GetFieldSquaresList()[index]->GetGameObject()->GetCharacterData()->getPosition();
 
 		// カメラをマスの上に追従
 		m_ZoomPercent = kMinZoom;
@@ -196,13 +198,12 @@ void FlyingCameraController::ChangeCameraPosition()	//カメラ位置の変更
 		m_camera->ChangeCameraFocus(squarePos.x, squarePos.y, squarePos.z);
 		XMStoreFloat3(&m_MovingValue, XMVectorZero());
 	}
-	else if (BFMng->GetCurrentTurn() == Turn::EnemyMove)
+	else if (BFMng->GetCurrentTurn() == Turn::EnemyMove)	//敵が行動中
 	{
 		int x = BFMng->GetFieldSquaresList()[BFMng->GetEnemyCharacterList()[AIMng->GetMoveAiCount()]->CharaPos]->charaPosX;
 		int y = BFMng->GetFieldSquaresList()[BFMng->GetEnemyCharacterList()[AIMng->GetMoveAiCount()]->CharaPos]->charaPosY;
 		
-
-		if (BFMng->GetEnemyCharacterList()[AIMng->GetMoveAiCount()]->AIMove == EnemyMove::Attack && AIMng->GetDelayCount() > 1.5f)
+		if (BFMng->GetEnemyCharacterList()[AIMng->GetMoveAiCount()]->AIMove == EnemyMove::Attack && AIMng->GetDelayCount() > 1.5f)	//敵の行動が攻撃、かつDelayCount()が1.5秒以上
 		{
 			x = BFMng->GetEnemyCharacterList()[AIMng->GetMoveAiCount()]->targetAISquare->charaPosX;
 			y = BFMng->GetEnemyCharacterList()[AIMng->GetMoveAiCount()]->targetAISquare->charaPosY;
@@ -210,7 +211,7 @@ void FlyingCameraController::ChangeCameraPosition()	//カメラ位置の変更
 
 		int index = x + y * 10;
 
-		XMFLOAT3 squarePos = BFMng->GetFieldSquaresList()[index]->getGameObject()->getCharacterData()->getPosition();
+		XMFLOAT3 squarePos = BFMng->GetFieldSquaresList()[index]->GetGameObject()->GetCharacterData()->getPosition();
 
 		// カメラをマスの上に追従
 		m_ZoomPercent = kMinZoom;

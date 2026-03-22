@@ -162,7 +162,7 @@ HRESULT MeshManager::AddVertexBuffer(const std::wstring idName, const void* init
     m_VertexBuffers[idName]->dataSize = vertexSize;
     m_VertexBuffers[idName]->pBuffer.Reset();
 
-	HRESULT hr = MyAccessHub::getMyGameEngine()->CreateVertexBuffer(m_VertexBuffers[idName]->pBuffer.GetAddressOf(), initBuff, vertexSize, vertexCount);
+	HRESULT hr = MyAccessHub::GetMyGameEngine()->CreateVertexBuffer(m_VertexBuffers[idName]->pBuffer.GetAddressOf(), initBuff, vertexSize, vertexCount);
 
     if (FAILED(hr))
         return hr;
@@ -191,7 +191,7 @@ HRESULT MeshManager::AddIndexBuffer(const std::wstring idName, const void* initB
     m_IndexBuffers[idName]->dataCount = indexCount;
     m_IndexBuffers[idName]->pBuffer.Reset();
 
-    HRESULT hr = MyAccessHub::getMyGameEngine()->CreateIndexBuffer(m_IndexBuffers[idName]->pBuffer.GetAddressOf(), initBuff, valueSize, indexCount);
+    HRESULT hr = MyAccessHub::GetMyGameEngine()->CreateIndexBuffer(m_IndexBuffers[idName]->pBuffer.GetAddressOf(), initBuff, valueSize, indexCount);
     if (FAILED(hr))
         return hr;
 

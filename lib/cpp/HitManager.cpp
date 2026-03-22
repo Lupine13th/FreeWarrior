@@ -995,8 +995,8 @@ void HitManager::hitFrameAction()
 							if (isHit(atkHit, defHit))
 							{
 								//ヒットしたら両方のGameObjectに通知
-								p_enHit->getGameComponent()->hitReaction(p_plHit->getGameComponent()->getGameObject(), p_plHit->getHitArea());
-								p_plHit->getGameComponent()->hitReaction(p_enHit->getGameComponent()->getGameObject(), p_enHit->getHitArea());
+								p_enHit->getGameComponent()->hitReaction(p_plHit->getGameComponent()->GetGameObject(), p_plHit->getHitArea());
+								p_plHit->getGameComponent()->hitReaction(p_enHit->getGameComponent()->GetGameObject(), p_enHit->getHitArea());
 							}
 						}
 					);

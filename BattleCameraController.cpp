@@ -8,8 +8,8 @@
 
 void BattleCameraController::InitAction()
 {
-	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
-	CharacterData* chData = getGameObject()->getCharacterData();
+	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
+	CharacterData* chData = GetGameObject()->GetCharacterData();
 
 	m_BattleFieldManager = MyAccessHub::GetBFManager();
 
@@ -130,8 +130,8 @@ void BattleCameraController::FinishAction()
 
 void BattleCameraController::UpdateCamera(XMVECTOR camera, XMVECTOR viewPoint)
 {
-	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
-	CharacterData* chData = getGameObject()->getCharacterData();
+	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
+	CharacterData* chData = GetGameObject()->GetCharacterData();
 
 	XMVECTOR Eye = camera;
 	XMVECTOR At = viewPoint;
@@ -144,8 +144,8 @@ void BattleCameraController::UpdateCamera(XMVECTOR camera, XMVECTOR viewPoint)
 
 void BattleCameraController::UpdateCameraPositionFromobject(float rotateY, XMFLOAT3 basedPosition, float distance, float height)
 {
-	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
-	CharacterData* chData = getGameObject()->getCharacterData();
+	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
+	CharacterData* chData = GetGameObject()->GetCharacterData();
 
 	XMVECTOR objectPos = XMLoadFloat3(&basedPosition);
 

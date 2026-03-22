@@ -6,7 +6,7 @@
 
 void TerrainComponent::InitAction()
 {
-	FBXCharacterData* fbxChara = static_cast<FBXCharacterData*>(getGameObject()->getCharacterData());
+	FBXCharacterData* fbxChara = static_cast<FBXCharacterData*>(GetGameObject()->GetCharacterData());
 	fbxChara->SetGraphicsPipeLine(L"StaticFBX");	//アニメなしFBXモード
 	fbxChara->AddCameraLabel(L"DefenderCamera");
 	fbxChara->AddCameraLabel(L"AttackerCamera");
@@ -17,7 +17,7 @@ void TerrainComponent::InitAction()
 
 bool TerrainComponent::FrameAction()
 {
-	getGameObject()->getCharacterData()->GetPipeline()->AddRenderObject(getGameObject()->getCharacterData());
+	GetGameObject()->GetCharacterData()->GetPipeline()->AddRenderObject(GetGameObject()->GetCharacterData());
 	return true;
 }
 

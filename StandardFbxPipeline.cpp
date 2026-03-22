@@ -172,7 +172,7 @@ HRESULT StandardFbxPipeline::InitPipeLineStateObject(ID3D12Device2* d3dDev)
     {
 		//コマンドリスト用vector確保
         m_cmdLists.resize(FRAME_COUNT);
-        MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+        MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
         for (int i = 0; i < FRAME_COUNT; i++)
         {
             ID3D12CommandAllocator* cmdAL = engine->GetCommandAllocator(i);
@@ -204,7 +204,7 @@ ID3D12GraphicsCommandList* StandardFbxPipeline::ExecuteRender()
     UINT strides = sizeof(FbxVertex);
     UINT offsets = 0;
 
-    MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+    MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
     SceneManager* scene = static_cast<SceneManager*>(engine->GetSceneController());
     std::wstring cameraLabel = L""; 
     MeshManager* pMeshMng = engine->GetMeshManager();
@@ -257,7 +257,7 @@ ID3D12GraphicsCommandList* StandardFbxPipeline::ExecuteRender()
                 continue;
             }
 
-            CharacterData* camChar = comp->getGameObject()->getCharacterData();
+            CharacterData* camChar = comp->GetGameObject()->GetCharacterData();
             ID3D12Resource* p_viewMtx = camChar->GetConstantBuffer(0);
             ID3D12Resource* p_prjMtx = camChar->GetConstantBuffer(1);
 

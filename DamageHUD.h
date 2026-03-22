@@ -11,7 +11,7 @@ class DamageHUD : public GameComponent
 private:
 	TimeManager* m_TimeManager = MyAccessHub::GetTimeManager();
 
-	std::vector<std::unique_ptr<SpriteCharacter>> m_sprite;	//0:緑ゲージ 1:赤ゲージ 2:黒ゲージ
+	std::vector<std::unique_ptr<SpriteCharacter>> m_Sprite;	//0:緑ゲージ 1:赤ゲージ 2:黒ゲージ
 
 	float animCount = 0.0f;
 

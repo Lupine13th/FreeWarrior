@@ -19,8 +19,8 @@ using namespace std::chrono;
 
 void BattleFieldManager::InitAction()
 {
-	MyGameEngine* p_engine = MyAccessHub::getMyGameEngine();
-	SceneManager* p_scene = static_cast<SceneManager*>(MyAccessHub::getMyGameEngine()->GetSceneController());
+	MyGameEngine* p_engine = MyAccessHub::GetMyGameEngine();
+	SceneManager* p_scene = static_cast<SceneManager*>(MyAccessHub::GetMyGameEngine()->GetSceneController());
 
 	m_AlliesCharacterList.resize(5);	//一旦5枠確保
 	m_EnemyCharacterList.resize(5);		//一旦5枠確保
@@ -47,9 +47,9 @@ void BattleFieldManager::InitAction()
 
 bool BattleFieldManager::FrameAction()
 {
-	MyGameEngine* p_engine = MyAccessHub::getMyGameEngine();
+	MyGameEngine* p_engine = MyAccessHub::GetMyGameEngine();
 
-	SceneManager* p_scene = static_cast<SceneManager*>(MyAccessHub::getMyGameEngine()->GetSceneController());
+	SceneManager* p_scene = static_cast<SceneManager*>(MyAccessHub::GetMyGameEngine()->GetSceneController());
 
 	KeyBindComponent* keycomp = static_cast<KeyBindComponent*>(p_scene->getKeyComponent());
 
@@ -819,7 +819,7 @@ void BattleFieldManager::FinishAction()
 //マスの色更新とターン終了の確認
 void BattleFieldManager::UpdateBattleField()
 {
-	SceneManager* p_scene = static_cast<SceneManager*>(MyAccessHub::getMyGameEngine()->GetSceneController());
+	SceneManager* p_scene = static_cast<SceneManager*>(MyAccessHub::GetMyGameEngine()->GetSceneController());
 	FlyingCameraController* Fcam = MyAccessHub::GetFlyingCameraController();
 
 	for (int i = 0; i < m_FieldSquaresList.size(); i++)
@@ -979,15 +979,15 @@ void BattleFieldManager::RefreshLogs(FieldCharacter* actionchara, FieldCharacter
 		default:
 			break;
 		case Admin::Rebel:
-			m_LogHUD->m_sprites[m_LogHUDText->LogCount]->setColor(0.5f, 0.5f, 0.7f, 1);
+			m_LogHUD->m_Sprites[m_LogHUDText->LogCount]->SetColor(0.5f, 0.5f, 0.7f, 1);
 			logColors[m_LogHUDText->LogCount] = XMFLOAT4(0.5f, 0.5f, 0.7f, 1);
 			break;
 		case Admin::Imperial:
-			m_LogHUD->m_sprites[m_LogHUDText->LogCount]->setColor(0.7f, 0.5f, 0.5f, 1);
+			m_LogHUD->m_Sprites[m_LogHUDText->LogCount]->SetColor(0.7f, 0.5f, 0.5f, 1);
 			logColors[m_LogHUDText->LogCount] = XMFLOAT4(0.7f, 0.5f, 0.5f, 1);
 			break;
 		case Admin::None:
-			m_LogHUD->m_sprites[m_LogHUDText->LogCount]->setColor(0.9f, 0.9f, 0.9f, 1);
+			m_LogHUD->m_Sprites[m_LogHUDText->LogCount]->SetColor(0.9f, 0.9f, 0.9f, 1);
 			logColors[m_LogHUDText->LogCount] = XMFLOAT4(0.9f, 0.9f, 0.9f, 1);
 			break;
 		}
@@ -998,7 +998,7 @@ void BattleFieldManager::RefreshLogs(FieldCharacter* actionchara, FieldCharacter
 		for (int i = 1; i < 8; i++)
 		{
 			m_LogHUDText->ctrs[i - 1] = m_LogHUDText->ctrs[i];
-			m_LogHUD->m_sprites[i - 1]->setColor(logColors[i].x, logColors[i].y, logColors[i].z, logColors[i].w);
+			m_LogHUD->m_Sprites[i - 1]->SetColor(logColors[i].x, logColors[i].y, logColors[i].z, logColors[i].w);
 			logColors[i - 1] = logColors[i];
 		}
 		m_LogHUDText->ctrs[7] = logs;
@@ -1007,15 +1007,15 @@ void BattleFieldManager::RefreshLogs(FieldCharacter* actionchara, FieldCharacter
 		default:
 			break;
 		case Admin::Rebel:
-			m_LogHUD->m_sprites[7]->setColor(0.5f, 0.5f, 0.7f, 1);
+			m_LogHUD->m_Sprites[7]->SetColor(0.5f, 0.5f, 0.7f, 1);
 			logColors[7] = XMFLOAT4(0.5f, 0.5f, 0.7f, 1);
 			break;
 		case Admin::Imperial:
-			m_LogHUD->m_sprites[7]->setColor(0.7f, 0.5f, 0.5f, 1);
+			m_LogHUD->m_Sprites[7]->SetColor(0.7f, 0.5f, 0.5f, 1);
 			logColors[7] = XMFLOAT4(0.7f, 0.5f, 0.5f, 1);
 			break;
 		case Admin::None:
-			m_LogHUD->m_sprites[7]->setColor(0.9f, 0.9f, 0.9f, 1);
+			m_LogHUD->m_Sprites[7]->SetColor(0.9f, 0.9f, 0.9f, 1);
 			logColors[7] = XMFLOAT4(0.9f, 0.9f, 0.9f, 1);
 			break;
 		}
@@ -1024,7 +1024,7 @@ void BattleFieldManager::RefreshLogs(FieldCharacter* actionchara, FieldCharacter
 
 void BattleFieldManager::DeleteChara(int deadCharaPos)
 {
-	MyGameEngine* p_engine = MyAccessHub::getMyGameEngine();
+	MyGameEngine* p_engine = MyAccessHub::GetMyGameEngine();
 
 	m_FieldSquaresList[deadCharaPos]->ThereCharaID = -1;
 	m_FieldSquaresList[deadCharaPos]->SqAdmin = Admin::None;
@@ -1242,7 +1242,7 @@ void BattleFieldManager::ResetFieldFromMove()	//移動モードになった際�
 void BattleFieldManager::ChangeTurn()
 {
 	EnemyAIManager* AIMng = static_cast<EnemyAIManager*>(MyAccessHub::GetAIManager());
-	SceneManager* p_scene = static_cast<SceneManager*>(MyAccessHub::getMyGameEngine()->GetSceneController());
+	SceneManager* p_scene = static_cast<SceneManager*>(MyAccessHub::GetMyGameEngine()->GetSceneController());
 	m_PreviousTurn = m_CurrentTurn;
 	switch (m_PreviousTurn)
 	{
@@ -1274,7 +1274,7 @@ void BattleFieldManager::ChangeTurn()
 
 void BattleFieldManager::ResetHUDs(int SEindex)
 {
-	MyGameEngine* p_engine = MyAccessHub::getMyGameEngine();
+	MyGameEngine* p_engine = MyAccessHub::GetMyGameEngine();
 
 	m_HUDManager->ResetHUDWhenMoveCursor();
 	m_HUDManager->GetHUDObject("CurrentTerrainHUD")->ResetHUD();

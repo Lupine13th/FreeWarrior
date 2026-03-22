@@ -13,7 +13,7 @@ class MonitorSelectUI : public GameComponent
 private:
     TimeManager* m_TimeManager = MyAccessHub::GetTimeManager();
 
-    vector<std::unique_ptr<SpriteCharacter>> m_sprite;
+    vector<std::unique_ptr<SpriteCharacter>> m_Sprite;
 
     bool Animation = false;
     bool CloseAnimation = false;

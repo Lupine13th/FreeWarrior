@@ -20,7 +20,7 @@ private:
     const wchar_t* m_chEnd;
 
     std::unordered_map<wchar_t, XMFLOAT4> m_fontMap;
-    std::vector<std::unique_ptr<SpriteCharacter>> m_sprites;
+    std::vector<std::unique_ptr<SpriteCharacter>> m_Sprites;
 
     int m_spriteCount;
 

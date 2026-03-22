@@ -10,8 +10,8 @@
 
 void TurnEndUI::InitAction()
 {
-    MyGameEngine* engine = MyAccessHub::getMyGameEngine();
-    CharacterData* chData = getGameObject()->getCharacterData();
+    MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
+    CharacterData* chData = GetGameObject()->GetCharacterData();
 
     engine->InitCameraConstantBuffer(chData);
 
@@ -26,29 +26,29 @@ void TurnEndUI::InitAction()
 
     XMFLOAT4 pattern(0.0f, 0.0f, 1.0f / 512.0f, 1.0f / 512.0f);
 
-    m_sprite.resize(3);
+    m_Sprite.resize(3);
 
-    for (int i = 0; i < m_sprite.size(); i++)
+    for (int i = 0; i < m_Sprite.size(); i++)
     {
-        m_sprite[i] = std::make_unique<SpriteCharacter>();
-        m_sprite[i]->setTextureId(L"Sprite00");
-        m_sprite[i]->SetCameraLabel(L"HUDCamera", 0);
-        m_sprite[i]->SetGraphicsPipeLine(L"AlphaSprite");
-        m_sprite[i]->SetSpritePattern(0, 1, 1, pattern);
-        m_sprite[i]->setSpriteIndex(0);
+        m_Sprite[i] = std::make_unique<SpriteCharacter>();
+        m_Sprite[i]->SetTextureId(L"Sprite00");
+        m_Sprite[i]->SetCameraLabel(L"HUDCamera", 0);
+        m_Sprite[i]->SetGraphicsPipeLine(L"AlphaSprite");
+        m_Sprite[i]->SetSpritePattern(0, 1, 1, pattern);
+        m_Sprite[i]->setSpriteIndex(0);
     }
 
-    m_sprite[0]->setPosition(0.0f, 0.0f, 1.5f);
-    m_sprite[0]->setScale(500.0f, 300.0f, 0.1f);
-    m_sprite[0]->setColor(0.0f, 0.0f, 1.0f, 1);
+    m_Sprite[0]->setPosition(0.0f, 0.0f, 1.5f);
+    m_Sprite[0]->setScale(500.0f, 300.0f, 0.1f);
+    m_Sprite[0]->SetColor(0.0f, 0.0f, 1.0f, 1);
 
-    m_sprite[1]->setPosition(100.0f, -50.0f, 1.4f);
-    m_sprite[1]->setScale(150.0f, 90.0f, 0.1f);
-    m_sprite[1]->setColor(1.0f, 1.0f, 1.0f, 1);
+    m_Sprite[1]->setPosition(100.0f, -50.0f, 1.4f);
+    m_Sprite[1]->setScale(150.0f, 90.0f, 0.1f);
+    m_Sprite[1]->SetColor(1.0f, 1.0f, 1.0f, 1);
 
-    m_sprite[2]->setPosition(-100.0f, -50.0f, 1.4f);
-    m_sprite[2]->setScale(150.0f, 90.0f, 0.1f);
-    m_sprite[2]->setColor(1.0f, 1.0f, 1.0f, 1);
+    m_Sprite[2]->setPosition(-100.0f, -50.0f, 1.4f);
+    m_Sprite[2]->setScale(150.0f, 90.0f, 0.1f);
+    m_Sprite[2]->SetColor(1.0f, 1.0f, 1.0f, 1);
 }
 
 bool TurnEndUI::FrameAction()
@@ -59,23 +59,23 @@ bool TurnEndUI::FrameAction()
     }
     else if (BFMng->GetMode() == Mode::TurnEndMode && m_WaitCount > 3.0f)
     {
-        MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+        MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
         GraphicsPipeLineObjectBase* pipe = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
 
         if (!BFMng->GetTurnEnd())
         {
-            m_sprite[1]->setColor(1.0f, 1.0f, 1.0f, 1);
-            m_sprite[2]->setColor(1.0f, 0.0f, 0.0f, 1);
+            m_Sprite[1]->SetColor(1.0f, 1.0f, 1.0f, 1);
+            m_Sprite[2]->SetColor(1.0f, 0.0f, 0.0f, 1);
         }
         else if (BFMng->GetTurnEnd())
         {
-            m_sprite[1]->setColor(1.0f, 0.0f, 0.0f, 1);
-            m_sprite[2]->setColor(1.0f, 1.0f, 1.0f, 1);
+            m_Sprite[1]->SetColor(1.0f, 0.0f, 0.0f, 1);
+            m_Sprite[2]->SetColor(1.0f, 1.0f, 1.0f, 1);
         }
 
-        for (int i = 0; i < m_sprite.size(); i++)
+        for (int i = 0; i < m_Sprite.size(); i++)
         {
-            pipe->AddRenderObject(m_sprite[i].get());
+            pipe->AddRenderObject(m_Sprite[i].get());
         }
     }
     

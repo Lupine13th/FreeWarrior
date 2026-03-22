@@ -48,7 +48,7 @@ void SceneManager::ClearSceneObjects()
 {
 	if (m_SystemObject == nullptr)
 		return;
-	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
 
 	auto IsHubManagedObject = [&](GameObject* go)->bool {
 		// シングルトン／マネージャーがコンポーネントとしてセットされている場合は削除しない
@@ -122,7 +122,7 @@ HRESULT SceneManager::initSceneController()
 HRESULT SceneManager::changeGameScene(UINT scene)
 {
 	HRESULT hr = S_OK;
-	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
 
 	BattleFieldManager* BFMng = nullptr;
 	EnemyAIManager* AIMng = nullptr;
@@ -487,12 +487,12 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 						Squares* squares = new Squares;
 						spriteObj = new GameObject(spriteCharacter);
 
-						spriteCharacter->setTextureId(L"TundraTexture");
+						spriteCharacter->SetTextureId(L"TundraTexture");
 
 						spriteCharacter->AddCameraLabel(L"AttackerCamera");
 						spriteCharacter->AddCameraLabel(L"DefenderCamera");
 
-						spriteCharacter->setColor(1, 1, 1, 1);
+						spriteCharacter->SetColor(1, 1, 1, 1);
 						spriteCharacter->setPosition(SpposX, 1.0f, SpposY);
 						spriteCharacter->setRotation(90.0f, 0.0f, 0.0f);
 
@@ -504,7 +504,7 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 						if (Y == 14)
 						{
 							squares->target = true;
-							spriteCharacter->setColor(1.0f, 0.3f, 0.3f, 1);
+							spriteCharacter->SetColor(1.0f, 0.3f, 0.3f, 1);
 						}
 
 						squares->SqPos = XMFLOAT3(SpposX, 0, SpposY);
@@ -581,7 +581,7 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 
 						else if (BFMng->GetFieldSquaresList()[(X + (Y * 10))]->terrainname == Terrain::River)
 						{
-							//Hill用のFBX表示
+							//River用のFBX表示
 							GameObject* RiverObj;
 							FBXCharacterData* RiverFbx = new FBXCharacterData();
 							RiverTerrain* RiverTer = new RiverTerrain();
@@ -725,7 +725,7 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 				m_CameraComponents[L"MainCamera"] = camComp;
 				cameraObj->addComponent(camComp);
 				engine->AddGameObject(cameraObj);
-				engine->SetCameraData(cameraObj->getCharacterData());
+				engine->SetCameraData(cameraObj->GetCharacterData());
 				camComp->ChangeCameraRatio(engine->GetWidth(), engine->GetHeight());
 				camComp->SetViewport(0.0f, 0.0f, (float)engine->GetWidth(), (float)engine->GetHeight());
 				camComp->ChangeCameraDepth(0.01f, 1000.0f);
@@ -869,7 +869,7 @@ void SceneManager::RemoveCamera(std::wstring label)
 }
 void SceneManager::AddSceneObject(GameObject* obj)
 {
-	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
 
 	obj->SetGameObjectDeleter(m_pObjDeleter.get());
 
@@ -899,7 +899,7 @@ void SceneManager::DeleteSceneObject(GameObject* obj)
 
 void SceneManager::GenerateEquipment(SoldiersType type, PlayerBase* playerBase, Admin admin)
 {
-	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
 	switch (admin)
 	{
 	case Admin::Rebel:

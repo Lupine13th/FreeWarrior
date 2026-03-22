@@ -21,19 +21,19 @@ int ReadyCharacterHUDW::MakeSpriteString(int startIndex, float ltX, float ltY, f
 	{
 		if (std::find(wordList.m_chListJ, m_chEnd, *str) != m_chEnd)
 		{
-			m_sprites[count]->SetSpritePattern(0, width, height, m_fontMap[*str]);
-			m_sprites[count]->setSpriteIndex(0);
+			m_Sprites[count]->SetSpritePattern(0, width, height, m_fontMap[*str]);
+			m_Sprites[count]->setSpriteIndex(0);
 
 			if (BRScene->menuIndex + 3 == makingSpriteCount && BRScene->lighting)
 			{
-				m_sprites[count]->setColor(0.0f, 0.0f, 0.0f, 1.0f);
+				m_Sprites[count]->SetColor(0.0f, 0.0f, 0.0f, 1.0f);
 			}
 			else
 			{
-				m_sprites[count]->setColor(BRScene->textcolor.x, BRScene->textcolor.y, BRScene->textcolor.z, 1);
+				m_Sprites[count]->SetColor(BRScene->textcolor.x, BRScene->textcolor.y, BRScene->textcolor.z, 1);
 			}
 
-			m_sprites[count]->setPosition(ltX, ltY, 0.0f);
+			m_Sprites[count]->setPosition(ltX, ltY, 0.0f);
 
 			
 			count++;
@@ -51,8 +51,8 @@ int ReadyCharacterHUDW::MakeSpriteString(int startIndex, float ltX, float ltY, f
 
 void ReadyCharacterHUDW::InitAction()
 {
-	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
-	CharacterData* chData = getGameObject()->getCharacterData();
+	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
+	CharacterData* chData = GetGameObject()->GetCharacterData();
 
 	m_spriteCount = 200;
 
@@ -62,14 +62,14 @@ void ReadyCharacterHUDW::InitAction()
 	{
 		spc = new SpriteCharacter();
 
-		spc->setTextureId(L"JPNHUDTexture");
+		spc->SetTextureId(L"JPNHUDTexture");
 		spc->SetCameraLabel(L"HUDCamera", 0);
 
-		spc->setColor(BRScene->textcolor.x, BRScene->textcolor.y, BRScene->textcolor.z, 1);
+		spc->SetColor(BRScene->textcolor.x, BRScene->textcolor.y, BRScene->textcolor.z, 1);
 
 		spc->SetGraphicsPipeLine(L"Sprite");
 
-		m_sprites.push_back(std::unique_ptr<SpriteCharacter>(spc));
+		m_Sprites.push_back(std::unique_ptr<SpriteCharacter>(spc));
 	}
 
 	Texture2DContainer* tex = engine->GetTextureManager()->GetTexture(L"JPNHUDTexture");
@@ -109,7 +109,7 @@ void ReadyCharacterHUDW::InitAction()
 
 bool ReadyCharacterHUDW::FrameAction()
 {
-	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
 	GraphicsPipeLineObjectBase* pipeLine = engine->GetPipelineManager()->GetPipeLineObject(L"Sprite");
 
 	int count = 0;
@@ -151,7 +151,7 @@ bool ReadyCharacterHUDW::FrameAction()
 
 		for (int i = 0; i < count; i++)
 		{
-			pipeLine->AddRenderObject(m_sprites[i].get());
+			pipeLine->AddRenderObject(m_Sprites[i].get());
 		}
 		
 		break;
@@ -215,98 +215,98 @@ bool ReadyCharacterHUDW::FrameAction()
 			{
 				for (int i = 0; i < CountList[0]; i++)
 				{
-					pipeLine->AddRenderObject(m_sprites[i].get());
+					pipeLine->AddRenderObject(m_Sprites[i].get());
 				}
 			}
 			else if (AnimCount > 0.1f && AnimCount < 0.2f)
 			{
 				for (int i = 0; i < CountList[1]; i++)
 				{
-					pipeLine->AddRenderObject(m_sprites[i].get());
+					pipeLine->AddRenderObject(m_Sprites[i].get());
 				}
 			}
 			else if (AnimCount > 0.2f && AnimCount < 0.3f)
 			{
 				for (int i = 0; i < CountList[2]; i++)
 				{
-					pipeLine->AddRenderObject(m_sprites[i].get());
+					pipeLine->AddRenderObject(m_Sprites[i].get());
 				}
 			}
 			else if (AnimCount > 0.3f && AnimCount < 0.4f)
 			{
 				for (int i = 0; i < CountList[3]; i++)
 				{
-					pipeLine->AddRenderObject(m_sprites[i].get());
+					pipeLine->AddRenderObject(m_Sprites[i].get());
 				}
 			}
 			else if (AnimCount > 0.4f && AnimCount < 0.5f)
 			{
 				for (int i = 0; i < CountList[4]; i++)
 				{
-					pipeLine->AddRenderObject(m_sprites[i].get());
+					pipeLine->AddRenderObject(m_Sprites[i].get());
 				}
 			}
 			else if (AnimCount > 0.5f && AnimCount < 0.6f)
 			{
 				for (int i = 0; i < CountList[5]; i++)
 				{
-					pipeLine->AddRenderObject(m_sprites[i].get());
+					pipeLine->AddRenderObject(m_Sprites[i].get());
 				}
 			}
 			else if (AnimCount > 0.6f && AnimCount < 0.7f)
 			{
 				for (int i = 0; i < CountList[6]; i++)
 				{
-					pipeLine->AddRenderObject(m_sprites[i].get());
+					pipeLine->AddRenderObject(m_Sprites[i].get());
 				}
 			}
 			else if (AnimCount > 0.7f && AnimCount < 0.8f)
 			{
 				for (int i = 0; i < CountList[7]; i++)
 				{
-					pipeLine->AddRenderObject(m_sprites[i].get());
+					pipeLine->AddRenderObject(m_Sprites[i].get());
 				}
 			}
 			else if (AnimCount > 0.8f && AnimCount < 0.9f)
 			{
 				for (int i = 0; i < CountList[8]; i++)
 				{
-					pipeLine->AddRenderObject(m_sprites[i].get());
+					pipeLine->AddRenderObject(m_Sprites[i].get());
 				}
 			}
 			else if (AnimCount > 0.9f && AnimCount < 1.0f)
 			{
 				for (int i = 0; i < CountList[9]; i++)
 				{
-					pipeLine->AddRenderObject(m_sprites[i].get());
+					pipeLine->AddRenderObject(m_Sprites[i].get());
 				}
 			}
 			else if (AnimCount > 1.0f && AnimCount < 1.1f)
 			{
 				for (int i = 0; i < CountList[10]; i++)
 				{
-					pipeLine->AddRenderObject(m_sprites[i].get());
+					pipeLine->AddRenderObject(m_Sprites[i].get());
 				}
 			}
 			else if (AnimCount > 1.1f && AnimCount < 1.2f)
 			{
 				for (int i = 0; i < CountList[11]; i++)
 				{
-					pipeLine->AddRenderObject(m_sprites[i].get());
+					pipeLine->AddRenderObject(m_Sprites[i].get());
 				}
 			}
 			else if (AnimCount > 1.2f && AnimCount < 1.3f)
 			{
 				for (int i = 0; i < CountList[12]; i++)
 				{
-					pipeLine->AddRenderObject(m_sprites[i].get());
+					pipeLine->AddRenderObject(m_Sprites[i].get());
 				}
 			}
 			else if (AnimCount > 1.3f)
 			{
 				for (int i = 0; i < count; i++)
 				{
-					pipeLine->AddRenderObject(m_sprites[i].get());
+					pipeLine->AddRenderObject(m_Sprites[i].get());
 				}
 				AnimCount = 0.0f;
 				AnimationFlag = false;
@@ -316,7 +316,7 @@ bool ReadyCharacterHUDW::FrameAction()
 		{
 			for (int i = 0; i < count; i++)
 			{
-				pipeLine->AddRenderObject(m_sprites[i].get());
+				pipeLine->AddRenderObject(m_Sprites[i].get());
 			}
 		}
 		break;
@@ -338,7 +338,7 @@ bool ReadyCharacterHUDW::FrameAction()
 
 		for (int i = 0; i < count; i++)
 		{
-			pipeLine->AddRenderObject(m_sprites[i].get());
+			pipeLine->AddRenderObject(m_Sprites[i].get());
 		}
 		break;
 	case ReadySceneState::Finish:
@@ -359,7 +359,7 @@ bool ReadyCharacterHUDW::FrameAction()
 
 		for (int i = 0; i < count; i++)
 		{
-			pipeLine->AddRenderObject(m_sprites[i].get());
+			pipeLine->AddRenderObject(m_Sprites[i].get());
 		}
 		break;
 	}

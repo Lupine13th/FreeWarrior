@@ -3,7 +3,7 @@
 
 void HillTerrain::InitAction()
 {
-    FBXCharacterData* chdata = static_cast<FBXCharacterData*>(getGameObject()->getCharacterData());
+    FBXCharacterData* chdata = static_cast<FBXCharacterData*>(GetGameObject()->GetCharacterData());
     chdata->SetGraphicsPipeLine(L"StaticFBX");
     chdata->LoadMainFBX(L"./Resources/fbx/HillTerrain.fbx", L"HillsTer");
     chdata->setScale(0.001f, 0.001f, 0.001f);
@@ -14,8 +14,7 @@ void HillTerrain::InitAction()
 
 bool HillTerrain::FrameAction()
 {
-
-    CharacterData* SqData = getGameObject()->getCharacterData();
+    CharacterData* SqData = GetGameObject()->GetCharacterData();
     SqData->GetPipeline()->AddRenderObject(SqData);
 
     return true;

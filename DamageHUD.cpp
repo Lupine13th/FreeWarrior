@@ -10,8 +10,8 @@
 
 void DamageHUD::InitAction()
 {
-    MyGameEngine* engine = MyAccessHub::getMyGameEngine();
-    CharacterData* chData = getGameObject()->getCharacterData();
+    MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
+    CharacterData* chData = GetGameObject()->GetCharacterData();
 
     engine->InitCameraConstantBuffer(chData);
 
@@ -26,32 +26,32 @@ void DamageHUD::InitAction()
 
     XMFLOAT4 pattern(0.0f, 0.0f, 1.0f / 512.0f, 1.0f / 512.0f);
 
-    m_sprite.resize(3);
+    m_Sprite.resize(3);
 
-    for (int i = 0; i < m_sprite.size(); i++)
+    for (int i = 0; i < m_Sprite.size(); i++)
     {
-        m_sprite[i] = std::make_unique<SpriteCharacter>();
-        m_sprite[i]->setTextureId(L"Sprite00");
-        m_sprite[i]->SetCameraLabel(L"HUDCamera", 0);
-        m_sprite[i]->SetGraphicsPipeLine(L"AlphaSprite");
-        m_sprite[i]->SetSpritePattern(0, 1, 1, pattern);
-        m_sprite[i]->setSpriteIndex(0);
-        m_sprite[i]->setPosition(OrigenBarPosX, kBarPosY, 2.0f);
-        m_sprite[i]->setScale(OriginBarSizeX, 10.0f, 0.1f);
+        m_Sprite[i] = std::make_unique<SpriteCharacter>();
+        m_Sprite[i]->SetTextureId(L"Sprite00");
+        m_Sprite[i]->SetCameraLabel(L"HUDCamera", 0);
+        m_Sprite[i]->SetGraphicsPipeLine(L"AlphaSprite");
+        m_Sprite[i]->SetSpritePattern(0, 1, 1, pattern);
+        m_Sprite[i]->setSpriteIndex(0);
+        m_Sprite[i]->setPosition(OrigenBarPosX, kBarPosY, 2.0f);
+        m_Sprite[i]->setScale(OriginBarSizeX, 10.0f, 0.1f);
     }
 
-    m_sprite[0]->setColor(0.0f, 1.0f, 0.0f, 1);
-    m_sprite[0]->setPosition(OrigenBarPosX, kBarPosY, 1.0f);
-    m_sprite[1]->setColor(1.0f, 0.0f, 0.0f, 1);
-    m_sprite[1]->setPosition(OrigenBarPosX, kBarPosY, 2.0f);
-    m_sprite[2]->setColor(0.0f, 0.0f, 0.0f, 1);
-    m_sprite[2]->setPosition(OrigenBarPosX, kBarPosY, 2.5f);
-    m_sprite[2]->setScale(OriginBarSizeX + 5.0f, 15.0f, 0.1f);
+    m_Sprite[0]->SetColor(0.0f, 1.0f, 0.0f, 1);
+    m_Sprite[0]->setPosition(OrigenBarPosX, kBarPosY, 1.0f);
+    m_Sprite[1]->SetColor(1.0f, 0.0f, 0.0f, 1);
+    m_Sprite[1]->setPosition(OrigenBarPosX, kBarPosY, 2.0f);
+    m_Sprite[2]->SetColor(0.0f, 0.0f, 0.0f, 1);
+    m_Sprite[2]->setPosition(OrigenBarPosX, kBarPosY, 2.5f);
+    m_Sprite[2]->setScale(OriginBarSizeX + 5.0f, 15.0f, 0.1f);
 }
 
 bool DamageHUD::FrameAction()
 {
-    MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+    MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
     GraphicsPipeLineObjectBase* pipe = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
 
     std::wstring cstr;
@@ -69,22 +69,22 @@ bool DamageHUD::FrameAction()
         if (animCount == 0.0f)
         {
             RedBarSizeX = startRedSizeX;
-            m_sprite[1]->setScale(RedBarSizeX, 10.0f, 0.1f);
-            m_sprite[1]->setPosition(kBarPosLeftX + RedBarSizeX / 2.0f, kBarPosY, 2.0f);
+            m_Sprite[1]->setScale(RedBarSizeX, 10.0f, 0.1f);
+            m_Sprite[1]->setPosition(kBarPosLeftX + RedBarSizeX / 2.0f, kBarPosY, 2.0f);
         }
         if (animCount < 0.5f)
         {
             float t = animCount / 0.5f;
             GreenBarSizeX = startGreenSizeX + (endGreenSizeX - startGreenSizeX) * t;
-            m_sprite[0]->setScale(GreenBarSizeX, 10.0f, 0.1f);
-            m_sprite[0]->setPosition(kBarPosLeftX + GreenBarSizeX / 2.0f, kBarPosY, 1.0f);
+            m_Sprite[0]->setScale(GreenBarSizeX, 10.0f, 0.1f);
+            m_Sprite[0]->setPosition(kBarPosLeftX + GreenBarSizeX / 2.0f, kBarPosY, 1.0f);
         }
         else if (animCount < 1.0f)
         {
             float t = (animCount - 0.5f) / 0.5f;
             RedBarSizeX = startRedSizeX + (endRedSizeX - startRedSizeX) * t;
-            m_sprite[1]->setScale(RedBarSizeX, 10.0f, 0.1f);
-            m_sprite[1]->setPosition(kBarPosLeftX + RedBarSizeX / 2.0f, kBarPosY, 2.0f);
+            m_Sprite[1]->setScale(RedBarSizeX, 10.0f, 0.1f);
+            m_Sprite[1]->setPosition(kBarPosLeftX + RedBarSizeX / 2.0f, kBarPosY, 2.0f);
         }
         else
         {
@@ -93,9 +93,9 @@ bool DamageHUD::FrameAction()
             m_DamegeAnimationState = DamegeAnimationState::None;
         }
 
-        for (int i = 0; i < m_sprite.size(); i++)
+        for (int i = 0; i < m_Sprite.size(); i++)
         {
-            pipe->AddRenderObject(m_sprite[i].get());
+            pipe->AddRenderObject(m_Sprite[i].get());
         }
         animCount += m_TimeManager->GetDeltaTime();
         break;

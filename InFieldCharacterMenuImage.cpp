@@ -9,8 +9,8 @@
 
 void InFieldCharacterMenuImage::InitAction()
 {
-    MyGameEngine* engine = MyAccessHub::getMyGameEngine();
-    CharacterData* chData = getGameObject()->getCharacterData();
+    MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
+    CharacterData* chData = GetGameObject()->GetCharacterData();
 
     engine->InitCameraConstantBuffer(chData);
 
@@ -27,7 +27,7 @@ void InFieldCharacterMenuImage::InitAction()
 
     m_Sprite = std::make_unique<SpriteCharacter>();
     m_Sprite->SetCameraLabel(L"HUDCamera", 0);
-    m_Sprite->setColor(1.0f, 1.0f, 1.0f, 1);
+    m_Sprite->SetColor(1.0f, 1.0f, 1.0f, 1);
     m_Sprite->SetGraphicsPipeLine(L"AlphaSprite");
     m_Sprite->SetSpritePattern(0, 1, 1, pattern);
     m_Sprite->setScale(270.0f, 270.0f, 0.1f);
@@ -44,25 +44,25 @@ bool InFieldCharacterMenuImage::FrameAction()
         default:
             break;
         case SoldiersType::infantry:
-            m_Sprite->setTextureId(L"RebelInfTexture");
+            m_Sprite->SetTextureId(L"RebelInfTexture");
             break;
         case SoldiersType::machinegunner:
-            m_Sprite->setTextureId(L"RebelCavTexture");
+            m_Sprite->SetTextureId(L"RebelCavTexture");
             break;
         case SoldiersType::artillery:
-            m_Sprite->setTextureId(L"RebelArtTexture");
+            m_Sprite->SetTextureId(L"RebelArtTexture");
             break;
         case SoldiersType::scout:
-            m_Sprite->setTextureId(L"RebelSctTexture");
+            m_Sprite->SetTextureId(L"RebelSctTexture");
             break;
         case SoldiersType::armored:
-            m_Sprite->setTextureId(L"RebelArmTexture");
+            m_Sprite->SetTextureId(L"RebelArmTexture");
             break;
         }
 
         if (BRScene->m_ReadySceneState == ReadySceneState::InField)
         {
-            MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+            MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
             GraphicsPipeLineObjectBase* pipe = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
             pipe->AddRenderObject(m_Sprite.get());
         }

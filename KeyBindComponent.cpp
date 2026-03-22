@@ -154,7 +154,7 @@ LONG KeyBindComponent::getAnalogValue(INPUT_TYPES inputDev, ANALOG_IDS analogId)
 
 void KeyBindComponent::InitAction()
 {
-	m_inputMng = MyAccessHub::getMyGameEngine()->GetInputManager();
+	m_inputMng = MyAccessHub::GetMyGameEngine()->GetInputManager();
 	m_currentInputType = INPUT_TYPES::KEYBOARD;
 
 	InputConfigData* conf;

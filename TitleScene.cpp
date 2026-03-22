@@ -18,7 +18,7 @@ int TitleScene::MakeSpriteString(int startIndex, float ltX, float ltY, float wid
         {
             m_WordSprites[count]->SetSpritePattern(0, width, height, m_FontMap[*str]);
             m_WordSprites[count]->setSpriteIndex(0);
-            m_WordSprites[count]->setColor(1.0f, 1.0f, 1.0f, 1.0f);
+            m_WordSprites[count]->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
             m_WordSprites[count]->setPosition(ltX, ltY, 0.0f);
             count++;
         }
@@ -33,8 +33,8 @@ int TitleScene::MakeSpriteString(int startIndex, float ltX, float ltY, float wid
 
 void TitleScene::InitAction()
 {
-    MyGameEngine* engine = MyAccessHub::getMyGameEngine();
-    CharacterData* chData = getGameObject()->getCharacterData();
+    MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
+    CharacterData* chData = GetGameObject()->GetCharacterData();
 
     engine->InitCameraConstantBuffer(chData);
 
@@ -53,34 +53,34 @@ void TitleScene::InitAction()
     
 
     m_Sprite.push_back(std::make_unique<SpriteCharacter>());
-    m_Sprite[0]->setTextureId(L"TitleBackGroundTexturewithLogo");
+    m_Sprite[0]->SetTextureId(L"TitleBackGroundTexturewithLogo");
     m_Sprite[0]->SetCameraLabel(L"HUDCamera", 0);
     m_Sprite[0]->SetGraphicsPipeLine(L"AlphaSprite");
     m_Sprite[0]->SetSpritePattern(0, 1, 1, pattern);
     m_Sprite[0]->setScale(1000.0f, 1000.0f, 0.1f);
     m_Sprite[0]->setSpriteIndex(0);
     m_Sprite[0]->setPosition(0.0f, -10.0f, 2.0f);
-    m_Sprite[0]->setColor(1.0f, 1.0f, 1.0f, 1);
+    m_Sprite[0]->SetColor(1.0f, 1.0f, 1.0f, 1);
 
     m_Sprite.push_back(std::make_unique<SpriteCharacter>());
-    m_Sprite[1]->setTextureId(L"TitleMenuEffectTexture");
+    m_Sprite[1]->SetTextureId(L"TitleMenuEffectTexture");
     m_Sprite[1]->SetCameraLabel(L"HUDCamera", 0);
     m_Sprite[1]->SetGraphicsPipeLine(L"AlphaSprite");
     m_Sprite[1]->SetSpritePattern(0, 1, 1, m_PatternRect);
     m_Sprite[1]->setScale(550.0f, 550.0f, 0.1f);
     m_Sprite[1]->setSpriteIndex(0);
     m_Sprite[1]->setPosition(0.0f, -10.0f, 1.0f);
-    m_Sprite[1]->setColor(1.0f, 1.0f, 1.0f, 1);
+    m_Sprite[1]->SetColor(1.0f, 1.0f, 1.0f, 1);
 
     m_Sprite.push_back(std::make_unique<SpriteCharacter>());
-    m_Sprite[2]->setTextureId(L"TitleFlashEffect");
+    m_Sprite[2]->SetTextureId(L"TitleFlashEffect");
     m_Sprite[2]->SetCameraLabel(L"HUDCamera", 0);
     m_Sprite[2]->SetGraphicsPipeLine(L"AlphaSprite");
     m_Sprite[2]->SetSpritePattern(0, 1, 1, m_PatternRect);
     m_Sprite[2]->setScale(1000.0f, 1000.0f, 0.1f);
     m_Sprite[2]->setSpriteIndex(0);
     m_Sprite[2]->setPosition(0.0f, -10.0f, 0.0f);
-    m_Sprite[2]->setColor(1.0f, 1.0f, 1.0f, 1);
+    m_Sprite[2]->SetColor(1.0f, 1.0f, 1.0f, 1);
 
     //Text
     m_WordCount = 50;
@@ -91,10 +91,10 @@ void TitleScene::InitAction()
     {
         spc = new SpriteCharacter();
 
-        spc->setTextureId((m_TextureType).c_str());
+        spc->SetTextureId((m_TextureType).c_str());
         spc->SetCameraLabel(L"HUDCamera", 0);
 
-        spc->setColor(1, 1, 1, 1);
+        spc->SetColor(1, 1, 1, 1);
 
         spc->SetGraphicsPipeLine(L"AlphaSprite");
 
@@ -138,7 +138,7 @@ void TitleScene::InitAction()
 
 bool TitleScene::FrameAction()
 {
-    MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+    MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
     GraphicsPipeLineObjectBase* pipe = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
 
     SceneManager* scene = static_cast<SceneManager*>(engine->GetSceneController());
@@ -264,7 +264,7 @@ bool TitleScene::FrameAction()
         break;
     }
     case TitleState::NextScene:
-        MyAccessHub::getMyGameEngine()->GetSceneController()->OrderNextScene((UINT)m_NextScene);
+        MyAccessHub::GetMyGameEngine()->GetSceneController()->OrderNextScene((UINT)m_NextScene);
         break;
     }
 	return true;

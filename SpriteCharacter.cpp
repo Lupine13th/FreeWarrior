@@ -2,7 +2,7 @@
 #include "TextureManager.h"
 #include "MyAccessHub.h"
 
-void SpriteCharacter::setTextureId(const wchar_t* texId)
+void SpriteCharacter::SetTextureId(const wchar_t* texId)
 {
 	if (texture_id != texId)
 	{
@@ -10,9 +10,9 @@ void SpriteCharacter::setTextureId(const wchar_t* texId)
 	}
 }
 
-HRESULT SpriteCharacter::setSpritePatterns(XMUINT4* patterns, UINT numOfPatterns)
+HRESULT SpriteCharacter::SetSpritePatterns(XMUINT4* patterns, UINT numOfPatterns)
 {
-    auto texContainer = MyAccessHub::getMyGameEngine()->GetTextureManager()->GetTexture(texture_id);
+    auto texContainer = MyAccessHub::GetMyGameEngine()->GetTextureManager()->GetTexture(texture_id);
 
     if (texContainer == nullptr)
         return E_FAIL;
@@ -68,7 +68,7 @@ HRESULT SpriteCharacter::SetSpritePattern(UINT index, float w, float h, XMFLOAT4
 }
 
 //======ColorMix
-void SpriteCharacter::setColor(float r, float g, float b, float a)
+void SpriteCharacter::SetColor(float r, float g, float b, float a)
 {
     m_color.x = r;
     m_color.y = g;
@@ -76,27 +76,27 @@ void SpriteCharacter::setColor(float r, float g, float b, float a)
     m_color.w = a;
 }
 
-void SpriteCharacter::setColorMix(COLOR_MIX_OP op)
+void SpriteCharacter::SetColorMix(COLOR_MIX_OP op)
 {
     m_colorMix = (UINT)op;
 }
 
-void SpriteCharacter::setAlphaMix(COLOR_MIX_OP op)
+void SpriteCharacter::SetAlphaMix(COLOR_MIX_OP op)
 {
     m_alphaMix = (UINT)op;
 }
 
-const XMFLOAT4* SpriteCharacter::getColor()
+const XMFLOAT4* SpriteCharacter::GetColor()
 {
     return &m_color;
 }
 
-UINT SpriteCharacter::getColorMix()
+UINT SpriteCharacter::GetColorMix()
 {
     return m_colorMix;
 }
 
-UINT SpriteCharacter::getAlphaMix()
+UINT SpriteCharacter::GetAlphaMix()
 {
     return m_alphaMix;
 }

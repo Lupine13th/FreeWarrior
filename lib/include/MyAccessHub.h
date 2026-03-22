@@ -73,7 +73,7 @@ public:
 		m_EffectGenerator = effectGenerator;
 	}
 
-	static MyGameEngine* getMyGameEngine()
+	static MyGameEngine* GetMyGameEngine()
 	{
 		return m_engine;
 	}

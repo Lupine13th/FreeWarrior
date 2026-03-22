@@ -13,7 +13,7 @@ using namespace std::chrono;
 
 void Squares::InitAction()
 {
-	CharacterData* SqData = getGameObject()->getCharacterData();
+	CharacterData* SqData = GetGameObject()->GetCharacterData();
 	SqData->setScale(0.5f, 0.5f, 0.5f);
 	SqData->setRotation(90.0f, 0.0f, 0.0f);
 	SqData->SetGraphicsPipeLine(L"AlphaSprite");
@@ -24,10 +24,10 @@ void Squares::InitAction()
 
 bool Squares::FrameAction()
 {
-	SceneManager* p_scene = static_cast<SceneManager*>(MyAccessHub::getMyGameEngine()->GetSceneController());
+	SceneManager* p_scene = static_cast<SceneManager*>(MyAccessHub::GetMyGameEngine()->GetSceneController());
 	if (!firstcount)
 	{
-		m_SqData = getGameObject()->getCharacterData();
+		m_SqData = GetGameObject()->GetCharacterData();
 	}
 
 	if (m_IsAnimating)
@@ -216,7 +216,7 @@ void Squares::HitReaction()
 
 void Squares::AttackReaction()
 {
-	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
 	switch (chara->CharaKind)
 	{
 	default:
@@ -250,43 +250,43 @@ void Squares::AttackReaction()
 
 void Squares::SetSquaresColor(SquareColor color)
 {
-	SpriteCharacter* SqData = static_cast<SpriteCharacter*>(getGameObject()->getCharacterData());
+	SpriteCharacter* SqData = static_cast<SpriteCharacter*>(GetGameObject()->GetCharacterData());
 	switch (color)
 	{
 	case SquareColor::AttackCursor:
-		SqData->setColor(1.0f, 0.0f, 1.0f, 1.0f);
+		SqData->SetColor(1.0f, 0.0f, 1.0f, 1.0f);
 		break;
 	case SquareColor::AttackSellectCursor:
-		SqData->setColor(1.0f, 0.0f, 0.5f, 1.0f);
+		SqData->SetColor(1.0f, 0.0f, 0.5f, 1.0f);
 		break;
 	case SquareColor::FieldCursor:
-		SqData->setColor(0.0f, 1.0f, 0.0f, 1.0f);
+		SqData->SetColor(0.0f, 1.0f, 0.0f, 1.0f);
 		break;
 	case SquareColor::AbillityCursor:
-		SqData->setColor(1.0f, 1.0f, 0.0f, 1.0f);
+		SqData->SetColor(1.0f, 1.0f, 0.0f, 1.0f);
 		break;
 	case SquareColor::MoveCursor:
-		SqData->setColor(0.0f, 1.0f, 1.0f, 1.0f);
+		SqData->SetColor(0.0f, 1.0f, 1.0f, 1.0f);
 		break;
 	case SquareColor::EnemyRengeCursor:
-		SqData->setTextureId(L"TargetTundraTexture");
+		SqData->SetTextureId(L"TargetTundraTexture");
 		break;
 	case SquareColor::EnemyCursor:
-		SqData->setColor(1.0f, 0.0f, 0.0f, 1.0f);
+		SqData->SetColor(1.0f, 0.0f, 0.0f, 1.0f);
 		break;
 	case SquareColor::NotCursor:
-		SqData->setColor(1.0f, 1.0f, 1.0f, 1.0f);
-		SqData->setTextureId(L"TundraTexture");
+		SqData->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
+		SqData->SetTextureId(L"TundraTexture");
 		break;
 	case SquareColor::PassColor:
-		SqData->setColor(0.5f, 0.7f, 0.5f, 1.0f);
+		SqData->SetColor(0.5f, 0.7f, 0.5f, 1.0f);
 		break;
 	case SquareColor::TargetColor:
-		SqData->setColor(1.0f, 0.3f, 0.3f, 1.0f);
+		SqData->SetColor(1.0f, 0.3f, 0.3f, 1.0f);
 		break;
 	default:
-		SqData->setColor(1.0f, 1.0f, 1.0f, 1.0f);
-		SqData->setTextureId(L"TundraTexture");
+		SqData->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
+		SqData->SetTextureId(L"TundraTexture");
 		break;
 	}
 }

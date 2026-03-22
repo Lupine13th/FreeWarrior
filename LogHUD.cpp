@@ -9,38 +9,30 @@
 
 void LogHUD::InitAction()
 {
-    MyGameEngine* engine = MyAccessHub::getMyGameEngine();
-    CharacterData* chData = getGameObject()->getCharacterData();
+    MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
+    CharacterData* chData = GetGameObject()->GetCharacterData();
 
     SpriteCharacter* spc;
 
     for (int i = 0; i < 9; i++)
     {
-        spc = new SpriteCharacter();
-
-        spc->setTextureId(L"Sprite00");
-        spc->SetCameraLabel(L"HUDCamera", 0);
-
-        spc->setColor(1, 1, 1, 1);
-
-        if (i % 2 == 1)
-        {
-            spc->setColor(0.9f, 0.9f, 0.9f, 1);
-        }
-
-        spc->SetGraphicsPipeLine(L"AlphaSprite");
-
         XMFLOAT4 pattern(0.0f, 0.0f, 1.0f / 512.0f, 1.0f / 512.0f);
 
+        spc = new SpriteCharacter();
+        spc->SetTextureId(L"Sprite00");
+        spc->SetCameraLabel(L"HUDCamera", 0);
+        spc->SetColor(1, 1, 1, 1);
+        if (i % 2 == 1)
+        {
+            spc->SetColor(0.9f, 0.9f, 0.9f, 1);
+        }
+        spc->SetGraphicsPipeLine(L"AlphaSprite");
         spc->SetSpritePattern(0, 10, 10, pattern);
-
         spc->setSpriteIndex(0);
-
         spc->setPosition(-360.0f, (-90.0f - i * 25.0f), 2.0f);
-
         spc->setScale(25.0f, 3.0f, 0.1f);
 
-        m_sprites.push_back(std::unique_ptr<SpriteCharacter>(spc));
+        m_Sprites.push_back(std::unique_ptr<SpriteCharacter>(spc));
     }
 }
 
@@ -48,12 +40,12 @@ bool LogHUD::FrameAction()
 {
     if (BFMng->GetCurrentTurn() != Turn::First && BFMng->GetOpenLog())
     {
-        MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+        MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
         GraphicsPipeLineObjectBase* pipe = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
 
         for (int i = 0; i < 8; i++)
         {
-            pipe->AddRenderObject(m_sprites[i].get());
+            pipe->AddRenderObject(m_Sprites[i].get());
         }
     }
     
@@ -62,6 +54,6 @@ bool LogHUD::FrameAction()
 
 void LogHUD::FinishAction()
 {
-    SceneManager* scene = static_cast<SceneManager*>(MyAccessHub::getMyGameEngine()->GetSceneController());
+    SceneManager* scene = static_cast<SceneManager*>(MyAccessHub::GetMyGameEngine()->GetSceneController());
     scene->RemoveCamera(this);
 }

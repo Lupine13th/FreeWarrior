@@ -34,8 +34,8 @@ void BattleReadyScene::ResetCount()
 
 void BattleReadyScene::InitAction()
 {
-    MyGameEngine* engine = MyAccessHub::getMyGameEngine();
-    CharacterData* chData = getGameObject()->getCharacterData();
+    MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
+    CharacterData* chData = GetGameObject()->GetCharacterData();
 
     engine->InitCameraConstantBuffer(chData);
 
@@ -48,19 +48,19 @@ void BattleReadyScene::InitAction()
     engine->UpdateShaderResourceOnGPU(chData->GetConstantBuffer(0), &view, sizeof(XMMATRIX));
     engine->UpdateShaderResourceOnGPU(chData->GetConstantBuffer(1), &proj, sizeof(XMMATRIX));
 
-    m_sprite = std::make_unique<SpriteCharacter>();
-    m_sprite->setTextureId(L"Sprite00");
-    m_sprite->SetGraphicsPipeLine(L"AlphaSprite");
-    m_sprite->SetCameraLabel(L"HUDCamera", 0);
+    m_Sprite = std::make_unique<SpriteCharacter>();
+    m_Sprite->SetTextureId(L"Sprite00");
+    m_Sprite->SetGraphicsPipeLine(L"AlphaSprite");
+    m_Sprite->SetCameraLabel(L"HUDCamera", 0);
 
     m_TimeManager = MyAccessHub::GetTimeManager();
 
     XMFLOAT4 pattern(0.0f, 0.0f, 1.0f / 512.0f, 1.0f / 512.0f);
-    m_sprite->SetSpritePattern(0, 10, 10, pattern);
-    m_sprite->setScale(100.0f, 60.0f, 0.1f);
-    m_sprite->setSpriteIndex(0);
-    m_sprite->setPosition(0.0f, 0.0f, 2.0f);
-    m_sprite->setColor(0.0f, 0.0f, 0.0f, 1);
+    m_Sprite->SetSpritePattern(0, 10, 10, pattern);
+    m_Sprite->setScale(100.0f, 60.0f, 0.1f);
+    m_Sprite->setSpriteIndex(0);
+    m_Sprite->setPosition(0.0f, 0.0f, 2.0f);
+    m_Sprite->SetColor(0.0f, 0.0f, 0.0f, 1);
 
     //味方待機部隊設定
 	InFieldAlliesCharacterList[0] = new Infantry;
@@ -115,10 +115,10 @@ void BattleReadyScene::InitAction()
 
 bool BattleReadyScene::FrameAction()
 {
-    MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+    MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
     GraphicsPipeLineObjectBase* pipe = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
 
-    pipe->AddRenderObject(m_sprite.get());
+    pipe->AddRenderObject(m_Sprite.get());
 
     SceneManager* scene = static_cast<SceneManager*>(engine->GetSceneController());
     KeyBindComponent* keyBind = static_cast<KeyBindComponent*>(scene->getKeyComponent());
@@ -279,7 +279,7 @@ bool BattleReadyScene::FrameAction()
             break;
         case ReadySceneState::Finish:   //シーン切り替え開始
             //sta = 1;
-            MyAccessHub::getMyGameEngine()->GetSceneController()->OrderNextScene((UINT)m_nextScene);
+            MyAccessHub::GetMyGameEngine()->GetSceneController()->OrderNextScene((UINT)m_nextScene);
             m_FinishCount += m_TimeManager->GetDeltaTime();
             if (m_FinishCount > kMaxFinishCount)
             {

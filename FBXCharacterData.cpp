@@ -14,7 +14,8 @@
 using namespace fbxsdk;
 using namespace DirectX;
 
-void convertFbxAMatrixToXMFLOAT4x4(const FbxAMatrix& fbxamatrix, DirectX::XMFLOAT4X4& xmfloat4x4)
+//FbxAMatrixをXMFLOAT4x4に変換
+void ConvertFbxAMatrixToXMFLOAT4x4(const FbxAMatrix& fbxamatrix, DirectX::XMFLOAT4X4& xmfloat4x4)
 {
 	for (int row = 0; row < 4; row++)
 	{
@@ -25,7 +26,8 @@ void convertFbxAMatrixToXMFLOAT4x4(const FbxAMatrix& fbxamatrix, DirectX::XMFLOA
 	}
 }
 
-void convertFbxAMatrixToXMMATRIX(const FbxAMatrix& fbxAMatrix, DirectX::XMMATRIX& xMMATRIX)
+//FbxAMatrixをXMMATRIXに変換
+void ConvertFbxAMatrixToXMMATRIX(const FbxAMatrix& fbxAMatrix, DirectX::XMMATRIX& xMMATRIX)
 {
 	xMMATRIX = DirectX::XMMATRIX(
 		(float)fbxAMatrix.Get(0, 0), (float)fbxAMatrix.Get(0, 1), (float)fbxAMatrix.Get(0, 2), (float)fbxAMatrix.Get(0, 3),
@@ -35,6 +37,7 @@ void convertFbxAMatrixToXMMATRIX(const FbxAMatrix& fbxAMatrix, DirectX::XMMATRIX
 	);
 }
 
+//Fbxデータ内に含まれているテクスチャの情報を入手
 FBX_TEXTURE_TYPE FBXDataContainer::GetTextureType(const fbxsdk::FbxBindingTableEntry& entryTable)
 {
 	std::string texStr = entryTable.GetSource();
@@ -63,6 +66,7 @@ FBX_TEXTURE_TYPE FBXDataContainer::GetTextureType(const fbxsdk::FbxBindingTableE
 	return FBX_TEXTURE_TYPE::FBX_UNKNOWN;
 }
 
+//Fbxロードに使ったメモリを解放
 void FinishFBXLoad(fbxsdk::FbxManager** man, fbxsdk::FbxImporter** imp, fbxsdk::FbxScene** sc)
 {
 
@@ -86,6 +90,7 @@ void FinishFBXLoad(fbxsdk::FbxManager** man, fbxsdk::FbxImporter** imp, fbxsdk::
 
 }
 
+//Fbxデータを読み込む
 HRESULT FBXDataContainer::ReadFbxToMeshContainer(const std::wstring id, FbxMesh * pMesh)
 {
 	HRESULT hr = S_OK;
@@ -217,7 +222,7 @@ HRESULT FBXDataContainer::ReadFbxToMeshContainer(const std::wstring id, FbxMesh 
 	}
 	
 	//作成したインデックスデータでシェーダリソースを作成
-	MyAccessHub::getMyGameEngine()->GetMeshManager()->AddIndexBuffer(id, meshCont->m_indexData.data(), sizeof(ULONG), vertexCount);
+	MyAccessHub::GetMyGameEngine()->GetMeshManager()->AddIndexBuffer(id, meshCont->m_indexData.data(), sizeof(ULONG), vertexCount);
 
 	//法線
 	FbxArray<FbxVector4> normals;
@@ -384,7 +389,7 @@ HRESULT FBXDataContainer::ReadFbxToMeshContainer(const std::wstring id, FbxMesh 
 			skinVertex[i].vertex = meshCont->m_vertexData[i];
 			skinVertex[i].skinvalues = skinWeights[0][index];
 		}
-		MyAccessHub::getMyGameEngine()->GetMeshManager()->
+		MyAccessHub::GetMyGameEngine()->GetMeshManager()->
 			AddVertexBuffer(id, skinVertex.data(), sizeof(FbxSkinAnimeVertex), vertexCount);
 	}
 	else
@@ -404,12 +409,12 @@ HRESULT FBXDataContainer::ReadFbxToMeshContainer(const std::wstring id, FbxMesh 
 				skinVertex[i].skinvalues.weight0 = { 1.0f, 0, 0, 0 };
 				skinVertex[i].skinvalues.weight1 = { 0, 0, 0, 0 };
 			}
-			MyAccessHub::getMyGameEngine()->GetMeshManager()->
+			MyAccessHub::GetMyGameEngine()->GetMeshManager()->
 				AddVertexBuffer(id, skinVertex.data(), sizeof(FbxSkinAnimeVertex), vertexCount);
 		}
 		else
 		{
-			MyAccessHub::getMyGameEngine()->GetMeshManager()->
+			MyAccessHub::GetMyGameEngine()->GetMeshManager()->
 				AddVertexBuffer(id, meshCont->m_vertexData.data(), sizeof(FbxVertex), vertexCount);
 		}
 	}
@@ -521,10 +526,11 @@ HRESULT FBXDataContainer::LoadMaterial(const std::wstring id, FbxSurfaceMaterial
 	return hr;
 }
 
+//マテリアルからテクスチャを読み込む
 HRESULT FBXDataContainer::LoadTextureFromMaterial(const std::wstring matName, const std::wstring id, FBX_TEXTURE_TYPE texType, const fbxsdk::FbxProperty* fbxProp)
 {
 	HRESULT hr = S_OK;
-	MyGameEngine* engine = MyAccessHub::getMyGameEngine();
+	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
 
 	fbxsdk::FbxFileTexture* texture = nullptr;
 	std::string keyword;
@@ -538,7 +544,7 @@ HRESULT FBXDataContainer::LoadTextureFromMaterial(const std::wstring matName, co
 		numOfTex = fbxProp->GetSrcObjectCount<FbxLayeredTexture>();
 	}
 
-	TextureManager* texMng = MyAccessHub::getMyGameEngine()->GetTextureManager();
+	TextureManager* texMng = MyAccessHub::GetMyGameEngine()->GetTextureManager();
 	for (int i = 0; i < numOfTex; i++)
 	{
 		texture = fbxProp->GetSrcObject<FbxFileTexture>(i);
@@ -625,15 +631,16 @@ HRESULT FBXDataContainer::LoadTextureFromMaterial(const std::wstring matName, co
 	return hr;
 }
 
+//Fbx読み込み
 HRESULT FBXDataContainer::LoadFBX(const std::wstring fileName, const std::wstring id)
 {
 	HRESULT hr = S_OK;
 
 	fs::path cacheDir = L"Cache";
 	fs::create_directories(cacheDir);
-	fs::path cachePath = cacheDir / (id + L".bin");
+	fs::path cachePath = cacheDir / (id + L".bin");	
 
-	if (fs::exists(cachePath))
+	if (fs::exists(cachePath))						//Cacheフォルダ内にid.binが存在するか確認
 	{
 		HRESULT cacheRes = LoadBinary(cachePath);
 		if (SUCCEEDED(cacheRes))
@@ -646,6 +653,8 @@ HRESULT FBXDataContainer::LoadFBX(const std::wstring fileName, const std::wstrin
 		}
 	}
 
+	//==========FbxSDKの初期化とインポート　Fbxファイルを開くための準備==========
+
 	fbxsdk::FbxManager* fbx_manager = nullptr;
 	FbxScene* fbx_scene = nullptr;
 	FbxImporter* fbx_importer = nullptr;
@@ -654,7 +663,8 @@ HRESULT FBXDataContainer::LoadFBX(const std::wstring fileName, const std::wstrin
 	char* c_filename = nullptr;
 	int wcSize = sizeof(wchar_t) * wcslen(fileName.c_str()) + 1;
 
-	c_filename = new char[wcSize];
+	c_filename = new char[wcSize];									//FbxSDKが受け取れるよう、char*型に変換
+
 	size_t retVal = 0;
 	wcstombs_s(&retVal, c_filename, wcSize, fileName.c_str(), wcSize);
 
@@ -694,14 +704,23 @@ HRESULT FBXDataContainer::LoadFBX(const std::wstring fileName, const std::wstrin
 		return hr;
 	}
 
+	//==========FbxSDKの初期化とインポート　Fbxファイルを開くための準備==========End
+
+
+	//==========DirectXに適応するために座標系を変換==========
+
 	FbxAxisSystem dx = FbxAxisSystem::DirectX;
 	if (dx != fbx_scene->GetGlobalSettings().GetAxisSystem())
 	{
 		dx.DeepConvertScene(fbx_scene);
 	}
 
-	fbx_node = fbx_scene->GetRootNode();
+	//==========DirectXに適応するために座標系を変換==========End
 
+
+	//==========ノード情報を収集&ポリゴンの最適化==========
+
+	fbx_node = fbx_scene->GetRootNode();
 	
 	if (fbx_node != nullptr)
 	{
@@ -716,6 +735,8 @@ HRESULT FBXDataContainer::LoadFBX(const std::wstring fileName, const std::wstrin
 		FbxGeometryConverter converter(fbx_manager);
 		converter.SplitMeshesPerMaterial(fbx_scene, true);
 		converter.Triangulate(fbx_scene, true);
+
+		//==========アニメーション情報の取得===========
 
 		if (fbx_importer->GetAnimStackCount() > 0)
 		{
@@ -734,6 +755,12 @@ HRESULT FBXDataContainer::LoadFBX(const std::wstring fileName, const std::wstrin
 			m_animeStack = nullptr;
 			m_animeFrames = 0;
 		}
+
+		//==========アニメーション情報の取得===========End
+
+
+
+		//==========マテリアル・メッシュの読み込む==========
 
 		m_pMeshContainer.clear();
 
@@ -768,6 +795,11 @@ HRESULT FBXDataContainer::LoadFBX(const std::wstring fileName, const std::wstrin
 			}
 		}
 
+		//==========マテリアル・メッシュの読み込む==========End
+
+
+		//==========ボーン(スケルトン)の準備==========
+
 		m_clusterCount = m_boneNameList.size();
 		if (m_clusterCount > 0)
 		{
@@ -775,15 +807,17 @@ HRESULT FBXDataContainer::LoadFBX(const std::wstring fileName, const std::wstrin
 			m_F4X4Matrix.resize(m_clusterCount);
 		}
 
+		//==========ボーン(スケルトン)の準備==========End
+
+
 		m_pFbxScene = fbx_scene;
-
-
 	}
 	fbx_importer->Destroy();
 
 	return hr;
 }
 
+//==========FBXのリソース（頂点バッファなど）をインスタンス固有のものとして扱い、そのインスタンスが破棄される際に自動的にグラフィックスメモリ上のリソースも削除するように設定する==========
 void FBXDataContainer::SetMeshUniqueFlag(bool meshFlag, bool materialFlag)
 {
 	int length = m_pMeshContainer.size();
@@ -797,6 +831,7 @@ void FBXDataContainer::SetMeshUniqueFlag(bool meshFlag, bool materialFlag)
 	}
 }
 
+//==========FBXが使用しているテクスチャリソースをインスタンス固有のものとして扱い、そのインスタンスが破棄される際に自動的にテクスチャをメモリから削除するように設定する==========
 void FBXDataContainer::SetTextureUniqueFlag(bool texFlag)
 {
 	for (auto ite = m_pMaterialContainer.begin(); ite != m_pMaterialContainer.end(); ite++)
@@ -805,6 +840,7 @@ void FBXDataContainer::SetTextureUniqueFlag(bool texFlag)
 	}
 }
 
+//==========Fbxのノード名から入手==========
 int FBXDataContainer::GetNodeId(const char* nodeName)
 {
 	int length = m_nodeNameList.size();
@@ -819,6 +855,7 @@ int FBXDataContainer::GetNodeId(const char* nodeName)
 	return -1;
 }
 
+//==========Fbxのメッシュ名から入手==========
 int FBXDataContainer::GetMeshId(const char* meshName)
 {
 	int len = m_pMeshContainer.size();
@@ -834,6 +871,7 @@ int FBXDataContainer::GetMeshId(const char* meshName)
 	return -1;
 }
 
+//==========FbxのIDからノードを入手==========
 FbxNode* FBXDataContainer::GetMeshNode(int id)
 {
 	if (id < m_pMeshContainer.size())
@@ -843,6 +881,7 @@ FbxNode* FBXDataContainer::GetMeshNode(int id)
 	return nullptr;
 }
 
+//==========Fbxをファイル名からロード(アニメ無し)==========
 HRESULT FBXCharacterData::LoadMainFBX(const std::wstring fileName, const std::wstring id)
 {
 	if (m_mainFbx.get() != nullptr)
@@ -859,7 +898,7 @@ HRESULT FBXCharacterData::LoadMainFBX(const std::wstring fileName, const std::ws
 
 		if (m_mainFbx->GetClusterCount() > 0) //スキンアニメ有り
 		{
-			int curCbuff = m_cbuffCount; //AddConstantBufferの中でm_cbuffCountが加算されるので先に。
+			int curCbuff = m_cbuffCount; //AddConstantBufferの中でm_cbuffCountが加算されるので先に
 			AddConstantBuffer(sizeof(XMFLOAT4X4) * m_mainFbx->GetClusterCount(), nullptr);
 			m_mainFbx->SetCBuffIndex(curCbuff); //アニメ用コンスタントバッファのインデックスを登録
 		}
@@ -869,6 +908,7 @@ HRESULT FBXCharacterData::LoadMainFBX(const std::wstring fileName, const std::ws
 	return hr;
 }
 
+//==========Fbxをファイル名からロード(アニメ有り)==========
 HRESULT FBXCharacterData::LoadAnimationFBX(const std::wstring fileName, const std::wstring id)
 {
 	//このエンジン用のデータクラスであるFBXDataContainerを作成
@@ -959,7 +999,7 @@ XMMATRIX FBXDataContainer::GetBornMaxrix(const char* bornName)
 			auto bornId = m_boneIdList[i];
 			auto fbxNode = animeScene->GetNode(bornId);
 			FbxAMatrix matrix = fbxNode->EvaluateGlobalTransform(m_FbxTime);
-			convertFbxAMatrixToXMMATRIX(matrix, xMMatrix);
+			ConvertFbxAMatrixToXMMATRIX(matrix, xMMatrix);
 			return xMMatrix;
 		}
 	}
@@ -975,7 +1015,7 @@ MeshContainer::~MeshContainer()
 
 	if (m_uniqueMesh)
 	{
-		auto meshMng = MyAccessHub::getMyGameEngine()->GetMeshManager();
+		auto meshMng = MyAccessHub::GetMyGameEngine()->GetMeshManager();
 		meshMng->removeVertexBuffer(m_MeshId, true);
 	}
 }
@@ -1008,7 +1048,7 @@ MaterialContainer::~MaterialContainer()
 {
 	if (m_uniqueTextures)
 	{
-		TextureManager* texMng = MyAccessHub::getMyGameEngine()->GetTextureManager();
+		TextureManager* texMng = MyAccessHub::GetMyGameEngine()->GetTextureManager();
 		for (auto id : m_diffuseTextures)
 		{
 			texMng->ReleaseTexture(id);
@@ -1088,7 +1128,7 @@ void FBXDataContainer::UpdateAnimation(const FbxTime& animeTime) //アニメデ�
 		node = animeScene->GetNode(m_boneIdList[i]); //ボーンのIDからFbxNodeを取得
 		//FbxTimeでボーンの変形マトリクス更新
 		FbxAMatrix matrix = node->EvaluateGlobalTransform(animeTime) * m_IboneMatrix[i];
-		convertFbxAMatrixToXMFLOAT4x4(matrix, m_F4X4Matrix[i]); //FbxAMatrixはdoubleなので変換
+		ConvertFbxAMatrixToXMFLOAT4x4(matrix, m_F4X4Matrix[i]); //FbxAMatrixはdoubleなので変換
 	}
 }
 

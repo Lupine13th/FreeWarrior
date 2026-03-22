@@ -59,7 +59,7 @@ public:
 
 	bool IsActive = true;	//コンポーネントの有効無効
 
-	GameObject* getGameObject() { return m_gObject; }
+	GameObject* GetGameObject() { return m_gObject; }
 };
 
 class GameObject								//サンプルエンジン用ゲームオブジェクト基底クラス
@@ -82,7 +82,7 @@ public:
 		characterData.reset(cData);
 	}
 
-	CharacterData* getCharacterData()			//これでCharacterDataのインスタンスを取得して座標などが直接変えられるようにはしている
+	CharacterData* GetCharacterData()			//これでCharacterDataのインスタンスを取得して座標などが直接変えられるようにはしている
 	{
 		return characterData.get();
 	}

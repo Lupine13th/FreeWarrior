@@ -10,7 +10,7 @@ class TurnEndUI : public GameComponent
 {
 private:
     TimeManager* m_TimeManager = MyAccessHub::GetTimeManager();
-    vector<std::unique_ptr<SpriteCharacter>> m_sprite;
+    vector<std::unique_ptr<SpriteCharacter>> m_Sprite;
     BattleFieldManager* BFMng = MyAccessHub::GetBFManager();
 
     float m_WaitCount = 0.0f;

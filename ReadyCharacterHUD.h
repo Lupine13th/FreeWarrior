@@ -13,7 +13,7 @@
 class ReadyCharacterHUD : public GameComponent
 {
 private:
-    std::vector<std::unique_ptr<SpriteCharacter>> m_sprite;
+    std::vector<std::unique_ptr<SpriteCharacter>> m_Sprite;
 
     BattleFieldManager* BFMng = MyAccessHub::GetBFManager();
 	BattleReadyScene* BRScene = MyAccessHub::GetBRScene();
