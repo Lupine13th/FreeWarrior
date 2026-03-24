@@ -204,25 +204,33 @@ ID3D12GraphicsCommandList* StandardFbxPipeline::ExecuteRender()
     UINT strides = sizeof(FbxVertex);
     UINT offsets = 0;
 
+    //マネージャーの類を宣言
     MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
     SceneManager* scene = static_cast<SceneManager*>(engine->GetSceneController());
     std::wstring cameraLabel = L""; 
     MeshManager* pMeshMng = engine->GetMeshManager();
     TextureManager* pTextureMng = engine->GetTextureManager();
 
+    //コマンドアロケーターを入手
     ID3D12CommandAllocator* cmdAl = engine->GetCurrentCommandAllocator();
 
+    //現在のフレームを入手
     UINT frameIndex = engine->GetCurrentFrameIndex();
 
+    //コマンドリストを入手
     ID3D12GraphicsCommandList* cmdList = m_cmdLists[frameIndex].Get();
 
+    //コマンドリストのリセット　(失敗したらコードを止める)
     ThrowIfFailed(cmdList->Reset(cmdAl, m_pipeLineState.Get()));
 
+    //レンダリングの対象を決定
     engine->SetMainRenderTarget(cmdList);
 
+    //リソースバリア(リソースの状態の切り替える指示をGPUに送る仕組み)を宣言
     CD3DX12_RESOURCE_BARRIER tra =
         CD3DX12_RESOURCE_BARRIER::Transition(engine->GetRenderTarget(frameIndex),
             D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+
     cmdList->ResourceBarrier(1, &tra); 
 
     cmdList->SetGraphicsRootSignature(m_rootSignature.Get());

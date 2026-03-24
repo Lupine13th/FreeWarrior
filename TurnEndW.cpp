@@ -36,10 +36,9 @@ void TurnEndW::InitAction()
 
 	chData->setPosition(0.0f, 0.0f, 0.0f);
 
-	//半分直接D3D触ってるようなもんだから良くはないんだけど、マトリクスを固定で作ってしまう。
-	XMVECTOR Eye = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);		//視点（カメラ）座標
-	XMVECTOR At = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);		//フォーカスする（カメラが向く）座標
-	XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);		//カメラの上方向単位ベクトル（カメラのロール軸）
+	XMVECTOR Eye = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	XMVECTOR At = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+	XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	XMMATRIX view = XMMatrixTranspose(MakeViewMatix(Eye, At, Up));
 	XMMATRIX proj = XMMatrixTranspose(MakeOrthographicPrjectionMatrix(engine->GetWidth(), engine->GetHeight(), 0.01f, 3.0f));
 

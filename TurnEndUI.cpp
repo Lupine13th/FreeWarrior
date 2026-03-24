@@ -38,14 +38,17 @@ void TurnEndUI::InitAction()
         m_Sprite[i]->setSpriteIndex(0);
     }
 
+    //ターンエンド背景
     m_Sprite[0]->setPosition(0.0f, 0.0f, 1.5f);
     m_Sprite[0]->setScale(500.0f, 300.0f, 0.1f);
     m_Sprite[0]->SetColor(0.0f, 0.0f, 1.0f, 1);
 
+    //いいえボタン
     m_Sprite[1]->setPosition(100.0f, -50.0f, 1.4f);
     m_Sprite[1]->setScale(150.0f, 90.0f, 0.1f);
     m_Sprite[1]->SetColor(1.0f, 1.0f, 1.0f, 1);
 
+    //はいボタン
     m_Sprite[2]->setPosition(-100.0f, -50.0f, 1.4f);
     m_Sprite[2]->setScale(150.0f, 90.0f, 0.1f);
     m_Sprite[2]->SetColor(1.0f, 1.0f, 1.0f, 1);
@@ -62,13 +65,15 @@ bool TurnEndUI::FrameAction()
         MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
         GraphicsPipeLineObjectBase* pipe = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
 
-        if (!BFMng->GetTurnEnd())
+        if (!BFMng->GetTurnEnd())   
         {
+            //ターンエンドしますか？　いいえ
             m_Sprite[1]->SetColor(1.0f, 1.0f, 1.0f, 1);
             m_Sprite[2]->SetColor(1.0f, 0.0f, 0.0f, 1);
         }
         else if (BFMng->GetTurnEnd())
         {
+            //ターンエンドしますか？　はい
             m_Sprite[1]->SetColor(1.0f, 0.0f, 0.0f, 1);
             m_Sprite[2]->SetColor(1.0f, 1.0f, 1.0f, 1);
         }

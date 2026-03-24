@@ -51,7 +51,7 @@ void TitleScene::InitAction()
     XMFLOAT4 pattern(0, 0, 1, 1);
 
     
-
+    //タイトル背景
     m_Sprite.push_back(std::make_unique<SpriteCharacter>());
     m_Sprite[0]->SetTextureId(L"TitleBackGroundTexturewithLogo");
     m_Sprite[0]->SetCameraLabel(L"HUDCamera", 0);
@@ -62,6 +62,7 @@ void TitleScene::InitAction()
     m_Sprite[0]->setPosition(0.0f, -10.0f, 2.0f);
     m_Sprite[0]->SetColor(1.0f, 1.0f, 1.0f, 1);
 
+    //選択肢のエフェクトアニメーション
     m_Sprite.push_back(std::make_unique<SpriteCharacter>());
     m_Sprite[1]->SetTextureId(L"TitleMenuEffectTexture");
     m_Sprite[1]->SetCameraLabel(L"HUDCamera", 0);
@@ -72,6 +73,7 @@ void TitleScene::InitAction()
     m_Sprite[1]->setPosition(0.0f, -10.0f, 1.0f);
     m_Sprite[1]->SetColor(1.0f, 1.0f, 1.0f, 1);
 
+    //シーン遷移のフラッシュエフェクト
     m_Sprite.push_back(std::make_unique<SpriteCharacter>());
     m_Sprite[2]->SetTextureId(L"TitleFlashEffect");
     m_Sprite[2]->SetCameraLabel(L"HUDCamera", 0);
@@ -146,16 +148,13 @@ bool TitleScene::FrameAction()
 
     int count = 0;
 
-    wstring startGame;
-    wstring exitGame;
-
     switch (m_TitleState)
     {
     case TitleState::Menu:
     {
-        if (keyBind->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK))
+        if (keyBind->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK))   //スペースキー入力時
         {
-            switch (m_MenuIndex)
+            switch (m_MenuIndex)    //メニューのインデックスで結果が変わる
             {
             case (int)TitleMenuState::GameStart:
 				m_TitleState = TitleState::Flash;
@@ -165,9 +164,9 @@ bool TitleScene::FrameAction()
                 break;
             }
         }
-        else if (keyBind->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_BACK))
+        else if (keyBind->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_BACK))    //十字キー↓入力時
         {
-            switch (m_MenuIndex)
+            switch (m_MenuIndex)    //メニュー選択肢を切り替え
             {
             case (int)TitleMenuState::GameStart:
                 m_MenuIndex = (int)TitleMenuState::ExitGame;
@@ -176,9 +175,9 @@ bool TitleScene::FrameAction()
                 break;
             }
         }
-        else if (keyBind->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_FORWARD))
+        else if (keyBind->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_FORWARD)) //十字キー↑入力時
         {
-            switch (m_MenuIndex)
+            switch (m_MenuIndex)    //メニュー選択肢を切り替え
             {
             case (int)TitleMenuState::ExitGame:
                 m_MenuIndex = (int)TitleMenuState::GameStart;
@@ -188,31 +187,28 @@ bool TitleScene::FrameAction()
             }
         }
 
-        startGame = L"ゲームスタート";
-        exitGame = L"ゲーム終了";
+        count = MakeSpriteString(count, -400.0f, -100.0f, 50, 80, m_StartGame.c_str());
 
-        count = MakeSpriteString(count, -400.0f, -100.0f, 50, 80, startGame.c_str());
-
-        if (m_MenuIndex == (int)TitleMenuState::GameStart)
+        if (m_MenuIndex == (int)TitleMenuState::GameStart)      //エフェクトの位置を修正
         {
 			m_Sprite[1]->setPosition(-270.0f, -50.0f, 1.0f);
         }
 
-        count = MakeSpriteString(count, -400.0f, -200.0f, 50, 80, exitGame.c_str());
+        count = MakeSpriteString(count, -400.0f, -200.0f, 50, 80, m_ExitGame.c_str());
 
-        if (m_MenuIndex == (int)TitleMenuState::ExitGame)
+        if (m_MenuIndex == (int)TitleMenuState::ExitGame)       //エフェクトの位置を修正
         {
             m_Sprite[1]->setPosition(-270.0f, -150.0f, 1.0f);
         }
 
-        for (int i = 0; i < count; i++)
+        for (int i = 0; i < count; i++)                         
         {
             pipe->AddRenderObject(m_WordSprites[i].get());
         }
 
 		m_MenuAnimationCount += m_TimeManager->GetDeltaTime();
 
-        if (m_MenuAnimationCount > 0.1f)
+        if (m_MenuAnimationCount > 0.1f)                        //エフェクトアニメーション更新
         {
 			m_MenuAnimationCount = 0.0f;
             m_AnimationPages++;
@@ -227,7 +223,7 @@ bool TitleScene::FrameAction()
             kPageAreaList[m_AnimationPages].y * kFlipHeight / kFullFlipHeight,
             kFlipWidth / kFullFlipWidth,
             kFlipHeight / kFullFlipHeight
-        };
+        };                                                      //テクスチャの範囲(エフェクトのアニメーション用)
 
         m_Sprite[1]->SetSpritePattern(0, 1, 1, m_PatternRect);
 
@@ -239,7 +235,7 @@ bool TitleScene::FrameAction()
     case TitleState::Flash:
     {
 		m_FlashAnimationCount += m_TimeManager->GetDeltaTime();
-        if (m_FlashAnimationCount > 0.05f)
+        if (m_FlashAnimationCount > 0.05f)                      //0.05秒ごとにアニメーション更新
         {
             m_FlashAnimationCount = 0.0f;
             m_FlashAnimationPages++;

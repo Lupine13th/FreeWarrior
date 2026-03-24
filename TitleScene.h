@@ -78,20 +78,17 @@ private:
 	const float kFullFlipHeight = 2048.0f;
 
 	int m_AnimationPages = 0;
-
 	const int kMaxPageCount = 8;
-
 	float m_MenuAnimationCount = 0.0f;
-
 	int m_FlashAnimationPages = 0;
-
 	const int kMaxFlashPageCount = 13;
-
 	float m_FlashAnimationCount = 0.0f;
 
 	TimeManager* m_TimeManager = MyAccessHub::GetTimeManager();
-
 	TitleState m_TitleState = TitleState::Menu;
+
+	wstring m_StartGame = L"ゲームスタート";
+	wstring m_ExitGame = L"ゲーム終了";
 public:
 	virtual void InitAction() override;
 	virtual bool FrameAction() override;

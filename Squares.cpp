@@ -179,6 +179,7 @@ void Squares::FinishAction()
 
 }
 
+//攻撃を受けた際のリアクション　データのやり取りを円滑にするため、Squaresで宣言
 void Squares::HitReaction()
 {
 	NextChara->fbxD->SetAnime(L"DAMAGE01");
@@ -214,6 +215,7 @@ void Squares::HitReaction()
 	m_IsDamaged = true;
 }
 
+//攻撃をする際のリアクション　データのやり取りを円滑にするため、Squaresで宣言
 void Squares::AttackReaction()
 {
 	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
@@ -248,6 +250,7 @@ void Squares::AttackReaction()
 	}
 }
 
+//そのマスの色を変更する
 void Squares::SetSquaresColor(SquareColor color)
 {
 	SpriteCharacter* SqData = static_cast<SpriteCharacter*>(GetGameObject()->GetCharacterData());
@@ -291,6 +294,7 @@ void Squares::SetSquaresColor(SquareColor color)
 	}
 }
 
+//バトルカメラ移行用の情報を入手＆アニメーションをセット
 void Squares::SetAnimation(Animations anim, Admin admin, Squares* chara, Squares* next)
 {
 	NowAnimation = anim;
@@ -300,22 +304,28 @@ void Squares::SetAnimation(Animations anim, Admin admin, Squares* chara, Squares
 	NowCharaPos = NowChara->SqPos;
 	NextCharaPos = NextChara->SqPos;
 	NowCharaRot = NowChara->fbxD->getRotation();
-	if (anim == Animations::Attack || anim == Animations::Scout)
+
+	if (anim == Animations::Attack || anim == Animations::Scout)	//攻撃か偵察の場合、被害を受けたユニットの情報と回転を入手　(後で元の位置に戻すため)
 	{
 		BFMng->SetAttackingCharacterSquares(NowChara);
 		NextCharaRot = NextChara->fbxD->getRotation();
 	}
+
+	//移動アニメーション用に平面の距離を入手
 	m_DistanceX = NextCharaPos.x - NowCharaPos.x;
 	m_DistanceY = NextCharaPos.z - NowCharaPos.z;
 
+	//内積
 	float angleRad = std::atan2(m_DistanceY, m_DistanceX);
 
+	//内積と現在の回転から移動先の方向に向ける
 	m_Rotate = 90.0f - angleRad * (180.0f / 3.14159265f);
 	m_CharacterAnimationCount = 0.0f;
 
 	m_IsAnimating = true;
 }
 
+//バトルカメラの位置にモデルを配置
 void Squares::SetBattlePosition()
 {
 	NowChara->fbxD->setPosition(25.0f, 5.0f, -40.0f);
@@ -324,6 +334,7 @@ void Squares::SetBattlePosition()
 	NextChara->fbxD->setRotation(0.0f, 0.0f, 0.0f);
 }
 
+//モデルを元のマスの位置、角度へ
 void Squares::SetPreviousPosition()
 {
 	if (NowChara->fbxD != nullptr)
@@ -341,3 +352,4 @@ void Squares::SetPreviousPosition()
 	MyAccessHub::GetHUDManager()->GetHUDObject("SuperiorityGaugeHUD")->SetAnimationState(AnimationState::Init);
 }
 
+//==========Fbxデータは各マスが持っているため、データが混濁しないためにマスで宣言する==========

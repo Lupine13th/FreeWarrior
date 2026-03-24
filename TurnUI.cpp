@@ -31,12 +31,12 @@ bool TurnUI::FrameAction()
         MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
         GraphicsPipeLineObjectBase* pipe = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
 
-        switch (m_HUDState)
+        switch (m_HUDState)                             //ターン切り替えアニメーション
         {
-        case HUDState::Allies:
+        case HUDState::Allies:                          //味方ターン
             m_Sprite->SetTextureId(L"TurnHUDAllies00");
             break;
-        case HUDState::AlliesToEnemy:
+        case HUDState::AlliesToEnemy:                   //味方ターンから敵ターンへ
             if (m_AnimCount < kAnimInterval)
             {
                 m_Sprite->SetTextureId(L"TurnHUDAllies00");
@@ -85,10 +85,10 @@ bool TurnUI::FrameAction()
                 BFMng->ChangeTurnEnemy();
             }
             break;
-        case HUDState::Enemy:
+        case HUDState::Enemy:                               //敵ターン
             m_Sprite->SetTextureId(L"TurnHUDEnemy00");
             break;
-        case HUDState::EnemyToAllies:
+        case HUDState::EnemyToAllies:                       //敵ターンから味方ターンへ
             if (m_AnimCount < kAnimInterval)
             {
                 m_Sprite->SetTextureId(L"TurnHUDEnemy00");
