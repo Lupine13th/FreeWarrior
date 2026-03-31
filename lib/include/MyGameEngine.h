@@ -36,6 +36,7 @@ class PipeLineManager;
 class HitManager;
 class GameObject;
 class CharacterData;
+class FBXResourceManager;
 
 class MyGameEngine
 {
@@ -108,11 +109,15 @@ private:
     //利用中カメラオブジェクト
     CharacterData* m_cameraData;
 
+    //FBXResourceManagerを作成
+	unique_ptr<FBXResourceManager> m_FbxResMng;
+
     //描画
     void Render();
 
 public:
     MyGameEngine(UINT width, UINT height, std::wstring title);
+	~MyGameEngine();
 
     const WCHAR* GetTitle() { return m_title.c_str(); }
 
@@ -144,6 +149,7 @@ public:
         return m_pd3dDevice.Get();
     }
 
+    //コマンドアロケーター　(GPUに送る命令を記録するメモリオブジェクト)
     ID3D12CommandAllocator* GetCurrentCommandAllocator()
     {
         return m_commandAllocators[m_frameIndex].Get();

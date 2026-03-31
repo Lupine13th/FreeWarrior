@@ -3,6 +3,7 @@
 #include <MyAccessHub.h>
 #include <MyGameEngine.h>
 #include "FBXCharacterData.h"
+#include "FBXResourceManager.h"
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -13,6 +14,8 @@
 
 using namespace fbxsdk;
 using namespace DirectX;
+
+class FBXResourceManager;
 
 //FbxAMatrixをXMFLOAT4x4に変換
 void ConvertFbxAMatrixToXMFLOAT4x4(const FbxAMatrix& fbxamatrix, DirectX::XMFLOAT4X4& xmfloat4x4)
@@ -884,23 +887,19 @@ FbxNode* FBXDataContainer::GetMeshNode(int id)
 //==========Fbxをファイル名からロード(アニメ無し)==========
 HRESULT FBXCharacterData::LoadMainFBX(const std::wstring fileName, const std::wstring id)
 {
-	if (m_mainFbx.get() != nullptr)
-	{
-		m_mainFbx.release();
-	}
-
-	m_mainFbx = make_unique<FBXDataContainer>();
-	HRESULT hr = m_mainFbx->LoadFBX(fileName, id);
+	m_MainFbx = MyAccessHub::GetFBXResourceManager()->GetorLoadFbx(fileName, id);
+	HRESULT hr = m_MainFbx->LoadFBX(fileName, id);
 	if (SUCCEEDED(hr))
 	{
+		m_constantBuffers.clear();
 		m_cbuffCount = 0;
 		AddConstantBuffer(sizeof(XMMATRIX), nullptr);
 
-		if (m_mainFbx->GetClusterCount() > 0) //スキンアニメ有り
+		if (m_MainFbx->GetClusterCount() > 0) //スキンアニメ有り
 		{
 			int curCbuff = m_cbuffCount; //AddConstantBufferの中でm_cbuffCountが加算されるので先に
-			AddConstantBuffer(sizeof(XMFLOAT4X4) * m_mainFbx->GetClusterCount(), nullptr);
-			m_mainFbx->SetCBuffIndex(curCbuff); //アニメ用コンスタントバッファのインデックスを登録
+			AddConstantBuffer(sizeof(XMFLOAT4X4) * m_MainFbx->GetClusterCount(), nullptr);
+			m_MainFbx->SetCBuffIndex(curCbuff); //アニメ用コンスタントバッファのインデックスを登録
 		}
 
 	}
@@ -916,11 +915,11 @@ HRESULT FBXCharacterData::LoadAnimationFBX(const std::wstring fileName, const st
 	HRESULT res = fbxCon->LoadFBX(fileName, id); //FBXを読み込む。ここで分解等は完了
 	if (SUCCEEDED(res))
 	{
-		if (m_animeFbxMap[id] != nullptr) //IDで管理するのでもうデータが入っている場合は前のデータを削除
+		if (m_AnimeFbxMap[id] != nullptr) //IDで管理するのでもうデータが入っている場合は前のデータを削除
 		{
-			m_animeFbxMap[id].release();
+			m_AnimeFbxMap[id].release();
 		}
-		m_animeFbxMap[id] = move(fbxCon);
+		m_AnimeFbxMap[id] = move(fbxCon);
 	}
 	return res;
 }
@@ -928,22 +927,22 @@ HRESULT FBXCharacterData::LoadAnimationFBX(const std::wstring fileName, const st
 //ラベル名からアニメ用FBXDataContainerを取得
 FBXDataContainer* FBXCharacterData::GetAnimeFbx(const std::wstring fileName)
 {
-	if (m_animeFbxMap.find(fileName) == m_animeFbxMap.end())
+	if (m_AnimeFbxMap.find(fileName) == m_AnimeFbxMap.end())
 		return nullptr;
-	return m_animeFbxMap[fileName].get();
+	return m_AnimeFbxMap[fileName].get();
 }
 
 void FBXCharacterData::SetAnime(std::wstring animeLabel) {
-	if (animeLabel != m_currentAnimeLabel) {
-		if (m_animeFbxMap[animeLabel] != nullptr) {
-			FBXDataContainer* animeCont = m_animeFbxMap[animeLabel].get(); //アニメFBX
-			FBXDataContainer* mainCont = m_mainFbx.get(); //メインFBX
+	if (animeLabel != m_CurrentAnimeLabel) {
+		if (m_AnimeFbxMap[animeLabel] != nullptr) {
+			FBXDataContainer* animeCont = m_AnimeFbxMap[animeLabel].get(); //アニメFBX
+			FBXDataContainer* mainCont = m_MainFbx.get(); //メインFBX
 			MeshContainer* meshCont = nullptr; //メインからのMeshContainer取り出し用
 			for (int i = 0; (meshCont = mainCont->GetMeshContainer(i)) != nullptr; i++) {
 				meshCont->SetBoneIdList(animeCont); //メインFBXの全メッシュのボーンIDリスト更新
 			}
-			m_currentAnimeLabel = animeLabel; //二重再生防止用。アニメラベル登録
-			m_animeTime = 0; //再生時間０
+			m_CurrentAnimeLabel = animeLabel; //二重再生防止用。アニメラベル登録
+			m_AnimeTime = 0; //再生時間０
 			//FbxSceneにアニメFBXから取り出したFbxAnimeStackをセット。再生可能状態に。
 			animeCont->GetFbxScene()->SetCurrentAnimationStack(animeCont->GetAnimeStack());
 			mainCont->SetAnimationFbx(animeCont); //メインFBXにアニメーションFBXをセット
@@ -955,24 +954,24 @@ void FBXCharacterData::SetAnime(std::wstring animeLabel) {
 //アニメーション更新
 void FBXCharacterData::UpdateAnimation()
 {
-	FBXDataContainer* animeCont = m_animeFbxMap[m_currentAnimeLabel].get(); //再生中のFBXDataContainer取得
+	FBXDataContainer* animeCont = m_AnimeFbxMap[m_CurrentAnimeLabel].get(); //再生中のFBXDataContainer取得
 	assert(animeCont);							//animeContがnullptrならエラー
 	int frames = animeCont->GetAnimeFrames();	//再生位置のフレーム取得
-	if (m_animeTime < frames)					//まだ終了位置でないなら
+	if (m_AnimeTime < frames)					//まだ終了位置でないなら
 	{
-		m_animeTime++; //フレーム加算
+		m_AnimeTime++; //フレーム加算
 	}
 	else
 	{
-		m_animeTime -= frames;
+		m_AnimeTime -= frames;
 	}
-	UpdateAnimation(m_animeTime);
+	UpdateAnimation(m_AnimeTime);
 }
 
 void FBXCharacterData::UpdateAnimation(int frameCount)
 {
-	FBXDataContainer* animeCont = m_animeFbxMap[m_currentAnimeLabel].get();
-	FBXDataContainer* mainCont = m_mainFbx.get();
+	FBXDataContainer* animeCont = m_AnimeFbxMap[m_CurrentAnimeLabel].get();
+	FBXDataContainer* mainCont = m_MainFbx.get();
 	MeshContainer* meshCont = nullptr;
 	double nowTime = animeCont->GetPeriodTime() * frameCount; //フレーム数から実時間を計算
 	if (nowTime > animeCont->GetEndTime())

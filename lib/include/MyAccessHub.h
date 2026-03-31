@@ -13,6 +13,7 @@ class TimeManager;
 class TitleScene;
 class HUDManager;
 class EffectGenerator;
+class FBXResourceManager;
 
 class MyAccessHub
 {
@@ -26,9 +27,10 @@ private:
 	static TitleScene* m_TitleScene;
 	static HUDManager* m_HUDManager;
 	static EffectGenerator* m_EffectGenerator;
+	static FBXResourceManager* m_FBXResourceManager;
 public:
 
-	static void setMyGameEnegine(MyGameEngine* eng)
+	static void SetMyGameEnegine(MyGameEngine* eng)
 	{
 		m_engine = eng;
 	}
@@ -71,6 +73,11 @@ public:
 	static void SetEffectGenerator(EffectGenerator* effectGenerator)
 	{
 		m_EffectGenerator = effectGenerator;
+	}
+
+	static void SetFBXResourceManager(FBXResourceManager* fbxResourceManager)
+	{
+		m_FBXResourceManager = fbxResourceManager;
 	}
 
 	static MyGameEngine* GetMyGameEngine()
@@ -116,5 +123,10 @@ public:
 	static EffectGenerator* GetEffectGenerator()
 	{
 		return m_EffectGenerator;
+	}
+
+	static FBXResourceManager* GetFBXResourceManager()
+	{
+		return m_FBXResourceManager;
 	}
 };

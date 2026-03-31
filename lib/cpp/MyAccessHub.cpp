@@ -11,3 +11,4 @@ TimeManager* MyAccessHub::m_TimeManager = nullptr;
 TitleScene* MyAccessHub::m_TitleScene = nullptr;
 HUDManager* MyAccessHub::m_HUDManager = nullptr;
 EffectGenerator* MyAccessHub::m_EffectGenerator = nullptr;
+FBXResourceManager* MyAccessHub::m_FBXResourceManager = nullptr;

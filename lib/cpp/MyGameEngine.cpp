@@ -7,9 +7,8 @@
 #include <algorithm>
 
 #include "MyGameEngine.h"
-
-//あんまり良くないんだけど、ポインタ引き回しが雑多な時にやる
 #include "MyAccessHub.h"
+#include "../../FreeWarriorMark2/FBXResourceManager.h"
 
 #include <D3D12Helper.h>
 #include <DXSampleHelper.h>
@@ -34,7 +33,10 @@ using namespace DirectX;
 HRESULT MyGameEngine::InitMyGameEngine(HINSTANCE hInst, HWND hwnd)
 {
     //AccessHubに登録
-    MyAccessHub::setMyGameEnegine(this);
+    MyAccessHub::SetMyGameEnegine(this);
+
+    m_FbxResMng = make_unique<FBXResourceManager>();
+	MyAccessHub::SetFBXResourceManager(m_FbxResMng.get());
 
     HRESULT hr = S_OK;  //DirectXの初期化処理関数の戻り値。ほとんどの物がHRESULTを返す。
 
@@ -770,4 +772,8 @@ MyGameEngine::MyGameEngine(UINT width, UINT height, std::wstring title)
     m_title = title;
     m_windowWidth = width;
     m_windowHeight = height;
+}
+
+MyGameEngine::~MyGameEngine()
+{
 }

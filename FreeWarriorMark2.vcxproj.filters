@@ -249,6 +249,9 @@
     <ClInclude Include="json.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="FBXResourceManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameMain.cpp">
@@ -297,54 +300,6 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="MenuText.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="..\lib\cpp\WAVFileReader.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="..\lib\cpp\CharacterData.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="..\lib\cpp\D3D12Helper.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="..\lib\cpp\DX11Helper.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="..\lib\cpp\GameObject.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="..\lib\cpp\HitManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="..\lib\cpp\HitShapes.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="..\lib\cpp\InputManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="..\lib\cpp\MeshManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="..\lib\cpp\MyAccessHub.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="..\lib\cpp\MyAppRunner.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="..\lib\cpp\MyGameEngine.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="..\lib\cpp\PipeLineManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="..\lib\cpp\RenderProcessContainer.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="..\lib\cpp\SoundManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="..\lib\cpp\TextureManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="FieldCharacter.cpp">
@@ -441,6 +396,57 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="EffectGenerator.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\cpp\WAVFileReader.cpp">
+      <Filter>ソース ファイル\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\cpp\TextureManager.cpp">
+      <Filter>ソース ファイル\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\cpp\SoundManager.cpp">
+      <Filter>ソース ファイル\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\cpp\RenderProcessContainer.cpp">
+      <Filter>ソース ファイル\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\cpp\PipeLineManager.cpp">
+      <Filter>ソース ファイル\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\cpp\MyGameEngine.cpp">
+      <Filter>ソース ファイル\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\cpp\MyAppRunner.cpp">
+      <Filter>ソース ファイル\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\cpp\MyAccessHub.cpp">
+      <Filter>ソース ファイル\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\cpp\MeshManager.cpp">
+      <Filter>ソース ファイル\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\cpp\InputManager.cpp">
+      <Filter>ソース ファイル\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\cpp\HitShapes.cpp">
+      <Filter>ソース ファイル\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\cpp\HitManager.cpp">
+      <Filter>ソース ファイル\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\cpp\GameObject.cpp">
+      <Filter>ソース ファイル\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\cpp\DX11Helper.cpp">
+      <Filter>ソース ファイル\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\cpp\D3D12Helper.cpp">
+      <Filter>ソース ファイル\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\cpp\CharacterData.cpp">
+      <Filter>ソース ファイル\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="FBXResourceManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>

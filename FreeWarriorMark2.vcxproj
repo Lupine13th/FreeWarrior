@@ -180,6 +180,7 @@
     <ClInclude Include="EnemyAIManager.h" />
     <ClInclude Include="EnemyTypes.h" />
     <ClInclude Include="FBXCharacterData.h" />
+    <ClInclude Include="FBXResourceManager.h" />
     <ClInclude Include="FieldCharacter.h" />
     <ClInclude Include="ForestTerrain.h" />
     <ClInclude Include="json.hpp" />
@@ -250,6 +251,7 @@
     <ClCompile Include="EffectGenerator.cpp" />
     <ClCompile Include="EnemyAIManager.cpp" />
     <ClCompile Include="FBXCharacterData.cpp" />
+    <ClCompile Include="FBXResourceManager.cpp" />
     <ClCompile Include="FieldCharacter.cpp" />
     <ClCompile Include="ForestTerrain.cpp" />
     <ClCompile Include="MenuText.cpp" />

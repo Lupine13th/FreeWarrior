@@ -319,7 +319,6 @@ public:
 		return m_spFbxManager;
 	}
 
-	//ToDo: SkinAnime07
 	//スキンアニメ用メソッド追加
 	void SetAnimationFbx(FBXDataContainer* animeCont); //アニメデータFBXセット
 	void UpdateAnimation(const FbxTime& animeTime); //アニメFBXボーンマトリクス更新
@@ -351,7 +350,6 @@ public:
 	{
 		return m_cbuffIndex;
 	}
-	//ToDo: ここまで
 
 	HRESULT LoadBinary(const fs::path& path);
 	HRESULT SaveBinary(const fs::path& path);
@@ -362,25 +360,29 @@ public:
 class FBXCharacterData : public CharacterData
 {
 private:
+	std::shared_ptr<FBXDataContainer>	m_MainFbx;	//データを共有可能にして複数のキャラクターデータで同じFBXデータを共有できるようにする。
 
-	std::unique_ptr<FBXDataContainer>	m_mainFbx;
+	std::vector<XMFLOAT4X4> m_AnimatedMatrix;	//このデータ用のボーンマトリクス配列。アニメ更新で更新される。スタティックメッシュの頂点変換に使用する。
+
+	std::vector<int> m_BornIdList;	//このデータ用のボーンID配列。アニメ更新で更新される。スタティックメッシュの頂点変換に使用する。
+
+	int m_CBuffIndex;	//アニメーション用定数バッファインデックス
 
 	//スキンアニメ用メンバ追加
-	std::unordered_map<std::wstring, std::unique_ptr<FBXDataContainer>> m_animeFbxMap;
-	std::wstring m_currentAnimeLabel; //再生中のアニメラベル
-	LONG m_animeTime; //再生時間
+	std::unordered_map<std::wstring, std::unique_ptr<FBXDataContainer>> m_AnimeFbxMap;
+	std::wstring m_CurrentAnimeLabel; //再生中のアニメラベル
+	LONG m_AnimeTime; //再生時間
 protected:
 	float m_ScaleValue = 0.0f;
 public:
 
-	HRESULT LoadMainFBX(const std::wstring fileName, const std::wstring id);
+	HRESULT LoadMainFBX(const std::wstring fileName, const std::wstring id);	//メインFBX読み込み
 
 	FBXDataContainer* GetMainFbx()
 	{
-		return m_mainFbx.get();
+		return m_MainFbx.get();
 	}
 
-	//ToDo; SkinAnime09
 	//スキンアニメ用FBX読み込みとアニメ実行メソッド関係
 	HRESULT LoadAnimationFBX(const std::wstring fileName, const std::wstring id); //アニメ用FBX読み込み
 	FBXDataContainer* GetAnimeFbx(const std::wstring fileName); //アニメ用FBXをラベル名で取得
@@ -391,14 +393,8 @@ public:
 	
 	void ClearAnimeFBX() //アニメFBXデータをクリア
 	{
-		m_animeFbxMap.clear();
+		m_AnimeFbxMap.clear();
 	}
-	//ToDo: ここまで
-
-
-	//ToDo: Hit
-	//当たり判定関係
-	//ToDo: ここまで
 	
 	GameComponent* playerData = nullptr;
 	
@@ -409,5 +405,24 @@ public:
 	float GetScaleValue()
 	{
 		return m_ScaleValue;
+	}
+
+	int GetCBuffIndex()
+	{
+		return m_CBuffIndex;
+	}
+
+	const XMFLOAT4X4* GetAnimatedMatrix()
+	{
+		return m_AnimatedMatrix.data();
+	}
+
+	XMMATRIX GetBornMaxrix(const char* bornName)
+	{
+		if (m_MainFbx)
+		{
+			return m_MainFbx->GetBornMaxrix(bornName);
+		}
+		return XMMatrixIdentity();
 	}
 };

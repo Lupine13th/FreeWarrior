@@ -18,13 +18,13 @@ private:
 public:
     void Update(float deltaTime);
 
-    // アニメーションが終了したかを取得するゲッター
+    //アニメーションが終了したかを取得するゲッター
     bool IsActive() const 
     { 
         return m_IsActive;
     }
 
-    // コンストラクタ
+    //コンストラクタ
     Tween(float start, 
         float end, 
         float dur, 
@@ -35,20 +35,20 @@ public:
     {
     }
 
-    // 線形補間
+    //線形補間
     static float EaseLinear(float t, float b, float c, float d)
     {
         return c * t / d + b;
     }
 
-    // 加速（Quad In）
+    //加速（Quad In）
     static float EaseInQuad(float t, float b, float c, float d)
     {
         t /= d;
         return c * t * t + b;
     }
 
-    // 減速（Quad Out）
+    //減速（Quad Out）
     static float EaseOutQuad(float t, float b, float c, float d)
     {
         t /= d;
