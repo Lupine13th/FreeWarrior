@@ -7,10 +7,10 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
-#include <fstream>
 #define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
 #include <experimental/filesystem>
 #include <Windows.h>
+
 
 using namespace fbxsdk;
 using namespace DirectX;
@@ -849,7 +849,7 @@ int FBXDataContainer::GetNodeId(const char* nodeName)
 	int length = m_nodeNameList.size();
 	for (int i = 0; i < length; i++)
 	{
-		if (strcmp(m_nodeNameList[i], nodeName) == 0)
+		if (strcmp(m_nodeNameList[i].c_str(), nodeName) == 0)
 		{
 			return i;
 		}
@@ -993,7 +993,7 @@ XMMATRIX FBXDataContainer::GetBornMaxrix(const char* bornName)
 	XMMATRIX xMMatrix;
 	for (int i = 0; i <  m_boneNameList.size(); i++)
 	{
-		if (strcmp(m_boneNameList[i], bornName) == 0)
+		if (strcmp(m_boneNameList[i].c_str(), bornName) == 0)
 		{
 			auto bornId = m_boneIdList[i];
 			auto fbxNode = animeScene->GetNode(bornId);
@@ -1093,7 +1093,7 @@ int FBXDataContainer::GetClusterId(FbxNode* pNode)
 	const char* nodeName = pNode->GetName();	//ノード名取得
 	for (int id = 0; id < size; id++)
 	{
-		if (strcmp(nodeName, m_boneNameList[id]) == 0)
+		if (strcmp(nodeName, m_boneNameList[id].c_str()) == 0)
 			return id;							//ノード名がリストに登録されていればそれがID
 	}
 	
@@ -1111,7 +1111,7 @@ void FBXDataContainer::SetAnimationFbx(FBXDataContainer* animeCont)
 		int len = m_boneNameList.size();
 		for (int i = 0; i < len; i++)
 		{
-			m_boneIdList[i] = m_currentAnimeCont->GetNodeId(m_boneNameList[i]);
+			m_boneIdList[i] = m_currentAnimeCont->GetNodeId(m_boneNameList[i].c_str());
 		}
 	}
 }
@@ -1146,6 +1146,76 @@ HRESULT FBXDataContainer::SaveBinary(const fs::path& path)
 {
 	std::ofstream ofs(path, std::ios::binary);
 	if (!ofs) return E_FAIL;
+
+	int version = 0;
+	WriteBinary(ofs, version);
+
+	WriteBinary(ofs, m_vtxTotalMin);
+	WriteBinary(ofs, m_vtxTotalMax);
+
+	WriteBinary(ofs, m_animeFrames);
+	WriteBinary(ofs, m_startTime);
+	WriteBinary(ofs, m_endTime);
+	WriteBinary(ofs, m_timePeriod);
+
+	WriteBinary(ofs, m_clusterCount);
+	WriteBinary(ofs, m_cbuffIndex);
+
+	size_t boneCnt = m_boneNameList.size();
+	WriteBinary(ofs, boneCnt);
+
+	for (const auto& name : m_boneNameList) WriteString(ofs, name);
+
+	WriteVector(ofs, m_boneIdList);
+
+	size_t iboneCnt = m_IboneMatrix.size();
+	WriteBinary(ofs, iboneCnt);
+	ofs.write(reinterpret_cast<const char*>(m_IboneMatrix.data()), sizeof(FbxAMatrix) * iboneCnt);
+
+	WriteVector(ofs, m_F4X4Matrix);
+
+	size_t nodeCnt = m_nodeNameList.size();
+	WriteBinary(ofs, nodeCnt);
+
+	for (const auto& name : m_nodeNameList) WriteString(ofs, name);
+
+	//マテリアル
+	size_t matCnt = m_pMaterialContainer.size();
+	WriteBinary(ofs, matCnt);
+	for (auto& pair : m_pMaterialContainer)
+	{
+		WriteWString(ofs, pair.first);
+		auto& matCont = pair.second;
+		ofs.write(reinterpret_cast<const char*>(matCont->ambient), sizeof(float) * 4);
+		ofs.write(reinterpret_cast<const char*>(matCont->diffuse), sizeof(float) * 4);
+		ofs.write(reinterpret_cast<const char*>(matCont->specular), sizeof(float) * 4);
+		WriteBinary(ofs, matCont->alpha);
+
+		WriteVector(ofs, matCont->m_diffuseTextures);
+		WriteVector(ofs, matCont->m_normalTextures);
+		WriteVector(ofs, matCont->m_specularTextures);
+		WriteVector(ofs, matCont->m_falloffTextures);
+		WriteVector(ofs, matCont->m_reflectionMapTextures);
+	}
+
+	//メッシュ
+	size_t meshCnt = m_pMeshContainer.size();
+	WriteBinary(ofs, meshCnt);
+	for (auto& meshCont : m_pMeshContainer)
+	{
+		FbxAMatrix matrix = meshCont->GetIBaseMatrix();
+		WriteString(ofs, meshCont->GetMeshNodeName());
+		WriteBinary(ofs, meshCont->GetParentNodeId());
+		ofs.write(reinterpret_cast<const char*>(&matrix), sizeof(FbxAMatrix));
+		WriteBinary(ofs, meshCont->GetSkinCount());
+		WriteWString(ofs, meshCont->m_MaterialId);
+		WriteWString(ofs, meshCont->m_MeshId);
+		WriteBinary(ofs, meshCont->m_vertexCount);
+		WriteVector(ofs, meshCont->m_vertexData);
+		WriteVector(ofs, meshCont->m_indexData);
+		WriteBinary(ofs, meshCont->m_vtxMin);
+		WriteBinary(ofs, meshCont->m_vtxMax);
+	}
 
 	return S_OK;
 }

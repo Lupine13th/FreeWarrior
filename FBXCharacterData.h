@@ -7,7 +7,7 @@
 #include <vector>
 #include <unordered_map>
 #include <wrl/client.h>
-
+#include <fstream>
 #include <fbxsdk.h>
 
 #define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
@@ -69,13 +69,10 @@ protected:
 	const char* m_meshNodeName;
 	int	m_parentNodeId;
 
-	//ToDo: SkinAnime 02
-	//スキンアニメ用メンバ変数追加
-	// FbxAMatrix m_IBaseMatrix;
+	//スキンアニメ用メンバ変数
 	FbxAMatrix m_IBaseMatrix;
 
 	UINT m_skinCount = 0;
-	//ToDo: ここまで
 
 public:
 	std::wstring m_MaterialId = L"";
@@ -99,9 +96,19 @@ public:
 		return m_meshNodeName;
 	}
 
+	int GetParentNodeId()
+	{
+		return m_parentNodeId;
+	}
+
 	FbxMesh* GetFbxMesh()
 	{
 		return m_mesh;
+	}
+
+	FbxAMatrix GetIBaseMatrix()
+	{
+		return m_IBaseMatrix;
 	}
 
 	void SetUniqueFlag(bool mesh)
@@ -109,7 +116,6 @@ public:
 		m_uniqueMesh = mesh;
 	}
 
-	//ToDo: SkinAnime 03
 	//スキンアニメ用メソッド追加
 	UINT GetSkinCount()
 	{
@@ -214,13 +220,13 @@ private:
 	
 	FBXDataContainer* m_currentAnimeCont;	//現在使用しているアニメ用FbxDataContainerのポインタ
 	
-	std::vector<const char*> m_boneNameList;	//ボーン名の配列
+	std::vector<std::string> m_boneNameList;	//ボーン名の配列
 	std::vector<int> m_boneIdList;			//ボーンID値の配列
 	std::vector<FbxAMatrix> m_IboneMatrix;	//計算用元初期ボーンの逆行列
 	std::vector<XMFLOAT4X4> m_F4X4Matrix;	//アニメーションのupdateで更新されるDirect3D用マトリクス
 	//ToDo: ここまで
 
-	std::vector<const char*> m_nodeNameList;
+	std::vector<std::string> m_nodeNameList;
 	std::vector<unique_ptr<MeshContainer>> m_pMeshContainer;
 	std::unordered_map<std::wstring, unique_ptr<MaterialContainer>> m_pMaterialContainer;
 
@@ -426,3 +432,44 @@ public:
 		return XMMatrixIdentity();
 	}
 };
+
+//バイナリー書き込み
+template<typename T>
+void WriteBinary(std::ofstream& ofs, const T& data)
+{
+	ofs.write(reinterpret_cast<const char*>(&data), sizeof(T));
+}
+
+//Vector書き込み
+template<typename T>
+void WriteVector(std::ofstream& ofs, const std::vector<T>& vec)
+{
+	size_t size = vec.size();
+	WriteBinary(ofs, size);
+	if (size > 0)
+	{
+		ofs.write(reinterpret_cast<const char*>(vec.data()), sizeof(T) * size);
+	}
+}
+
+//String書き込み
+inline void WriteString(std::ofstream& ofs, const std::string& str)
+{
+	size_t size = str.size();
+	WriteBinary(ofs, size);
+	if (size > 0)
+	{
+		ofs.write(str.c_str(), size);
+	}
+}
+
+//WString書き込み
+inline void WriteWString(std::ofstream& ofs, const std::wstring& str)
+{
+	size_t size = str.size();
+	WriteBinary(ofs, size);
+	if (size > 0)
+	{
+		ofs.write(reinterpret_cast<const char*>(str.c_str()), sizeof(wchar_t) * size);
+	}
+}
