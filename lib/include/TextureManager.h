@@ -37,7 +37,7 @@ struct Texture2DContainer
 class TextureManager
 {
 private:
-	std::unordered_map<std::wstring, std::unique_ptr<Texture2DContainer>> m_textureDB;
+	std::unordered_map<std::wstring, std::unique_ptr<Texture2DContainer>> m_TextureDataBase;
 
 	HRESULT CreateTextureFromFile(ID3D12Device* g_pD3D, Texture2DContainer* txbuff, const wchar_t* filename, bool genMipmap = false);
 	void	ReleaseTexObj(Texture2DContainer* txbuff);

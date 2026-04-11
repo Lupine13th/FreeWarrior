@@ -825,6 +825,8 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 #pragma endregion
 
 				engine->UploadCreatedTextures();
+
+				IsLoading = false;
 		}
 			break;
 

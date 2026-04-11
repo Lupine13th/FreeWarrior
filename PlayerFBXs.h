@@ -5,6 +5,9 @@
 #include "Admin.h"
 #include "CharacterEquipment.h"
 
+class FBXCharacterData;
+class CharacterEquipment;
+
 class PlayerBase : public GameComponent
 {
 private:

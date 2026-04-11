@@ -21,7 +21,7 @@
 
 using namespace std;
 
-class FieldCharacter;
+class FBXCharacterData;
 
 enum class Terrain
 {

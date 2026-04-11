@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include <MyAccessHub.h>
 #include <CharacterData.h>
+#include "FieldCharacter.h"
 
 #include <memory>
 #include <vector>
@@ -21,6 +22,8 @@ namespace fs = std::experimental::filesystem;
 
 class FBXDataContainer;
 
+class FieldCharacter;
+
 struct FbxVertex
 {
 	XMFLOAT3 position;
@@ -29,7 +32,6 @@ struct FbxVertex
 	XMFLOAT2 uv;
 };
 
-//ToDo: SkinAnime 01
 //スキンアニメ用頂点データ構造体追加
 struct FbxSkinAnimeParams
 {
@@ -44,7 +46,6 @@ struct FbxSkinAnimeVertex	//スタティックメッシュに追加データを�
 	FbxVertex vertex;	//スタティックメッシュの頂点データ
 	FbxSkinAnimeParams skinvalues;	//スケルタルメッシュの追加データ
 };
-//ToDo: ここまで
 
 enum class FBX_TEXTURE_TYPE
 {
@@ -66,7 +67,7 @@ protected:
 
 	bool m_uniqueMesh = false;
 
-	const char* m_meshNodeName;
+	std::string m_meshNodeName;
 	int	m_parentNodeId;
 
 	//スキンアニメ用メンバ変数
@@ -82,6 +83,7 @@ public:
 
 	std::vector<FbxVertex>	m_vertexData;
 	std::vector<ULONG>		m_indexData;
+	std::vector<FbxSkinAnimeParams> m_skinParams; // キャッシュ保存用：スキン情報
 
 	//頂点データの最大値と最小値　これは判定作成時に使う
 	XMFLOAT3				m_vtxMin;
@@ -91,12 +93,12 @@ public:
 
 	void SetFbxMesh(FbxMesh* mesh);
 
-	const char* GetMeshNodeName()
+	std::string& GetMeshNodeName()
 	{
 		return m_meshNodeName;
 	}
 
-	int GetParentNodeId()
+	int& GetParentNodeId()
 	{
 		return m_parentNodeId;
 	}
@@ -106,7 +108,7 @@ public:
 		return m_mesh;
 	}
 
-	FbxAMatrix GetIBaseMatrix()
+	FbxAMatrix& GetIBaseMatrix()
 	{
 		return m_IBaseMatrix;
 	}
@@ -117,7 +119,7 @@ public:
 	}
 
 	//スキンアニメ用メソッド追加
-	UINT GetSkinCount()
+	UINT& GetSkinCount()
 	{
 		return m_skinCount;
 	}
@@ -141,11 +143,20 @@ public:
 	float diffuse[4];
 	float specular[4];
 	float alpha;
-	std::vector<std::wstring>	m_diffuseTextures;
-	std::vector<std::wstring>	m_normalTextures;
-	std::vector<std::wstring>	m_specularTextures;
-	std::vector<std::wstring>	m_falloffTextures;
-	std::vector<std::wstring>	m_reflectionMapTextures;
+
+	//テクスチャの名前を保存
+	std::vector<std::wstring>	m_DiffuseTextures;
+	std::vector<std::wstring>	m_NormalTextures;
+	std::vector<std::wstring>	m_SpecularTextures;
+	std::vector<std::wstring>	m_FalloffTextures;
+	std::vector<std::wstring>	m_ReflectionMapTextures;
+
+	//テクスチャのパスを保存（SaveBinaryに利用する）
+	std::vector<std::wstring>	m_DiffusePath;
+	std::vector<std::wstring>	m_NormalPath;
+	std::vector<std::wstring>	m_SpecularPath;
+	std::vector<std::wstring>	m_FalloffPath;
+	std::vector<std::wstring>	m_ReflectionMapPath;
 
 	MaterialContainer()
 	{
@@ -158,11 +169,11 @@ public:
 
 		alpha = 1.0f;
 
-		m_diffuseTextures.clear();
-		m_normalTextures.clear();
-		m_specularTextures.clear();
-		m_falloffTextures.clear();
-		m_reflectionMapTextures.clear();
+		m_DiffuseTextures.clear();
+		m_NormalTextures.clear();
+		m_SpecularTextures.clear();
+		m_FalloffTextures.clear();
+		m_ReflectionMapTextures.clear();
 	}
 
 	void SetUniqueTextureFlag(bool flg)
@@ -202,7 +213,6 @@ class FBXDataContainer
 {
 private:
 
-	//ToDo: SkinAnime04
 	//スキンアニメ用メンバ変数追加
 
 	FbxScene* m_pFbxScene;	//FBXファイルデータ本体。アニメ更新に必要。
@@ -224,7 +234,6 @@ private:
 	std::vector<int> m_boneIdList;			//ボーンID値の配列
 	std::vector<FbxAMatrix> m_IboneMatrix;	//計算用元初期ボーンの逆行列
 	std::vector<XMFLOAT4X4> m_F4X4Matrix;	//アニメーションのupdateで更新されるDirect3D用マトリクス
-	//ToDo: ここまで
 
 	std::vector<std::string> m_nodeNameList;
 	std::vector<unique_ptr<MeshContainer>> m_pMeshContainer;
@@ -252,7 +261,6 @@ private:
 public:
 	~FBXDataContainer()
 	{
-		//ToDo: SkinAnime06
 		//スキンアニメ用メンバ削除処理
 		if (m_pFbxScene != nullptr)
 		{
@@ -264,7 +272,6 @@ public:
 		m_IboneMatrix.clear();
 		m_boneIdList.clear();
 		m_F4X4Matrix.clear();
-		//ToDo: ここまで
 
 		m_pMeshContainer.clear();
 		m_pMaterialContainer.clear();
@@ -356,6 +363,10 @@ public:
 	{
 		return m_cbuffIndex;
 	}
+	FBXDataContainer* GetCurrentAnimCont()
+	{
+		return m_currentAnimeCont;
+	}
 
 	HRESULT LoadBinary(const fs::path& path);
 	HRESULT SaveBinary(const fs::path& path);
@@ -431,6 +442,8 @@ public:
 		}
 		return XMMatrixIdentity();
 	}
+
+	void SetAnimeInit(std::wstring initAnimeLabel, FieldCharacter* chara);
 };
 
 //バイナリー書き込み
@@ -471,5 +484,49 @@ inline void WriteWString(std::ofstream& ofs, const std::wstring& str)
 	if (size > 0)
 	{
 		ofs.write(reinterpret_cast<const char*>(str.c_str()), sizeof(wchar_t) * size);
+	}
+}
+
+//バイナリ読み込みヘルパー
+template<typename T>
+void ReadBinary(std::ifstream& ifs, T& data)
+{
+	ifs.read(reinterpret_cast<char*>(&data), sizeof(T));
+}
+
+//vector読み込み
+template<typename T>
+void ReadVector(std::ifstream& ifs, std::vector<T>& vec)
+{
+	size_t size;
+	ReadBinary(ifs, size);
+	vec.resize(size);
+	if (size > 0)
+	{
+		ifs.read(reinterpret_cast<char*>(vec.data()), sizeof(T) * size);
+	}
+}
+
+//string読み込み
+inline void ReadString(std::ifstream& ifs, std::string& str)
+{
+	size_t size;
+	ReadBinary(ifs, size);
+	str.resize(size);
+	if (size > 0)
+	{
+		ifs.read(&str[0], size);
+	}
+}
+
+//wstring読み込み
+inline void ReadWString(std::ifstream& ifs, std::wstring& str)
+{
+	size_t size;
+	ReadBinary(ifs, size);
+	str.resize(size);
+	if (size > 0)
+	{
+		ifs.read(reinterpret_cast<char*>(&str[0]), sizeof(wchar_t) * size);
 	}
 }

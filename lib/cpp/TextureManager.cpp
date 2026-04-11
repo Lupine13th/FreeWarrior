@@ -15,7 +15,7 @@ using namespace DirectX;
 
 HRESULT TextureManager::InitTextureManager(void)
 {
-	m_textureDB.clear();
+	m_TextureDataBase.clear();
 
 	return S_OK;
 }
@@ -38,9 +38,9 @@ HRESULT TextureManager::CreateTextureFromFile(ID3D12Device* pD3D, std::wstring l
 {
 	HRESULT hr;
 
-	m_textureDB[labelName].reset(new Texture2DContainer());
+	m_TextureDataBase[labelName].reset(new Texture2DContainer());
 
-	hr = CreateTextureFromFile(pD3D, m_textureDB[labelName].get(), filename);
+	hr = CreateTextureFromFile(pD3D, m_TextureDataBase[labelName].get(), filename);
 
 	return hr;
 }
@@ -49,9 +49,18 @@ HRESULT TextureManager::UploadCreatedTextures(ID3D12Device* pD3D, ID3D12Graphics
 {
 	HRESULT hres = E_FAIL;
 
-	for (auto const &pair : m_textureDB)
+	for (auto const &pair : m_TextureDataBase)
 	{
+		const std::wstring& label = pair.first;
 		Texture2DContainer* txbuff = pair.second.get();
+
+		if (txbuff == nullptr)
+		{
+			wchar_t debugMsg[256];
+			swprintf_s(debugMsg, L"!!! TextureManager Error: Label '%ls' is NULL in Database !!!\n", label.c_str());
+			OutputDebugStringW(debugMsg);
+			continue;
+		}
 
 		if (!txbuff->m_uploaded) continue;
 
@@ -86,28 +95,30 @@ HRESULT TextureManager::UploadCreatedTextures(ID3D12Device* pD3D, ID3D12Graphics
 
 void TextureManager::ReleaseTexture(std::wstring labelName)
 {
-	if (m_textureDB[labelName] != nullptr)
+	//テクスチャが見つからない場合にnullをキーに挿入せずに単にnullptrを返す
+	auto textureDataBase = m_TextureDataBase.find(labelName);
+	if (textureDataBase != m_TextureDataBase.end())
 	{
-		ReleaseTexObj(m_textureDB[labelName].get());
-		m_textureDB[labelName].reset();
+		ReleaseTexObj(textureDataBase->second.get());
+		m_TextureDataBase.erase(textureDataBase);
 	}
 }
 
 void TextureManager::ReleaseAllTextures(void)
 {
-	for (auto const& pair : m_textureDB)
+	for (auto const& pair : m_TextureDataBase)
 	{
 		ReleaseTexObj(pair.second.get());
 	}
 
-	m_textureDB.clear();
+	m_TextureDataBase.clear();
 }
 
 void TextureManager::CreateTextureSRV(ID3D12Device* pD3D, ID3D12DescriptorHeap* pSrvHeap, UINT slotNo, std::wstring texLabel)
 {
-	if (m_textureDB[texLabel] != nullptr)
+	if (m_TextureDataBase[texLabel] != nullptr)
 	{
-		CreateTextureSRV(pD3D, pSrvHeap, slotNo, m_textureDB[texLabel].get());
+		CreateTextureSRV(pD3D, pSrvHeap, slotNo, m_TextureDataBase[texLabel].get());
 	}
 }
 
@@ -132,9 +143,11 @@ void TextureManager::CreateTextureSRV(ID3D12Device* pD3D, ID3D12DescriptorHeap* 
 
 Texture2DContainer* TextureManager::GetTexture(std::wstring labelName)
 {
-	if (m_textureDB[labelName] != nullptr)
+	//テクスチャが見つからない場合にnullをキーに挿入せずに単にnullptrを返す
+	auto textureDataBase = m_TextureDataBase.find(labelName);
+	if (textureDataBase != m_TextureDataBase.end())
 	{
-		return m_textureDB[labelName].get();
+		return textureDataBase->second.get();
 	}
 
 	return nullptr;

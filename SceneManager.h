@@ -17,6 +17,7 @@ class Squares;
 class CharacterEquipment;
 class PlayerBase;
 enum class SoldiersType;
+enum class Admin;
 
 class SceneObjectDeleter : public AbstractGameObjectDeleter
 {
@@ -50,6 +51,7 @@ private:
 	void ClearSceneObjects();
 	void SetCharaToSquares(FieldCharacter* chara, Squares* square);
 	bool IsFirstTime = true;
+	
 public:
 	HRESULT initSceneController() override;
 	HRESULT changeGameScene(UINT scene) override;
@@ -118,4 +120,6 @@ public:
 	vector<FieldCharacter*> enemy = { nullptr ,nullptr, nullptr, nullptr, nullptr };
 
 	void GenerateEquipment(SoldiersType type, PlayerBase* playerBase, Admin admin);
+
+	bool IsLoading = true;
 };

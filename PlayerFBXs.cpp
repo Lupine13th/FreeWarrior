@@ -18,22 +18,38 @@ void InfantryPlayer::InitAction()
 		chdata->setScale(scaleValue, scaleValue, scaleValue);
 
 		//アニメーションを登録
-		chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Rifle_Idle.fbx", L"WAIT01");
-		chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Rifle_Fire.fbx", L"ATTACK01");
-		chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Rifle_Run.fbx", L"WALK01");
-		chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Rifle_Dying.fbx", L"DYING01");
-		chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Rifle_Damage.fbx", L"DAMAGE01");
+		HRESULT loadIdleAnim = chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Rifle_Idle.fbx", L"WAIT_REBEL_INF");
+		HRESULT loadAttackAnim = chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Rifle_Fire.fbx", L"ATTACK_REBEL_INF");
+		HRESULT loadWalkAnim = chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Rifle_Run.fbx", L"WALK_REBEL_INF");
+		HRESULT loadDyingAnim = chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Rifle_Dying.fbx", L"DYING_REBEL_INF");
+		HRESULT loadDamageAnim = chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Rifle_Damage.fbx", L"DAMAGE_REBEL_INF");
 
 		//初期アニメーション
-		chdata->SetAnime(L"WAIT01");
+		if (SUCCEEDED(loadIdleAnim))
+		{
+			chdata->SetAnime(L"WAIT_REBEL_INF");
+		}
 
 		chdata->GetMainFbx()->SetMeshUniqueFlag(true, true);
 		chdata->GetMainFbx()->SetTextureUniqueFlag(true);
-		chdata->GetAnimeFbx(L"WAIT01")->SetMeshUniqueFlag(true, true);
-		chdata->GetAnimeFbx(L"ATTACK01")->SetMeshUniqueFlag(true, true);
-		chdata->GetAnimeFbx(L"WALK01")->SetMeshUniqueFlag(true, true);
-		chdata->GetAnimeFbx(L"DYING01")->SetMeshUniqueFlag(true, true);
-		chdata->GetAnimeFbx(L"DAMAGE01")->SetMeshUniqueFlag(true, true);
+
+		// MeshUniqueFlagの設定
+		// 該当するアニメーションがロードされている場合のみ実行
+		if (SUCCEEDED(loadIdleAnim)) {
+			chdata->GetAnimeFbx(L"WAIT_REBEL_INF")->SetMeshUniqueFlag(true, true);
+		}
+		if (SUCCEEDED(loadAttackAnim)) {
+			chdata->GetAnimeFbx(L"ATTACK_REBEL_INF")->SetMeshUniqueFlag(true, true);
+		}
+		if (SUCCEEDED(loadWalkAnim)) {
+			chdata->GetAnimeFbx(L"WALK_REBEL_INF")->SetMeshUniqueFlag(true, true);
+		}
+		if (SUCCEEDED(loadDyingAnim)) {
+			chdata->GetAnimeFbx(L"DYING_REBEL_INF")->SetMeshUniqueFlag(true, true);
+		}
+		if (SUCCEEDED(loadDamageAnim)) {
+			chdata->GetAnimeFbx(L"DAMAGE_REBEL_INF")->SetMeshUniqueFlag(true, true);
+		}
 	}
 	else if (m_admin == Admin::Imperial)
 	{
@@ -41,22 +57,38 @@ void InfantryPlayer::InitAction()
 		chdata->setScale(scaleValue, scaleValue, scaleValue);
 
 		//アニメーションを登録
-		chdata->LoadAnimationFBX(L"./Resources/fbx/ImperialAnime/imperial_Rifle_Idle.fbx", L"WAIT01");
-		chdata->LoadAnimationFBX(L"./Resources/fbx/ImperialAnime/imperial_Rifle_Fire.fbx", L"ATTACK01");
-		chdata->LoadAnimationFBX(L"./Resources/fbx/ImperialAnime/imperial_Rifle_Run.fbx", L"WALK01");
-		chdata->LoadAnimationFBX(L"./Resources/fbx/ImperialAnime/imperial_Rifle_Dying.fbx", L"DYING01");
-		chdata->LoadAnimationFBX(L"./Resources/fbx/ImperialAnime/imperial_Rifle_Damage.fbx", L"DAMAGE01");
+		HRESULT loadIdleAnim = chdata->LoadAnimationFBX(L"./Resources/fbx/ImperialAnime/imperial_Rifle_Idle.fbx", L"WAIT_IMPER_INF");
+		HRESULT loadAttackAnim = chdata->LoadAnimationFBX(L"./Resources/fbx/ImperialAnime/imperial_Rifle_Fire.fbx", L"ATTACK_IMPER_INF");
+		HRESULT loadWalkAnim = chdata->LoadAnimationFBX(L"./Resources/fbx/ImperialAnime/imperial_Rifle_Run.fbx", L"WALK_IMPER_INF");
+		HRESULT loadDyingAnim = chdata->LoadAnimationFBX(L"./Resources/fbx/ImperialAnime/imperial_Rifle_Dying.fbx", L"DYING_IMPER_INF");
+		HRESULT loadDamageAnim = chdata->LoadAnimationFBX(L"./Resources/fbx/ImperialAnime/imperial_Rifle_Damage.fbx", L"DAMAGE_IMPER_INF");
 
 		//初期アニメーション
-		chdata->SetAnime(L"WAIT01");
+		if (SUCCEEDED(loadIdleAnim))
+		{
+			chdata->SetAnime(L"WAIT_IMPER_INF");
+		}
 
 		chdata->GetMainFbx()->SetMeshUniqueFlag(true, true);
 		chdata->GetMainFbx()->SetTextureUniqueFlag(true);
-		chdata->GetAnimeFbx(L"WAIT01")->SetMeshUniqueFlag(true, true);
-		chdata->GetAnimeFbx(L"ATTACK01")->SetMeshUniqueFlag(true, true);
-		chdata->GetAnimeFbx(L"WALK01")->SetMeshUniqueFlag(true, true);
-		chdata->GetAnimeFbx(L"DYING01")->SetMeshUniqueFlag(true, true);
-		chdata->GetAnimeFbx(L"DAMAGE01")->SetMeshUniqueFlag(true, true);
+
+		// MeshUniqueFlagの設定
+		// 該当するアニメーションがロードされている場合のみ実行
+		if (SUCCEEDED(loadIdleAnim)) {
+			chdata->GetAnimeFbx(L"WAIT_IMPER_INF")->SetMeshUniqueFlag(true, true);
+		}
+		if (SUCCEEDED(loadAttackAnim)) {
+			chdata->GetAnimeFbx(L"ATTACK_IMPER_INF")->SetMeshUniqueFlag(true, true);
+		}
+		if (SUCCEEDED(loadWalkAnim)) {
+			chdata->GetAnimeFbx(L"WALK_IMPER_INF")->SetMeshUniqueFlag(true, true);
+		}
+		if (SUCCEEDED(loadDyingAnim)) {
+			chdata->GetAnimeFbx(L"DYING_IMPER_INF")->SetMeshUniqueFlag(true, true);
+		}
+		if (SUCCEEDED(loadDamageAnim)) {
+			chdata->GetAnimeFbx(L"DAMAGE_IMPER_INF")->SetMeshUniqueFlag(true, true);
+		}
 	}
 
 }
@@ -171,22 +203,38 @@ void MachinegunnerPlayer::InitAction()
 	chdata->SetScaleValue(scaleValue);
 
 	//アニメーションを登録
-	chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Machinegun_Idle.fbx", L"WAIT01");
-	chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Machinegun_Fire.fbx", L"ATTACK01");
-	chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Rifle_Run.fbx", L"WALK01");
-	chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Rifle_Dying.fbx", L"DYING01");
-	chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Rifle_Damage.fbx", L"DAMAGE01");
+	HRESULT loadIdleAnim = chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Machinegun_Idle.fbx", L"WAIT_REBEL_MGN");
+	HRESULT loadAttackAnim = chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Machinegun_Fire.fbx", L"ATTACK_REBEL_MGN");
+	HRESULT loadWalkAnim = chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Rifle_Run.fbx", L"WALK_REBEL_MGN");
+	HRESULT loadDyingAnim = chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Rifle_Dying.fbx", L"DYING_REBEL_MGN");
+	HRESULT loadDamageAnim = chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Rifle_Damage.fbx", L"DAMAGE_REBEL_MGN");
 
 	//初期アニメーション
-	chdata->SetAnime(L"WAIT01");
+	if (SUCCEEDED(loadIdleAnim))
+	{
+		chdata->SetAnime(L"WAIT_REBEL_MGN");
+	}
 
 	chdata->GetMainFbx()->SetMeshUniqueFlag(true, true);
 	chdata->GetMainFbx()->SetTextureUniqueFlag(true);
-	chdata->GetAnimeFbx(L"WAIT01")->SetMeshUniqueFlag(true, true);
-	chdata->GetAnimeFbx(L"ATTACK01")->SetMeshUniqueFlag(true, true);
-	chdata->GetAnimeFbx(L"WALK01")->SetMeshUniqueFlag(true, true);
-	chdata->GetAnimeFbx(L"DYING01")->SetMeshUniqueFlag(true, true);
-	chdata->GetAnimeFbx(L"DAMAGE01")->SetMeshUniqueFlag(true, true);
+
+	// MeshUniqueFlagの設定
+	// 該当するアニメーションがロードされている場合のみ実行
+	if (SUCCEEDED(loadIdleAnim)) {
+		chdata->GetAnimeFbx(L"WAIT_REBEL_MGN")->SetMeshUniqueFlag(true, true);
+	}
+	if (SUCCEEDED(loadAttackAnim)) {
+		chdata->GetAnimeFbx(L"ATTACK_REBEL_MGN")->SetMeshUniqueFlag(true, true);
+	}
+	if (SUCCEEDED(loadWalkAnim)) {
+		chdata->GetAnimeFbx(L"WALK_REBEL_MGN")->SetMeshUniqueFlag(true, true);
+	}
+	if (SUCCEEDED(loadDyingAnim)) {
+		chdata->GetAnimeFbx(L"DYING_REBEL_MGN")->SetMeshUniqueFlag(true, true);
+	}
+	if (SUCCEEDED(loadDamageAnim)) {
+		chdata->GetAnimeFbx(L"DAMAGE_REBEL_MGN")->SetMeshUniqueFlag(true, true);
+	}
 }
 
 bool MachinegunnerPlayer::FrameAction()
@@ -280,22 +328,38 @@ void ScoutPlayer::InitAction()
 		chdata->SetScaleValue(scaleValue);
 
 		//アニメーションを登録
-		chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Scout_Idle.fbx", L"WAIT01");
-		chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Scout_Fire.fbx", L"ATTACK01");
-		chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Scout_Run.fbx", L"WALK01");
-		chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Scout_Dying.fbx", L"DYING01");
-		chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Scout_Damage.fbx", L"DAMAGE01");
+		HRESULT loadIdleAnim = chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Scout_Idle.fbx", L"WAIT_REBEL_SCT");
+		HRESULT loadAttackAnim = chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Scout_Fire.fbx", L"ATTACK_REBEL_SCT");
+		HRESULT loadWalkAnim = chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Scout_Run.fbx", L"WALK_REBEL_SCT");
+		HRESULT loadDyingAnim = chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Scout_Dying.fbx", L"DYING_REBEL_SCT");
+		HRESULT loadDamageAnim = chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Scout_Damage.fbx", L"DAMAGE_REBEL_SCT");
 
 		//初期アニメーション
-		chdata->SetAnime(L"WAIT01");
+		if (SUCCEEDED(loadIdleAnim))
+		{
+			chdata->SetAnime(L"WAIT_REBEL_SCT");
+		}
 
 		chdata->GetMainFbx()->SetMeshUniqueFlag(true, true);
 		chdata->GetMainFbx()->SetTextureUniqueFlag(true);
-		chdata->GetAnimeFbx(L"WAIT01")->SetMeshUniqueFlag(true, true); 
-		chdata->GetAnimeFbx(L"ATTACK01")->SetMeshUniqueFlag(true, true);
-		chdata->GetAnimeFbx(L"WALK01")->SetMeshUniqueFlag(true, true);
-		chdata->GetAnimeFbx(L"DYING01")->SetMeshUniqueFlag(true, true);
-		chdata->GetAnimeFbx(L"DAMAGE01")->SetMeshUniqueFlag(true, true);
+
+		// MeshUniqueFlagの設定
+		// 該当するアニメーションがロードされている場合のみ実行
+		if (SUCCEEDED(loadIdleAnim)) {
+			chdata->GetAnimeFbx(L"WAIT_REBEL_SCT")->SetMeshUniqueFlag(true, true);
+		}
+		if (SUCCEEDED(loadAttackAnim)) {
+			chdata->GetAnimeFbx(L"ATTACK_REBEL_SCT")->SetMeshUniqueFlag(true, true);
+		}
+		if (SUCCEEDED(loadWalkAnim)) {
+			chdata->GetAnimeFbx(L"WALK_REBEL_SCT")->SetMeshUniqueFlag(true, true);
+		}
+		if (SUCCEEDED(loadDyingAnim)) {
+			chdata->GetAnimeFbx(L"DYING_REBEL_SCT")->SetMeshUniqueFlag(true, true);
+		}
+		if (SUCCEEDED(loadDamageAnim)) {
+			chdata->GetAnimeFbx(L"DAMAGE_REBEL_SCT")->SetMeshUniqueFlag(true, true);
+		}
 	}
 
 	else if (m_admin == Admin::Imperial)
@@ -306,20 +370,38 @@ void ScoutPlayer::InitAction()
 		chdata->SetScaleValue(scaleValue);
 
 		//アニメーションを登録
-		chdata->LoadAnimationFBX(L"./Resources/fbx/ImperialAnime/imperial_Scout_Idle.fbx", L"WAIT01");
-		chdata->LoadAnimationFBX(L"./Resources/fbx/ImperialAnime/imperial_Scout_Fire.fbx", L"ATTACK01");
-		chdata->LoadAnimationFBX(L"./Resources/fbx/ImperialAnime/imperial_Scout_Run.fbx", L"WALK01");
-		chdata->LoadAnimationFBX(L"./Resources/fbx/ImperialAnime/imperial_Scout_Dying.fbx", L"DYING01");
-		chdata->LoadAnimationFBX(L"./Resources/fbx/ImperialAnime/imperial_Scout_Damage.fbx", L"DAMAGE01");
+		HRESULT loadIdleAnim = chdata->LoadAnimationFBX(L"./Resources/fbx/ImperialAnime/imperial_Scout_Idle.fbx", L"WAIT_IMPER_SCT");
+		HRESULT loadAttackAnim = chdata->LoadAnimationFBX(L"./Resources/fbx/ImperialAnime/imperial_Scout_Fire.fbx", L"ATTACK_IMPER_SCT");
+		HRESULT loadWalkAnim = chdata->LoadAnimationFBX(L"./Resources/fbx/ImperialAnime/imperial_Scout_Run.fbx", L"WALK_IMPER_SCT");
+		HRESULT loadDyingAnim = chdata->LoadAnimationFBX(L"./Resources/fbx/ImperialAnime/imperial_Scout_Dying.fbx", L"DYING_IMPER_SCT");
+		HRESULT loadDamageAnim = chdata->LoadAnimationFBX(L"./Resources/fbx/ImperialAnime/imperial_Scout_Damage.fbx", L"DAMAGE_IMPER_SCT");
 
 		//初期アニメーション
-		chdata->SetAnime(L"WAIT01");
+		if (SUCCEEDED(loadIdleAnim))
+		{
+			chdata->SetAnime(L"WAIT_IMPER_SCT");
+		}
 
 		chdata->GetMainFbx()->SetMeshUniqueFlag(true, true);
 		chdata->GetMainFbx()->SetTextureUniqueFlag(true);
-		chdata->GetAnimeFbx(L"WAIT01")->SetMeshUniqueFlag(true, true);
-		chdata->GetAnimeFbx(L"ATTACK01")->SetMeshUniqueFlag(true, true);
-		chdata->GetAnimeFbx(L"WALK01")->SetMeshUniqueFlag(true, true);
+
+		// MeshUniqueFlagの設定
+		// 該当するアニメーションがロードされている場合のみ実行
+		if (SUCCEEDED(loadIdleAnim)) {
+			chdata->GetAnimeFbx(L"WAIT_IMPER_SCT")->SetMeshUniqueFlag(true, true);
+		}
+		if (SUCCEEDED(loadAttackAnim)) {
+			chdata->GetAnimeFbx(L"ATTACK_IMPER_SCT")->SetMeshUniqueFlag(true, true);
+		}
+		if (SUCCEEDED(loadWalkAnim)) {
+			chdata->GetAnimeFbx(L"WALK_IMPER_SCT")->SetMeshUniqueFlag(true, true);
+		}
+		if (SUCCEEDED(loadDyingAnim)) {
+			chdata->GetAnimeFbx(L"DYING_IMPER_SCT")->SetMeshUniqueFlag(true, true);
+		}
+		if (SUCCEEDED(loadDamageAnim)) {
+			chdata->GetAnimeFbx(L"DAMAGE_IMPER_SCT")->SetMeshUniqueFlag(true, true);
+		}
 	}
 }
 

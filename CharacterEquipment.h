@@ -3,6 +3,8 @@
 #include "GameObject.h"
 #include "FBXCharacterData.h" 
 
+class FBXCharacterData;
+
 enum EquipType
 {
 	None,

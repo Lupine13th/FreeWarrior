@@ -140,10 +140,10 @@ bool EnemyAIManager::FrameAction()
 		default:
 			break;
 		case EnemyMove::Attack:
-			BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->fbxD->SetAnime(L"ATTACK01");
+			BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->fbxD->SetAnimeInit(L"ATTACK", BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->chara);
 			break;
 		case EnemyMove::Move:
-			BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->fbxD->SetAnime(L"WALK01");
+			BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->fbxD->SetAnimeInit(L"WALK", BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->chara);
 			break;
 		case EnemyMove::None:
 		case EnemyMove::Wait:

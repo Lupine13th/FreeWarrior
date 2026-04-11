@@ -592,7 +592,7 @@ HRESULT FBXDataContainer::LoadTextureFromMaterial(const std::wstring matName, co
 			size_t conv = 0;
 			mbstowcs_s(&conv, namebuff, fileName.c_str(), fileName.length());
 
-			wsprintfW(texturePath, L"Resources/textures/%ls/%ls", id.c_str(), namebuff);
+			wsprintfW(texturePath, L"Resources/textures/%ls/%ls", id.c_str(), namebuff);	//Resources/textures/3Dモデルの名前/テクスチャの名前
 
 			wchar_t idName[128];
 			wsprintfW(idName, L"%ls_%ls", id.c_str(), namebuff);
@@ -606,23 +606,28 @@ HRESULT FBXDataContainer::LoadTextureFromMaterial(const std::wstring matName, co
 			switch (texType)
 			{
 			case FBX_TEXTURE_TYPE::FBX_DIFFUSE:
-				m_pMaterialContainer[matName]->m_diffuseTextures.push_back(idName);
+				m_pMaterialContainer[matName]->m_DiffuseTextures.push_back(idName);
+				m_pMaterialContainer[matName]->m_DiffusePath.push_back(texturePath);
 				break;
 
 			case FBX_TEXTURE_TYPE::FBX_NORMAL:
-				m_pMaterialContainer[matName]->m_normalTextures.push_back(idName);
+				m_pMaterialContainer[matName]->m_NormalTextures.push_back(idName);
+				m_pMaterialContainer[matName]->m_NormalPath.push_back(texturePath);
 				break;
 
 			case FBX_TEXTURE_TYPE::FBX_SPECUAR:
-				m_pMaterialContainer[matName]->m_specularTextures.push_back(idName);
+				m_pMaterialContainer[matName]->m_SpecularTextures.push_back(idName);
+				m_pMaterialContainer[matName]->m_SpecularPath.push_back(texturePath);
 				break;
 
 			case FBX_TEXTURE_TYPE::FBX_FALLOFF:
-				m_pMaterialContainer[matName]->m_falloffTextures.push_back(idName);
+				m_pMaterialContainer[matName]->m_FalloffTextures.push_back(idName);
+				m_pMaterialContainer[matName]->m_FalloffPath.push_back(texturePath);
 				break;
 
 			case FBX_TEXTURE_TYPE::FBX_REFLECTIONMAP:
-				m_pMaterialContainer[matName]->m_reflectionMapTextures.push_back(idName);
+				m_pMaterialContainer[matName]->m_ReflectionMapTextures.push_back(idName);
+				m_pMaterialContainer[matName]->m_ReflectionMapPath.push_back(texturePath);
 				break;
 
 			default:	//Unknown
@@ -642,19 +647,6 @@ HRESULT FBXDataContainer::LoadFBX(const std::wstring fileName, const std::wstrin
 	fs::path cacheDir = L"Cache";
 	fs::create_directories(cacheDir);
 	fs::path cachePath = cacheDir / (id + L".bin");	
-
-	if (fs::exists(cachePath))						//Cacheフォルダ内にid.binが存在するか確認
-	{
-		HRESULT cacheRes = LoadBinary(cachePath);
-		if (SUCCEEDED(cacheRes))
-		{
-			return cacheRes;
-		}
-		else
-		{
-			fs::remove(cachePath);
-		}
-	}
 
 	//==========FbxSDKの初期化とインポート　Fbxファイルを開くための準備==========
 
@@ -708,6 +700,51 @@ HRESULT FBXDataContainer::LoadFBX(const std::wstring fileName, const std::wstrin
 	}
 
 	//==========FbxSDKの初期化とインポート　Fbxファイルを開くための準備==========End
+
+
+
+	//==========アニメーション情報の取得 (キャッシュ時も必要)===========
+
+	int animStackCount = fbx_importer->GetAnimStackCount();
+	if (animStackCount > 0)
+	{
+		// GetCurrentAnimationStack() が null を返す場合があるため、明示的に 0 番目を取得
+		m_animeStack = fbx_scene->GetSrcObject<FbxAnimStack>(0);
+		fbx_scene->SetCurrentAnimationStack(m_animeStack);
+	}
+	else
+	{
+		m_animeStack = nullptr;
+	}
+
+	m_pFbxScene = fbx_scene; // シーンを保持
+
+	//==========アニメーション情報の取得 (キャッシュ時も必要)===========End
+
+
+	if (fs::exists(cachePath))						//Cacheフォルダ内にid.binが存在するか確認
+	{
+		HRESULT cacheRes = LoadBinary(cachePath);
+		if (SUCCEEDED(cacheRes))
+		{
+			// キャッシュロード成功。
+			// アニメーションスタックが正しく取得できているか再確認
+			if (m_animeStack == nullptr && animStackCount > 0)
+			{
+				m_animeStack = fbx_scene->GetSrcObject<FbxAnimStack>(0);
+				fbx_scene->SetCurrentAnimationStack(m_animeStack);
+			}
+
+			// ここでインポータを消すと、シーン内のオブジェクトが不安定になる場合があるため
+			// 解析フェーズをスキップして終了
+			fbx_importer->Destroy();
+			return S_OK;
+		}
+		else
+		{
+			fs::remove(cachePath); // 壊れているか古い場合は削除
+		}
+	}
 
 
 	//==========DirectXに適応するために座標系を変換==========
@@ -814,8 +851,15 @@ HRESULT FBXDataContainer::LoadFBX(const std::wstring fileName, const std::wstrin
 
 
 		m_pFbxScene = fbx_scene;
+
+		SaveBinary(cachePath);
 	}
 	fbx_importer->Destroy();
+
+	//if (SUCCEEDED(hr))
+	//{
+	//	MyAccessHub::GetMyGameEngine()->UploadCreatedTextures();
+	//}
 
 	return hr;
 }
@@ -865,7 +909,7 @@ int FBXDataContainer::GetMeshId(const char* meshName)
 
 	for (int i = 0; i < len; i++)
 	{
-		if (strcmp(m_pMeshContainer[i]->GetMeshNodeName(), meshName) == 0)
+		if (strcmp(m_pMeshContainer[i]->GetMeshNodeName().c_str(), meshName) == 0)	//string型に変更したため修正
 		{
 			return i;
 		}
@@ -983,6 +1027,45 @@ void FBXCharacterData::UpdateAnimation(int frameCount)
 	mainCont->UpdateAnimation(currentTime); 
 }
 
+//アニメーションを呼ぶwstringを統一するためにSetAnimeを呼ぶ前段階
+void FBXCharacterData::SetAnimeInit(std::wstring initAnimeLabel, FieldCharacter* chara)
+{
+	switch (chara->CharaAdmin)
+	{
+	default:
+		break;
+	case Admin::Rebel:
+		switch (chara->CharaKind)
+		{
+		default:
+			break;
+		case SoldiersType::infantry:
+			SetAnime(initAnimeLabel + L"_REBEL_INF");
+			break;
+		case SoldiersType::machinegunner:
+			SetAnime(initAnimeLabel + L"_REBEL_MGN");
+			break;
+		case SoldiersType::scout:
+			SetAnime(initAnimeLabel + L"_REBEL_SCT");
+			break;
+		}
+		break;
+	case Admin::Imperial:
+		switch (chara->CharaKind)
+		{
+		default:
+			break;
+		case SoldiersType::infantry:
+			SetAnime(initAnimeLabel + L"_IMPER_INF");
+			break;
+		case SoldiersType::scout:
+			SetAnime(initAnimeLabel + L"_IMPER_SCT");
+			break;
+		}
+		break;
+	}
+}
+
 XMMATRIX FBXDataContainer::GetBornMaxrix(const char* bornName)
 {
 	if (m_currentAnimeCont == nullptr)
@@ -1039,7 +1122,7 @@ void MeshContainer::InitSkinList(int skinCount)
 void MeshContainer::SetBoneIdList(FBXDataContainer* animeFbxCont)
 {
 	m_animeFbxCont = animeFbxCont;
-	m_parentNodeId = m_animeFbxCont->GetMeshId(m_meshNodeName); 
+	m_parentNodeId = m_animeFbxCont->GetMeshId(m_meshNodeName.c_str());		//string型に変更したため修正
 }
 
 
@@ -1048,38 +1131,38 @@ MaterialContainer::~MaterialContainer()
 	if (m_uniqueTextures)
 	{
 		TextureManager* texMng = MyAccessHub::GetMyGameEngine()->GetTextureManager();
-		for (auto id : m_diffuseTextures)
+		for (auto id : m_DiffuseTextures)
 		{
 			texMng->ReleaseTexture(id);
 		}
 
-		for (auto id : m_normalTextures)
+		for (auto id : m_NormalTextures)
 		{
 			texMng->ReleaseTexture(id);
 		}
 
-		for (auto id : m_specularTextures)
+		for (auto id : m_SpecularTextures)
 		{
 			texMng->ReleaseTexture(id);
 		}
 
-		for (auto id : m_falloffTextures)
+		for (auto id : m_FalloffTextures)
 		{
 			texMng->ReleaseTexture(id);
 		}
 
-		for (auto id : m_reflectionMapTextures)
+		for (auto id : m_ReflectionMapTextures)
 		{
 			texMng->ReleaseTexture(id);
 		}
 
 	}
 
-	m_diffuseTextures.clear();
-	m_normalTextures.clear();
-	m_specularTextures.clear();
-	m_falloffTextures.clear();
-	m_reflectionMapTextures.clear();
+	m_DiffuseTextures.clear();
+	m_NormalTextures.clear();
+	m_SpecularTextures.clear();
+	m_FalloffTextures.clear();
+	m_ReflectionMapTextures.clear();
 }
 
 int FBXDataContainer::GetClusterId(FbxCluster* pCluster)
@@ -1135,19 +1218,177 @@ const XMFLOAT4X4* FBXDataContainer::GetAnimatedMatrix()
 {
 	return m_F4X4Matrix.data();
 }
+
 HRESULT FBXDataContainer::LoadBinary(const fs::path& path)
 {
-	std::ifstream ifs(path, std::ios::binary);
+	std::ifstream ifs(path.wstring().c_str(), std::ios::binary);
 	if (!ifs) return E_FAIL;
+
+	int version = 0;
+	ReadBinary(ifs, version);
+	if (version != 2) return E_FAIL; // バージョン不一致ならキャッシュ破棄・再生成へ
+
+	// 全体の境界
+	ReadBinary(ifs, m_vtxTotalMin);
+	ReadBinary(ifs, m_vtxTotalMax);
+
+	// 時間設定
+	ReadBinary(ifs, m_animeFrames);
+	ReadBinary(ifs, m_startTime);
+	ReadBinary(ifs, m_endTime);
+	ReadBinary(ifs, m_timePeriod);
+
+	// クラスター/ボーン情報
+	ReadBinary(ifs, m_clusterCount);
+	ReadBinary(ifs, m_cbuffIndex);
+
+	size_t boneCnt;
+	ReadBinary(ifs, boneCnt);
+	m_boneNameList.resize(boneCnt);
+	for (auto& name : m_boneNameList) ReadString(ifs, name);
+
+	ReadVector(ifs, m_boneIdList);
+
+	size_t iboneCnt;
+	ReadBinary(ifs, iboneCnt);
+	m_IboneMatrix.resize(iboneCnt);
+	ifs.read(reinterpret_cast<char*>(m_IboneMatrix.data()), sizeof(FbxAMatrix) * iboneCnt);
+
+	ReadVector(ifs, m_F4X4Matrix);
+
+	size_t nodeCnt;
+	ReadBinary(ifs, nodeCnt);
+	m_nodeNameList.resize(nodeCnt);
+	for (auto& name : m_nodeNameList) ReadString(ifs, name);
+
+	// マテリアル
+	size_t matCnt;
+	ReadBinary(ifs, matCnt);
+	for (size_t i = 0; i < matCnt; i++)
+	{
+		std::wstring matId;
+		ReadWString(ifs, matId);
+		auto matCont = make_unique<MaterialContainer>();
+		ifs.read(reinterpret_cast<char*>(matCont->ambient), sizeof(float) * 4);
+		ifs.read(reinterpret_cast<char*>(matCont->diffuse), sizeof(float) * 4);
+		ifs.read(reinterpret_cast<char*>(matCont->specular), sizeof(float) * 4);
+		ReadBinary(ifs, matCont->alpha);
+
+		// テクスチャ名リストを読み込み
+		auto ReadTexureNameList = [&](std::vector<std::wstring>& list)
+		{
+			size_t size;
+			ReadBinary(ifs, size);
+			list.resize(size);
+			for (auto& s : list) ReadWString(ifs, s);
+		};
+		ReadTexureNameList(matCont->m_DiffuseTextures);
+		ReadTexureNameList(matCont->m_NormalTextures);
+		ReadTexureNameList(matCont->m_SpecularTextures);
+		ReadTexureNameList(matCont->m_FalloffTextures);
+		ReadTexureNameList(matCont->m_ReflectionMapTextures);
+
+		// テクスチャパスリストを読み込み
+		auto ReadTexturePathList = [&](std::vector<std::wstring>& list)
+		{
+			size_t size;
+			ReadBinary(ifs, size);
+			list.resize(size);
+			for (auto& s : list) ReadWString(ifs, s);
+		};
+		ReadTexturePathList(matCont->m_DiffusePath);
+		ReadTexturePathList(matCont->m_NormalPath);
+		ReadTexturePathList(matCont->m_SpecularPath);
+		ReadTexturePathList(matCont->m_FalloffPath);
+		ReadTexturePathList(matCont->m_ReflectionMapPath);
+
+		for (size_t i = 0; i < matCont->m_DiffuseTextures.size(); i++)
+		{
+			auto device = MyAccessHub::GetMyGameEngine()->GetDirect3DDevice();
+			MyAccessHub::GetMyGameEngine()->GetTextureManager()->CreateTextureFromFile(device, matCont->m_DiffuseTextures[i].c_str(), matCont->m_DiffusePath[i].c_str());
+		}
+
+		for (size_t i = 0; i < matCont->m_NormalTextures.size(); i++)
+		{
+			auto device = MyAccessHub::GetMyGameEngine()->GetDirect3DDevice();
+			MyAccessHub::GetMyGameEngine()->GetTextureManager()->CreateTextureFromFile(device, matCont->m_NormalTextures[i].c_str(), matCont->m_NormalPath[i].c_str());
+		}
+
+		for (size_t i = 0; i < matCont->m_SpecularTextures.size(); i++)
+		{
+			auto device = MyAccessHub::GetMyGameEngine()->GetDirect3DDevice();
+			MyAccessHub::GetMyGameEngine()->GetTextureManager()->CreateTextureFromFile(device, matCont->m_SpecularTextures[i].c_str(), matCont->m_SpecularPath[i].c_str());
+		}
+
+		for (size_t i = 0; i < matCont->m_FalloffTextures.size(); i++)
+		{
+			auto device = MyAccessHub::GetMyGameEngine()->GetDirect3DDevice();
+			MyAccessHub::GetMyGameEngine()->GetTextureManager()->CreateTextureFromFile(device, matCont->m_FalloffTextures[i].c_str(), matCont->m_FalloffPath[i].c_str());
+		}
+
+		for (size_t i = 0; i < matCont->m_ReflectionMapTextures.size(); i++)
+		{
+			auto device = MyAccessHub::GetMyGameEngine()->GetDirect3DDevice();
+			MyAccessHub::GetMyGameEngine()->GetTextureManager()->CreateTextureFromFile(device, matCont->m_ReflectionMapTextures[i].c_str(), matCont->m_ReflectionMapPath[i].c_str());
+		}
+
+		m_pMaterialContainer[matId] = move(matCont);
+	}
+
+	// メッシュ
+	size_t meshCnt;
+	ReadBinary(ifs, meshCnt);
+	for (size_t i = 0; i < meshCnt; i++)
+	{
+		auto meshCont = make_unique<MeshContainer>();
+		ReadString(ifs, meshCont->GetMeshNodeName());
+		ReadBinary(ifs, meshCont->GetParentNodeId());
+		ifs.read(reinterpret_cast<char*>(&meshCont->GetIBaseMatrix()), sizeof(FbxAMatrix));
+		ReadBinary(ifs, meshCont->GetSkinCount());
+		ReadWString(ifs, meshCont->m_MaterialId);
+		ReadWString(ifs, meshCont->m_MeshId);
+		ReadBinary(ifs, meshCont->m_vertexCount);
+		ReadVector(ifs, meshCont->m_vertexData);
+		ReadVector(ifs, meshCont->m_indexData);
+		ReadVector(ifs, meshCont->m_skinParams); // スキン情報ロード
+		ReadBinary(ifs, meshCont->m_vtxMin);
+		ReadBinary(ifs, meshCont->m_vtxMax);
+
+		// メッシュリソースをGPUに登録 (LoadFBX内で行っているのと同様)
+		MyAccessHub::GetMyGameEngine()->GetMeshManager()->AddIndexBuffer(meshCont->m_MeshId, meshCont->m_indexData.data(), sizeof(ULONG), (UINT)meshCont->m_indexData.size());
+
+		if (meshCont->GetSkinCount() > 0 || meshCont->m_skinParams.size() > 0)
+		{
+			// スキンアニメーション用頂点バッファの構築
+			std::vector<FbxSkinAnimeVertex> skinVertex(meshCont->m_vertexCount);
+			for (UINT v = 0; v < meshCont->m_vertexCount; ++v)
+			{
+				skinVertex[v].vertex = meshCont->m_vertexData[v];
+				if (meshCont->m_skinParams.size() > v)
+				{
+					skinVertex[v].skinvalues = meshCont->m_skinParams[v];
+				}
+			}
+			MyAccessHub::GetMyGameEngine()->GetMeshManager()->AddVertexBuffer(meshCont->m_MeshId, skinVertex.data(), sizeof(FbxSkinAnimeVertex), meshCont->m_vertexCount);
+		}
+		else
+		{
+			MyAccessHub::GetMyGameEngine()->GetMeshManager()->AddVertexBuffer(meshCont->m_MeshId, meshCont->m_vertexData.data(), sizeof(FbxVertex), meshCont->m_vertexCount);
+		}
+
+		m_pMeshContainer.push_back(move(meshCont));
+	}
 
 	return S_OK;
 }
+
 HRESULT FBXDataContainer::SaveBinary(const fs::path& path)
 {
-	std::ofstream ofs(path, std::ios::binary);
+	std::ofstream ofs(path.wstring().c_str(), std::ios::binary);
 	if (!ofs) return E_FAIL;
 
-	int version = 0;
+	//バージョン管理による安全性確保
+	int version = 2;
 	WriteBinary(ofs, version);
 
 	WriteBinary(ofs, m_vtxTotalMin);
@@ -1191,11 +1432,31 @@ HRESULT FBXDataContainer::SaveBinary(const fs::path& path)
 		ofs.write(reinterpret_cast<const char*>(matCont->specular), sizeof(float) * 4);
 		WriteBinary(ofs, matCont->alpha);
 
-		WriteVector(ofs, matCont->m_diffuseTextures);
-		WriteVector(ofs, matCont->m_normalTextures);
-		WriteVector(ofs, matCont->m_specularTextures);
-		WriteVector(ofs, matCont->m_falloffTextures);
-		WriteVector(ofs, matCont->m_reflectionMapTextures);
+		// テクスチャ名リストを保存
+		auto WriteTextureNameList = [&](const std::vector<std::wstring>& list) 
+		{
+			size_t size = list.size();
+			WriteBinary(ofs, size);
+			for (const auto& s : list) WriteWString(ofs, s);
+		};
+		WriteTextureNameList(matCont->m_DiffuseTextures);
+		WriteTextureNameList(matCont->m_NormalTextures);
+		WriteTextureNameList(matCont->m_SpecularTextures);
+		WriteTextureNameList(matCont->m_FalloffTextures);
+		WriteTextureNameList(matCont->m_ReflectionMapTextures);
+
+		// テクスチャパスリストを保存
+		auto WriteTexturePathList = [&](const std::vector<std::wstring>& list) 
+		{
+			size_t size = list.size();
+			WriteBinary(ofs, size);
+			for (const auto& s : list) WriteWString(ofs, s);
+		};
+		WriteTexturePathList(matCont->m_DiffusePath);
+		WriteTexturePathList(matCont->m_NormalPath);
+		WriteTexturePathList(matCont->m_SpecularPath);
+		WriteTexturePathList(matCont->m_FalloffPath);
+		WriteTexturePathList(matCont->m_ReflectionMapPath);
 	}
 
 	//メッシュ
@@ -1213,6 +1474,7 @@ HRESULT FBXDataContainer::SaveBinary(const fs::path& path)
 		WriteBinary(ofs, meshCont->m_vertexCount);
 		WriteVector(ofs, meshCont->m_vertexData);
 		WriteVector(ofs, meshCont->m_indexData);
+		WriteVector(ofs, meshCont->m_skinParams);
 		WriteBinary(ofs, meshCont->m_vtxMin);
 		WriteBinary(ofs, meshCont->m_vtxMax);
 	}

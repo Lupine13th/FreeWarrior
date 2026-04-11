@@ -326,12 +326,12 @@ ID3D12GraphicsCommandList* StandardFbxPipeline::ExecuteRender()
                 if (mesh->m_MaterialId != L"")
                 {
                     MaterialContainer* matCon = mainFbx->GetMaterialContainer(mesh->m_MaterialId);
-                    int textureLength = matCon->m_diffuseTextures.size();
+                    int textureLength = matCon->m_DiffuseTextures.size();
 
                     auto gpuHeap = m_srvHeap->GetGPUDescriptorHandleForHeapStart();
                     for (int i = 0; i < textureLength; i++)
                     {
-                        std::wstring texId = matCon->m_diffuseTextures[i];
+                        std::wstring texId = matCon->m_DiffuseTextures[i];
                         if (m_srvTexList.find(texId) == m_srvTexList.end())
                         {
                             pTextureMng->CreateTextureSRV(engine->GetDirect3DDevice(), m_srvHeap.Get(),

@@ -55,7 +55,7 @@ bool BattleFieldManager::FrameAction()
 
 	FlyingCameraController* Fcam = MyAccessHub::GetFlyingCameraController();
 
-	if (m_CurrentTurn == Turn::First)
+	if (m_CurrentTurn == Turn::First == !p_scene->IsLoading)
 	{
 		if (m_OpeningAnimHUD->OPAnimCount > 5.2f)	//オープニングアニメ終了後
 		{
@@ -399,7 +399,7 @@ bool BattleFieldManager::FrameAction()
 
 				//==================================Attackモード=====================================
 			case Mode::AttackMode:
-				m_FieldSquaresList[m_SelectID]->fbxD->SetAnime(L"ATTACK01");
+				m_FieldSquaresList[m_SelectID]->fbxD->SetAnimeInit(L"ATTACK", m_FieldSquaresList[m_SelectID]->chara);
 
 				if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_LEFT))			//十字キーの左を入力
 				{
@@ -472,7 +472,7 @@ bool BattleFieldManager::FrameAction()
 					m_FieldSquaresList[m_TargetID]->SetSquaresColor(SquareColor::NotCursor);													//メニューを閉じる
 					m_Mode = Mode::FieldMode;
 					ResetFieldFromMove();
-					m_FieldSquaresList[m_SelectID]->fbxD->SetAnime(L"WAIT01");																	//待機アニメーション
+					m_FieldSquaresList[m_SelectID]->fbxD->SetAnimeInit(L"WAIT", m_FieldSquaresList[m_SelectID]->chara);							//待機アニメーション
 					ResetHUDs(6);
 				}
 				break;
@@ -485,7 +485,7 @@ bool BattleFieldManager::FrameAction()
 				//==================================Moveモード=====================================
 
 			case Mode::MoveMode:
-				m_FieldSquaresList[m_SelectID]->fbxD->SetAnime(L"WALK01");	//移動アニメーション
+				m_FieldSquaresList[m_SelectID]->fbxD->SetAnimeInit(L"WALK", m_FieldSquaresList[m_SelectID]->chara);		//移動アニメーション
 
 				if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_LEFT))			//十字キーの左を入力
 				{
@@ -571,7 +571,7 @@ bool BattleFieldManager::FrameAction()
 					m_FieldSquaresList[m_TargetID]->SetSquaresColor(SquareColor::NotCursor);												//メニューを閉じる
 					ResetFieldFromMove();
 					m_Mode = Mode::FieldMode;
-					m_FieldSquaresList[m_SelectID]->fbxD->SetAnime(L"WAIT01");																//待機アニメーション
+					m_FieldSquaresList[m_SelectID]->fbxD->SetAnimeInit(L"WAIT", m_FieldSquaresList[m_SelectID]->chara);						//待機アニメーション
 
 					m_PassedSquaresList.clear();
 					ResetHUDs(6);
@@ -584,7 +584,7 @@ bool BattleFieldManager::FrameAction()
 
 			//==================================Abilityモード=====================================
 			case Mode::AbilityMode:
-				m_FieldSquaresList[m_SelectID]->fbxD->SetAnime(L"ATTACK01");																//攻撃アニメーション
+				m_FieldSquaresList[m_SelectID]->fbxD->SetAnimeInit(L"ATTACK", m_FieldSquaresList[m_SelectID]->chara);						//攻撃アニメーション
 				switch (m_TargetMode)
 				{
 				case TargetMode::None:																										//ターゲットモードが無い＝メニュー展開中
@@ -740,7 +740,7 @@ bool BattleFieldManager::FrameAction()
 						ResetFieldFromMove();
 						m_Mode = Mode::FieldMode;
 						m_TargetMode = TargetMode::None;
-						m_FieldSquaresList[m_SelectID]->fbxD->SetAnime(L"WAIT01");																	//待機アニメーション
+						m_FieldSquaresList[m_SelectID]->fbxD->SetAnimeInit(L"WAIT", m_FieldSquaresList[m_SelectID]->chara);							//待機アニメーション
 						m_AbillityIndex = 0;
 						ResetHUDs(6);
 					}

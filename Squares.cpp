@@ -51,7 +51,7 @@ bool Squares::FrameAction()
 
 			else if (m_CharacterAnimationCount > 2.0f)
 			{
-				NowChara->fbxD->SetAnime(L"WAIT01");
+				NowChara->fbxD->SetAnimeInit(L"WAIT", NowChara->chara);
 
 				Fcam->ChangeCameraPosition();
 
@@ -103,12 +103,12 @@ bool Squares::FrameAction()
 					m_IsDamaged = false;
 					if (NowChara->fbxD != nullptr)
 					{
-						NowChara->fbxD->SetAnime(L"WAIT01");
+						NowChara->fbxD->SetAnimeInit(L"WAIT", NowChara->chara);
 					}
 
 					if (NextChara->fbxD != nullptr)
 					{
-						NextChara->fbxD->SetAnime(L"WAIT01");
+						NextChara->fbxD->SetAnimeInit(L"WAIT", NextChara->chara);
 					}
 					Fcam->ChangeCameraPosition();
 				}
@@ -157,12 +157,12 @@ bool Squares::FrameAction()
 					m_IsDamaged = false;
 					if (NowChara->fbxD != nullptr)
 					{
-						NowChara->fbxD->SetAnime(L"WAIT01");
+						NowChara->fbxD->SetAnimeInit(L"WAIT", NowChara->chara);
 					}
 
 					if (NextChara->fbxD != nullptr)
 					{
-						NextChara->fbxD->SetAnime(L"WAIT01");
+						NextChara->fbxD->SetAnimeInit(L"WAIT", NextChara->chara);
 					}
 					Fcam->ChangeCameraPosition();
 				}
@@ -182,7 +182,7 @@ void Squares::FinishAction()
 //攻撃を受けた際のリアクション　データのやり取りを円滑にするため、Squaresで宣言
 void Squares::HitReaction()
 {
-	NextChara->fbxD->SetAnime(L"DAMAGE01");
+	NextChara->fbxD->SetAnimeInit(L"DAMAGE", NextChara->chara);
 
 	switch (chara->CharaKind)
 	{
