@@ -106,10 +106,10 @@ bool InfantryPlayer::FrameAction()
 		switch (m_admin)
 		{
 		case Admin::Rebel:
-			rightHandMatrix = m_chData->GetMainFbx()->GetBornMaxrix("mixamorig:RightHand");
+			rightHandMatrix = m_chData->GetMainFbx()->GetBornMatrix("mixamorig:RightHand");
 			break;
 		case Admin::Imperial:
-			rightHandMatrix = m_chData->GetMainFbx()->GetBornMaxrix("mixamorig:RightHand");
+			rightHandMatrix = m_chData->GetMainFbx()->GetBornMatrix("mixamorig:RightHand");
 			break;
 		}
 
@@ -250,10 +250,10 @@ bool MachinegunnerPlayer::FrameAction()
 		switch (m_admin)
 		{
 		case Admin::Rebel:
-			rightHandMatrix = m_chData->GetMainFbx()->GetBornMaxrix("mixamorig:RightHand");
+			rightHandMatrix = m_chData->GetMainFbx()->GetBornMatrix("mixamorig:RightHand");
 			break;
 		case Admin::Imperial:
-			rightHandMatrix = m_chData->GetMainFbx()->GetBornMaxrix("mixamorig:RightHand");
+			rightHandMatrix = m_chData->GetMainFbx()->GetBornMatrix("mixamorig:RightHand");
 			break;
 		}
 
@@ -261,10 +261,10 @@ bool MachinegunnerPlayer::FrameAction()
 		switch (m_admin)
 		{
 		case Admin::Rebel:
-			spineMatrix = m_chData->GetMainFbx()->GetBornMaxrix("mixamorig:Spine");
+			spineMatrix = m_chData->GetMainFbx()->GetBornMatrix("mixamorig:Spine");
 			break;
 		case Admin::Imperial:
-			spineMatrix = m_chData->GetMainFbx()->GetBornMaxrix("mixamorig:Spine");
+			spineMatrix = m_chData->GetMainFbx()->GetBornMatrix("mixamorig:Spine");
 			break;
 		}
 
@@ -419,10 +419,10 @@ bool ScoutPlayer::FrameAction()
 		switch (m_admin)
 		{
 		case Admin::Rebel:
-			rightHandMatrix = m_chData->GetMainFbx()->GetBornMaxrix("mixamorig:RightHand");
+			rightHandMatrix = m_chData->GetMainFbx()->GetBornMatrix("mixamorig:RightHand");
 			break;
 		case Admin::Imperial:
-			rightHandMatrix = m_chData->GetMainFbx()->GetBornMaxrix("mixamorig:RightHand");
+			rightHandMatrix = m_chData->GetMainFbx()->GetBornMatrix("mixamorig:RightHand");
 			break;
 		}
 

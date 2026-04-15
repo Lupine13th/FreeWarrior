@@ -201,6 +201,9 @@ ID3D12GraphicsCommandList* StandardFbxPipeline::ExecuteRender()
 {
     if (m_renderList.size() < 1) return nullptr;
 
+    m_srvTexList.clear();
+    m_numOfTex = 0;
+
     UINT strides = sizeof(FbxVertex);
     UINT offsets = 0;
 
@@ -326,6 +329,15 @@ ID3D12GraphicsCommandList* StandardFbxPipeline::ExecuteRender()
                 if (mesh->m_MaterialId != L"")
                 {
                     MaterialContainer* matCon = mainFbx->GetMaterialContainer(mesh->m_MaterialId);
+
+                    if (matCon == nullptr) 
+                    {
+                        // マテリアルが見つからない場合のログ
+                        OutputDebugStringW(L"!!! Error: Material NOT FOUND !!!\n");
+                        continue;
+                        
+                    }
+
                     int textureLength = matCon->m_DiffuseTextures.size();
 
                     auto gpuHeap = m_srvHeap->GetGPUDescriptorHandleForHeapStart();

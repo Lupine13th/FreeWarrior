@@ -317,6 +317,7 @@ HRESULT FBXDataContainer::ReadFbxToMeshContainer(const std::wstring id, FbxMesh 
 		std::vector<std::vector< std::pair<UINT, float>>> tempWeightVect;
 		std::vector<std::vector<FbxSkinAnimeParams>> skinWeights;
 		skinWeights.resize(skinCount);
+
 		//スキンの数だけループ
 		for (int skinloop = 0; skinloop < skinCount; skinloop++)
 		{
@@ -386,11 +387,14 @@ HRESULT FBXDataContainer::ReadFbxToMeshContainer(const std::wstring id, FbxMesh 
 		std::vector<FbxSkinAnimeVertex> skinVertex;
 		skinVertex.clear();
 		skinVertex.resize(vertexCount);
+		meshCont->m_skinParams.resize(vertexCount);	//キャッシュ保存用に領域確保
+
 		for (int i = 0; i < vertexCount; i++)
 		{
 			int index = indices[i];
 			skinVertex[i].vertex = meshCont->m_vertexData[i];
 			skinVertex[i].skinvalues = skinWeights[0][index];
+			meshCont->m_skinParams[i] = skinWeights[0][index];	//キャッシュ保存用に領域確保
 		}
 		MyAccessHub::GetMyGameEngine()->GetMeshManager()->
 			AddVertexBuffer(id, skinVertex.data(), sizeof(FbxSkinAnimeVertex), vertexCount);
@@ -854,12 +858,13 @@ HRESULT FBXDataContainer::LoadFBX(const std::wstring fileName, const std::wstrin
 
 		SaveBinary(cachePath);
 	}
+
 	fbx_importer->Destroy();
 
-	//if (SUCCEEDED(hr))
-	//{
-	//	MyAccessHub::GetMyGameEngine()->UploadCreatedTextures();
-	//}
+	if (SUCCEEDED(hr))
+	{
+		MyAccessHub::GetMyGameEngine()->UploadCreatedTextures();
+	}
 
 	return hr;
 }
@@ -899,6 +904,20 @@ int FBXDataContainer::GetNodeId(const char* nodeName)
 		}
 	}
 
+	std::string prefix = "mixamorig:";
+	std::string baseTarget = nodeName;
+	if (baseTarget.find(prefix) == 0)
+	{
+		baseTarget = baseTarget.substr(prefix.length());
+	}
+
+	for (int i = 0; i < length; i++) 
+	{
+		std::string baseCurrent = m_nodeNameList[i];
+		if (baseCurrent.find(prefix) == 0) baseCurrent = baseCurrent.substr(prefix.length());
+		if (baseTarget == baseCurrent) return i;
+	}
+	
 	return -1;
 }
 
@@ -931,8 +950,7 @@ FbxNode* FBXDataContainer::GetMeshNode(int id)
 //==========Fbxをファイル名からロード(アニメ無し)==========
 HRESULT FBXCharacterData::LoadMainFBX(const std::wstring fileName, const std::wstring id)
 {
-	m_MainFbx = MyAccessHub::GetFBXResourceManager()->GetorLoadFbx(fileName, id);
-	HRESULT hr = m_MainFbx->LoadFBX(fileName, id);
+	HRESULT hr = MyAccessHub::GetFBXResourceManager()->GetorLoadFbx(fileName, id, m_MainFbx);
 	if (SUCCEEDED(hr))
 	{
 		m_constantBuffers.clear();
@@ -982,14 +1000,21 @@ void FBXCharacterData::SetAnime(std::wstring animeLabel) {
 			FBXDataContainer* animeCont = m_AnimeFbxMap[animeLabel].get(); //アニメFBX
 			FBXDataContainer* mainCont = m_MainFbx.get(); //メインFBX
 			MeshContainer* meshCont = nullptr; //メインからのMeshContainer取り出し用
-			for (int i = 0; (meshCont = mainCont->GetMeshContainer(i)) != nullptr; i++) {
+
+			for (int i = 0; (meshCont = mainCont->GetMeshContainer(i)) != nullptr; i++) 
+			{
 				meshCont->SetBoneIdList(animeCont); //メインFBXの全メッシュのボーンIDリスト更新
 			}
+
 			m_CurrentAnimeLabel = animeLabel; //二重再生防止用。アニメラベル登録
+
 			m_AnimeTime = 0; //再生時間０
+
 			//FbxSceneにアニメFBXから取り出したFbxAnimeStackをセット。再生可能状態に。
 			animeCont->GetFbxScene()->SetCurrentAnimationStack(animeCont->GetAnimeStack());
+
 			mainCont->SetAnimationFbx(animeCont); //メインFBXにアニメーションFBXをセット
+
 			UpdateAnimation(0); //アニメーションを先頭フレームに
 		}
 	}
@@ -1030,43 +1055,31 @@ void FBXCharacterData::UpdateAnimation(int frameCount)
 //アニメーションを呼ぶwstringを統一するためにSetAnimeを呼ぶ前段階
 void FBXCharacterData::SetAnimeInit(std::wstring initAnimeLabel, FieldCharacter* chara)
 {
-	switch (chara->CharaAdmin)
+	std::wstring adminString = (chara->CharaAdmin == Admin::Rebel) ? L"_REBEL" : L"_IMPER";
+	std::wstring typeString = L"";
+
+	switch (chara->CharaKind)
 	{
 	default:
 		break;
-	case Admin::Rebel:
-		switch (chara->CharaKind)
-		{
-		default:
-			break;
-		case SoldiersType::infantry:
-			SetAnime(initAnimeLabel + L"_REBEL_INF");
-			break;
-		case SoldiersType::machinegunner:
-			SetAnime(initAnimeLabel + L"_REBEL_MGN");
-			break;
-		case SoldiersType::scout:
-			SetAnime(initAnimeLabel + L"_REBEL_SCT");
-			break;
-		}
+	case SoldiersType::infantry:
+		typeString = L"_INF";
 		break;
-	case Admin::Imperial:
-		switch (chara->CharaKind)
-		{
-		default:
-			break;
-		case SoldiersType::infantry:
-			SetAnime(initAnimeLabel + L"_IMPER_INF");
-			break;
-		case SoldiersType::scout:
-			SetAnime(initAnimeLabel + L"_IMPER_SCT");
-			break;
-		}
+	case SoldiersType::machinegunner:
+		typeString = L"_MGN";
 		break;
+	case SoldiersType::scout:
+		typeString = L"_SCT";
+		break;
+	}
+
+	if (!typeString.empty())
+	{
+		SetAnime(initAnimeLabel + adminString + typeString);
 	}
 }
 
-XMMATRIX FBXDataContainer::GetBornMaxrix(const char* bornName)
+XMMATRIX FBXDataContainer::GetBornMatrix(const char* bornName)
 {
 	if (m_currentAnimeCont == nullptr)
 	{
@@ -1353,6 +1366,7 @@ HRESULT FBXDataContainer::LoadBinary(const fs::path& path)
 		ReadVector(ifs, meshCont->m_skinParams); // スキン情報ロード
 		ReadBinary(ifs, meshCont->m_vtxMin);
 		ReadBinary(ifs, meshCont->m_vtxMax);
+		ReadBinary(ifs, meshCont->GetIBaseMatrix());
 
 		// メッシュリソースをGPUに登録 (LoadFBX内で行っているのと同様)
 		MyAccessHub::GetMyGameEngine()->GetMeshManager()->AddIndexBuffer(meshCont->m_MeshId, meshCont->m_indexData.data(), sizeof(ULONG), (UINT)meshCont->m_indexData.size());
@@ -1477,6 +1491,7 @@ HRESULT FBXDataContainer::SaveBinary(const fs::path& path)
 		WriteVector(ofs, meshCont->m_skinParams);
 		WriteBinary(ofs, meshCont->m_vtxMin);
 		WriteBinary(ofs, meshCont->m_vtxMax);
+		WriteBinary(ofs, meshCont->GetIBaseMatrix());
 	}
 
 	return S_OK;

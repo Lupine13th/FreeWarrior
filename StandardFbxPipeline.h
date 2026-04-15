@@ -21,7 +21,6 @@ public:
     virtual HRESULT InitPipeLineStateObject(ID3D12Device2* d3dDev) override;
     virtual ID3D12GraphicsCommandList* ExecuteRender() override;
 
-    //ToDo:SkinAnime 02
     void SetAnimationMode(bool on)
     {
         m_animationMode = on;
@@ -30,5 +29,4 @@ public:
         else
             m_animationOffset = 3;
     }
-    //ToDo:SkinAnime 02 End
 };

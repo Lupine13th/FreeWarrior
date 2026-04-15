@@ -371,7 +371,7 @@ public:
 	HRESULT LoadBinary(const fs::path& path);
 	HRESULT SaveBinary(const fs::path& path);
 
-	XMMATRIX GetBornMaxrix(const char* bornName);
+	XMMATRIX GetBornMatrix(const char* bornName);
 };
 
 class FBXCharacterData : public CharacterData
@@ -434,11 +434,11 @@ public:
 		return m_AnimatedMatrix.data();
 	}
 
-	XMMATRIX GetBornMaxrix(const char* bornName)
+	XMMATRIX GetBornMatrix(const char* bornName)
 	{
 		if (m_MainFbx)
 		{
-			return m_MainFbx->GetBornMaxrix(bornName);
+			return m_MainFbx->GetBornMatrix(bornName);
 		}
 		return XMMatrixIdentity();
 	}
