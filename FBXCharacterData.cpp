@@ -785,6 +785,9 @@ HRESULT FBXDataContainer::LoadFBX(const std::wstring fileName, const std::wstrin
 		if (fbx_importer->GetAnimStackCount() > 0)
 		{
 			auto stack = fbx_scene->GetCurrentAnimationStack();
+			auto name = stack->GetName();
+			auto memberCount = stack->GetMemberCount<FbxAnimCurveNode>();
+			auto fbxAnimeLayer = stack->GetMember<FbxAnimLayer>(0);
 
 			m_startTime = stack->GetLocalTimeSpan().GetStart().GetSecondDouble();
 			m_endTime = stack->GetLocalTimeSpan().GetStop().GetSecondDouble();
