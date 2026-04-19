@@ -106,10 +106,10 @@ bool InfantryPlayer::FrameAction()
 		switch (m_admin)
 		{
 		case Admin::Rebel:
-			rightHandMatrix = m_chData->GetMainFbx()->GetBornMatrix("mixamorig:RightHand");
+			rightHandMatrix = m_chData->GetBornMatrix("mixamorig:RightHand");
 			break;
 		case Admin::Imperial:
-			rightHandMatrix = m_chData->GetMainFbx()->GetBornMatrix("mixamorig:RightHand");
+			rightHandMatrix = m_chData->GetBornMatrix("mixamorig:RightHand");
 			break;
 		}
 
@@ -250,10 +250,10 @@ bool MachinegunnerPlayer::FrameAction()
 		switch (m_admin)
 		{
 		case Admin::Rebel:
-			rightHandMatrix = m_chData->GetMainFbx()->GetBornMatrix("mixamorig:RightHand");
+			rightHandMatrix = m_chData->GetBornMatrix("mixamorig:RightHand");
 			break;
 		case Admin::Imperial:
-			rightHandMatrix = m_chData->GetMainFbx()->GetBornMatrix("mixamorig:RightHand");
+			rightHandMatrix = m_chData->GetBornMatrix("mixamorig:RightHand");
 			break;
 		}
 
@@ -261,10 +261,10 @@ bool MachinegunnerPlayer::FrameAction()
 		switch (m_admin)
 		{
 		case Admin::Rebel:
-			spineMatrix = m_chData->GetMainFbx()->GetBornMatrix("mixamorig:Spine");
+			spineMatrix = m_chData->GetBornMatrix("mixamorig:Spine");
 			break;
 		case Admin::Imperial:
-			spineMatrix = m_chData->GetMainFbx()->GetBornMatrix("mixamorig:Spine");
+			spineMatrix = m_chData->GetBornMatrix("mixamorig:Spine");
 			break;
 		}
 
@@ -361,7 +361,6 @@ void ScoutPlayer::InitAction()
 			chdata->GetAnimeFbx(L"DAMAGE_REBEL_SCT")->SetMeshUniqueFlag(true, true);
 		}
 	}
-
 	else if (m_admin == Admin::Imperial)
 	{
 		chdata->LoadMainFBX(L"./Resources/fbx/imperialSco.fbx", L"ImperialSco");
@@ -419,10 +418,10 @@ bool ScoutPlayer::FrameAction()
 		switch (m_admin)
 		{
 		case Admin::Rebel:
-			rightHandMatrix = m_chData->GetMainFbx()->GetBornMatrix("mixamorig:RightHand");
+			rightHandMatrix = m_chData->GetBornMatrix("mixamorig:RightHand");
 			break;
 		case Admin::Imperial:
-			rightHandMatrix = m_chData->GetMainFbx()->GetBornMatrix("mixamorig:RightHand");
+			rightHandMatrix = m_chData->GetBornMatrix("mixamorig:RightHand");
 			break;
 		}
 

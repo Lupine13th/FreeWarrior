@@ -318,7 +318,7 @@ ID3D12GraphicsCommandList* StandardFbxPipeline::ExecuteRender()
             {
                 ID3D12Resource* resource = p_fbxChara->GetConstantBuffer(mainFbx->GetCBuffIndex());
                 cmdList->SetGraphicsRootConstantBufferView(1, resource->GetGPUVirtualAddress());
-                engine->UpdateShaderResourceOnGPU(resource, mainFbx->GetAnimatedMatrix(), sizeof(XMFLOAT4X4) * mainFbx->GetClusterCount());
+                engine->UpdateShaderResourceOnGPU(resource, p_fbxChara->GetAnimatedMatrix(), sizeof(XMFLOAT4X4) * mainFbx->GetClusterCount());
             }
 
             for (int meshIndex = 0; (mesh = mainFbx->GetMeshContainer(meshIndex)) != nullptr; meshIndex++)

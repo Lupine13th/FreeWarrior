@@ -232,7 +232,7 @@ private:
 	
 	std::vector<std::string> m_boneNameList;	//ボーン名の配列
 	std::vector<int> m_boneIdList;			//ボーンID値の配列
-	std::vector<FbxAMatrix> m_IboneMatrix;	//計算用元初期ボーンの逆行列
+	std::vector<XMFLOAT4X4> m_IboneMatrix;	//計算用元初期ボーンの逆行列
 	std::vector<XMFLOAT4X4> m_F4X4Matrix;	//アニメーションのupdateで更新されるDirect3D用マトリクス
 
 	std::vector<std::string> m_nodeNameList;
@@ -250,11 +250,9 @@ private:
 
 	HRESULT LoadTextureFromMaterial(const std::wstring matName, const std::wstring id, FBX_TEXTURE_TYPE texType, const FbxProperty* fbxProp);
 
-	//ToDo: SkinAnime05
 	//スキンアニメ用クラスター数アクセサ追記
 	int GetClusterId(FbxCluster* pCluster);
 	int GetClusterId(FbxNode* pNode);
-	//ToDo: ここまで
 
 	FbxTime m_FbxTime;
 
@@ -312,6 +310,24 @@ public:
 		return nullptr;
 	}
 
+	vector<string> GetBoneNameList()
+	{
+		return m_boneNameList;
+	}
+
+	int GetBornIndex(const char* boneName)
+	{
+		for (int i = 0; i < m_boneNameList.size(); i++)
+		{
+			if (strcmp(m_boneNameList[i].c_str(), boneName) == 0)
+			{
+				return i;
+			}
+		}
+
+		return -1;
+	}
+
 	void SetMeshUniqueFlag(bool meshFlag, bool materialFlag);
 	void SetTextureUniqueFlag(bool texFlag);
 
@@ -334,7 +350,7 @@ public:
 
 	//スキンアニメ用メソッド追加
 	void SetAnimationFbx(FBXDataContainer* animeCont); //アニメデータFBXセット
-	void UpdateAnimation(const FbxTime& animeTime); //アニメFBXボーンマトリクス更新
+	void UpdateAnimation(FBXDataContainer* animeCont, const FbxTime& animeTime, vector<XMFLOAT4X4>& chDataMatrix, vector<XMFLOAT4X4>& nodeMatrices, const vector<int>& bornIdList); //アニメFBXボーンマトリクス更新　※仕様変更04/17　FbxCharacterDataが行列を独自で持つようになったためそれを宣言するように。
 	
 	const XMFLOAT4X4* GetAnimatedMatrix(); //アニメFBXボーンマトリクス取得
 	
@@ -379,9 +395,7 @@ class FBXCharacterData : public CharacterData
 private:
 	std::shared_ptr<FBXDataContainer>	m_MainFbx;	//データを共有可能にして複数のキャラクターデータで同じFBXデータを共有できるようにする。
 
-	std::vector<XMFLOAT4X4> m_AnimatedMatrix;	//このデータ用のボーンマトリクス配列。アニメ更新で更新される。スタティックメッシュの頂点変換に使用する。
-
-	std::vector<int> m_BornIdList;	//このデータ用のボーンID配列。アニメ更新で更新される。スタティックメッシュの頂点変換に使用する。
+	std::vector<int> m_BoneIdList;	//このデータ用のボーンID配列。アニメ更新で更新される。スタティックメッシュの頂点変換に使用する。
 
 	int m_CBuffIndex;	//アニメーション用定数バッファインデックス
 
@@ -389,6 +403,9 @@ private:
 	std::unordered_map<std::wstring, std::unique_ptr<FBXDataContainer>> m_AnimeFbxMap;
 	std::wstring m_CurrentAnimeLabel; //再生中のアニメラベル
 	LONG m_AnimeTime; //再生時間
+
+	std::vector<XMFLOAT4X4> m_AnimatedMatrix;	//キャッシュ処理の過程で追加。m_MainFbxをSharedポインタに変更したため、データごとに行列バッファを持つように。
+	std::vector<XMFLOAT4X4> m_NodeMatrices;		//何かを持たせる時に使う行列
 protected:
 	float m_ScaleValue = 0.0f;
 public:
@@ -434,14 +451,7 @@ public:
 		return m_AnimatedMatrix.data();
 	}
 
-	XMMATRIX GetBornMatrix(const char* bornName)
-	{
-		if (m_MainFbx)
-		{
-			return m_MainFbx->GetBornMatrix(bornName);
-		}
-		return XMMatrixIdentity();
-	}
+	XMMATRIX GetBornMatrix(const char* bornName);
 
 	void SetAnimeInit(std::wstring initAnimeLabel, FieldCharacter* chara);
 };

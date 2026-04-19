@@ -1,4 +1,5 @@
 ﻿#include <algorithm>
+#include <DirectXMath.h>
 
 #include <MyAccessHub.h>
 #include <MyGameEngine.h>
@@ -24,7 +25,7 @@ void ConvertFbxAMatrixToXMFLOAT4x4(const FbxAMatrix& fbxamatrix, DirectX::XMFLOA
 	{
 		for (int column = 0; column < 4; column++)
 		{
-			xmfloat4x4.m[row][column] = static_cast<float>(fbxamatrix[row][column]);
+			xmfloat4x4.m[row][column] = static_cast<float>(fbxamatrix.Get(row, column));
 		}
 	}
 }
@@ -706,25 +707,60 @@ HRESULT FBXDataContainer::LoadFBX(const std::wstring fileName, const std::wstrin
 	//==========FbxSDKの初期化とインポート　Fbxファイルを開くための準備==========End
 
 
-
-	//==========アニメーション情報の取得 (キャッシュ時も必要)===========
-
-	int animStackCount = fbx_importer->GetAnimStackCount();
-	if (animStackCount > 0)
-	{
-		// GetCurrentAnimationStack() が null を返す場合があるため、明示的に 0 番目を取得
-		m_animeStack = fbx_scene->GetSrcObject<FbxAnimStack>(0);
-		fbx_scene->SetCurrentAnimationStack(m_animeStack);
-	}
-	else
-	{
-		m_animeStack = nullptr;
-	}
-
 	m_pFbxScene = fbx_scene; // シーンを保持
 
-	//==========アニメーション情報の取得 (キャッシュ時も必要)===========End
+	auto AnimationInfo = [&](FbxScene* scene, FbxImporter* importer)
+	{
+		//もしアニメーション持ちでないならこの段階で返す。
+		/*if (!IsAnimation)
+		{
+			m_animeFrames = 0;
+			m_startTime = 0;
+			m_timePeriod = 0;
+			m_animeStack = nullptr;
 
+			return;
+		}*/
+
+		int animStackCount = importer->GetAnimStackCount();
+		if (animStackCount > 0)
+		{
+			FbxAnimStack* stack = scene->GetCurrentAnimationStack();
+			if (stack == nullptr)
+			{
+				stack = scene->GetSrcObject<FbxAnimStack>(0);
+			}
+
+			if (stack)
+			{
+				m_animeStack = stack;
+				scene->SetCurrentAnimationStack(m_animeStack);
+
+				FbxTimeSpan timeSpan = stack->GetLocalTimeSpan();
+				m_startTime = timeSpan.GetStart().GetSecondDouble();
+				m_endTime = timeSpan.GetStop().GetSecondDouble();
+
+				if (m_endTime <= 0.001 || (m_startTime == 0.0 && m_endTime == 5.0)) 
+				{
+					FbxTakeInfo* takeInfo = scene->GetTakeInfo(stack->GetName());
+					if (takeInfo) {
+						m_startTime = takeInfo->mLocalTimeSpan.GetStart().GetSecondDouble();
+						m_endTime = takeInfo->mLocalTimeSpan.GetStop().GetSecondDouble();
+					}
+				}
+
+				m_timePeriod = 1.0f / 60.0f;
+				m_animeFrames = floorl((m_endTime - m_startTime) / m_timePeriod);
+
+				if (m_animeFrames <= 0)
+				{
+					m_animeFrames = 1;
+				}
+			}
+		}
+	};
+
+	AnimationInfo(fbx_scene, fbx_importer);
 
 	if (fs::exists(cachePath))						//Cacheフォルダ内にid.binが存在するか確認
 	{
@@ -733,10 +769,11 @@ HRESULT FBXDataContainer::LoadFBX(const std::wstring fileName, const std::wstrin
 		{
 			// キャッシュロード成功。
 			// アニメーションスタックが正しく取得できているか再確認
-			if (m_animeStack == nullptr && animStackCount > 0)
+			if (m_animeStack == nullptr)
 			{
 				m_animeStack = fbx_scene->GetSrcObject<FbxAnimStack>(0);
 				fbx_scene->SetCurrentAnimationStack(m_animeStack);
+				m_currentAnimeCont = this;
 			}
 
 			// ここでインポータを消すと、シーン内のオブジェクトが不安定になる場合があるため
@@ -1003,6 +1040,14 @@ void FBXCharacterData::SetAnime(std::wstring animeLabel) {
 			FBXDataContainer* animeCont = m_AnimeFbxMap[animeLabel].get(); //アニメFBX
 			FBXDataContainer* mainCont = m_MainFbx.get(); //メインFBX
 			MeshContainer* meshCont = nullptr; //メインからのMeshContainer取り出し用
+			int boneCount = mainCont->GetBoneNameList().size();
+
+			m_BoneIdList.resize(boneCount);		//インスタンスごとのボーンリストを初期化
+
+			for (int i = 0; i < boneCount; i++)
+			{
+				m_BoneIdList[i] = animeCont->GetNodeId(mainCont->GetBoneNameList()[i].c_str());
+			}
 
 			for (int i = 0; (meshCont = mainCont->GetMeshContainer(i)) != nullptr; i++) 
 			{
@@ -1044,7 +1089,7 @@ void FBXCharacterData::UpdateAnimation(int frameCount)
 {
 	FBXDataContainer* animeCont = m_AnimeFbxMap[m_CurrentAnimeLabel].get();
 	FBXDataContainer* mainCont = m_MainFbx.get();
-	MeshContainer* meshCont = nullptr;
+
 	double nowTime = animeCont->GetPeriodTime() * frameCount; //フレーム数から実時間を計算
 	if (nowTime > animeCont->GetEndTime())
 	{
@@ -1052,7 +1097,8 @@ void FBXCharacterData::UpdateAnimation(int frameCount)
 	}
 	FbxTime currentTime; 
 	currentTime.SetSecondDouble(nowTime); 
-	mainCont->UpdateAnimation(currentTime); 
+
+	mainCont->UpdateAnimation(animeCont, currentTime, m_AnimatedMatrix, m_NodeMatrices, m_BoneIdList); 
 }
 
 //アニメーションを呼ぶwstringを統一するためにSetAnimeを呼ぶ前段階
@@ -1090,17 +1136,17 @@ XMMATRIX FBXDataContainer::GetBornMatrix(const char* bornName)
 	}
 	FbxScene* animeScene = m_currentAnimeCont->GetFbxScene();
 	XMMATRIX xMMatrix;
-	for (int i = 0; i <  m_boneNameList.size(); i++)
+	
+	// アニメーション側のシーンでのノードIDを取得する必要がある
+	int bornId = m_currentAnimeCont->GetNodeId(bornName);
+	if (bornId != -1)
 	{
-		if (strcmp(m_boneNameList[i].c_str(), bornName) == 0)
-		{
-			auto bornId = m_boneIdList[i];
-			auto fbxNode = animeScene->GetNode(bornId);
-			FbxAMatrix matrix = fbxNode->EvaluateGlobalTransform(m_FbxTime);
-			ConvertFbxAMatrixToXMMATRIX(matrix, xMMatrix);
-			return xMMatrix;
-		}
+		auto fbxNode = animeScene->GetNode(bornId);
+		FbxAMatrix matrix = fbxNode->EvaluateGlobalTransform(m_FbxTime);
+		ConvertFbxAMatrixToXMMATRIX(matrix, xMMatrix);
+		return xMMatrix;
 	}
+
 	return DirectX::XMMatrixIdentity();
 }
 
@@ -1197,7 +1243,12 @@ int FBXDataContainer::GetClusterId(FbxNode* pNode)
 	}
 	
 	m_boneNameList.push_back(nodeName);
-	m_IboneMatrix.push_back(pNode->EvaluateGlobalTransform().Inverse());
+
+	FbxAMatrix inv = pNode->EvaluateGlobalTransform().Inverse();	//一旦行列を保持
+	XMFLOAT4X4 xmInv;	//型変更用
+	ConvertFbxAMatrixToXMFLOAT4x4(inv, xmInv);
+
+	m_IboneMatrix.push_back(xmInv);
 	return size; 
 }
 
@@ -1215,18 +1266,60 @@ void FBXDataContainer::SetAnimationFbx(FBXDataContainer* animeCont)
 	}
 }
 
-void FBXDataContainer::UpdateAnimation(const FbxTime& animeTime) //アニメデータの更新処理
+void FBXDataContainer::UpdateAnimation(FBXDataContainer* animeCont, const FbxTime& animeTime, vector<XMFLOAT4X4>& chDataMatrix, vector<XMFLOAT4X4>& nodeMatrices, const vector<int>& bornIdList)	//アニメデータの更新処理　※※仕様変更04/17　FbxCharacterDataが行列を独自で持つようになったためそれを宣言するように。
 {
-	FbxNode* node;
 	m_FbxTime = animeTime;
-	int size = m_boneNameList.size();
-	FbxScene* animeScene = m_currentAnimeCont->GetFbxScene();
-	for (int i = 0; i < size; i++)
+	int boneCount = m_boneNameList.size();
+	FbxScene* animeScene = animeCont->GetFbxScene();
+
+	//インスタンスごとに違うシーンを呼ぶために自身のシーンを付与
+	if (animeScene->GetCurrentAnimationStack() != animeCont->GetAnimeStack())
 	{
-		node = animeScene->GetNode(m_boneIdList[i]); //ボーンのIDからFbxNodeを取得
-		//FbxTimeでボーンの変形マトリクス更新
-		FbxAMatrix matrix = node->EvaluateGlobalTransform(animeTime) * m_IboneMatrix[i];
-		ConvertFbxAMatrixToXMFLOAT4x4(matrix, m_F4X4Matrix[i]); //FbxAMatrixはdoubleなので変換
+		animeScene->SetCurrentAnimationStack(animeCont->GetAnimeStack());
+	}
+
+	//各キャラクターのFbxCharacterDataが持つ変数とContainer側の変数のサイズを合わせる
+	if (boneCount != chDataMatrix.size())
+	{
+		chDataMatrix.resize(boneCount);
+	}
+
+	//ノードのサイズも同様に
+	if (boneCount != nodeMatrices.size())
+	{
+		nodeMatrices.resize(boneCount);
+	}
+
+	for (int i = 0; i < boneCount; i++)
+	{
+		int animeNodeId = bornIdList[i];
+
+		//このフレームでのアニメーションボーンを取得し、XMMatrixに変換
+		if (animeNodeId != -1)
+		{
+			FbxNode* fbxNode = animeScene->GetNode(animeNodeId);					//ノード取得
+			FbxAMatrix fbxAMatrix = fbxNode->EvaluateGlobalTransform(animeTime);	//animeTimeにおけるNodeの位置情報を取得
+
+			FbxAMatrix fbxInvBind;													//AMatrixにバインド
+			for (int r = 0; r < 4; r++)
+			{
+				for (int c = 0; c < 4; c++)
+				{
+					fbxInvBind[r][c] = m_IboneMatrix[i].m[r][c];
+				}
+			}
+
+			ConvertFbxAMatrixToXMFLOAT4x4(fbxAMatrix, nodeMatrices[i]);					//モノを持たせる為に行列を挿入
+
+			FbxAMatrix finalFbxMatrix = fbxAMatrix * fbxInvBind;						//逆行列を掛け算
+			ConvertFbxAMatrixToXMFLOAT4x4(finalFbxMatrix, chDataMatrix[i]);				//XMMatrixに変換し、DirectXで使用可能に
+		}
+		else
+		{
+			//見つからない場合は単位行列・下半身がねじれる現象を解決
+			XMStoreFloat4x4(&chDataMatrix[i], XMMatrixIdentity());
+			XMStoreFloat4x4(&nodeMatrices[i], XMMatrixIdentity());
+		}
 	}
 }
 
@@ -1265,12 +1358,9 @@ HRESULT FBXDataContainer::LoadBinary(const fs::path& path)
 
 	ReadVector(ifs, m_boneIdList);
 
-	size_t iboneCnt;
-	ReadBinary(ifs, iboneCnt);
-	m_IboneMatrix.resize(iboneCnt);
-	ifs.read(reinterpret_cast<char*>(m_IboneMatrix.data()), sizeof(FbxAMatrix) * iboneCnt);
+	ReadVector(ifs, m_IboneMatrix);
 
-	ReadVector(ifs, m_F4X4Matrix);
+	m_F4X4Matrix.resize(m_IboneMatrix.size());
 
 	size_t nodeCnt;
 	ReadBinary(ifs, nodeCnt);
@@ -1426,11 +1516,7 @@ HRESULT FBXDataContainer::SaveBinary(const fs::path& path)
 
 	WriteVector(ofs, m_boneIdList);
 
-	size_t iboneCnt = m_IboneMatrix.size();
-	WriteBinary(ofs, iboneCnt);
-	ofs.write(reinterpret_cast<const char*>(m_IboneMatrix.data()), sizeof(FbxAMatrix) * iboneCnt);
-
-	WriteVector(ofs, m_F4X4Matrix);
+	WriteVector(ofs, m_IboneMatrix);
 
 	size_t nodeCnt = m_nodeNameList.size();
 	WriteBinary(ofs, nodeCnt);
@@ -1498,4 +1584,16 @@ HRESULT FBXDataContainer::SaveBinary(const fs::path& path)
 	}
 
 	return S_OK;
+}
+
+XMMATRIX FBXCharacterData::GetBornMatrix(const char* bornName)
+{
+	int bornId = m_MainFbx->GetBornIndex(bornName);
+
+	if (bornId != -1 && bornId < m_NodeMatrices.size())
+	{
+		return XMLoadFloat4x4(&m_NodeMatrices[bornId]);
+	}
+
+	return XMMatrixIdentity();
 }
