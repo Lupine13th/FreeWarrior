@@ -18,16 +18,33 @@ using namespace DirectX;
 
 class FBXResourceManager;
 
-//FbxAMatrixをXMFLOAT4x4に変換
-void ConvertFbxAMatrixToXMFLOAT4x4(const FbxAMatrix& fbxamatrix, DirectX::XMFLOAT4X4& xmfloat4x4)
+// 内部計算用.FbxAMatrixをXMFLOAT4X4に右手系のままコピー 
+void ConvertFbxAMatrixToXMFLOAT4x4_Raw(const FbxAMatrix& fbxamatrix, DirectX::XMFLOAT4X4& xmfloat4x4)
 {
-	for (int row = 0; row < 4; row++)
+	for (int r = 0; r < 4; r++)
 	{
-		for (int column = 0; column < 4; column++)
+		for (int c = 0; c < 4; c++)
 		{
-			xmfloat4x4.m[row][column] = static_cast<float>(fbxamatrix.Get(row, column));
+			xmfloat4x4.m[r][c] = static_cast<float>(fbxamatrix.Get(r, c));
 		}
 	}
+}
+
+//FbxAMatrixをXMFLOAT4x4に変換 右手系から左手系への変換
+void ConvertFbxAMatrixToXMFLOAT4x4(const FbxAMatrix& fbxamatrix, DirectX::XMFLOAT4X4& xmfloat4x4)
+{
+	ConvertFbxAMatrixToXMFLOAT4x4_Raw(fbxamatrix, xmfloat4x4);
+
+	////右手系(FBX)から左手系(DirectX)への変換: Z軸に関連する成分の符号を反転
+	//xmfloat4x4.m[0][2] *= -1.0f;
+	//xmfloat4x4.m[1][2] *= -1.0f;
+	//xmfloat4x4.m[2][0] *= -1.0f;
+	//xmfloat4x4.m[2][1] *= -1.0f;
+	//xmfloat4x4.m[3][2] *= -1.0f;
+
+	////シェーダーのボーン変形とワールド変換の両方に対応するために転置
+	//XMMATRIX matrix = XMLoadFloat4x4(&xmfloat4x4);
+	//XMStoreFloat4x4(&xmfloat4x4, XMMatrixTranspose(matrix));
 }
 
 //FbxAMatrixをXMMATRIXに変換
@@ -790,11 +807,11 @@ HRESULT FBXDataContainer::LoadFBX(const std::wstring fileName, const std::wstrin
 
 	//==========DirectXに適応するために座標系を変換==========
 
-	FbxAxisSystem dx = FbxAxisSystem::DirectX;
+	/*FbxAxisSystem dx = FbxAxisSystem::DirectX;
 	if (dx != fbx_scene->GetGlobalSettings().GetAxisSystem())
 	{
 		dx.DeepConvertScene(fbx_scene);
-	}
+	}*/
 
 	//==========DirectXに適応するために座標系を変換==========End
 
@@ -1246,9 +1263,11 @@ int FBXDataContainer::GetClusterId(FbxNode* pNode)
 
 	FbxAMatrix inv = pNode->EvaluateGlobalTransform().Inverse();	//一旦行列を保持
 	XMFLOAT4X4 xmInv;	//型変更用
-	ConvertFbxAMatrixToXMFLOAT4x4(inv, xmInv);
+
+	ConvertFbxAMatrixToXMFLOAT4x4_Raw(inv, xmInv);
 
 	m_IboneMatrix.push_back(xmInv);
+
 	return size; 
 }
 
@@ -1449,7 +1468,20 @@ HRESULT FBXDataContainer::LoadBinary(const fs::path& path)
 		auto meshCont = make_unique<MeshContainer>();
 		ReadString(ifs, meshCont->GetMeshNodeName());
 		ReadBinary(ifs, meshCont->GetParentNodeId());
-		ifs.read(reinterpret_cast<char*>(&meshCont->GetIBaseMatrix()), sizeof(FbxAMatrix));
+
+		XMFLOAT4X4 xmBase;
+		ReadBinary(ifs, xmBase);
+		FbxAMatrix baseMatrix;
+		for (int raw = 0; raw < 4; raw++)
+		{
+			for (int column = 0; column < 4; column++)
+			{
+				baseMatrix[raw][column] = xmBase.m[raw][column];	//SDKクラスに復元
+			}
+		}
+
+		meshCont->SetIBaseMatrix(baseMatrix);
+
 		ReadBinary(ifs, meshCont->GetSkinCount());
 		ReadWString(ifs, meshCont->m_MaterialId);
 		ReadWString(ifs, meshCont->m_MeshId);
@@ -1521,7 +1553,10 @@ HRESULT FBXDataContainer::SaveBinary(const fs::path& path)
 	size_t nodeCnt = m_nodeNameList.size();
 	WriteBinary(ofs, nodeCnt);
 
-	for (const auto& name : m_nodeNameList) WriteString(ofs, name);
+	for (const auto& name : m_nodeNameList)
+	{
+		WriteString(ofs, name);
+	}
 
 	//マテリアル
 	size_t matCnt = m_pMaterialContainer.size();
@@ -1570,7 +1605,11 @@ HRESULT FBXDataContainer::SaveBinary(const fs::path& path)
 		FbxAMatrix matrix = meshCont->GetIBaseMatrix();
 		WriteString(ofs, meshCont->GetMeshNodeName());
 		WriteBinary(ofs, meshCont->GetParentNodeId());
-		ofs.write(reinterpret_cast<const char*>(&matrix), sizeof(FbxAMatrix));
+
+		XMFLOAT4X4 xmBase;
+		ConvertFbxAMatrixToXMFLOAT4x4_Raw(meshCont->GetIBaseMatrix(), xmBase);
+		WriteBinary(ofs, xmBase);
+
 		WriteBinary(ofs, meshCont->GetSkinCount());
 		WriteWString(ofs, meshCont->m_MaterialId);
 		WriteWString(ofs, meshCont->m_MeshId);
@@ -1581,6 +1620,7 @@ HRESULT FBXDataContainer::SaveBinary(const fs::path& path)
 		WriteBinary(ofs, meshCont->m_vtxMin);
 		WriteBinary(ofs, meshCont->m_vtxMax);
 		WriteBinary(ofs, meshCont->GetIBaseMatrix());
+
 	}
 
 	return S_OK;

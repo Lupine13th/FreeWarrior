@@ -113,6 +113,11 @@ public:
 		return m_IBaseMatrix;
 	}
 
+	void SetIBaseMatrix(FbxAMatrix& aMatrix)
+	{
+		m_IBaseMatrix = aMatrix;
+	}
+
 	void SetUniqueFlag(bool mesh)
 	{
 		m_uniqueMesh = mesh;
