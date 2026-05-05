@@ -46,14 +46,12 @@ PS_INPUT main(SPRITE_INPUT input)
     //dv
     output.Tex.x = SpriteRect.x + input.Tex.x * SpriteRect.z;
     output.Tex.y = SpriteRect.y + input.Tex.y * SpriteRect.w;
-    //====ToDo 1:܂
-
+    //====ToDo 1:܁E
     //====ToDo 2: TCYf
     //XvCg̃TCYύX MVP̑OɁB
     output.Pos.x = input.Pos.x * SpriteSize.x;
     output.Pos.y = input.Pos.y * SpriteSize.y;
-    //====ToDo 2:܂
-
+    //====ToDo 2:܁E
     //MVP Matrix
     output.Pos = mul(output.Pos, Model);
     output.Pos = mul(output.Pos, View);
@@ -61,8 +59,7 @@ PS_INPUT main(SPRITE_INPUT input)
 
     //====ToDo 3: _J[͂Ƃ肠
     output.Col = float4(1.0f, 1.0f, 1.0f, 1.0f);    //Ƃ肠^
-    //====ToDo 3:܂
-
+    //====ToDo 3:܁E
 
     return output;
 }

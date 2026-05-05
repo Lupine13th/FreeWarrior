@@ -42,9 +42,9 @@ void ConvertFbxAMatrixToXMFLOAT4x4(const FbxAMatrix& fbxamatrix, DirectX::XMFLOA
 	//xmfloat4x4.m[2][1] *= -1.0f;
 	//xmfloat4x4.m[3][2] *= -1.0f;
 
-	////シェーダーのボーン変形とワールド変換の両方に対応するために転置
-	//XMMATRIX matrix = XMLoadFloat4x4(&xmfloat4x4);
-	//XMStoreFloat4x4(&xmfloat4x4, XMMatrixTranspose(matrix));
+	//シェーダーのボーン変形とワールド変換の両方に対応するために転置
+	XMMATRIX matrix = XMLoadFloat4x4(&xmfloat4x4);
+	XMStoreFloat4x4(&xmfloat4x4, XMMatrixTranspose(matrix));
 }
 
 //FbxAMatrixをXMMATRIXに変換
@@ -807,11 +807,11 @@ HRESULT FBXDataContainer::LoadFBX(const std::wstring fileName, const std::wstrin
 
 	//==========DirectXに適応するために座標系を変換==========
 
-	/*FbxAxisSystem dx = FbxAxisSystem::DirectX;
-	if (dx != fbx_scene->GetGlobalSettings().GetAxisSystem())
-	{
-		dx.DeepConvertScene(fbx_scene);
-	}*/
+	//FbxAxisSystem dx = FbxAxisSystem::DirectX;
+	//if (dx != fbx_scene->GetGlobalSettings().GetAxisSystem())
+	//{
+	//	dx.DeepConvertScene(fbx_scene);
+	//}
 
 	//==========DirectXに適応するために座標系を変換==========End
 
@@ -1331,6 +1331,7 @@ void FBXDataContainer::UpdateAnimation(FBXDataContainer* animeCont, const FbxTim
 			ConvertFbxAMatrixToXMFLOAT4x4(fbxAMatrix, nodeMatrices[i]);					//モノを持たせる為に行列を挿入
 
 			FbxAMatrix finalFbxMatrix = fbxAMatrix * fbxInvBind;						//逆行列を掛け算
+
 			ConvertFbxAMatrixToXMFLOAT4x4(finalFbxMatrix, chDataMatrix[i]);				//XMMatrixに変換し、DirectXで使用可能に
 		}
 		else

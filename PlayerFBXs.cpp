@@ -510,18 +510,19 @@ void PlayerBase::SetBackEquipment(CharacterEquipment* equipment)
 
 void PlayerBase::SetMatrixForEquipment(CharacterEquipment* equipment, XMMATRIX matrix, XMFLOAT3 rotate, XMFLOAT3 position, XMFLOAT3 scale)
 {
-	XMMATRIX gripRotate = XMMatrixRotationRollPitchYaw
+	XMMATRIX gripRotate = XMMatrixRotationRollPitchYaw	//初期値ローテーションをラジアン値に変換
 	(
 		XMConvertToRadians(rotate.x),
 		XMConvertToRadians(rotate.y),
 		XMConvertToRadians(rotate.z)
 	);
-	XMMATRIX scaleMatrix = XMMatrixScaling(scale.x, scale.y, scale.z);
-	XMMATRIX gripTranslate = XMMatrixTranslation(position.x, position.y, position.z);
-	XMMATRIX gripMatrix = gripRotate * gripTranslate;
-	XMMATRIX gripInverse = XMMatrixInverse(nullptr, gripMatrix);
-	XMMATRIX charWorldMatrix = m_chData->GetWorldMatrix();
-	XMMATRIX finalWeaponMatrix = scaleMatrix * gripInverse * matrix * charWorldMatrix;
+
+	XMMATRIX scaleMatrix = XMMatrixScaling(scale.x, scale.y, scale.z);					//初期値スケール
+	XMMATRIX gripTranslate = XMMatrixTranslation(position.x, position.y, position.z);	//初期値ポジション
+	XMMATRIX gripMatrix = gripRotate * gripTranslate;									//追尾するノードと移動距離を掛け算
+	XMMATRIX gripInverse = XMMatrixInverse(nullptr, gripMatrix);						//逆行列化
+	XMMATRIX charWorldMatrix = m_chData->GetWorldMatrix();								//ワールド座標のマトリクスを取得
+	XMMATRIX finalWeaponMatrix = scaleMatrix * gripInverse * matrix * charWorldMatrix;	//
 
 	equipment->GetCharacterData()->SetMatrixAutoUpdate(false);
 	equipment->GetCharacterData()->SetWorldMatrix(finalWeaponMatrix);
