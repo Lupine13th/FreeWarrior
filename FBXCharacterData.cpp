@@ -42,9 +42,9 @@ void ConvertFbxAMatrixToXMFLOAT4x4(const FbxAMatrix& fbxamatrix, DirectX::XMFLOA
 	//xmfloat4x4.m[2][1] *= -1.0f;
 	//xmfloat4x4.m[3][2] *= -1.0f;
 
-	//シェーダーのボーン変形とワールド変換の両方に対応するために転置
-	XMMATRIX matrix = XMLoadFloat4x4(&xmfloat4x4);
-	XMStoreFloat4x4(&xmfloat4x4, XMMatrixTranspose(matrix));
+	////シェーダーのボーン変形とワールド変換の両方に対応するために転置
+	//XMMATRIX matrix = XMLoadFloat4x4(&xmfloat4x4);
+	//XMStoreFloat4x4(&xmfloat4x4, XMMatrixTranspose(matrix));
 }
 
 //FbxAMatrixをXMMATRIXに変換
@@ -779,6 +779,8 @@ HRESULT FBXDataContainer::LoadFBX(const std::wstring fileName, const std::wstrin
 
 	AnimationInfo(fbx_scene, fbx_importer);
 
+	FbxAxisSystem dx = FbxAxisSystem::DirectX;
+
 	if (fs::exists(cachePath))						//Cacheフォルダ内にid.binが存在するか確認
 	{
 		HRESULT cacheRes = LoadBinary(cachePath);
@@ -793,9 +795,15 @@ HRESULT FBXDataContainer::LoadFBX(const std::wstring fileName, const std::wstrin
 				m_currentAnimeCont = this;
 			}
 
+			if (dx != fbx_scene->GetGlobalSettings().GetAxisSystem())	//キャッシュがある時用の座標転換
+			{
+				dx.DeepConvertScene(fbx_scene);
+			}
+
 			// ここでインポータを消すと、シーン内のオブジェクトが不安定になる場合があるため
 			// 解析フェーズをスキップして終了
 			fbx_importer->Destroy();
+
 			return S_OK;
 		}
 		else
@@ -807,11 +815,11 @@ HRESULT FBXDataContainer::LoadFBX(const std::wstring fileName, const std::wstrin
 
 	//==========DirectXに適応するために座標系を変換==========
 
-	//FbxAxisSystem dx = FbxAxisSystem::DirectX;
-	//if (dx != fbx_scene->GetGlobalSettings().GetAxisSystem())
-	//{
-	//	dx.DeepConvertScene(fbx_scene);
-	//}
+	
+	if (dx != fbx_scene->GetGlobalSettings().GetAxisSystem())
+	{
+		dx.DeepConvertScene(fbx_scene);
+	}
 
 	//==========DirectXに適応するために座標系を変換==========End
 

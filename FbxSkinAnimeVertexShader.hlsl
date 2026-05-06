@@ -52,7 +52,7 @@ VS_OUT main(VS_IN input)
 	boneMtx += bones[input.indices1[2]] * input.weights1[2];
 	boneMtx += bones[input.indices1[3]] * input.weights1[3];
 
-    output.pos = mul(output.pos, boneMtx); // ローカル座標 * アニメマトリクス メッシュ自体の変形なので最初
+    output.pos = mul(boneMtx, output.pos); // ローカル座標 * アニメマトリクス メッシュ自体の変形なので最初
 	output.pos = mul(output.pos, World); // ローカル座標 * ワールド座標変換行列
 	output.pos = mul(output.pos, View); // ワールド座標 * ビュー座標変換行列
 	output.pos = mul(output.pos, Projection); // ビュー座標 * プロジェクション座標変換行列
