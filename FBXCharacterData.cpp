@@ -18,8 +18,8 @@ using namespace DirectX;
 
 class FBXResourceManager;
 
-// 内部計算用.FbxAMatrixをXMFLOAT4X4に右手系のままコピー 
-void ConvertFbxAMatrixToXMFLOAT4x4_Raw(const FbxAMatrix& fbxamatrix, DirectX::XMFLOAT4X4& xmfloat4x4)
+//FbxAMatrixをXMFLOAT4x4に変換 右手系から左手系への変換
+void ConvertFbxAMatrixToXMFLOAT4x4(const FbxAMatrix& fbxamatrix, DirectX::XMFLOAT4X4& xmfloat4x4)
 {
 	for (int r = 0; r < 4; r++)
 	{
@@ -28,23 +28,6 @@ void ConvertFbxAMatrixToXMFLOAT4x4_Raw(const FbxAMatrix& fbxamatrix, DirectX::XM
 			xmfloat4x4.m[r][c] = static_cast<float>(fbxamatrix.Get(r, c));
 		}
 	}
-}
-
-//FbxAMatrixをXMFLOAT4x4に変換 右手系から左手系への変換
-void ConvertFbxAMatrixToXMFLOAT4x4(const FbxAMatrix& fbxamatrix, DirectX::XMFLOAT4X4& xmfloat4x4)
-{
-	ConvertFbxAMatrixToXMFLOAT4x4_Raw(fbxamatrix, xmfloat4x4);
-
-	////右手系(FBX)から左手系(DirectX)への変換: Z軸に関連する成分の符号を反転
-	//xmfloat4x4.m[0][2] *= -1.0f;
-	//xmfloat4x4.m[1][2] *= -1.0f;
-	//xmfloat4x4.m[2][0] *= -1.0f;
-	//xmfloat4x4.m[2][1] *= -1.0f;
-	//xmfloat4x4.m[3][2] *= -1.0f;
-
-	////シェーダーのボーン変形とワールド変換の両方に対応するために転置
-	//XMMATRIX matrix = XMLoadFloat4x4(&xmfloat4x4);
-	//XMStoreFloat4x4(&xmfloat4x4, XMMatrixTranspose(matrix));
 }
 
 //FbxAMatrixをXMMATRIXに変換
@@ -795,7 +778,8 @@ HRESULT FBXDataContainer::LoadFBX(const std::wstring fileName, const std::wstrin
 				m_currentAnimeCont = this;
 			}
 
-			if (dx != fbx_scene->GetGlobalSettings().GetAxisSystem())	//キャッシュがある時用の座標転換
+			// キャッシュがある時用の座標転換
+			if (dx != fbx_scene->GetGlobalSettings().GetAxisSystem())	
 			{
 				dx.DeepConvertScene(fbx_scene);
 			}
@@ -1272,7 +1256,7 @@ int FBXDataContainer::GetClusterId(FbxNode* pNode)
 	FbxAMatrix inv = pNode->EvaluateGlobalTransform().Inverse();	//一旦行列を保持
 	XMFLOAT4X4 xmInv;	//型変更用
 
-	ConvertFbxAMatrixToXMFLOAT4x4_Raw(inv, xmInv);
+	ConvertFbxAMatrixToXMFLOAT4x4(inv, xmInv);
 
 	m_IboneMatrix.push_back(xmInv);
 
@@ -1616,7 +1600,7 @@ HRESULT FBXDataContainer::SaveBinary(const fs::path& path)
 		WriteBinary(ofs, meshCont->GetParentNodeId());
 
 		XMFLOAT4X4 xmBase;
-		ConvertFbxAMatrixToXMFLOAT4x4_Raw(meshCont->GetIBaseMatrix(), xmBase);
+		ConvertFbxAMatrixToXMFLOAT4x4(meshCont->GetIBaseMatrix(), xmBase);
 		WriteBinary(ofs, xmBase);
 
 		WriteBinary(ofs, meshCont->GetSkinCount());
