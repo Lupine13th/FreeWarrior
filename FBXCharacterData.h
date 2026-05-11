@@ -220,33 +220,33 @@ private:
 
 	//スキンアニメ用メンバ変数追加
 
-	FbxScene* m_pFbxScene;	//FBXファイルデータ本体。アニメ更新に必要。
+	FbxScene* m_FbxScene;	//FBXファイルデータ本体。アニメ更新に必要。
 	
-	LONG m_animeFrames;		//アニメフレーム数
+	LONG m_AnimeFrames;		//アニメフレーム数
 	
-	double m_startTime;		//アニメ開始時間。doubleなので注意
-	double m_endTime;		//アニメ終了時間
-	double m_timePeriod;	//１フレームの時間。今回は60fpsで固定
+	double m_StartTime;		//アニメ開始時間。doubleなので注意
+	double m_EndTime;		//アニメ終了時間
+	double m_TimePeriod;	//１フレームの時間。今回は60fpsで固定
 	
-	FbxAnimStack* m_animeStack;		//FbxSdkの構造体。アニメーションレイヤーデータ
+	FbxAnimStack* m_AnimeStack;		//FbxSdkの構造体。アニメーションレイヤーデータ
 	
-	int m_clusterCount;		//ボーンノード（関節点）の数
-	int m_cbuffIndex;		//アニメデータ用定数バッファインデックス
+	int m_ClusterCount;		//ボーンノード（関節点）の数
+	int m_ConstantBufferIndex;		//アニメデータ用定数バッファインデックス　アニメ付きのモデルの行列データを分別するための値。シェーダー側でこの値を元に行列データの格納場所を分ける
 	
-	FBXDataContainer* m_currentAnimeCont;	//現在使用しているアニメ用FbxDataContainerのポインタ
+	FBXDataContainer* m_CurrentAnimeCont;	//現在使用しているアニメ用FbxDataContainerのポインタ
 	
-	std::vector<std::string> m_boneNameList;	//ボーン名の配列
-	std::vector<int> m_boneIdList;			//ボーンID値の配列
-	std::vector<XMFLOAT4X4> m_IboneMatrix;	//計算用元初期ボーンの逆行列
+	std::vector<std::string> m_BoneNameList;	//ボーン名の配列
+	std::vector<int> m_BoneIdList;			//ボーンID値の配列
+	std::vector<XMFLOAT4X4> m_IBoneMatrix;	//計算用元初期ボーンの逆行列
 	std::vector<XMFLOAT4X4> m_F4X4Matrix;	//アニメーションのupdateで更新されるDirect3D用マトリクス
 
-	std::vector<std::string> m_nodeNameList;
-	std::vector<unique_ptr<MeshContainer>> m_pMeshContainer;
-	std::unordered_map<std::wstring, unique_ptr<MaterialContainer>> m_pMaterialContainer;
+	std::vector<std::string> m_NodeNameList;
+	std::vector<unique_ptr<MeshContainer>> m_MeshContainer;
+	std::unordered_map<std::wstring, unique_ptr<MaterialContainer>> m_MaterialContainer;
 
 	//頂点データの最大値と最小値　このオブジェクトに読み込んだ全メッシュの中での総合値
-	XMFLOAT3	m_vtxTotalMin;
-	XMFLOAT3	m_vtxTotalMax;
+	XMFLOAT3	m_VertexTotalMin;
+	XMFLOAT3	m_VertexTotalMax;
 
 	FBX_TEXTURE_TYPE GetTextureType(const fbxsdk::FbxBindingTableEntry& entryTable);
 
@@ -265,66 +265,66 @@ public:
 	~FBXDataContainer()
 	{
 		//スキンアニメ用メンバ削除処理
-		if (m_pFbxScene != nullptr)
+		if (m_FbxScene != nullptr)
 		{
-			m_pFbxScene->Destroy();
-			m_pFbxScene = nullptr;
+			m_FbxScene->Destroy();
+			m_FbxScene = nullptr;
 		}
 
-		m_boneNameList.clear();
-		m_IboneMatrix.clear();
-		m_boneIdList.clear();
+		m_BoneNameList.clear();
+		m_IBoneMatrix.clear();
+		m_BoneIdList.clear();
 		m_F4X4Matrix.clear();
 
-		m_pMeshContainer.clear();
-		m_pMaterialContainer.clear();
+		m_MeshContainer.clear();
+		m_MaterialContainer.clear();
 	}
 
 	HRESULT LoadFBX(const std::wstring fileName, const std::wstring id);
 
 	XMFLOAT3 GetFbxMin()
 	{
-		return m_vtxTotalMin;
+		return m_VertexTotalMin;
 	}
 
 	XMFLOAT3 GetFbxMax()
 	{
-		return m_vtxTotalMax;
+		return m_VertexTotalMax;
 	}
 
 	MeshContainer* GetMeshContainer(int index)
 	{
-		if (m_pMeshContainer.size() <= index)
+		if (m_MeshContainer.size() <= index)
 		{
 			return nullptr;
 		}
 
-		return m_pMeshContainer[index].get();
+		return m_MeshContainer[index].get();
 	}
 
 	int GetMeshCount()
 	{
-		return m_pMeshContainer.size();
+		return m_MeshContainer.size();
 	}
 
 	MaterialContainer* GetMaterialContainer(const std::wstring& matName)
 	{
-		if (m_pMaterialContainer[matName] != nullptr)
-			return m_pMaterialContainer[matName].get();
+		if (m_MaterialContainer[matName] != nullptr)
+			return m_MaterialContainer[matName].get();
 
 		return nullptr;
 	}
 
 	vector<string> GetBoneNameList()
 	{
-		return m_boneNameList;
+		return m_BoneNameList;
 	}
 
 	int GetBornIndex(const char* boneName)
 	{
-		for (int i = 0; i < m_boneNameList.size(); i++)
+		for (int i = 0; i < m_BoneNameList.size(); i++)
 		{
-			if (strcmp(m_boneNameList[i].c_str(), boneName) == 0)
+			if (strcmp(m_BoneNameList[i].c_str(), boneName) == 0)
 			{
 				return i;
 			}
@@ -360,33 +360,33 @@ public:
 	const XMFLOAT4X4* GetAnimatedMatrix(); //アニメFBXボーンマトリクス取得
 	
 	//アニメフレームデータを持っているのがFbxScene
-	FbxScene* GetFbxScene() { return m_pFbxScene; }
+	FbxScene* GetFbxScene() { return m_FbxScene; }
 	
 	//時間系メンバ取得
-	double GetStartTime() { return m_startTime; }
-	double GetEndTime() { return m_endTime; }
-	double GetPeriodTime() { return m_timePeriod; }
+	double GetStartTime() { return m_StartTime; }
+	double GetEndTime() { return m_EndTime; }
+	double GetPeriodTime() { return m_TimePeriod; }
 
 	//総アニメフレーム数
-	LONG GetAnimeFrames() { return m_animeFrames; }
+	LONG GetAnimeFrames() { return m_AnimeFrames; }
 
 	//アニメレイヤデータ
-	FbxAnimStack* GetAnimeStack() { return m_animeStack; }
+	FbxAnimStack* GetAnimeStack() { return m_AnimeStack; }
 	int GetClusterCount()
 	{
-		return m_clusterCount; //FBX内のアニメの数
+		return m_ClusterCount; //FBX内のアニメの数
 	}
 	void SetCBuffIndex(int index)
 	{
-		m_cbuffIndex = index;
+		m_ConstantBufferIndex = index;
 	}
 	int GetCBuffIndex()
 	{
-		return m_cbuffIndex;
+		return m_ConstantBufferIndex;
 	}
 	FBXDataContainer* GetCurrentAnimCont()
 	{
-		return m_currentAnimeCont;
+		return m_CurrentAnimeCont;
 	}
 
 	HRESULT LoadBinary(const fs::path& path);

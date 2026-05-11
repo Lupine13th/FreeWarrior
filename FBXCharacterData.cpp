@@ -180,13 +180,13 @@ HRESULT FBXDataContainer::ReadFbxToMeshContainer(const std::wstring id, FbxMesh 
 	}
 
 	//保存したminとmaxを全体のmin、maxと比較して更新
-	if (m_vtxTotalMax.x < meshCont->m_vtxMax.x) m_vtxTotalMax.x = meshCont->m_vtxMax.x;
-	if (m_vtxTotalMax.y < meshCont->m_vtxMax.y) m_vtxTotalMax.y = meshCont->m_vtxMax.y;
-	if (m_vtxTotalMax.z < meshCont->m_vtxMax.z) m_vtxTotalMax.z = meshCont->m_vtxMax.z;
+	if (m_VertexTotalMax.x < meshCont->m_vtxMax.x) m_VertexTotalMax.x = meshCont->m_vtxMax.x;
+	if (m_VertexTotalMax.y < meshCont->m_vtxMax.y) m_VertexTotalMax.y = meshCont->m_vtxMax.y;
+	if (m_VertexTotalMax.z < meshCont->m_vtxMax.z) m_VertexTotalMax.z = meshCont->m_vtxMax.z;
 
-	if (m_vtxTotalMin.x > meshCont->m_vtxMin.x) m_vtxTotalMin.x = meshCont->m_vtxMin.x;
-	if (m_vtxTotalMin.y > meshCont->m_vtxMin.y) m_vtxTotalMin.y = meshCont->m_vtxMin.y;
-	if (m_vtxTotalMin.z > meshCont->m_vtxMin.z) m_vtxTotalMin.z = meshCont->m_vtxMin.z;
+	if (m_VertexTotalMin.x > meshCont->m_vtxMin.x) m_VertexTotalMin.x = meshCont->m_vtxMin.x;
+	if (m_VertexTotalMin.y > meshCont->m_vtxMin.y) m_VertexTotalMin.y = meshCont->m_vtxMin.y;
+	if (m_VertexTotalMin.z > meshCont->m_vtxMin.z) m_VertexTotalMin.z = meshCont->m_vtxMin.z;
 
 	FbxStringList uvset_names;
 	// UVSetの名前リストを取得
@@ -427,7 +427,7 @@ HRESULT FBXDataContainer::ReadFbxToMeshContainer(const std::wstring id, FbxMesh 
 		}
 	}
 
-	m_pMeshContainer.push_back(move(meshCont));
+	m_MeshContainer.push_back(move(meshCont));
 
 
 	return hr;
@@ -452,7 +452,7 @@ HRESULT FBXDataContainer::LoadMaterial(const std::wstring id, FbxSurfaceMaterial
 	size_t conv = 0;
 	mbstowcs_s(&conv, namebuff, mtname, strlen(mtname));
 	std::wstring matName = namebuff;
-	m_pMaterialContainer[matName] = make_unique<MaterialContainer>();
+	m_MaterialContainer[matName] = make_unique<MaterialContainer>();
 
 	FbxDouble3 colors[(int)MaterialOrder::MaxOrder];
 	FbxDouble factors[(int)MaterialOrder::MaxOrder];
@@ -498,11 +498,11 @@ HRESULT FBXDataContainer::LoadMaterial(const std::wstring id, FbxSurfaceMaterial
 
 	FbxDouble3 color = colors[(int)MaterialOrder::Ambient];
 	FbxDouble factor = factors[(int)MaterialOrder::Ambient];
-	m_pMaterialContainer[matName]->SetAmbient((float)color[0], (float)color[1], (float)color[2], (float)factor);
+	m_MaterialContainer[matName]->SetAmbient((float)color[0], (float)color[1], (float)color[2], (float)factor);
 
 	color = colors[(int)MaterialOrder::Diffuse];
 	factor = factors[(int)MaterialOrder::Diffuse];
-	m_pMaterialContainer[matName]->SetDiffuse((float)color[0], (float)color[1], (float)color[2], (float)factor);
+	m_MaterialContainer[matName]->SetDiffuse((float)color[0], (float)color[1], (float)color[2], (float)factor);
 
 	// テクスチャ読み込み(シングル対応)
 	// マルチテクスチャはシェーダから別。今回はそこら辺は未対応
@@ -611,28 +611,28 @@ HRESULT FBXDataContainer::LoadTextureFromMaterial(const std::wstring matName, co
 			switch (texType)
 			{
 			case FBX_TEXTURE_TYPE::FBX_DIFFUSE:
-				m_pMaterialContainer[matName]->m_DiffuseTextures.push_back(idName);
-				m_pMaterialContainer[matName]->m_DiffusePath.push_back(texturePath);
+				m_MaterialContainer[matName]->m_DiffuseTextures.push_back(idName);
+				m_MaterialContainer[matName]->m_DiffusePath.push_back(texturePath);
 				break;
 
 			case FBX_TEXTURE_TYPE::FBX_NORMAL:
-				m_pMaterialContainer[matName]->m_NormalTextures.push_back(idName);
-				m_pMaterialContainer[matName]->m_NormalPath.push_back(texturePath);
+				m_MaterialContainer[matName]->m_NormalTextures.push_back(idName);
+				m_MaterialContainer[matName]->m_NormalPath.push_back(texturePath);
 				break;
 
 			case FBX_TEXTURE_TYPE::FBX_SPECUAR:
-				m_pMaterialContainer[matName]->m_SpecularTextures.push_back(idName);
-				m_pMaterialContainer[matName]->m_SpecularPath.push_back(texturePath);
+				m_MaterialContainer[matName]->m_SpecularTextures.push_back(idName);
+				m_MaterialContainer[matName]->m_SpecularPath.push_back(texturePath);
 				break;
 
 			case FBX_TEXTURE_TYPE::FBX_FALLOFF:
-				m_pMaterialContainer[matName]->m_FalloffTextures.push_back(idName);
-				m_pMaterialContainer[matName]->m_FalloffPath.push_back(texturePath);
+				m_MaterialContainer[matName]->m_FalloffTextures.push_back(idName);
+				m_MaterialContainer[matName]->m_FalloffPath.push_back(texturePath);
 				break;
 
 			case FBX_TEXTURE_TYPE::FBX_REFLECTIONMAP:
-				m_pMaterialContainer[matName]->m_ReflectionMapTextures.push_back(idName);
-				m_pMaterialContainer[matName]->m_ReflectionMapPath.push_back(texturePath);
+				m_MaterialContainer[matName]->m_ReflectionMapTextures.push_back(idName);
+				m_MaterialContainer[matName]->m_ReflectionMapPath.push_back(texturePath);
 				break;
 
 			default:	//Unknown
@@ -649,9 +649,9 @@ HRESULT FBXDataContainer::LoadFBX(const std::wstring fileName, const std::wstrin
 {
 	HRESULT hr = S_OK;
 
-	fs::path cacheDir = L"Cache";
-	fs::create_directories(cacheDir);
-	fs::path cachePath = cacheDir / (id + L".bin");	
+	fs::path cacheDir = L"Cache";					
+	fs::create_directories(cacheDir);				//キャッシュがあるかを検索するファイルを指定
+	fs::path cachePath = cacheDir / (id + L".bin");	//キャッシュの名前をIDから指定
 
 	//==========FbxSDKの初期化とインポート　Fbxファイルを開くための準備==========
 
@@ -666,11 +666,11 @@ HRESULT FBXDataContainer::LoadFBX(const std::wstring fileName, const std::wstrin
 	c_filename = new char[wcSize];									//FbxSDKが受け取れるよう、char*型に変換
 
 	size_t retVal = 0;
-	wcstombs_s(&retVal, c_filename, wcSize, fileName.c_str(), wcSize);
+	wcstombs_s(&retVal, c_filename, wcSize, fileName.c_str(), wcSize);	//c_filenameにfileNameをchar*型で保存
 
-	fbx_manager = FBXDataContainer::GetFbxManager();
+	fbx_manager = FBXDataContainer::GetFbxManager();					//マネージャ初期化
 
-	fbx_importer = FbxImporter::Create(fbx_manager, c_filename);
+	fbx_importer = FbxImporter::Create(fbx_manager, c_filename);		//インポータ初期化
 
 	if (fbx_importer == nullptr)
 	{
@@ -679,7 +679,7 @@ HRESULT FBXDataContainer::LoadFBX(const std::wstring fileName, const std::wstrin
 		return hr;
 	}
 
-	fbx_scene = FbxScene::Create(fbx_manager, c_filename);
+	fbx_scene = FbxScene::Create(fbx_manager, c_filename);				//シーン初期化
 
 	if (fbx_scene == nullptr)
 	{
@@ -688,8 +688,10 @@ HRESULT FBXDataContainer::LoadFBX(const std::wstring fileName, const std::wstrin
 		return hr;
 	}
 
-	bool res = fbx_importer->Initialize(c_filename);
-	delete[] c_filename;
+	bool res = fbx_importer->Initialize(c_filename);					//ファイル名のファイルが存在しているか
+
+	delete[] c_filename;												//メモリ開放
+
 	if (res == false)
 	{
 		hr = E_FAIL;
@@ -707,54 +709,44 @@ HRESULT FBXDataContainer::LoadFBX(const std::wstring fileName, const std::wstrin
 	//==========FbxSDKの初期化とインポート　Fbxファイルを開くための準備==========End
 
 
-	m_pFbxScene = fbx_scene; // シーンを保持
+	m_FbxScene = fbx_scene; // シーンを保持
 
 	auto AnimationInfo = [&](FbxScene* scene, FbxImporter* importer)
 	{
-		//もしアニメーション持ちでないならこの段階で返す。
-		/*if (!IsAnimation)
-		{
-			m_animeFrames = 0;
-			m_startTime = 0;
-			m_timePeriod = 0;
-			m_animeStack = nullptr;
+		int animStackCount = importer->GetAnimStackCount();				//アニメーションの種類を取得
 
-			return;
-		}*/
-
-		int animStackCount = importer->GetAnimStackCount();
-		if (animStackCount > 0)
+		if (animStackCount > 0)											//アニメーションがある場合
 		{
-			FbxAnimStack* stack = scene->GetCurrentAnimationStack();
+			FbxAnimStack* stack = scene->GetCurrentAnimationStack();	//シーンに含まれる現在のアニメスタック取得
 			if (stack == nullptr)
 			{
-				stack = scene->GetSrcObject<FbxAnimStack>(0);
+				stack = scene->GetSrcObject<FbxAnimStack>(0);			//もし現在のスタックが定義されてなかったら最初のスタックを取得	
 			}
 
 			if (stack)
 			{
-				m_animeStack = stack;
-				scene->SetCurrentAnimationStack(m_animeStack);
+				m_AnimeStack = stack;
+				scene->SetCurrentAnimationStack(m_AnimeStack);			//Fbxシーンでのアニメスタックをセット
 
-				FbxTimeSpan timeSpan = stack->GetLocalTimeSpan();
-				m_startTime = timeSpan.GetStart().GetSecondDouble();
-				m_endTime = timeSpan.GetStop().GetSecondDouble();
+				FbxTimeSpan timeSpan = stack->GetLocalTimeSpan();		//アニメ時間の取得
+				m_StartTime = timeSpan.GetStart().GetSecondDouble();	//開始時間
+				m_EndTime = timeSpan.GetStop().GetSecondDouble();		//終了時間
 
-				if (m_endTime <= 0.001 || (m_startTime == 0.0 && m_endTime == 5.0)) 
+				if (m_EndTime <= 0.001 || (m_StartTime == 0.0 && m_EndTime == 5.0))		//アニメタイムが初期値、もしくは標準の5秒だった場合、もう一度取得
 				{
 					FbxTakeInfo* takeInfo = scene->GetTakeInfo(stack->GetName());
 					if (takeInfo) {
-						m_startTime = takeInfo->mLocalTimeSpan.GetStart().GetSecondDouble();
-						m_endTime = takeInfo->mLocalTimeSpan.GetStop().GetSecondDouble();
+						m_StartTime = takeInfo->mLocalTimeSpan.GetStart().GetSecondDouble();
+						m_EndTime = takeInfo->mLocalTimeSpan.GetStop().GetSecondDouble();
 					}
 				}
 
-				m_timePeriod = 1.0f / 60.0f;
-				m_animeFrames = floorl((m_endTime - m_startTime) / m_timePeriod);
+				m_TimePeriod = 1.0f / 60.0f;							
+				m_AnimeFrames = floorl((m_EndTime - m_StartTime) / m_TimePeriod);	//1フレームの長さを1/60秒に設定
 
-				if (m_animeFrames <= 0)
+				if (m_AnimeFrames <= 0)	
 				{
-					m_animeFrames = 1;
+					m_AnimeFrames = 1;
 				}
 			}
 		}
@@ -762,37 +754,34 @@ HRESULT FBXDataContainer::LoadFBX(const std::wstring fileName, const std::wstrin
 
 	AnimationInfo(fbx_scene, fbx_importer);
 
-	FbxAxisSystem dx = FbxAxisSystem::DirectX;
+	FbxAxisSystem dx = FbxAxisSystem::DirectX;		//軸変換のため軸を初期化
 
 	if (fs::exists(cachePath))						//Cacheフォルダ内にid.binが存在するか確認
 	{
 		HRESULT cacheRes = LoadBinary(cachePath);
-		if (SUCCEEDED(cacheRes))
+		if (SUCCEEDED(cacheRes))					//キャッシュロード成功。
 		{
-			// キャッシュロード成功。
-			// アニメーションスタックが正しく取得できているか再確認
-			if (m_animeStack == nullptr)
+			if (m_AnimeStack == nullptr)			//アニメーションスタックが正しく取得できているか再確認
 			{
-				m_animeStack = fbx_scene->GetSrcObject<FbxAnimStack>(0);
-				fbx_scene->SetCurrentAnimationStack(m_animeStack);
-				m_currentAnimeCont = this;
+				m_AnimeStack = fbx_scene->GetSrcObject<FbxAnimStack>(0);
+				fbx_scene->SetCurrentAnimationStack(m_AnimeStack);
+				m_CurrentAnimeCont = this;
 			}
 
-			// キャッシュがある時用の座標転換
-			if (dx != fbx_scene->GetGlobalSettings().GetAxisSystem())	
+			if (dx != fbx_scene->GetGlobalSettings().GetAxisSystem())	//キャッシュがある時用の座標転換
 			{
 				dx.DeepConvertScene(fbx_scene);
 			}
 
-			// ここでインポータを消すと、シーン内のオブジェクトが不安定になる場合があるため
-			// 解析フェーズをスキップして終了
+			//ここでインポータを消すと、シーン内のオブジェクトが不安定になる場合があるため
+			//解析フェーズをスキップして終了
 			fbx_importer->Destroy();
 
 			return S_OK;
 		}
 		else
 		{
-			fs::remove(cachePath); // 壊れているか古い場合は削除
+			fs::remove(cachePath); //壊れているか古い場合は削除
 		}
 	}
 
@@ -815,11 +804,11 @@ HRESULT FBXDataContainer::LoadFBX(const std::wstring fileName, const std::wstrin
 	if (fbx_node != nullptr)
 	{
 		int nodes = fbx_scene->GetNodeCount();
-		m_nodeNameList.clear();
-		m_nodeNameList.resize(nodes);
+		m_NodeNameList.clear();
+		m_NodeNameList.resize(nodes);
 		for (int i = 0; i < nodes; i++)
 		{
-			m_nodeNameList[i] = fbx_scene->GetNode(i)->GetName();
+			m_NodeNameList[i] = fbx_scene->GetNode(i)->GetName();
 		}
 
 		FbxGeometryConverter converter(fbx_manager);
@@ -835,18 +824,18 @@ HRESULT FBXDataContainer::LoadFBX(const std::wstring fileName, const std::wstrin
 			auto memberCount = stack->GetMemberCount<FbxAnimCurveNode>();
 			auto fbxAnimeLayer = stack->GetMember<FbxAnimLayer>(0);
 
-			m_startTime = stack->GetLocalTimeSpan().GetStart().GetSecondDouble();
-			m_endTime = stack->GetLocalTimeSpan().GetStop().GetSecondDouble();
-			m_timePeriod = 1.0 / 60.0;
-			m_animeFrames = floorl((m_endTime - m_startTime) / m_timePeriod);
+			m_StartTime = stack->GetLocalTimeSpan().GetStart().GetSecondDouble();
+			m_EndTime = stack->GetLocalTimeSpan().GetStop().GetSecondDouble();
+			m_TimePeriod = 1.0 / 60.0;
+			m_AnimeFrames = floorl((m_EndTime - m_StartTime) / m_TimePeriod);
 
-			m_animeStack = stack; 
-			fbx_scene->SetCurrentAnimationStack(m_animeStack);
+			m_AnimeStack = stack; 
+			fbx_scene->SetCurrentAnimationStack(m_AnimeStack);
 		}
 		else
 		{
-			m_animeStack = nullptr;
-			m_animeFrames = 0;
+			m_AnimeStack = nullptr;
+			m_AnimeFrames = 0;
 		}
 
 		//==========アニメーション情報の取得===========End
@@ -855,7 +844,7 @@ HRESULT FBXDataContainer::LoadFBX(const std::wstring fileName, const std::wstrin
 
 		//==========マテリアル・メッシュの読み込む==========
 
-		m_pMeshContainer.clear();
+		m_MeshContainer.clear();
 
 		int materialCnt = fbx_scene->GetMaterialCount();
 
@@ -867,13 +856,13 @@ HRESULT FBXDataContainer::LoadFBX(const std::wstring fileName, const std::wstrin
 		//メッシュ読み込み処理
 		int meshCount = fbx_scene->GetSrcObjectCount<FbxMesh>();
 
-		m_vtxTotalMax.x = FLT_MIN;
-		m_vtxTotalMax.y = FLT_MIN;
-		m_vtxTotalMax.z = FLT_MIN;
+		m_VertexTotalMax.x = FLT_MIN;
+		m_VertexTotalMax.y = FLT_MIN;
+		m_VertexTotalMax.z = FLT_MIN;
 
-		m_vtxTotalMin.x = FLT_MAX;
-		m_vtxTotalMin.y = FLT_MAX;
-		m_vtxTotalMin.z = FLT_MAX;
+		m_VertexTotalMin.x = FLT_MAX;
+		m_VertexTotalMin.y = FLT_MAX;
+		m_VertexTotalMin.z = FLT_MAX;
 
 		wchar_t idName[128];
 		for (int i = 0; i < meshCount; i++)
@@ -893,17 +882,17 @@ HRESULT FBXDataContainer::LoadFBX(const std::wstring fileName, const std::wstrin
 
 		//==========ボーン(スケルトン)の準備==========
 
-		m_clusterCount = m_boneNameList.size();
-		if (m_clusterCount > 0)
+		m_ClusterCount = m_BoneNameList.size();
+		if (m_ClusterCount > 0)
 		{
-			m_boneIdList.resize(m_clusterCount); 
-			m_F4X4Matrix.resize(m_clusterCount);
+			m_BoneIdList.resize(m_ClusterCount); 
+			m_F4X4Matrix.resize(m_ClusterCount);
 		}
 
 		//==========ボーン(スケルトン)の準備==========End
 
 
-		m_pFbxScene = fbx_scene;
+		m_FbxScene = fbx_scene;
 
 		SaveBinary(cachePath);
 	}
@@ -921,13 +910,13 @@ HRESULT FBXDataContainer::LoadFBX(const std::wstring fileName, const std::wstrin
 //==========FBXのリソース（頂点バッファなど）をインスタンス固有のものとして扱い、そのインスタンスが破棄される際に自動的にグラフィックスメモリ上のリソースも削除するように設定する==========
 void FBXDataContainer::SetMeshUniqueFlag(bool meshFlag, bool materialFlag)
 {
-	int length = m_pMeshContainer.size();
+	int length = m_MeshContainer.size();
 
 	for (int id = 0; id < length; id++)
 	{
-		if (m_pMeshContainer[id] != nullptr)
+		if (m_MeshContainer[id] != nullptr)
 		{
-			m_pMeshContainer[id]->SetUniqueFlag(meshFlag);
+			m_MeshContainer[id]->SetUniqueFlag(meshFlag);
 		}
 	}
 }
@@ -935,7 +924,7 @@ void FBXDataContainer::SetMeshUniqueFlag(bool meshFlag, bool materialFlag)
 //==========FBXが使用しているテクスチャリソースをインスタンス固有のものとして扱い、そのインスタンスが破棄される際に自動的にテクスチャをメモリから削除するように設定する==========
 void FBXDataContainer::SetTextureUniqueFlag(bool texFlag)
 {
-	for (auto ite = m_pMaterialContainer.begin(); ite != m_pMaterialContainer.end(); ite++)
+	for (auto ite = m_MaterialContainer.begin(); ite != m_MaterialContainer.end(); ite++)
 	{
 		ite->second->SetUniqueTextureFlag(texFlag);
 	}
@@ -944,10 +933,10 @@ void FBXDataContainer::SetTextureUniqueFlag(bool texFlag)
 //==========Fbxのノード名から入手==========
 int FBXDataContainer::GetNodeId(const char* nodeName)
 {
-	int length = m_nodeNameList.size();
+	int length = m_NodeNameList.size();
 	for (int i = 0; i < length; i++)
 	{
-		if (strcmp(m_nodeNameList[i].c_str(), nodeName) == 0)
+		if (strcmp(m_NodeNameList[i].c_str(), nodeName) == 0)
 		{
 			return i;
 		}
@@ -962,7 +951,7 @@ int FBXDataContainer::GetNodeId(const char* nodeName)
 
 	for (int i = 0; i < length; i++) 
 	{
-		std::string baseCurrent = m_nodeNameList[i];
+		std::string baseCurrent = m_NodeNameList[i];
 		if (baseCurrent.find(prefix) == 0) baseCurrent = baseCurrent.substr(prefix.length());
 		if (baseTarget == baseCurrent) return i;
 	}
@@ -973,11 +962,11 @@ int FBXDataContainer::GetNodeId(const char* nodeName)
 //==========Fbxのメッシュ名から入手==========
 int FBXDataContainer::GetMeshId(const char* meshName)
 {
-	int len = m_pMeshContainer.size();
+	int len = m_MeshContainer.size();
 
 	for (int i = 0; i < len; i++)
 	{
-		if (strcmp(m_pMeshContainer[i]->GetMeshNodeName().c_str(), meshName) == 0)	//string型に変更したため修正
+		if (strcmp(m_MeshContainer[i]->GetMeshNodeName().c_str(), meshName) == 0)	//string型に変更したため修正
 		{
 			return i;
 		}
@@ -989,9 +978,9 @@ int FBXDataContainer::GetMeshId(const char* meshName)
 //==========FbxのIDからノードを入手==========
 FbxNode* FBXDataContainer::GetMeshNode(int id)
 {
-	if (id < m_pMeshContainer.size())
+	if (id < m_MeshContainer.size())
 	{
-		return m_pMeshContainer[id]->GetFbxMesh()->GetNode();
+		return m_MeshContainer[id]->GetFbxMesh()->GetNode();
 	}
 	return nullptr;
 }
@@ -1008,9 +997,9 @@ HRESULT FBXCharacterData::LoadMainFBX(const std::wstring fileName, const std::ws
 
 		if (m_MainFbx->GetClusterCount() > 0) //スキンアニメ有り
 		{
-			int curCbuff = m_cbuffCount; //AddConstantBufferの中でm_cbuffCountが加算されるので先に
+			int curCbuff = m_cbuffCount;													//AddConstantBufferの中でm_cbuffCountが加算されるので先に
 			AddConstantBuffer(sizeof(XMFLOAT4X4) * m_MainFbx->GetClusterCount(), nullptr);
-			m_MainFbx->SetCBuffIndex(curCbuff); //アニメ用コンスタントバッファのインデックスを登録
+			m_MainFbx->SetCBuffIndex(curCbuff);												//アニメ用コンスタントバッファのインデックスを登録
 		}
 
 	}
@@ -1139,15 +1128,15 @@ void FBXCharacterData::SetAnimeInit(std::wstring initAnimeLabel, FieldCharacter*
 
 XMMATRIX FBXDataContainer::GetBornMatrix(const char* bornName)
 {
-	if (m_currentAnimeCont == nullptr)
+	if (m_CurrentAnimeCont == nullptr)
 	{
 		return DirectX::XMMatrixIdentity();
 	}
-	FbxScene* animeScene = m_currentAnimeCont->GetFbxScene();
+	FbxScene* animeScene = m_CurrentAnimeCont->GetFbxScene();
 	XMMATRIX xMMatrix;
 	
 	// アニメーション側のシーンでのノードIDを取得する必要がある
-	int bornId = m_currentAnimeCont->GetNodeId(bornName);
+	int bornId = m_CurrentAnimeCont->GetNodeId(bornName);
 	if (bornId != -1)
 	{
 		auto fbxNode = animeScene->GetNode(bornId);
@@ -1243,36 +1232,36 @@ int FBXDataContainer::GetClusterId(FbxCluster* pCluster)
 
 int FBXDataContainer::GetClusterId(FbxNode* pNode)
 {
-	int size = m_boneNameList.size();			//今のクラスターIDリストのサイズ取得
+	int size = m_BoneNameList.size();			//今のクラスターIDリストのサイズ取得
 	const char* nodeName = pNode->GetName();	//ノード名取得
 	for (int id = 0; id < size; id++)
 	{
-		if (strcmp(nodeName, m_boneNameList[id].c_str()) == 0)
+		if (strcmp(nodeName, m_BoneNameList[id].c_str()) == 0)
 			return id;							//ノード名がリストに登録されていればそれがID
 	}
 	
-	m_boneNameList.push_back(nodeName);
+	m_BoneNameList.push_back(nodeName);
 
 	FbxAMatrix inv = pNode->EvaluateGlobalTransform().Inverse();	//一旦行列を保持
 	XMFLOAT4X4 xmInv;	//型変更用
 
 	ConvertFbxAMatrixToXMFLOAT4x4(inv, xmInv);
 
-	m_IboneMatrix.push_back(xmInv);
+	m_IBoneMatrix.push_back(xmInv);
 
 	return size; 
 }
 
 void FBXDataContainer::SetAnimationFbx(FBXDataContainer* animeCont)
 {
-	if (m_currentAnimeCont != animeCont) 
+	if (m_CurrentAnimeCont != animeCont) 
 	{
-		m_currentAnimeCont = animeCont;
+		m_CurrentAnimeCont = animeCont;
 		
-		int len = m_boneNameList.size();
+		int len = m_BoneNameList.size();
 		for (int i = 0; i < len; i++)
 		{
-			m_boneIdList[i] = m_currentAnimeCont->GetNodeId(m_boneNameList[i].c_str());
+			m_BoneIdList[i] = m_CurrentAnimeCont->GetNodeId(m_BoneNameList[i].c_str());
 		}
 	}
 }
@@ -1280,7 +1269,7 @@ void FBXDataContainer::SetAnimationFbx(FBXDataContainer* animeCont)
 void FBXDataContainer::UpdateAnimation(FBXDataContainer* animeCont, const FbxTime& animeTime, vector<XMFLOAT4X4>& chDataMatrix, vector<XMFLOAT4X4>& nodeMatrices, const vector<int>& bornIdList)	//アニメデータの更新処理　※※仕様変更04/17　FbxCharacterDataが行列を独自で持つようになったためそれを宣言するように。
 {
 	m_FbxTime = animeTime;
-	int boneCount = m_boneNameList.size();
+	int boneCount = m_BoneNameList.size();
 	FbxScene* animeScene = animeCont->GetFbxScene();
 
 	//インスタンスごとに違うシーンを呼ぶために自身のシーンを付与
@@ -1316,7 +1305,7 @@ void FBXDataContainer::UpdateAnimation(FBXDataContainer* animeCont, const FbxTim
 			{
 				for (int c = 0; c < 4; c++)
 				{
-					fbxInvBind[r][c] = m_IboneMatrix[i].m[r][c];
+					fbxInvBind[r][c] = m_IBoneMatrix[i].m[r][c];
 				}
 			}
 
@@ -1347,37 +1336,37 @@ HRESULT FBXDataContainer::LoadBinary(const fs::path& path)
 
 	int version = 0;
 	ReadBinary(ifs, version);
-	if (version != 2) return E_FAIL; // バージョン不一致ならキャッシュ破棄・再生成へ
+	if (version != 2) return E_FAIL; //バージョン不一致ならキャッシュ破棄・再生成へ
 
-	// 全体の境界
-	ReadBinary(ifs, m_vtxTotalMin);
-	ReadBinary(ifs, m_vtxTotalMax);
+	//頂点データの最大値・最小値
+	ReadBinary(ifs, m_VertexTotalMin);
+	ReadBinary(ifs, m_VertexTotalMax);
 
-	// 時間設定
-	ReadBinary(ifs, m_animeFrames);
-	ReadBinary(ifs, m_startTime);
-	ReadBinary(ifs, m_endTime);
-	ReadBinary(ifs, m_timePeriod);
+	//アニメーション時間設定
+	ReadBinary(ifs, m_AnimeFrames);
+	ReadBinary(ifs, m_StartTime);
+	ReadBinary(ifs, m_EndTime);
+	ReadBinary(ifs, m_TimePeriod);
 
-	// クラスター/ボーン情報
-	ReadBinary(ifs, m_clusterCount);
-	ReadBinary(ifs, m_cbuffIndex);
+	//クラスター/ボーン情報
+	ReadBinary(ifs, m_ClusterCount);
+	ReadBinary(ifs, m_ConstantBufferIndex);
 
 	size_t boneCnt;
 	ReadBinary(ifs, boneCnt);
-	m_boneNameList.resize(boneCnt);
-	for (auto& name : m_boneNameList) ReadString(ifs, name);
+	m_BoneNameList.resize(boneCnt);
+	for (auto& name : m_BoneNameList) ReadString(ifs, name);
 
-	ReadVector(ifs, m_boneIdList);
+	ReadVector(ifs, m_BoneIdList);
 
-	ReadVector(ifs, m_IboneMatrix);
+	ReadVector(ifs, m_IBoneMatrix);
 
-	m_F4X4Matrix.resize(m_IboneMatrix.size());
+	m_F4X4Matrix.resize(m_IBoneMatrix.size());
 
 	size_t nodeCnt;
 	ReadBinary(ifs, nodeCnt);
-	m_nodeNameList.resize(nodeCnt);
-	for (auto& name : m_nodeNameList) ReadString(ifs, name);
+	m_NodeNameList.resize(nodeCnt);
+	for (auto& name : m_NodeNameList) ReadString(ifs, name);
 
 	// マテリアル
 	size_t matCnt;
@@ -1450,7 +1439,7 @@ HRESULT FBXDataContainer::LoadBinary(const fs::path& path)
 			MyAccessHub::GetMyGameEngine()->GetTextureManager()->CreateTextureFromFile(device, matCont->m_ReflectionMapTextures[i].c_str(), matCont->m_ReflectionMapPath[i].c_str());
 		}
 
-		m_pMaterialContainer[matId] = move(matCont);
+		m_MaterialContainer[matId] = move(matCont);
 	}
 
 	// メッシュ
@@ -1508,7 +1497,7 @@ HRESULT FBXDataContainer::LoadBinary(const fs::path& path)
 			MyAccessHub::GetMyGameEngine()->GetMeshManager()->AddVertexBuffer(meshCont->m_MeshId, meshCont->m_vertexData.data(), sizeof(FbxVertex), meshCont->m_vertexCount);
 		}
 
-		m_pMeshContainer.push_back(move(meshCont));
+		m_MeshContainer.push_back(move(meshCont));
 	}
 
 	return S_OK;
@@ -1523,38 +1512,38 @@ HRESULT FBXDataContainer::SaveBinary(const fs::path& path)
 	int version = 2;
 	WriteBinary(ofs, version);
 
-	WriteBinary(ofs, m_vtxTotalMin);
-	WriteBinary(ofs, m_vtxTotalMax);
+	WriteBinary(ofs, m_VertexTotalMin);
+	WriteBinary(ofs, m_VertexTotalMax);
 
-	WriteBinary(ofs, m_animeFrames);
-	WriteBinary(ofs, m_startTime);
-	WriteBinary(ofs, m_endTime);
-	WriteBinary(ofs, m_timePeriod);
+	WriteBinary(ofs, m_AnimeFrames);
+	WriteBinary(ofs, m_StartTime);
+	WriteBinary(ofs, m_EndTime);
+	WriteBinary(ofs, m_TimePeriod);
 
-	WriteBinary(ofs, m_clusterCount);
-	WriteBinary(ofs, m_cbuffIndex);
+	WriteBinary(ofs, m_ClusterCount);
+	WriteBinary(ofs, m_ConstantBufferIndex);
 
-	size_t boneCnt = m_boneNameList.size();
+	size_t boneCnt = m_BoneNameList.size();
 	WriteBinary(ofs, boneCnt);
 
-	for (const auto& name : m_boneNameList) WriteString(ofs, name);
+	for (const auto& name : m_BoneNameList) WriteString(ofs, name);
 
-	WriteVector(ofs, m_boneIdList);
+	WriteVector(ofs, m_BoneIdList);
 
-	WriteVector(ofs, m_IboneMatrix);
+	WriteVector(ofs, m_IBoneMatrix);
 
-	size_t nodeCnt = m_nodeNameList.size();
+	size_t nodeCnt = m_NodeNameList.size();
 	WriteBinary(ofs, nodeCnt);
 
-	for (const auto& name : m_nodeNameList)
+	for (const auto& name : m_NodeNameList)
 	{
 		WriteString(ofs, name);
 	}
 
 	//マテリアル
-	size_t matCnt = m_pMaterialContainer.size();
+	size_t matCnt = m_MaterialContainer.size();
 	WriteBinary(ofs, matCnt);
-	for (auto& pair : m_pMaterialContainer)
+	for (auto& pair : m_MaterialContainer)
 	{
 		WriteWString(ofs, pair.first);
 		auto& matCont = pair.second;
@@ -1591,9 +1580,9 @@ HRESULT FBXDataContainer::SaveBinary(const fs::path& path)
 	}
 
 	//メッシュ
-	size_t meshCnt = m_pMeshContainer.size();
+	size_t meshCnt = m_MeshContainer.size();
 	WriteBinary(ofs, meshCnt);
-	for (auto& meshCont : m_pMeshContainer)
+	for (auto& meshCont : m_MeshContainer)
 	{
 		FbxAMatrix matrix = meshCont->GetIBaseMatrix();
 		WriteString(ofs, meshCont->GetMeshNodeName());
