@@ -123,17 +123,17 @@ HRESULT SpriteRenderPipeline::InitPipeLineStateObject(ID3D12Device2* d3dDev)
         psoDesc.BlendState.RenderTarget[i] = defaultRenderTargetBlendDesc;
 
     psoDesc.BlendState.RenderTarget[0].BlendEnable = true;
-
-
     psoDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
-    psoDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+    psoDesc.DepthStencilState.DepthWriteMask = (blendMode == 1) ? D3D12_DEPTH_WRITE_MASK_ZERO : D3D12_DEPTH_WRITE_MASK_ALL;     //アルファブレンドが有効な場合は深度バッファへの書き込みを無効に
     psoDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
     psoDesc.DepthStencilState.DepthEnable = TRUE;
     psoDesc.DepthStencilState.StencilEnable = TRUE;
     psoDesc.DepthStencilState.StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK;
     psoDesc.DepthStencilState.StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
+
     const D3D12_DEPTH_STENCILOP_DESC defaultStencilOp =
     { D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_COMPARISON_FUNC_ALWAYS };
+
     psoDesc.DepthStencilState.FrontFace = defaultStencilOp;
     psoDesc.DepthStencilState.BackFace = defaultStencilOp;
 
@@ -222,6 +222,8 @@ ID3D12GraphicsCommandList* SpriteRenderPipeline::ExecuteRender()
 
     //描画対象が無いのでここで終了
     if (m_renderList.size() < 1) return nullptr;
+
+    m_renderList.sort([](CharacterData* a, CharacterData* b) { return a->getPosition().z > b->getPosition().z; });  //z値でソート 奥から順番に描画するようにする
 
     ID3D12GraphicsCommandList* cmdList = m_cmdLists[frameIndex].Get();
 

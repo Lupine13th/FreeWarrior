@@ -16,7 +16,7 @@ void Squares::InitAction()
 	CharacterData* SqData = GetGameObject()->GetCharacterData();
 	SqData->setScale(0.5f, 0.5f, 0.5f);
 	SqData->setRotation(90.0f, 0.0f, 0.0f);
-	SqData->SetGraphicsPipeLine(L"AlphaSprite");
+	SqData->SetGraphicsPipeLine(L"AlphaSprite3D");
 
 	m_TimeManager = MyAccessHub::GetTimeManager();
 	BFMng = MyAccessHub::GetBFManager();

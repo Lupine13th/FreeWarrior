@@ -278,16 +278,6 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 				//==========PipeLineManager
 				PipeLineManager* plMng = engine->GetPipelineManager();
 
-				SpriteRenderPipeline* spritePL = new SpriteRenderPipeline();
-				spritePL->SetSamplerMode(0);
-				spritePL->SetBlendMode(0);
-				plMng->AddPipeLineObject(L"Sprite", spritePL);
-
-				spritePL = new SpriteRenderPipeline();
-				spritePL->SetSamplerMode(0);
-				spritePL->SetBlendMode(1);
-				plMng->AddPipeLineObject(L"AlphaSprite", spritePL);
-
 				//FBX
 				StandardFbxPipeline* fbxPL = new StandardFbxPipeline();
 				fbxPL->SetAnimationMode(false);
@@ -296,6 +286,22 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 				fbxPL = new StandardFbxPipeline();
 				fbxPL->SetAnimationMode(true); //スケルタルメッシュモードへ
 				plMng->AddPipeLineObject(L"AnimationFBX", fbxPL);
+
+				//Sprite
+				SpriteRenderPipeline* spritePL = new SpriteRenderPipeline();
+				spritePL->SetSamplerMode(0);
+				spritePL->SetBlendMode(0);
+				plMng->AddPipeLineObject(L"Sprite", spritePL);
+
+				spritePL = new SpriteRenderPipeline();
+				spritePL->SetSamplerMode(0);
+				spritePL->SetBlendMode(1);
+				plMng->AddPipeLineObject(L"AlphaSprite3D", spritePL);
+
+				spritePL = new SpriteRenderPipeline();
+				spritePL->SetSamplerMode(0);
+				spritePL->SetBlendMode(1);
+				plMng->AddPipeLineObject(L"AlphaSprite", spritePL);
 
 				HitManager* hitMng = engine->GetHitManager();
 
@@ -509,7 +515,7 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 
 						squares->SqPos = XMFLOAT3(SpposX, 0, SpposY);
 
-						spriteCharacter->SetGraphicsPipeLine(L"AlphaSprite");
+						spriteCharacter->SetGraphicsPipeLine(L"AlphaSprite3D");
 
 						XMFLOAT4 uvPattern = { 0.0f, 0.0f, 1.0f, 1.0f };
 
