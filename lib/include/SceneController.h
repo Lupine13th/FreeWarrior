@@ -11,6 +11,7 @@ protected:
 	UINT m_orderSceneID; //予約された次のシーン番号
 	//=======Change Scene END
 
+	bool IsLoading = true;	//シーン切り替え中かどうか
 public:
 	//virtualにしているのはオリジナルのシーン構造を作る時にオーバライド出来るように。
 	HRESULT virtual initSceneController() = 0;
@@ -31,5 +32,9 @@ public:
 			}
 		}
 	}
-	//=======Change Scene END
+
+	bool GetIsLoading()
+	{
+		return IsLoading;
+	}
 };

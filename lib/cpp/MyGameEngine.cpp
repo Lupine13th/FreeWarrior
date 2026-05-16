@@ -9,6 +9,7 @@
 #include "MyGameEngine.h"
 #include "MyAccessHub.h"
 #include "../../FreeWarriorMark2/FBXResourceManager.h"
+#include "../../FreeWarriorMark2/LoadScene.h"
 
 #include <D3D12Helper.h>
 #include <DXSampleHelper.h>
@@ -721,6 +722,16 @@ HRESULT MyGameEngine::UploadCreatedTextures()
 {
     m_initCommand->Reset(m_commandAllocators[m_frameIndex].Get(), nullptr);
     return m_pTextureMng->UploadCreatedTextures(m_pd3dDevice.Get(), m_initCommand.Get(), m_pCommandQueue.Get());
+}
+
+void MyGameEngine::ManualRender()
+{
+	if (MyAccessHub::GetLoadAnimationHUD() == nullptr) return;
+	MyAccessHub::GetLoadAnimationHUD()->FrameAction();   //シーンのActionを呼び出す。これでゲームオブジェクトのActionも呼び出される
+
+	Render();                       //描画
+
+	MoveToNextFrame();              //GPU待機　次フレーム切り替え   
 }
 
 void MyGameEngine::Render()

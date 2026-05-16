@@ -247,4 +247,6 @@ public:
     HRESULT UpdateShaderResourceOnGPU(ID3D12Resource* resource, const void* res, size_t buffSize);
 
     HRESULT UploadCreatedTextures();
+
+    void ManualRender();
 };
