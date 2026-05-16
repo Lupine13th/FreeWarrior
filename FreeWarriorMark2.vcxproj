@@ -184,8 +184,6 @@
     <ClInclude Include="FieldCharacter.h" />
     <ClInclude Include="ForestTerrain.h" />
     <ClInclude Include="json.hpp" />
-    <ClInclude Include="LoadScene.h" />
-    <ClInclude Include="MenuText.h" />
     <ClInclude Include="HillTerrain.h" />
     <ClInclude Include="HUDManager.h" />
     <ClInclude Include="InFieldCharacterMenu.h" />
@@ -193,8 +191,6 @@
     <ClInclude Include="InFieldCharacterMenuWord.h" />
     <ClInclude Include="LogHUD.h" />
     <ClInclude Include="LogHUDW.h" />
-    <ClInclude Include="MonitorSelectUI.h" />
-    <ClInclude Include="MenuUI.h" />
     <ClInclude Include="OpeningAnimHUD.h" />
     <ClInclude Include="ReadyCharacterHUD.h" />
     <ClInclude Include="ReadyCharacterHUDW.h" />
@@ -255,8 +251,6 @@
     <ClCompile Include="FBXResourceManager.cpp" />
     <ClCompile Include="FieldCharacter.cpp" />
     <ClCompile Include="ForestTerrain.cpp" />
-    <ClCompile Include="LoadScene.cpp" />
-    <ClCompile Include="MenuText.cpp" />
     <ClCompile Include="HillTerrain.cpp" />
     <ClCompile Include="HUDManager.cpp" />
     <ClCompile Include="InFieldCharacterMenu.cpp" />
@@ -264,8 +258,6 @@
     <ClCompile Include="InFieldCharacterMenuWord.cpp" />
     <ClCompile Include="LogHUD.cpp" />
     <ClCompile Include="LogHUDW.cpp" />
-    <ClCompile Include="MonitorSelectUI.cpp" />
-    <ClCompile Include="MenuUI.cpp" />
     <ClCompile Include="OpeningAnimHUD.cpp" />
     <ClCompile Include="PlayerFBXs.cpp" />
     <ClCompile Include="ReadyCharacterHUD.cpp" />

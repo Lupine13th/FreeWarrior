@@ -1376,16 +1376,6 @@ int BattleFieldManager::GetEnemyKillCount()
 	return m_EnemyKillCount;
 }
 
-void BattleFieldManager::SetMenuUI(MenuUI* MenuUI)
-{
-    m_MenuUI = MenuUI;
-}
-
-void BattleFieldManager::SetMenuSelectUI(MonitorSelectUI* menuSelectUI)
-{
-    m_MenuSelectUI = menuSelectUI;
-}
-
 void BattleFieldManager::SetStatusText(StatusWords* StatusWords)
 {
     m_StatusText = StatusWords;

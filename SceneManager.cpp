@@ -11,11 +11,8 @@
 #include "CameraComponent.h"
 #include "CameraChangerComponent.h"
 #include "FlyingCameraController.h"
-#include "MenuText.h"
 #include "Squares.h"
 #include "BattleFieldManager.h"
-#include "MenuUI.h"
-#include "MonitorSelectUI.h"
 #include "EnemyAIManager.h"
 #include "TurnUI.h"
 #include "ForestTerrain.h"
@@ -43,7 +40,6 @@
 #include "EffectGenerator.h"
 #include "PlayerFBXs.h"
 #include "BattleCameraController.h"
-#include "LoadScene.h"
 
 void SceneManager::ClearSceneObjects()
 {
@@ -487,9 +483,6 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 
 #pragma region UI
 				cameraObj = new GameObject(new CharacterData());
-				MenuText* m_UIRender = new MenuText();
-				MenuUI* m_MoniterRender = new MenuUI();
-				MonitorSelectUI* m_MoniSelRender = new MonitorSelectUI();
 				TurnUI* m_TurnUI = new TurnUI();
 				LogHUD* m_LogHUD = new LogHUD();
 				LogHUDW* m_LogHUDW = new LogHUDW();
@@ -500,12 +493,9 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 				TurnEndW* m_TurnEndW = new TurnEndW();
 				ResultUI* m_ResultUI = new ResultUI();
 
-				m_CameraComponents[L"HUDCamera"] = m_UIRender;	//HUD用カメラをメニューに渡す
-				m_CameraComponents[L"BackGroundHUDCamera"] = m_UIRender;	//同じ範囲を描画するので、背景用もここに渡す
+				m_CameraComponents[L"HUDCamera"] = m_HUDManager;	//HUD用カメラをメニューに渡す
+				m_CameraComponents[L"BackGroundHUDCamera"] = m_HUDManager;	//同じ範囲を描画するので、背景用もここに渡す
 
-				cameraObj->addComponent(m_UIRender);
-				cameraObj->addComponent(m_MoniterRender);
-				cameraObj->addComponent(m_MoniSelRender);
 				cameraObj->addComponent(m_TurnUI);
 				cameraObj->addComponent(m_LogHUD);
 				cameraObj->addComponent(m_LogHUDW);
@@ -519,9 +509,6 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 				//==================HUDマネージャ追加==================
 				cameraObj->addComponent(m_HUDManager);
 
-				BFMng->SetMenuText(m_UIRender);
-				BFMng->SetMenuUI(m_MoniterRender);
-				BFMng->SetMenuSelectUI(m_MoniSelRender);
 				BFMng->SetLogHUD(m_LogHUD);
 				BFMng->SetLogHUDText(m_LogHUDW);
 				BFMng->SetDamageHUD(m_DamageHUD);

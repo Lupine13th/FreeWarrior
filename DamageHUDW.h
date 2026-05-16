@@ -2,7 +2,6 @@
 
 #include "GameObject.h"
 #include "SpriteCharacter.h"
-#include "MenuUI.h"
 #include "BattleFieldManager.h"
 #include "WordList.h"
 #include "TimeManager.h"

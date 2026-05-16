@@ -26,8 +26,6 @@ class Abilities;
 #include "Squares.h"
 #include "GameObject.h"
 #include "FieldCharacter.h"
-#include "MenuUI.h"
-#include "MonitorSelectUI.h"
 #include "Abilities.h"
 #include "LogHUD.h"
 #include "LogHUDW.h"
@@ -36,7 +34,6 @@ class Abilities;
 #include "DamageHUDW.h"
 #include "TurnEndUI.h"
 #include "OpeningAnimHUD.h"
-#include "MenuText.h"
 #include "ResultUI.h"
 #include "TurnUI.h"
 #include "HUDManager.h"
@@ -161,9 +158,6 @@ private:
 	AbillityMenuState m_AbillityMenuState = AbillityMenuState::None;	//アビリティメニューの状態
 
 	//==========Pointer==========
-	MenuUI* m_MenuUI;
-	MonitorSelectUI* m_MenuSelectUI;
-	//StatusHUD* m_StatusHUD;
 	StatusWords* m_StatusText;
 	TerrainHUD* m_TerrainHUD;
 	MenuText* m_MenuText;
@@ -194,8 +188,6 @@ public:
 	void FinishAction() override;
 
 	//==========Setter==========
-	void SetMenuUI(MenuUI* MenuUI);
-	void SetMenuSelectUI(MonitorSelectUI* MonitorSelectUI);
 	void SetStatusText(StatusWords* StatusWords);
 	void SetTerrainHUD(TerrainHUD* TerrainHUD);
 	void SetMenuText(MenuText* MenuText);
@@ -286,14 +278,6 @@ public:
 	vector<Squares*> GetFieldSquaresList()
 	{
 		return m_FieldSquaresList;
-	}
-	MenuUI* GetMenuUI()
-	{
-		return m_MenuUI;
-	}
-	MonitorSelectUI* GetMonitorSelectUI()
-	{
-		return m_MenuSelectUI;
 	}
 	StatusWords* GetStatusText()
 	{

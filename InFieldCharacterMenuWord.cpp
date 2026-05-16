@@ -1,7 +1,4 @@
 ﻿#include "InFieldCharacterMenuWord.h"
-
-#include "MenuText.h"
-
 #include <MyAccessHub.h>
 #include <D3D12Helper.h>
 #include <chrono>
