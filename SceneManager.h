@@ -121,5 +121,4 @@ public:
 
 	void GenerateEquipment(SoldiersType type, PlayerBase* playerBase, Admin admin);
 
-	bool IsLoading = true;
 };

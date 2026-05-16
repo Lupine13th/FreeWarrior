@@ -44,6 +44,16 @@ void HUDManager::InitAction()
     SuperiorityGaugeHUD* superiorityGaugeHUD = new SuperiorityGaugeHUD();   //勢力ゲージHUD
     GetGameObject()->addComponent(superiorityGaugeHUD);
     AddHUDObject("SuperiorityGaugeHUD", superiorityGaugeHUD);
+
+    LoadAnimationHUD* loadAnimationHUD = new LoadAnimationHUD();   //ロードアニメーションHUD
+    GetGameObject()->addComponent(loadAnimationHUD);
+    AddHUDObject("LoadAnimationHUD", loadAnimationHUD);
+
+    MyAccessHub::SetLoadAnimationHUD(loadAnimationHUD);
+
+    MainMenuHUD* mainMenuHUD = new MainMenuHUD();   //メインメニューHUD
+    GetGameObject()->addComponent(mainMenuHUD);
+    AddHUDObject("MainMenuHUD", mainMenuHUD);
 }
 
 bool HUDManager::FrameAction()
@@ -384,7 +394,7 @@ void StatusHUD::InitAction()
         m_SpriteList[i] = std::make_unique<SpriteCharacter>();
         m_SpriteList[i]->SetCameraLabel(L"HUDCamera", 0);
         m_SpriteList[i]->SetColor(1.0f, 1.0f, 1.0f, 1);
-        m_SpriteList[i]->SetGraphicsPipeLine(L"AlphaSprite");
+        m_SpriteList[i]->SetGraphicsPipeLine(L"Sprite");
         m_SpriteList[i]->SetSpritePattern(0, 1, 1, m_PatternRect);
         m_SpriteList[i]->setSpriteIndex(0);
 
@@ -406,7 +416,7 @@ void StatusHUD::InitAction()
             m_SpriteList[i]->SetTextureId(L"BrownTelevisiomnFrameImage");
             break;
         case 3:     //テレビの背景
-            m_SpriteList[i]->setPosition(380.0f, 225.0f, OrderInLayer::Text + 0.2f);
+            m_SpriteList[i]->setPosition(380.0f, 225.0f, OrderInLayer::BackGround + 0.2f);
             m_SpriteList[i]->SetCameraLabel(L"BackGroundHUDCamera", 0); //背景用ラベルに切り替え
             m_SpriteList[i]->setScale(200.0f, 150.0f, 0.1f);
             m_SpriteList[i]->SetTextureId(L"Sprite00");
@@ -419,7 +429,7 @@ void StatusHUD::InitAction()
 bool StatusHUD::FrameAction()
 {
     MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
-    GraphicsPipeLineObjectBase* pipe = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
+    GraphicsPipeLineObjectBase* pipe = engine->GetPipelineManager()->GetPipeLineObject(L"Sprite");
     SceneManager* p_scene = static_cast<SceneManager*>(MyAccessHub::GetMyGameEngine()->GetSceneController());
 
     Squares* selectSquare = BFMng->GetFieldSquaresList()[BFMng->GetSelectID()];
@@ -670,7 +680,7 @@ int HUDTextObject::MakeSpriteString(int startIndex, float ltX, float ltY, float 
             count++;
         }
 
-        ltX += width;
+        ltX += width + m_TextDuration;
 
         str++;
     }
@@ -1374,6 +1384,8 @@ void MainMenuHUD::InitAction()
     m_SpriteCount = 50;
     SetFont(m_FontTextureId, m_FontWordList);
 
+    m_TextDuration = 8.0f;
+
     for (int i = 0; i < 25; i++)
     {
         m_SpriteList.push_back(std::make_unique<SpriteCharacter>());
@@ -1383,47 +1395,272 @@ void MainMenuHUD::InitAction()
         m_SpriteList[i]->SetGraphicsPipeLine(L"AlphaSprite");
         m_SpriteList[i]->SetSpritePattern(0, 1, 1, m_PatternRect);
         m_SpriteList[i]->setSpriteIndex(0);
-
         
-        if (i < 18)
+        if (i < 18) //0～17はテキストを表示する場所
         {
             m_SpriteList[i]->SetTextureId(L"NixieTubesTexture");
             m_SpriteList[i]->setScale(110.0f, 90.0f, 0.1f);
         }
-        else if (i < 23)
+        else if (i < 23)    //18～22は表示部分の基盤の柱
         {
             m_SpriteList[i]->SetTextureId(L"NixieBaseTexture");
-            m_SpriteList[i]->setScale(250.0f, 250.0f, 1.0f);
+            m_SpriteList[i]->setScale(250.0f, 250.0f, 0.1f);
         }
-        else if (i < 24)
+        else if (i < 24)    //23はメニュー部分の基盤
         {
             m_SpriteList[i]->SetTextureId(L"MenuBaseTexture");
-            m_SpriteList[i]->setScale(200.0f, 330.0f, 1.0f);
+            m_SpriteList[i]->setScale(200.0f, 330.0f, 0.1f);
         }
-        else if (i < 25)
+		else if (i < 25)    //24はゲージ部分の基盤
         {
             m_SpriteList[i]->SetTextureId(L"NixieGageTexture");
-            m_SpriteList[i]->setScale(300.0f, 300.0f, 1.0f);
-        }
-
-        switch (i)
-        {
-        case 0:
-            /*m_SpriteList[i]->setPosition(kBackGroundPos.x, kBackGroundPos.y, OrderInLayer::BackGround);
-            m_SpriteList[i]->setScale(960.0f, 950.0f, 0.1f);*/
-            
-            break;
+            m_SpriteList[i]->setScale(300.0f, 300.0f, 0.1f);
         }
     }
 
-    m_TextList["攻撃側"] = (L"");
-    m_TextList["防御側"] = (L"");
+    //=====================文字用ニキシー管のポジション=========================
+    m_SpriteList[0]->setPosition(kNixieTubeDefaultPositionX[1], kNixieTubePositionY[0], m_PosZ + 0.5f);    //攻
+    m_SpriteList[1]->setPosition(kNixieTubeDefaultPositionX[2], kNixieTubePositionY[0], m_PosZ + 0.5f);    //撃
 
-    SetAnimationState(AnimationState::Init);
+    m_SpriteList[2]->setPosition(kNixieTubeDefaultPositionX[1], kNixieTubePositionY[1], m_PosZ + 0.5f);    //移
+    m_SpriteList[3]->setPosition(kNixieTubeDefaultPositionX[2], kNixieTubePositionY[1], m_PosZ + 0.5f);    //動
+
+    m_SpriteList[4]->setPosition(kNixieTubeDefaultPositionX[1], kNixieTubePositionY[2], m_PosZ + 0.5f);    //行
+    m_SpriteList[5]->setPosition(kNixieTubeDefaultPositionX[2], kNixieTubePositionY[2], m_PosZ + 0.5f);    //動
+
+    m_SpriteList[6]->setPosition(kNixieTubeDefaultPositionX[1], kNixieTubePositionY[3], m_PosZ + 0.5f);    //待
+    m_SpriteList[7]->setPosition(kNixieTubeDefaultPositionX[2], kNixieTubePositionY[3], m_PosZ + 0.5f);    //機
+
+    m_SpriteList[8]->setPosition(kNixieTubeDefaultPositionX[1], kNixieTubePositionY[4], m_PosZ + 0.5f);    //キ
+    m_SpriteList[9]->setPosition(kNixieTubeDefaultPositionX[2], kNixieTubePositionY[4], m_PosZ + 0.5f);    //ャ
+    m_SpriteList[10]->setPosition(kNixieTubeDefaultPositionX[3], kNixieTubePositionY[4], m_PosZ + 0.5f);   //ン
+    m_SpriteList[11]->setPosition(kNixieTubeDefaultPositionX[4], kNixieTubePositionY[4], m_PosZ + 0.5f);   //セ
+    m_SpriteList[12]->setPosition(kNixieTubeDefaultPositionX[5], kNixieTubePositionY[4], m_PosZ + 0.5f);   //ル
+
+    //=====================矢印用ニキシー管のポジション=========================
+    m_SpriteList[13]->setPosition(kNixieTubeDefaultPositionX[0], kNixieTubePositionY[0], m_PosZ + 0.5f);
+    m_SpriteList[14]->setPosition(kNixieTubeDefaultPositionX[0], kNixieTubePositionY[1], m_PosZ + 0.5f);
+    m_SpriteList[15]->setPosition(kNixieTubeDefaultPositionX[0], kNixieTubePositionY[2], m_PosZ + 0.5f);
+    m_SpriteList[16]->setPosition(kNixieTubeDefaultPositionX[0], kNixieTubePositionY[3], m_PosZ + 0.5f);
+    m_SpriteList[17]->setPosition(kNixieTubeDefaultPositionX[0], kNixieTubePositionY[4], m_PosZ + 0.5f);
+
+    //=====================ニキシー管の基盤部分ポジション=========================
+    m_SpriteList[18]->setPosition(kNixieBaseDefaultPositionX, kNixieBasePositionY[0], m_PosZ);
+    m_SpriteList[19]->setPosition(kNixieBaseDefaultPositionX, kNixieBasePositionY[1], m_PosZ);
+    m_SpriteList[20]->setPosition(kNixieBaseDefaultPositionX, kNixieBasePositionY[2], m_PosZ);
+    m_SpriteList[21]->setPosition(kNixieBaseDefaultPositionX, kNixieBasePositionY[3], m_PosZ);
+    m_SpriteList[22]->setPosition(kNixieBaseDefaultPositionX, kNixieBasePositionY[4], m_PosZ);
+
+    //=====================メニューの基盤部分のポジション=========================
+    m_SpriteList[23]->setPosition(kMenuBaseDefaultPositionX, kMenuBasePositionY, m_PosZ);
+
+    //=====================メニューのバーのポジション=========================
+    m_SpriteList[24]->setPosition(kMenuGageDefaultPositionX, kMenuGagePositionY[0], m_PosZ + 0.2f);
+
+    m_TextList["攻撃"] = (L"攻撃");
+    m_TextList["移動"] = (L"移動");
+    m_TextList["行動"] = (L"行動");
+    m_TextList["待機"] = (L"待機");
+    m_TextList["キャンセル"] = (L"キャンセル");
+    m_TextList[">"] = (L">");
 }
 
 bool MainMenuHUD::FrameAction()
 {
+    MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
+    GraphicsPipeLineObjectBase* pipeline = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
+
+    int renderCount = 0;
+
+    int count = 0;
+
+    for (int i = m_ActiveTweenList.size() - 1; i >= 0; --i)
+    {
+        m_ActiveTweenList[i]->Update(m_TimeManager->GetDeltaTime());
+        if (!m_ActiveTweenList[i]->IsActive())
+        {
+            // Tweenが終了したらリストから削除
+            m_ActiveTweenList.erase(m_ActiveTweenList.begin() + i);
+        }
+    }
+
+    switch (m_AnimationState)
+    {
+    default:
+		break;
+    case AnimationState::OnInit:
+
+        if (m_MenuAnimationCount == 0.0f)   //最初のフレームでメニュー全体を動かす
+        {
+            SetEasingAnimation(m_SpriteList[0].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[1], kNixieTubeMovedPositionX[1], kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[1].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[2], kNixieTubeMovedPositionX[2], kMenuAnimationTime, Tween::EaseInQuad);
+
+            SetEasingAnimation(m_SpriteList[2].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[1], kNixieTubeMovedPositionX[1], kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[3].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[2], kNixieTubeMovedPositionX[2], kMenuAnimationTime, Tween::EaseInQuad);
+
+            SetEasingAnimation(m_SpriteList[4].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[1], kNixieTubeMovedPositionX[1], kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[5].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[2], kNixieTubeMovedPositionX[2], kMenuAnimationTime, Tween::EaseInQuad);
+
+            SetEasingAnimation(m_SpriteList[6].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[1], kNixieTubeMovedPositionX[1], kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[7].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[2], kNixieTubeMovedPositionX[2], kMenuAnimationTime, Tween::EaseInQuad);
+
+            SetEasingAnimation(m_SpriteList[8].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[1], kNixieTubeMovedPositionX[1], kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[9].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[2], kNixieTubeMovedPositionX[2], kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[10].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[3], kNixieTubeMovedPositionX[3], kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[11].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[4], kNixieTubeMovedPositionX[4], kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[12].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[5], kNixieTubeMovedPositionX[5], kMenuAnimationTime, Tween::EaseInQuad);
+
+            SetEasingAnimation(m_SpriteList[13].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[0], kNixieTubeMovedPositionX[0], kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[14].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[0], kNixieTubeMovedPositionX[0], kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[15].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[0], kNixieTubeMovedPositionX[0], kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[16].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[0], kNixieTubeMovedPositionX[0], kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[17].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[0], kNixieTubeMovedPositionX[0], kMenuAnimationTime, Tween::EaseInQuad);
+
+            SetEasingAnimation(m_SpriteList[18].get(), EasingVector::Horizontal, kNixieBaseDefaultPositionX, kNixieBaseMovedPositionX, kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[19].get(), EasingVector::Horizontal, kNixieBaseDefaultPositionX, kNixieBaseMovedPositionX, kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[20].get(), EasingVector::Horizontal, kNixieBaseDefaultPositionX, kNixieBaseMovedPositionX, kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[21].get(), EasingVector::Horizontal, kNixieBaseDefaultPositionX, kNixieBaseMovedPositionX, kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[22].get(), EasingVector::Horizontal, kNixieBaseDefaultPositionX, kNixieBaseMovedPositionX, kMenuAnimationTime, Tween::EaseInQuad);
+
+            SetEasingAnimation(m_SpriteList[23].get(), EasingVector::Horizontal, kMenuBaseDefaultPositionX, kMenuBaseMovedPositionX, kMenuAnimationTime, Tween::EaseInQuad);
+        }
+		else if (m_MenuAnimationCount > kMenuAnimationTime) //メニュー全体のアニメーション終了後
+        {
+			SetAnimationState(AnimationState::Init);
+        }
+
+        renderCount = 24;
+
+		m_MenuAnimationCount += m_TimeManager->GetDeltaTime();
+
+        break;
+
+    case AnimationState::Init:  //ゲージのアニメーション
+        m_SpriteList[24]->setPosition(kMenuGageDefaultPositionX, kMenuGagePositionY[BFMng->GetMenuSelectIndex()], m_PosZ + 0.5f);                                              //Y軸を調整
+        SetEasingAnimation(m_SpriteList[24].get(), EasingVector::Horizontal, kMenuGageDefaultPositionX, kMenuGageMovedPositionX, kMenuAnimationTime, Tween::EaseInQuad);//X軸のアニメーション
+
+        renderCount = 25;
+
+        m_MenuAnimationCount = 0.0f;
+
+        SetAnimationState(AnimationState::Run);
+        break;
+    case AnimationState::Run:   //動きなし
+        renderCount = 25;
+        break;
+    case AnimationState::Finish:   //戻るアニメーション
+
+        if (m_MenuAnimationCount == 0.0f)   //最初のフレームでメニュー全体を動かす
+        {
+            SetEasingAnimation(m_SpriteList[0].get(), EasingVector::Horizontal, kNixieTubeMovedPositionX[1], kNixieTubeDefaultPositionX[1], kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[1].get(), EasingVector::Horizontal, kNixieTubeMovedPositionX[2], kNixieTubeDefaultPositionX[2], kMenuAnimationTime, Tween::EaseInQuad);
+
+            SetEasingAnimation(m_SpriteList[2].get(), EasingVector::Horizontal, kNixieTubeMovedPositionX[1], kNixieTubeDefaultPositionX[1], kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[3].get(), EasingVector::Horizontal, kNixieTubeMovedPositionX[2], kNixieTubeDefaultPositionX[2], kMenuAnimationTime, Tween::EaseInQuad);
+
+            SetEasingAnimation(m_SpriteList[4].get(), EasingVector::Horizontal, kNixieTubeMovedPositionX[1], kNixieTubeDefaultPositionX[1], kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[5].get(), EasingVector::Horizontal, kNixieTubeMovedPositionX[2], kNixieTubeDefaultPositionX[2], kMenuAnimationTime, Tween::EaseInQuad);
+
+            SetEasingAnimation(m_SpriteList[6].get(), EasingVector::Horizontal, kNixieTubeMovedPositionX[1], kNixieTubeDefaultPositionX[1], kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[7].get(), EasingVector::Horizontal, kNixieTubeMovedPositionX[2], kNixieTubeDefaultPositionX[2], kMenuAnimationTime, Tween::EaseInQuad);
+
+            SetEasingAnimation(m_SpriteList[8].get(), EasingVector::Horizontal, kNixieTubeMovedPositionX[1], kNixieTubeDefaultPositionX[1], kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[9].get(), EasingVector::Horizontal, kNixieTubeMovedPositionX[2], kNixieTubeDefaultPositionX[2], kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[10].get(), EasingVector::Horizontal, kNixieTubeMovedPositionX[3], kNixieTubeDefaultPositionX[3], kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[11].get(), EasingVector::Horizontal, kNixieTubeMovedPositionX[4], kNixieTubeDefaultPositionX[4], kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[12].get(), EasingVector::Horizontal, kNixieTubeMovedPositionX[5], kNixieTubeDefaultPositionX[5], kMenuAnimationTime, Tween::EaseInQuad);
+
+            SetEasingAnimation(m_SpriteList[13].get(), EasingVector::Horizontal, kNixieTubeMovedPositionX[0], kNixieTubeDefaultPositionX[0], kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[14].get(), EasingVector::Horizontal, kNixieTubeMovedPositionX[0], kNixieTubeDefaultPositionX[0], kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[15].get(), EasingVector::Horizontal, kNixieTubeMovedPositionX[0], kNixieTubeDefaultPositionX[0], kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[16].get(), EasingVector::Horizontal, kNixieTubeMovedPositionX[0], kNixieTubeDefaultPositionX[0], kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[17].get(), EasingVector::Horizontal, kNixieTubeMovedPositionX[0], kNixieTubeDefaultPositionX[0], kMenuAnimationTime, Tween::EaseInQuad);
+
+            SetEasingAnimation(m_SpriteList[18].get(), EasingVector::Horizontal, kNixieBaseMovedPositionX, kNixieBaseDefaultPositionX, kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[19].get(), EasingVector::Horizontal, kNixieBaseMovedPositionX, kNixieBaseDefaultPositionX, kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[20].get(), EasingVector::Horizontal, kNixieBaseMovedPositionX, kNixieBaseDefaultPositionX, kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[21].get(), EasingVector::Horizontal, kNixieBaseMovedPositionX, kNixieBaseDefaultPositionX, kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[22].get(), EasingVector::Horizontal, kNixieBaseMovedPositionX, kNixieBaseDefaultPositionX, kMenuAnimationTime, Tween::EaseInQuad);
+
+            SetEasingAnimation(m_SpriteList[23].get(), EasingVector::Horizontal, kMenuBaseMovedPositionX, kMenuBaseDefaultPositionX, kMenuAnimationTime, Tween::EaseInQuad);
+
+            m_MenuAnimationCount += m_TimeManager->GetDeltaTime();
+        }
+        else if (m_MenuAnimationCount < kMenuAnimationTime) //メニュー全体のアニメーション終了後
+        {
+            m_MenuAnimationCount += m_TimeManager->GetDeltaTime();
+        }
+        else if (m_MenuAnimationCount > kMenuAnimationTime) //メニュー全体のアニメーション終了後
+        {
+            SetAnimationState(AnimationState::None);
+            m_MenuAnimationCount = 0.0f;
+        }
+
+        renderCount = 24;
+
+        break;
+    }
+
+    //攻撃表示
+    if (BFMng->GetInLengeEnemyCount() > 0)
+    {
+        count = MakeSpriteString(count, kMenuTextPositionX, kMenuTextPositionY[0], 32, 54, m_TextList["攻撃"], XMFLOAT3(1.0f, 1.0f, 1.0f));
+    }
+
+    //移動表示
+    count = MakeSpriteString(count, kMenuTextPositionX, kMenuTextPositionY[1], 32, 54, m_TextList["移動"], XMFLOAT3(1.0f, 1.0f, 1.0f));
+
+    //アビリティ表示
+    if (BFMng->GetInLengeEnemyCount() > 0)
+    {
+        count = MakeSpriteString(count, kMenuTextPositionX, kMenuTextPositionY[2], 32, 54, m_TextList["行動"], XMFLOAT3(1.0f, 1.0f, 1.0f));
+    }
+
+    //待機表示
+    count = MakeSpriteString(count, kMenuTextPositionX, kMenuTextPositionY[3], 32, 54, m_TextList["待機"], XMFLOAT3(1.0f, 1.0f, 1.0f));
+
+    //キャンセル表示
+    count = MakeSpriteString(count, kMenuTextPositionX, kMenuTextPositionY[4], 32, 54, m_TextList["キャンセル"], XMFLOAT3(1.0f, 1.0f, 1.0f));
+
+    //矢印表示
+    float arrowPositionY = 0.0f;
+
+    //メニューの矢印のY座標を更新
+    switch (BFMng->GetMenuSelectIndex())
+    {
+    default:
+        break;
+    case 0:
+        arrowPositionY = kMenuTextPositionY[0];
+        break;
+    case 1:
+        arrowPositionY = kMenuTextPositionY[1];
+        break;
+    case 2:
+        arrowPositionY = kMenuTextPositionY[2];
+        break;
+    case 3:
+        arrowPositionY = kMenuTextPositionY[3];
+        break;
+    case 4:
+        arrowPositionY = kMenuTextPositionY[4];
+        break;
+    }
+
+    count = MakeSpriteString(count, kMenuArrowPositionX, arrowPositionY, 32, 54, m_TextList[">"], XMFLOAT3(1.0f, 1.0f, 1.0f));
+
+    for (int i = 0; i < renderCount; i++)
+    {
+        pipeline->AddRenderObject(m_SpriteList[i].get());
+    }
+
+    if (m_AnimationState == AnimationState::Run || m_AnimationState == AnimationState::Init)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            pipeline->AddRenderObject(m_WordSpriteList[i].get());
+        }
+    }
     return true;
 }
 
@@ -1641,4 +1878,82 @@ void SuperiorityGaugeHUD::SetGagePercent(XMFLOAT2 strengthValues)
 
     m_StartGageSizeX = { 300.0f * m_CurrentGagePercent, 300.0f - 300.0f * m_CurrentGagePercent };   //ゲージの現在のサイズを計算
     m_EndGageSizeX = { 300.0f * m_NextGagePercent , 300.0f - 300.0f * m_NextGagePercent };          //ゲージの現在のサイズを計算
+}
+
+void LoadAnimationHUD::InitAction()
+{
+    XMFLOAT4 pattern(0.0f, 0.0f, 1.0f, 1.0f);
+
+    m_FontTextureId = L"JPNHUDTexture";
+    m_FontWordList = m_WordList.m_chListJ;
+    m_SpriteCount = 50;
+    SetFont(m_FontTextureId, m_FontWordList);
+
+    for (int i = 0; i < 1; i++)
+    {
+        m_SpriteList.push_back(std::make_unique<SpriteCharacter>());
+        m_SpriteList[i]->SetTextureId(L"Sprite00");
+        m_SpriteList[i]->SetCameraLabel(L"HUDCamera", 0);
+        m_SpriteList[i]->SetGraphicsPipeLine(L"AlphaSprite");
+        m_SpriteList[i]->SetSpritePattern(0, 1, 1, pattern);
+        m_SpriteList[i]->setSpriteIndex(0);
+        m_SpriteList[i]->SetColor(0.0f, 0.0f, 0.0f, 1);
+    }
+
+    //背景
+    m_SpriteList[0]->setScale(1000.0f, 800.0f, 0.1f);
+    m_SpriteList[0]->setPosition(0.0f, 0.0f, 1.0f);
+}
+
+bool LoadAnimationHUD::FrameAction()
+{
+    if (!MyAccessHub::GetMyGameEngine()->GetSceneController()->GetIsLoading())
+    {
+        return true;
+    }
+
+    MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
+    GraphicsPipeLineObjectBase* pipeline = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
+    int count = 0;
+
+    if (m_AnimationCount < 0.2f)
+    {
+		m_TextList["ロードテキスト"] = L">データを送信中";
+    }
+    else if (m_AnimationCount < 0.4f)
+    {
+        m_TextList["ロードテキスト"] = L">データを送信中*";
+    }
+    else if (m_AnimationCount < 0.6f)
+    {
+        m_TextList["ロードテキスト"] = L">データを送信中**";
+    }
+    else if (m_AnimationCount < 0.8f)
+    {
+        m_TextList["ロードテキスト"] = L">データを送信中***";
+    }
+    else
+    {
+		m_AnimationCount = 0.0f;
+    }
+
+    count = MakeSpriteString(count, pos.x, pos.y, 40, 60, m_TextList["ロードテキスト"], XMFLOAT3( 1.0f, 1.0f, 0.7f ));
+
+    for (int i = 0; i < m_SpriteList.size(); i++)
+    {
+        pipeline->AddRenderObject(m_SpriteList[i].get());
+    }
+
+    for (int i = 0; i < count; i++)
+    {
+        pipeline->AddRenderObject(m_WordSpriteList[i].get());
+    }
+
+    m_AnimationCount += m_TimeManager->GetDeltaTime();
+
+    return true;
+}
+
+void LoadAnimationHUD::FinishAction()
+{
 }

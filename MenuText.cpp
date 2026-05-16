@@ -174,13 +174,13 @@ bool MenuText::FrameAction()
 	}
 
 	//メニューが表示中＆ディレイ後だったら描画
-	if (BFMng->GetMenuUI()->MenuUIenable && m_IsEnable && !BFMng->GetMenuUI()->CloseAnim)
-	{
-		for (int i = 0; i < count; i++)
-		{
-			pipeLine->AddRenderObject(m_Sprites[i].get());
-		}
-	}
+	//if (BFMng->GetMenuUI()->MenuUIenable && m_IsEnable && !BFMng->GetMenuUI()->CloseAnim)
+	//{
+	//	for (int i = 0; i < count; i++)
+	//	{
+	//		pipeLine->AddRenderObject(m_Sprites[i].get());
+	//	}
+	//}
 
 	return true;
 }

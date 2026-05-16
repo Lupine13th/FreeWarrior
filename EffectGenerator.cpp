@@ -761,7 +761,7 @@ void CircleEffect::InitAction()
 		spriteCharacter->setPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
 		spriteCharacter->setScale(m_SpriteScale, m_SpriteScale, m_SpriteScale);
 		spriteCharacter->SetColor(0, 0, 1, 1);
-		spriteCharacter->SetGraphicsPipeLine(L"AlphaSprite3D");
+		spriteCharacter->SetGraphicsPipeLine(L"Sprite");
 		spriteCharacter->SetTextureId(L"CircleTexture");
 		XMFLOAT4 uvPattern = { 0.0f, 0.0f, 1.0f, 1.0f };
 		spriteCharacter->SetSpritePattern(0, 1.0f, 1.0f, uvPattern);
@@ -774,7 +774,7 @@ void CircleEffect::InitAction()
 bool CircleEffect::FrameAction()
 {
 	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
-	GraphicsPipeLineObjectBase* pipeLine = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
+	GraphicsPipeLineObjectBase* pipeLine = engine->GetPipelineManager()->GetPipeLineObject(L"Sprite");
 
 	if (m_IsPlaying)
 	{

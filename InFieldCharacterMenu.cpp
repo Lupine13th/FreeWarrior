@@ -7,9 +7,6 @@
 
 using namespace std::chrono;
 
-#include "SceneManager.h"
-#include "SpriteCharacter.h"
-
 void InFieldCharacterMenu::InitAction()
 {
     MyGameEngine* engine = MyAccessHub::GetMyGameEngine();

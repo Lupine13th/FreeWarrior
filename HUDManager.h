@@ -109,6 +109,8 @@ class HUDTextObject : public HUDObject	//HUD(テキストあり)の親クラス
 protected:
 	int m_SpriteCount = 0;
 
+	float m_TextDuration = 0.0f;
+
 	const wchar_t* kWordListEnd;
 	const wchar_t* m_FontTextureId;
 	const wchar_t* m_FontWordList;
@@ -314,6 +316,10 @@ private:
 		L">",
 	};
 
+	const float kMenuArrowPositionX = -450.0f;
+
+	const float kMenuTextPositionX = -410.0f;
+
 	const vector<float> kMenuTextPositionY =
 	{
 		185.0f,
@@ -323,16 +329,20 @@ private:
 		-135.0f
 	};
 
+	const float kNixieBaseDefaultPositionX = -850.0f;
+
+	const float kNixieBaseMovedPositionX = -350.0f;
+
 	const vector<float> kNixieBasePositionY =
 	{
-		185.0f,
-		105.0f,
-		25.0f,
-		-55.0f,
-		-135.0f
+		140.0f,
+		60.0f,
+		-20.0f,
+		-100.0f,
+		-180.0f
 	};
 
-	const vector<float> kNixieTubePositionX =
+	const vector<float> kNixieTubeMovedPositionX =
 	{ 
 		-450.0f, 
 		-410.0f, 
@@ -340,6 +350,16 @@ private:
 		-330.0f, 
 		-290.0f, 
 		-250.0f 
+	};
+
+	const vector<float> kNixieTubeDefaultPositionX =
+	{ 
+		-950.0f, 
+		-910.0f, 
+		-870.0f, 
+		-830.0f, 
+		-790.0f, 
+		-750.0f 
 	};
 
 	const vector<float> kNixieTubePositionY = 
@@ -351,8 +371,30 @@ private:
 		-140.0f 
 	};
 
-	const float kTextPositionX = -410.0f;
-	const float kArrowPositionX = -450.0f;
+	const float kMenuBaseDefaultPositionX = -980.0f;
+
+	const float kMenuBaseMovedPositionX = -480.0f;
+
+	const float kMenuBasePositionY = 60.0f;
+
+	const float kMenuGageDefaultPositionX = -700.0f;
+
+	const float kMenuGageMovedPositionX = -350.0f;
+
+	const vector<float> kMenuGagePositionY =
+	{
+		143.0f,
+		63.0f,
+		-17.0f,
+		-97.0f,
+		-177.0f
+	};
+
+	const float m_PosZ = 2.0f;
+
+	const float kMenuAnimationTime = 0.5f;
+
+	float m_MenuAnimationCount = 0.0f;
 public:
 	void InitAction() override;
 	bool FrameAction() override;
@@ -401,3 +443,16 @@ public:
 	void SetGagePercent(XMFLOAT2 strengthValues);
 };
 
+class LoadAnimationHUD : public HUDTextObject	//ロード画面のテキスト＆背景
+{
+private:
+	//テキストの座標
+	XMFLOAT2 pos = { -400.0f, 250.0f } ;
+
+	//アニメーション時間
+	float m_AnimationCount = 0.0f;
+public:
+	void InitAction() override;
+	bool FrameAction() override;
+	void FinishAction() override;
+};

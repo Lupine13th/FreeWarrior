@@ -31,7 +31,7 @@ int DamageHUDW::MakeSpriteString(int startIndex, float ltX, float ltY, float wid
 	}
 
 	return count;
-}		//正常
+}
 
 void DamageHUDW::InitAction()
 {

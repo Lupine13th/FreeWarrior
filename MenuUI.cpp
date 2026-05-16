@@ -183,10 +183,10 @@ bool MenuUI::FrameAction()
             m_Sprite[17]->setPosition(posx[0], posy[4], m_PosZ);
         }
 
-        for (int i = 0; i < m_Sprite.size(); i++)
-        {
-            pipe->AddRenderObject(m_Sprite[i].get());
-        }
+        //for (int i = 0; i < m_Sprite.size(); i++)
+        //{
+        //    pipe->AddRenderObject(m_Sprite[i].get());
+        //}
         
     }
 

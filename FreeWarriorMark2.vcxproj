@@ -184,6 +184,7 @@
     <ClInclude Include="FieldCharacter.h" />
     <ClInclude Include="ForestTerrain.h" />
     <ClInclude Include="json.hpp" />
+    <ClInclude Include="LoadScene.h" />
     <ClInclude Include="MenuText.h" />
     <ClInclude Include="HillTerrain.h" />
     <ClInclude Include="HUDManager.h" />
@@ -254,6 +255,7 @@
     <ClCompile Include="FBXResourceManager.cpp" />
     <ClCompile Include="FieldCharacter.cpp" />
     <ClCompile Include="ForestTerrain.cpp" />
+    <ClCompile Include="LoadScene.cpp" />
     <ClCompile Include="MenuText.cpp" />
     <ClCompile Include="HillTerrain.cpp" />
     <ClCompile Include="HUDManager.cpp" />

@@ -105,131 +105,131 @@ void MonitorSelectUI::InitAction()
 bool MonitorSelectUI::FrameAction()
 {
 
-    MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
-    GraphicsPipeLineObjectBase* pipe = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
-    BattleFieldManager* BFMng = MyAccessHub::GetBFManager();
+    //MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
+    //GraphicsPipeLineObjectBase* pipe = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
+    //BattleFieldManager* BFMng = MyAccessHub::GetBFManager();
 
-    if (BFMng->GetMenuUI()->MenuUIenable)
-    {
-        if (!CloseAnimation)
-        {
-            if (firstAnim && !Animation)    //メニューUIが出てくるアニメ―ション
-            {
-                if (firstAnimCount < 0.5f)
-                {
-                    persent = (0.5f - firstAnimCount) / 0.5f;
-					Gageposx = -700.0f;
-                    MenuBaseposx = -480.0f - 500.0f * persent;
-                    NixieBaseposx = -350.0f - 500.0f * persent;
-                    firstAnimCount += m_TimeManager->GetDeltaTime();
-                }
-                else if (firstAnimCount > 0.5f)
-                {
-                    firstAnimCount = 0.0f;
-                    firstAnim = false;
-                    MenuBaseposx = -480.0f;
-                    NixieBaseposx = -350.0f;
-                    ResetAnim();
-                }
+    //if (BFMng->GetMenuUI()->MenuUIenable)
+    //{
+    //    if (!CloseAnimation)
+    //    {
+    //        if (firstAnim && !Animation)    //メニューUIが出てくるアニメ―ション
+    //        {
+    //            if (firstAnimCount < 0.5f)
+    //            {
+    //                persent = (0.5f - firstAnimCount) / 0.5f;
+				//	Gageposx = -700.0f;
+    //                MenuBaseposx = -480.0f - 500.0f * persent;
+    //                NixieBaseposx = -350.0f - 500.0f * persent;
+    //                firstAnimCount += m_TimeManager->GetDeltaTime();
+    //            }
+    //            else if (firstAnimCount > 0.5f)
+    //            {
+    //                firstAnimCount = 0.0f;
+    //                firstAnim = false;
+    //                MenuBaseposx = -480.0f;
+    //                NixieBaseposx = -350.0f;
+    //                ResetAnim();
+    //            }
 
-                m_Sprite[0]->setPosition(NixieBaseposx, 140.0f, 1.0f);
-                m_Sprite[1]->setPosition(NixieBaseposx, 60.0f, 1.0f);
-                m_Sprite[2]->setPosition(NixieBaseposx, -20.0f, 1.0f);
-                m_Sprite[3]->setPosition(NixieBaseposx, -100.0f, 1.0f);
-                m_Sprite[4]->setPosition(NixieBaseposx, -180.0f, 1.0f);
-                m_Sprite[5]->setPosition(MenuBaseposx, 60.0f, 0.5f);
-                m_Sprite[6]->setPosition(Gageposx, 60.0f, 0.5f);
+    //            m_Sprite[0]->setPosition(NixieBaseposx, 140.0f, 1.0f);
+    //            m_Sprite[1]->setPosition(NixieBaseposx, 60.0f, 1.0f);
+    //            m_Sprite[2]->setPosition(NixieBaseposx, -20.0f, 1.0f);
+    //            m_Sprite[3]->setPosition(NixieBaseposx, -100.0f, 1.0f);
+    //            m_Sprite[4]->setPosition(NixieBaseposx, -180.0f, 1.0f);
+    //            m_Sprite[5]->setPosition(MenuBaseposx, 60.0f, 0.5f);
+    //            m_Sprite[6]->setPosition(Gageposx, 60.0f, 0.5f);
 
-                for (int i = 0; i < m_Sprite.size(); i++)
-                {
-                    pipe->AddRenderObject(m_Sprite[i].get());
-                }
-            }
-            else if (!firstAnim && Animation)   //メニューUIのバーのアニメーション
-            {
-                if (AnimCount < 0.5f)
-                {
-                    persent = (0.5f - AnimCount) / 0.5f;
-                    Gageposx = -350.0f - 350.0f * persent;
-                    AnimCount += m_TimeManager->GetDeltaTime();
-                }
-                else if (AnimCount > 0.5f)
-                {
-                    AnimCount = 0.0f;
-                    Animation = false;
-                    Gageposx = -350.0f;
-                }
+    //            for (int i = 0; i < m_Sprite.size(); i++)
+    //            {
+    //                pipe->AddRenderObject(m_Sprite[i].get());
+    //            }
+    //        }
+    //        else if (!firstAnim && Animation)   //メニューUIのバーのアニメーション
+    //        {
+    //            if (AnimCount < 0.5f)
+    //            {
+    //                persent = (0.5f - AnimCount) / 0.5f;
+    //                Gageposx = -350.0f - 350.0f * persent;
+    //                AnimCount += m_TimeManager->GetDeltaTime();
+    //            }
+    //            else if (AnimCount > 0.5f)
+    //            {
+    //                AnimCount = 0.0f;
+    //                Animation = false;
+    //                Gageposx = -350.0f;
+    //            }
 
-                for (int i = 0; i < m_Sprite.size(); i++)
-                {
-                    pipe->AddRenderObject(m_Sprite[i].get());
-                }
-            }
-            else
-            {
-                for (int i = 0; i < m_Sprite.size(); i++)
-                {
-                    pipe->AddRenderObject(m_Sprite[i].get());
-                }
-            }
-        }
-        else
-        {
-            if (closeAnimCount < 0.5f)
-            {
-                persent = closeAnimCount / 0.5f;
-                MenuBaseposx = -480.0f - 500.0f * persent;
-                NixieBaseposx = -350.0f - 500.0f * persent;
-                closeAnimCount += m_TimeManager->GetDeltaTime();
-                //persent = closeAnimCount / 0.5f;
-            }
-            else if (closeAnimCount > 0.5f)
-            {
-                closeAnimCount = 0.0f;
-                CloseAnimation = false;
-                MenuBaseposx = -480.0f - 500.0f;
-                NixieBaseposx = -350.0f - 500.0f;
-            }
+    //            for (int i = 0; i < m_Sprite.size(); i++)
+    //            {
+    //                pipe->AddRenderObject(m_Sprite[i].get());
+    //            }
+    //        }
+    //        else
+    //        {
+    //            for (int i = 0; i < m_Sprite.size(); i++)
+    //            {
+    //                pipe->AddRenderObject(m_Sprite[i].get());
+    //            }
+    //        }
+    //    }
+    //    else
+    //    {
+    //        if (closeAnimCount < 0.5f)
+    //        {
+    //            persent = closeAnimCount / 0.5f;
+    //            MenuBaseposx = -480.0f - 500.0f * persent;
+    //            NixieBaseposx = -350.0f - 500.0f * persent;
+    //            closeAnimCount += m_TimeManager->GetDeltaTime();
+    //            //persent = closeAnimCount / 0.5f;
+    //        }
+    //        else if (closeAnimCount > 0.5f)
+    //        {
+    //            closeAnimCount = 0.0f;
+    //            CloseAnimation = false;
+    //            MenuBaseposx = -480.0f - 500.0f;
+    //            NixieBaseposx = -350.0f - 500.0f;
+    //        }
 
-            m_Sprite[0]->setPosition(NixieBaseposx, 140.0f, 1.0f);
-            m_Sprite[1]->setPosition(NixieBaseposx, 60.0f, 1.0f);
-            m_Sprite[2]->setPosition(NixieBaseposx, -20.0f, 1.0f);
-            m_Sprite[3]->setPosition(NixieBaseposx, -100.0f, 1.0f);
-            m_Sprite[4]->setPosition(NixieBaseposx, -180.0f, 1.0f);
-            m_Sprite[5]->setPosition(MenuBaseposx, 60.0f, 0.5f);
+    //        m_Sprite[0]->setPosition(NixieBaseposx, 140.0f, 1.0f);
+    //        m_Sprite[1]->setPosition(NixieBaseposx, 60.0f, 1.0f);
+    //        m_Sprite[2]->setPosition(NixieBaseposx, -20.0f, 1.0f);
+    //        m_Sprite[3]->setPosition(NixieBaseposx, -100.0f, 1.0f);
+    //        m_Sprite[4]->setPosition(NixieBaseposx, -180.0f, 1.0f);
+    //        m_Sprite[5]->setPosition(MenuBaseposx, 60.0f, 0.5f);
 
-            for (int i = 0; i < 6; i++)
-            {
-                if (i != 6)
-                {
-                    pipe->AddRenderObject(m_Sprite[i].get());
-                }
-            }
-        }
-        
+    //        for (int i = 0; i < 6; i++)
+    //        {
+    //            if (i != 6)
+    //            {
+    //                pipe->AddRenderObject(m_Sprite[i].get());
+    //            }
+    //        }
+    //    }
+    //    
 
-        //ゲージのアニメーション
-        switch (BFMng->GetMenuSelectIndex())
-        {
-        default:
-            break;
-        case 0:
-            m_Sprite[6]->setPosition(Gageposx, 143.0f, 1.5f);
-            break;
-        case 1:
-            m_Sprite[6]->setPosition(Gageposx, 63.0f, 1.5f);
-            break;
-        case 2:
-            m_Sprite[6]->setPosition(Gageposx, -17.0f, 1.5f);
-            break;
-        case 3:
-            m_Sprite[6]->setPosition(Gageposx, -97.0f, 1.5f);
-            break; 
-        case 4:
-            m_Sprite[6]->setPosition(Gageposx, -177.0f, 1.5f);
-            break; 
-        }
-    }
+    //    //ゲージのアニメーション
+    //    switch (BFMng->GetMenuSelectIndex())
+    //    {
+    //    default:
+    //        break;
+    //    case 0:
+    //        m_Sprite[6]->setPosition(Gageposx, 143.0f, 1.5f);
+    //        break;
+    //    case 1:
+    //        m_Sprite[6]->setPosition(Gageposx, 63.0f, 1.5f);
+    //        break;
+    //    case 2:
+    //        m_Sprite[6]->setPosition(Gageposx, -17.0f, 1.5f);
+    //        break;
+    //    case 3:
+    //        m_Sprite[6]->setPosition(Gageposx, -97.0f, 1.5f);
+    //        break; 
+    //    case 4:
+    //        m_Sprite[6]->setPosition(Gageposx, -177.0f, 1.5f);
+    //        break; 
+    //    }
+    //}
 	return true;
 }
 

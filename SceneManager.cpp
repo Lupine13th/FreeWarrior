@@ -43,6 +43,7 @@
 #include "EffectGenerator.h"
 #include "PlayerFBXs.h"
 #include "BattleCameraController.h"
+#include "LoadScene.h"
 
 void SceneManager::ClearSceneObjects()
 {
@@ -427,300 +428,6 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 		case static_cast<UINT>(GAME_SCENES::IN_GAME):
 			{
 				PipeLineManager* plMng = engine->GetPipelineManager();
-				
-				//背景の地形メッシュ生成
-				FBXCharacterData* terrainFbx = new FBXCharacterData();
-				if (FAILED(terrainFbx->LoadMainFBX(L"./Resources/fbx/TerrainSnowField.fbx", L"TerrainSample")))
-					return E_FAIL;
-				terrainFbx->setPosition(0.0f, -8.0f, 0.0f);
-				terrainFbx->SetGraphicsPipeLine(L"StaticFBX");
-				GameObject* terrainObj = new GameObject(terrainFbx);
-				TerrainComponent* trCom = new TerrainComponent();
-				terrainObj->addComponent(trCom);
-				AddSceneObject(terrainObj);
-				m_terrains.push_back(trCom);
-
-				//スカイドーム
-				FBXCharacterData* skydomeFbx = new FBXCharacterData();
-				if (FAILED(skydomeFbx->LoadMainFBX(L"./Resources/fbx/SkyDome001.fbx", L"SkyDome")))
-					return E_FAIL;
-
-				GameObject* skydomeObj = new GameObject(skydomeFbx);
-				SkyDomeComponent* skCom = new SkyDomeComponent();
-				skydomeObj->addComponent(skCom);
-
-				engine->AddGameObject(skydomeObj);
-
-
-				//フィールドマネージャ
-				CharacterData* FMngData = new CharacterData();
-				GameObject* FMngObj = new GameObject(FMngData);
-
-				FMngObj->addComponent(BFMng);
-
-				engine->AddGameObject(FMngObj);
-
-
-				//エフェクトジェネレータ
-				CharacterData* effectGenerator = new CharacterData();
-				GameObject* effectGeneratorObj = new GameObject(effectGenerator);
-
-				effectGeneratorObj->addComponent(m_EffectGenerator);
-
-				engine->AddGameObject(effectGeneratorObj);
-
-				m_EffectGenerator->GenerateMuzzleFlashEffect(L"MuzzleFlash");
-				m_EffectGenerator->GenerateCanonMuzzleFlashEffect(L"CanonMuzzleFlash");
-				m_EffectGenerator->GenerateExplosiveEffect(L"Explosive");
-				m_EffectGenerator->GenerateLargeExplosiveEffect(L"LargeExplosive01");
-				m_EffectGenerator->GenerateLargeExplosiveEffect(L"LargeExplosive02");
-				m_EffectGenerator->GenerateScoutEffect(L"Scout");
-				m_EffectGenerator->GenerateScoutedEffect(L"Scouted");
-				m_EffectGenerator->GenerateCircleEffect(L"Circle00");
-				m_EffectGenerator->GenerateCircleEffect(L"Circle01");
-				m_EffectGenerator->GenerateCircleEffect(L"Circle02");
-				m_EffectGenerator->GenerateCircleEffect(L"Circle03");
-				m_EffectGenerator->GenerateCircleEffect(L"Circle04");
-				
-
-				//戦場のマスを生成
-				for (int Y = 0; Y < 15; Y++)
-				{
-					for (int X = 0; X < 10; X++)
-					{
-						GameObject* spriteObj;
-						SpriteCharacter* spriteCharacter = new SpriteCharacter();
-						Squares* squares = new Squares;
-						spriteObj = new GameObject(spriteCharacter);
-
-						spriteCharacter->SetTextureId(L"TundraTexture");
-
-						spriteCharacter->AddCameraLabel(L"AttackerCamera");
-						spriteCharacter->AddCameraLabel(L"DefenderCamera");
-
-						spriteCharacter->SetColor(1, 1, 1, 1);
-						spriteCharacter->setPosition(SpposX, 1.0f, SpposY);
-						spriteCharacter->setRotation(90.0f, 0.0f, 0.0f);
-
-						squares->charaPosX = X;
-						squares->charaPosY = Y;
-
-						squares->SetSquareID(X + (Y * 10));
-
-						if (Y == 14)
-						{
-							squares->target = true;
-							spriteCharacter->SetColor(1.0f, 0.3f, 0.3f, 1);
-						}
-
-						squares->SqPos = XMFLOAT3(SpposX, 0, SpposY);
-
-						spriteCharacter->SetGraphicsPipeLine(L"AlphaSprite3D");
-
-						XMFLOAT4 uvPattern = { 0.0f, 0.0f, 1.0f, 1.0f };
-
-						spriteCharacter->SetSpritePattern(0, 10.0f, 10.0f, uvPattern);
-						spriteCharacter->setSpriteIndex(0);
-
-						spriteObj->addComponent(squares);
-
-						engine->AddGameObject(spriteObj);
-
-						BFMng->AddFieldSquare(squares);
-
-						SpposX += 5.0f;
-					}
-					SpposX = -25.0f;
-					SpposY += 5.0f;
-				}
-
-				BFMng->SetAlliesCharacterList(ally);
-				BFMng->SetEnemyCharacterList(enemy);
-
-				for (int i = 0; i < 5; i++)
-				{
-					SetCharaToSquares(BFMng->GetAlliesCharacterList()[i], BFMng->GetFieldSquaresList()[i * 2]);
-					switch (kPlayStates)
-					{
-					case PlayStates::Debug:
-						SetCharaToSquares(BFMng->GetEnemyCharacterList()[i], BFMng->GetFieldSquaresList()[i * 2 + 50]);
-						break;
-					case PlayStates::Release:
-						SetCharaToSquares(BFMng->GetEnemyCharacterList()[i], BFMng->GetFieldSquaresList()[i * 2 + 140]);
-						break;
-					}
-				}
-				
-				BFMng->SetTerrainData();
-
-				for (int Y = 0; Y < 15; Y++)
-				{
-					for (int X = 0; X < 10; X++)
-					{
-						if (BFMng->GetFieldSquaresList()[(X + (Y * 10))]->terrainname == Terrain::Forest)
-						{
-							//Forest用のFBX表示
-							GameObject* ForestObj;
-							FBXCharacterData* ForestFbx = new FBXCharacterData();
-							ForestTerrain* ForestTer = new ForestTerrain();
-							ForestObj = new GameObject(ForestFbx);
-							XMFLOAT3 pos = BFMng->GetCharaPos(BFMng->GetFieldSquaresList()[(X + (Y * 10))]);
-							ForestFbx->setPosition(pos.x, pos.y, pos.z);
-							ForestFbx->setRotation(0.0f, 0.0f, 0.0f);
-							ForestObj->addComponent(ForestTer);
-							engine->AddGameObject(ForestObj);
-						}
-
-						else if (BFMng->GetFieldSquaresList()[(X + (Y * 10))]->terrainname == Terrain::Hills)
-						{
-							//Hill用のFBX表示
-							GameObject* HillObj;
-							FBXCharacterData* HillFbx = new FBXCharacterData();
-							HillTerrain* HillTer = new HillTerrain();
-							HillObj = new GameObject(HillFbx);
-							XMFLOAT3 pos = BFMng->GetCharaPos(BFMng->GetFieldSquaresList()[(X + (Y * 10))]);
-							HillFbx->setPosition(pos.x, pos.y, pos.z);
-							HillFbx->setRotation(0.0f, 0.0f, 0.0f);
-							HillObj->addComponent(HillTer);
-							engine->AddGameObject(HillObj);
-						}
-
-						else if (BFMng->GetFieldSquaresList()[(X + (Y * 10))]->terrainname == Terrain::River)
-						{
-							//River用のFBX表示
-							GameObject* RiverObj;
-							FBXCharacterData* RiverFbx = new FBXCharacterData();
-							RiverTerrain* RiverTer = new RiverTerrain();
-							RiverObj = new GameObject(RiverFbx);
-							XMFLOAT3 pos = BFMng->GetCharaPos(BFMng->GetFieldSquaresList()[(X + (Y * 10))]);
-							RiverFbx->setPosition(pos.x, pos.y, pos.z);
-							RiverFbx->setRotation(0.0f, 0.0f, 0.0f);
-							RiverObj->addComponent(RiverTer);
-							engine->AddGameObject(RiverObj);
-						}
-
-						else if (BFMng->GetFieldSquaresList()[(X + (Y * 10))]->terrainname == Terrain::Tower)
-						{
-							//Tower用のFBX表示
-							GameObject* TowerObj;
-							FBXCharacterData* TowerFbx = new FBXCharacterData();
-							TowerTerrain* TowerTer = new TowerTerrain();
-							TowerObj = new GameObject(TowerFbx);
-							XMFLOAT3 pos = BFMng->GetCharaPos(BFMng->GetFieldSquaresList()[(X + (Y * 10))]);
-							TowerFbx->setPosition(pos.x, pos.y, pos.z);
-							TowerFbx->setRotation(0.0f, 0.0f, 0.0f);
-							TowerObj->addComponent(TowerTer);
-							engine->AddGameObject(TowerObj);
-						}
-					}
-				}
-
-				//====================味方キャラクターの3Dモデルの生成====================
-				for (int i = 0; i < BFMng->GetAlliesCharacterList().size(); i++)
-				{
-					auto characterData = BFMng->GetAlliesCharacterList()[i];
-					GameObject* rebelInfObj;
-					FBXCharacterData* rebelInfFbx = new FBXCharacterData(); //FBX用CharacterData
-					PlayerBase* rebelPlayer = nullptr;
-					switch (BFMng->GetAlliesCharacterList()[i]->CharaKind)
-					{
-					default:
-						//rebelPlayer = new UnityChanPlayer();
-						break;
-					case SoldiersType::infantry:
-						rebelPlayer = new InfantryPlayer();
-						break;
-					case SoldiersType::artillery:
-						rebelPlayer = new ArtilleryPlayer();
-						break;
-					case SoldiersType::machinegunner:
-						rebelPlayer = new MachinegunnerPlayer();
-						break;
-					case SoldiersType::scout:
-						rebelPlayer = new ScoutPlayer();
-						break;
-					case SoldiersType::armored:
-						rebelPlayer = new ArmoredPlayer();
-						break;
-					}
-
-					rebelPlayer->SetAdmin(Admin::Rebel);
-					characterData->SetPlayerBase(rebelPlayer);
-
-					rebelInfObj = new GameObject(rebelInfFbx); //FBXCharacterDataを持たせて初期化
-
-					XMFLOAT3 pos = BFMng->GetCharaPos(BFMng->GetFieldSquaresList()[BFMng->GetAlliesCharacterList()[i]->CharaPos]);
-					rebelInfFbx->setPosition(pos.x, pos.y ,pos.z);
-					rebelInfFbx->setRotation(0.0f, 0.0f, 0.0f);
-					BFMng->GetFieldSquaresList()[BFMng->GetAlliesCharacterList()[i]->CharaPos]->fbxD = rebelInfFbx;
-					BFMng->GetFieldSquaresList()[BFMng->GetAlliesCharacterList()[i]->CharaPos]->fbxD->playerData = rebelPlayer;
-
-					BFMng->GetAlliesCharacterList()[i]->CharaObj = rebelInfObj; //GameObjectポインタをキャラクターに登録
-
-					rebelInfObj->addComponent(rebelPlayer); //Unityちゃん本体コンポーネントをセット
-					engine->AddGameObject(rebelInfObj); //GameObjectをエンジンに登録
-
-					GenerateEquipment(characterData->CharaKind, rebelPlayer, Admin::Rebel);
-				}
-
-				//====================敵キャラクターの3Dモデルの生成====================
-				for (int i = 0; i < BFMng->GetEnemyCharacterList().size(); i++)
-				{
-					auto characterData = BFMng->GetEnemyCharacterList()[i];
-					GameObject* imperialInfObj;
-					FBXCharacterData* imperialInfFbx = new FBXCharacterData(); //FBX用CharacterData
-					PlayerBase* imperialPlayer = nullptr;
-
-					switch (BFMng->GetEnemyCharacterList()[i]->CharaKind)
-					{
-					default:
-						//imperialPlayer = new UnityChanPlayer();
-						break;
-					case SoldiersType::infantry:
-						imperialPlayer = new InfantryPlayer();
-						break;
-					case SoldiersType::artillery:
-						imperialPlayer = new ArtilleryPlayer();
-						break;
-					case SoldiersType::machinegunner:
-						imperialPlayer = new MachinegunnerPlayer();
-						break;
-					case SoldiersType::scout:
-						imperialPlayer = new ScoutPlayer();
-						break;
-					case SoldiersType::armored:
-						imperialPlayer = new ArmoredPlayer();
-						break;
-					}
-
-					imperialPlayer->SetAdmin(Admin::Imperial);
-					characterData->SetPlayerBase(imperialPlayer);
-
-					imperialInfObj = new GameObject(imperialInfFbx); //FBXCharacterDataを持たせて初期化
-
-					XMFLOAT3 pos = BFMng->GetCharaPos(BFMng->GetFieldSquaresList()[BFMng->GetEnemyCharacterList()[i]->CharaPos]);
-					imperialInfFbx->setPosition(pos.x, pos.y, pos.z);
-					imperialInfFbx->setRotation(0.0f, 180.0f, 0.0f);
-					BFMng->GetFieldSquaresList()[BFMng->GetEnemyCharacterList()[i]->CharaPos]->fbxD = imperialInfFbx;
-					BFMng->GetFieldSquaresList()[BFMng->GetEnemyCharacterList()[i]->CharaPos]->fbxD->playerData = imperialPlayer;
-
-					BFMng->GetEnemyCharacterList()[i]->CharaObj = imperialInfObj; //GameObjectポインタをキャラクターに登録
-
-					imperialInfObj->addComponent(imperialPlayer); //Unityちゃん本体コンポーネントをセット
-					engine->AddGameObject(imperialInfObj); //GameObjectをエンジンに登録
-
-					GenerateEquipment(characterData->CharaKind, imperialPlayer, Admin::Imperial);
-				}
-
-#pragma region AIManager
-				//AIマネージャ登録
-				CharacterData* AIMngData = new CharacterData();
-				GameObject* AIMngObj = new GameObject(AIMngData);
-
-				AIMngObj->addComponent(AIMng);
-
-				engine->AddGameObject(AIMngObj);
-#pragma endregion
 
 #pragma region Camera
 				//カメラ
@@ -746,7 +453,6 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 				CameraChangerComponent* camChanger = new CameraChangerComponent();
 				cameraObj->addComponent(camChanger);
 				camChanger->SetCameraController(flyCam);
-				//camChanger->SetCameraController(tpCam);
 				camChanger->ChangeCameraController(0);
 #pragma endregion
 
@@ -826,10 +532,325 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 				BFMng->SetTurnUI(m_TurnUI);
 				BFMng->SetAbiliteis(new Abilities());
 
+				////ロード画面＆UI用カメラ
+				//LoadScene* loadScene = new LoadScene();
+				//m_CameraComponents[L"HUDCamera"] = loadScene;	//HUD用カメラをロードシーンに渡す
+				//cameraObj->addComponent(loadScene);
+
 				engine->AddGameObject(cameraObj);
 
-#pragma endregion
+				engine->ManualRender();
 
+#pragma endregion
+				
+				//背景の地形メッシュ生成
+				FBXCharacterData* terrainFbx = new FBXCharacterData();
+				if (FAILED(terrainFbx->LoadMainFBX(L"./Resources/fbx/TerrainSnowField.fbx", L"TerrainSample")))
+					return E_FAIL;
+				terrainFbx->setPosition(0.0f, -8.0f, 0.0f);
+				terrainFbx->SetGraphicsPipeLine(L"StaticFBX");
+				GameObject* terrainObj = new GameObject(terrainFbx);
+				TerrainComponent* trCom = new TerrainComponent();
+				terrainObj->addComponent(trCom);
+				AddSceneObject(terrainObj);
+				m_terrains.push_back(trCom);
+
+				engine->ManualRender();
+
+				//スカイドーム
+				FBXCharacterData* skydomeFbx = new FBXCharacterData();
+				if (FAILED(skydomeFbx->LoadMainFBX(L"./Resources/fbx/SkyDome001.fbx", L"SkyDome")))
+					return E_FAIL;
+
+				GameObject* skydomeObj = new GameObject(skydomeFbx);
+				SkyDomeComponent* skCom = new SkyDomeComponent();
+				skydomeObj->addComponent(skCom);
+
+				engine->AddGameObject(skydomeObj);
+
+				engine->ManualRender();
+
+
+				//フィールドマネージャ
+				CharacterData* FMngData = new CharacterData();
+				GameObject* FMngObj = new GameObject(FMngData);
+
+				FMngObj->addComponent(BFMng);
+
+				engine->AddGameObject(FMngObj);
+
+				engine->ManualRender();
+
+
+				//エフェクトジェネレータ
+				CharacterData* effectGenerator = new CharacterData();
+				GameObject* effectGeneratorObj = new GameObject(effectGenerator);
+
+				effectGeneratorObj->addComponent(m_EffectGenerator);
+
+				engine->AddGameObject(effectGeneratorObj);
+
+				m_EffectGenerator->GenerateMuzzleFlashEffect(L"MuzzleFlash");
+				m_EffectGenerator->GenerateCanonMuzzleFlashEffect(L"CanonMuzzleFlash");
+				m_EffectGenerator->GenerateExplosiveEffect(L"Explosive");
+				m_EffectGenerator->GenerateLargeExplosiveEffect(L"LargeExplosive01");
+				m_EffectGenerator->GenerateLargeExplosiveEffect(L"LargeExplosive02");
+				m_EffectGenerator->GenerateScoutEffect(L"Scout");
+				m_EffectGenerator->GenerateScoutedEffect(L"Scouted");
+				m_EffectGenerator->GenerateCircleEffect(L"Circle00");
+				m_EffectGenerator->GenerateCircleEffect(L"Circle01");
+				m_EffectGenerator->GenerateCircleEffect(L"Circle02");
+				m_EffectGenerator->GenerateCircleEffect(L"Circle03");
+				m_EffectGenerator->GenerateCircleEffect(L"Circle04");
+
+				engine->ManualRender();
+				
+
+				//戦場のマスを生成
+				for (int Y = 0; Y < 15; Y++)
+				{
+					for (int X = 0; X < 10; X++)
+					{
+						GameObject* spriteObj;
+						SpriteCharacter* spriteCharacter = new SpriteCharacter();
+						Squares* squares = new Squares;
+						spriteObj = new GameObject(spriteCharacter);
+
+						spriteCharacter->SetTextureId(L"TundraTexture");
+
+						spriteCharacter->AddCameraLabel(L"AttackerCamera");
+						spriteCharacter->AddCameraLabel(L"DefenderCamera");
+
+						spriteCharacter->SetColor(1, 1, 1, 1);
+						spriteCharacter->setPosition(SpposX, 1.0f, SpposY);
+						spriteCharacter->setRotation(90.0f, 0.0f, 0.0f);
+
+						squares->charaPosX = X;
+						squares->charaPosY = Y;
+
+						squares->SetSquareID(X + (Y * 10));
+
+						if (Y == 14)
+						{
+							squares->target = true;
+							spriteCharacter->SetColor(1.0f, 0.3f, 0.3f, 1);
+						}
+
+						squares->SqPos = XMFLOAT3(SpposX, 0, SpposY);
+
+						spriteCharacter->SetGraphicsPipeLine(L"AlphaSprite3D");
+
+						XMFLOAT4 uvPattern = { 0.0f, 0.0f, 1.0f, 1.0f };
+
+						spriteCharacter->SetSpritePattern(0, 10.0f, 10.0f, uvPattern);
+						spriteCharacter->setSpriteIndex(0);
+
+						spriteObj->addComponent(squares);
+
+						engine->AddGameObject(spriteObj);
+
+						BFMng->AddFieldSquare(squares);
+
+						SpposX += 5.0f;
+
+						engine->ManualRender();
+					}
+					SpposX = -25.0f;
+					SpposY += 5.0f;
+				}
+
+				BFMng->SetAlliesCharacterList(ally);
+				BFMng->SetEnemyCharacterList(enemy);
+
+				for (int i = 0; i < 5; i++)
+				{
+					engine->ManualRender();
+					SetCharaToSquares(BFMng->GetAlliesCharacterList()[i], BFMng->GetFieldSquaresList()[i * 2]);
+					switch (kPlayStates)
+					{
+					case PlayStates::Debug:
+						SetCharaToSquares(BFMng->GetEnemyCharacterList()[i], BFMng->GetFieldSquaresList()[i * 2 + 50]);
+						break;
+					case PlayStates::Release:
+						SetCharaToSquares(BFMng->GetEnemyCharacterList()[i], BFMng->GetFieldSquaresList()[i * 2 + 140]);
+						break;
+					}
+				}
+				
+				BFMng->SetTerrainData();
+
+				for (int Y = 0; Y < 15; Y++)
+				{
+					for (int X = 0; X < 10; X++)
+					{
+						if (BFMng->GetFieldSquaresList()[(X + (Y * 10))]->terrainname == Terrain::Forest)
+						{
+							//Forest用のFBX表示
+							GameObject* ForestObj;
+							FBXCharacterData* ForestFbx = new FBXCharacterData();
+							ForestTerrain* ForestTer = new ForestTerrain();
+							ForestObj = new GameObject(ForestFbx);
+							XMFLOAT3 pos = BFMng->GetCharaPos(BFMng->GetFieldSquaresList()[(X + (Y * 10))]);
+							ForestFbx->setPosition(pos.x, pos.y, pos.z);
+							ForestFbx->setRotation(0.0f, 0.0f, 0.0f);
+							ForestObj->addComponent(ForestTer);
+							engine->AddGameObject(ForestObj);
+						}
+						else if (BFMng->GetFieldSquaresList()[(X + (Y * 10))]->terrainname == Terrain::Hills)
+						{
+							//Hill用のFBX表示
+							GameObject* HillObj;
+							FBXCharacterData* HillFbx = new FBXCharacterData();
+							HillTerrain* HillTer = new HillTerrain();
+							HillObj = new GameObject(HillFbx);
+							XMFLOAT3 pos = BFMng->GetCharaPos(BFMng->GetFieldSquaresList()[(X + (Y * 10))]);
+							HillFbx->setPosition(pos.x, pos.y, pos.z);
+							HillFbx->setRotation(0.0f, 0.0f, 0.0f);
+							HillObj->addComponent(HillTer);
+							engine->AddGameObject(HillObj);
+						}
+						else if (BFMng->GetFieldSquaresList()[(X + (Y * 10))]->terrainname == Terrain::River)
+						{
+							//River用のFBX表示
+							GameObject* RiverObj;
+							FBXCharacterData* RiverFbx = new FBXCharacterData();
+							RiverTerrain* RiverTer = new RiverTerrain();
+							RiverObj = new GameObject(RiverFbx);
+							XMFLOAT3 pos = BFMng->GetCharaPos(BFMng->GetFieldSquaresList()[(X + (Y * 10))]);
+							RiverFbx->setPosition(pos.x, pos.y, pos.z);
+							RiverFbx->setRotation(0.0f, 0.0f, 0.0f);
+							RiverObj->addComponent(RiverTer);
+							engine->AddGameObject(RiverObj);
+						}
+						else if (BFMng->GetFieldSquaresList()[(X + (Y * 10))]->terrainname == Terrain::Tower)
+						{
+							//Tower用のFBX表示
+							GameObject* TowerObj;
+							FBXCharacterData* TowerFbx = new FBXCharacterData();
+							TowerTerrain* TowerTer = new TowerTerrain();
+							TowerObj = new GameObject(TowerFbx);
+							XMFLOAT3 pos = BFMng->GetCharaPos(BFMng->GetFieldSquaresList()[(X + (Y * 10))]);
+							TowerFbx->setPosition(pos.x, pos.y, pos.z);
+							TowerFbx->setRotation(0.0f, 0.0f, 0.0f);
+							TowerObj->addComponent(TowerTer);
+							engine->AddGameObject(TowerObj);
+						}
+						engine->ManualRender();
+					}
+				}
+
+				//====================味方キャラクターの3Dモデルの生成====================
+				for (int i = 0; i < BFMng->GetAlliesCharacterList().size(); i++)
+				{
+					auto characterData = BFMng->GetAlliesCharacterList()[i];
+					GameObject* rebelInfObj;
+					FBXCharacterData* rebelInfFbx = new FBXCharacterData(); //FBX用CharacterData
+					PlayerBase* rebelPlayer = nullptr;
+					switch (BFMng->GetAlliesCharacterList()[i]->CharaKind)
+					{
+					default:
+						//rebelPlayer = new UnityChanPlayer();
+						break;
+					case SoldiersType::infantry:
+						rebelPlayer = new InfantryPlayer();
+						break;
+					case SoldiersType::artillery:
+						rebelPlayer = new ArtilleryPlayer();
+						break;
+					case SoldiersType::machinegunner:
+						rebelPlayer = new MachinegunnerPlayer();
+						break;
+					case SoldiersType::scout:
+						rebelPlayer = new ScoutPlayer();
+						break;
+					case SoldiersType::armored:
+						rebelPlayer = new ArmoredPlayer();
+						break;
+					}
+
+					rebelPlayer->SetAdmin(Admin::Rebel);
+					characterData->SetPlayerBase(rebelPlayer);
+
+					rebelInfObj = new GameObject(rebelInfFbx); //FBXCharacterDataを持たせて初期化
+
+					XMFLOAT3 pos = BFMng->GetCharaPos(BFMng->GetFieldSquaresList()[BFMng->GetAlliesCharacterList()[i]->CharaPos]);
+					rebelInfFbx->setPosition(pos.x, pos.y ,pos.z);
+					rebelInfFbx->setRotation(0.0f, 0.0f, 0.0f);
+					BFMng->GetFieldSquaresList()[BFMng->GetAlliesCharacterList()[i]->CharaPos]->fbxD = rebelInfFbx;
+					BFMng->GetFieldSquaresList()[BFMng->GetAlliesCharacterList()[i]->CharaPos]->fbxD->playerData = rebelPlayer;
+
+					BFMng->GetAlliesCharacterList()[i]->CharaObj = rebelInfObj; //GameObjectポインタをキャラクターに登録
+
+					rebelInfObj->addComponent(rebelPlayer); //Unityちゃん本体コンポーネントをセット
+					engine->AddGameObject(rebelInfObj); //GameObjectをエンジンに登録
+
+					GenerateEquipment(characterData->CharaKind, rebelPlayer, Admin::Rebel);
+
+					engine->ManualRender();
+				}
+
+				//====================敵キャラクターの3Dモデルの生成====================
+				for (int i = 0; i < BFMng->GetEnemyCharacterList().size(); i++)
+				{
+					auto characterData = BFMng->GetEnemyCharacterList()[i];
+					GameObject* imperialInfObj;
+					FBXCharacterData* imperialInfFbx = new FBXCharacterData(); //FBX用CharacterData
+					PlayerBase* imperialPlayer = nullptr;
+
+					switch (BFMng->GetEnemyCharacterList()[i]->CharaKind)
+					{
+					default:
+						//imperialPlayer = new UnityChanPlayer();
+						break;
+					case SoldiersType::infantry:
+						imperialPlayer = new InfantryPlayer();
+						break;
+					case SoldiersType::artillery:
+						imperialPlayer = new ArtilleryPlayer();
+						break;
+					case SoldiersType::machinegunner:
+						imperialPlayer = new MachinegunnerPlayer();
+						break;
+					case SoldiersType::scout:
+						imperialPlayer = new ScoutPlayer();
+						break;
+					case SoldiersType::armored:
+						imperialPlayer = new ArmoredPlayer();
+						break;
+					}
+
+					imperialPlayer->SetAdmin(Admin::Imperial);
+					characterData->SetPlayerBase(imperialPlayer);
+
+					imperialInfObj = new GameObject(imperialInfFbx); //FBXCharacterDataを持たせて初期化
+
+					XMFLOAT3 pos = BFMng->GetCharaPos(BFMng->GetFieldSquaresList()[BFMng->GetEnemyCharacterList()[i]->CharaPos]);
+					imperialInfFbx->setPosition(pos.x, pos.y, pos.z);
+					imperialInfFbx->setRotation(0.0f, 180.0f, 0.0f);
+					BFMng->GetFieldSquaresList()[BFMng->GetEnemyCharacterList()[i]->CharaPos]->fbxD = imperialInfFbx;
+					BFMng->GetFieldSquaresList()[BFMng->GetEnemyCharacterList()[i]->CharaPos]->fbxD->playerData = imperialPlayer;
+
+					BFMng->GetEnemyCharacterList()[i]->CharaObj = imperialInfObj; //GameObjectポインタをキャラクターに登録
+
+					imperialInfObj->addComponent(imperialPlayer); //Unityちゃん本体コンポーネントをセット
+					engine->AddGameObject(imperialInfObj); //GameObjectをエンジンに登録
+
+					GenerateEquipment(characterData->CharaKind, imperialPlayer, Admin::Imperial);
+
+					engine->ManualRender();
+				}
+
+#pragma region AIManager
+				//AIマネージャ登録
+				CharacterData* AIMngData = new CharacterData();
+				GameObject* AIMngObj = new GameObject(AIMngData);
+
+				AIMngObj->addComponent(AIMng);
+
+				engine->AddGameObject(AIMngObj);
+
+				engine->ManualRender();
+#pragma endregion
 				engine->UploadCreatedTextures();
 
 				IsLoading = false;

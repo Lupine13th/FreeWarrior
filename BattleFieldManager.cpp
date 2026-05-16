@@ -55,7 +55,7 @@ bool BattleFieldManager::FrameAction()
 
 	FlyingCameraController* Fcam = MyAccessHub::GetFlyingCameraController();
 
-	if (m_CurrentTurn == Turn::First == !p_scene->IsLoading)
+	if (m_CurrentTurn == Turn::First == !p_scene->GetIsLoading())
 	{
 		if (m_OpeningAnimHUD->OPAnimCount > 5.2f)	//オープニングアニメ終了後
 		{
@@ -126,11 +126,9 @@ bool BattleFieldManager::FrameAction()
 				}
 				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK))			//スペースキーを入力
 				{
-					if (!m_MenuUI->MenuUIenable && m_FieldSquaresList[m_SelectID]->chara != nullptr && m_FieldSquaresList[m_SelectID]->chara->CharaAdmin == Admin::Rebel && !m_FieldSquaresList[m_SelectID]->chara->Moved && !m_FieldSquaresList[m_SelectID]->chara->Dead)	//カーソルが味方部隊をさしている時
+					if (m_FieldSquaresList[m_SelectID]->chara != nullptr && m_FieldSquaresList[m_SelectID]->chara->CharaAdmin == Admin::Rebel && !m_FieldSquaresList[m_SelectID]->chara->Moved && !m_FieldSquaresList[m_SelectID]->chara->Dead)	//カーソルが味方部隊をさしている時
 					{
 						p_engine->GetSoundManager()->play(3);
-						m_MenuUI->MenuUIenable = true;
-						m_MenuUI->OpenMenuAnim();
 						m_MenuSelectIndex = 0;
 
 						m_InRangeIDListForMenu.clear();	//攻撃範囲内のマスIDリストをクリア
@@ -159,8 +157,7 @@ bool BattleFieldManager::FrameAction()
 							m_MenuSelectIndex = 1;			//移動コマンドにカーソルを合わせる
 						}
 
-						m_MenuSelectUI->OpenAnim();			//メニュー展開アニメ起動
-						m_MenuText->OpenMenuText();			//メニューテキスト表示までのカウント起動
+						m_HUDManager->GetHUDObject("MainMenuHUD")->SetAnimationState(AnimationState::OnInit);
 						m_Mode = Mode::MenuMode;
 					}
 				}
@@ -256,7 +253,8 @@ bool BattleFieldManager::FrameAction()
 							m_MenuSelectIndex = 3;
 						}
 					}
-					m_MenuSelectUI->ResetAnim();
+
+					m_HUDManager->GetHUDObject("MainMenuHUD")->SetAnimationState(AnimationState::Init);
 					p_engine->GetSoundManager()->play(2);
 				}
 
@@ -282,7 +280,7 @@ bool BattleFieldManager::FrameAction()
 						}
 					}
 					
-					m_MenuSelectUI->ResetAnim();
+					m_HUDManager->GetHUDObject("MainMenuHUD")->SetAnimationState(AnimationState::Init);
 					p_engine->GetSoundManager()->play(2);
 				}
 
@@ -304,12 +302,6 @@ bool BattleFieldManager::FrameAction()
 							m_SelectingSquare = m_FieldSquaresList[m_SelectID];
 
 							UpdateBattleField();
-
-							//moniUI->MenuUIenable = false;
-
-							m_MenuUI->CloseMenuAnim();
-
-							m_MenuSelectUI->CloseAnim();
 
 							p_engine->GetSoundManager()->play(3);
 							break;
@@ -333,10 +325,6 @@ bool BattleFieldManager::FrameAction()
 
 							SetEnemyRengeSquareTexture();
 
-							m_MenuUI->CloseMenuAnim();
-
-							m_MenuSelectUI->CloseAnim();
-
 							p_engine->GetSoundManager()->play(3);
 							break;
 						case 2:																													//行動コマンド
@@ -352,18 +340,12 @@ bool BattleFieldManager::FrameAction()
 
 							m_AbillityMenuState = AbillityMenuState::Menu;
 
-							m_MenuUI->CloseMenuAnim();
-							m_MenuSelectUI->CloseAnim();
-
 							m_HUDManager->GetHUDObject("AbilityHUD")->ResetHUD();
 
 							p_engine->GetSoundManager()->play(3);
 							break;
 						case 3:																													//待機コマンド
 							m_Mode = Mode::FieldMode;
-							m_MenuSelectUI->ResetAnim();
-							m_MenuUI->CloseMenuAnim();
-							m_MenuSelectUI->CloseAnim();
 
 							Wait(m_SelectID);
 
@@ -371,24 +353,19 @@ bool BattleFieldManager::FrameAction()
 							break;
 						case 4:																													//メニューを閉じる
 							m_Mode = Mode::FieldMode;
-							m_MenuSelectUI->ResetAnim();
-
-							m_MenuUI->CloseMenuAnim();
-
-							m_MenuSelectUI->CloseAnim();
 
 							p_engine->GetSoundManager()->play(6);
 							break;
 						}
 
+						m_HUDManager->GetHUDObject("MainMenuHUD")->SetAnimationState(AnimationState::Finish);
+						
 					}
 				}
 				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_CANCEL))		//エスケープキーを入力
 				{
 					m_Mode = Mode::FieldMode;
-					m_MenuSelectUI->ResetAnim();
-					m_MenuUI->CloseMenuAnim();
-					m_MenuSelectUI->CloseAnim();
+					m_HUDManager->GetHUDObject("MainMenuHUD")->SetAnimationState(AnimationState::Finish);
 					p_engine->GetSoundManager()->play(6);
 				}
 				break;
@@ -1278,10 +1255,13 @@ void BattleFieldManager::ResetHUDs(int SEindex)
 
 	m_HUDManager->ResetHUDWhenMoveCursor();
 	m_HUDManager->GetHUDObject("CurrentTerrainHUD")->ResetHUD();
+	
+
 	if (SEindex != -1)
 	{
 		p_engine->GetSoundManager()->play(SEindex);
 	}
+
 	UpdateBattleField();
 }
 
