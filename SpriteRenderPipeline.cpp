@@ -196,7 +196,7 @@ HRESULT SpriteRenderPipeline::InitPipeLineStateObject(ID3D12Device2* d3dDev)
 
 
     //==============使う画像を増やしたかったらここを増やしてね======================
-    cbvHeapDesc.NumDescriptors = 95; //ModelMtx Size UV Color Mix ViewMtx ProjectionMtx Texture1 Texture2
+    cbvHeapDesc.NumDescriptors = 100; //ModelMtx Size UV Color Mix ViewMtx ProjectionMtx Texture1 Texture2
     //==============使う画像を増やしたかったらここを増やしてね======================
 
 

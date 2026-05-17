@@ -56,33 +56,33 @@ void TurnEndUI::InitAction()
 
 bool TurnEndUI::FrameAction()
 {
-    if (BFMng->GetMode() == Mode::TurnEndMode && BFMng->GetCurrentTurn() != Turn::Result && m_WaitCount < 3.0f)
-    {
-        m_WaitCount += m_TimeManager->GetDeltaTime();
-    }
-    else if (BFMng->GetMode() == Mode::TurnEndMode && m_WaitCount > 3.0f)
-    {
-        MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
-        GraphicsPipeLineObjectBase* pipe = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
+    //if (BFMng->GetMode() == Mode::TurnEndMode && BFMng->GetCurrentTurn() != Turn::Result && m_WaitCount < 3.0f)
+    //{
+    //    m_WaitCount += m_TimeManager->GetDeltaTime();
+    //}
+    //else if (BFMng->GetMode() == Mode::TurnEndMode && m_WaitCount > 3.0f)
+    //{
+    //    MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
+    //    GraphicsPipeLineObjectBase* pipe = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
 
-        if (!BFMng->GetTurnEnd())   
-        {
-            //ターンエンドしますか？　いいえ
-            m_Sprite[1]->SetColor(1.0f, 1.0f, 1.0f, 1);
-            m_Sprite[2]->SetColor(1.0f, 0.0f, 0.0f, 1);
-        }
-        else if (BFMng->GetTurnEnd())
-        {
-            //ターンエンドしますか？　はい
-            m_Sprite[1]->SetColor(1.0f, 0.0f, 0.0f, 1);
-            m_Sprite[2]->SetColor(1.0f, 1.0f, 1.0f, 1);
-        }
+    //    if (!BFMng->GetTurnEnd())   
+    //    {
+    //        //ターンエンドしますか？　いいえ
+    //        m_Sprite[1]->SetColor(1.0f, 1.0f, 1.0f, 1);
+    //        m_Sprite[2]->SetColor(1.0f, 0.0f, 0.0f, 1);
+    //    }
+    //    else if (BFMng->GetTurnEnd())
+    //    {
+    //        //ターンエンドしますか？　はい
+    //        m_Sprite[1]->SetColor(1.0f, 0.0f, 0.0f, 1);
+    //        m_Sprite[2]->SetColor(1.0f, 1.0f, 1.0f, 1);
+    //    }
 
-        for (int i = 0; i < m_Sprite.size(); i++)
-        {
-            pipe->AddRenderObject(m_Sprite[i].get());
-        }
-    }
+    //    for (int i = 0; i < m_Sprite.size(); i++)
+    //    {
+    //        pipe->AddRenderObject(m_Sprite[i].get());
+    //    }
+    //}
     
     return true;
 }

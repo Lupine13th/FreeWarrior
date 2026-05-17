@@ -97,6 +97,7 @@ public:
 	{
 		return m_ActiveTweenList[index].get();
 	}
+	void MakeSpriteObject(const wchar_t* textureId, wstring cameraLabel, wstring pipeLine, XMFLOAT4 pattern, XMFLOAT4 color);
 	void SetEasingAnimation(SpriteCharacter* sprite, EasingVector vector, float startPos, float endPos, float duration, const std::function<float(float, float, float, float)>& easing);
 	void FlipAnimation(SpriteCharacter* sprite);
 
@@ -451,6 +452,47 @@ private:
 
 	//アニメーション時間
 	float m_AnimationCount = 0.0f;
+public:
+	void InitAction() override;
+	bool FrameAction() override;
+	void FinishAction() override;
+};
+
+class TurnEndHUD : public HUDTextObject			//ターンエンド画面
+{
+private:
+	//テキストの座標
+	XMFLOAT2 pos = { -200.0f, 100.0f };
+
+	//現在のアニメーション時間
+	float m_AnimationCount = 0.0f;
+
+	//冒頭のアニメーション時間
+	float m_InitAnimationCount = 0.0f;
+
+	//アニメーション時間
+	const float kAnimationTime = 0.2f;
+
+	//矢印の角度
+	float m_ArrowRotation = 0.0f;
+
+	const vector<float> kBackGroundPosY =
+	{
+		-350.0f,
+		-50.0f
+	};
+
+	const vector<float> kArrowPosY =
+	{
+		-450.0f,
+		-150.0f
+	};
+
+	const vector<float> kTextBackGroundPosY =
+	{
+		-200.0f,
+		100.0f
+	};
 public:
 	void InitAction() override;
 	bool FrameAction() override;

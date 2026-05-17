@@ -192,7 +192,6 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"TerrainHUDTexture", L"./Resources/textures/HUD/TerrainHUDImage.png");		//地形HUD背景イメージ
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"SoldierBarArrowTexture", L"./Resources/textures/HUD/BarArrowImage.png");	//メーターの矢印のイメージ
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"NewsPaperTexture", L"./Resources/textures/HUD/NewsPaporImage.png");		//新聞背景イメージ
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"DogtagTexture", L"./Resources/textures/HUD/DogtagImage.png");				//ドックタグイメージ
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"DogtagBaseTexture", L"./Resources/textures/HUD/DogtagBaseImage.png");		//ドックタグ背景イメージ
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"AliesGageTexture", L"./Resources/textures/HUD/AliesGageTexture.png");		//味方優勢ゲージイメージ
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"EnemyGageTexture", L"./Resources/textures/HUD/EnemyGageTexture.png");		//敵優勢ゲージイメージ
@@ -219,6 +218,8 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"DamagedEffectTexture", L"./Resources/textures/HUD/DamagedEffectTexture.png");			//ダメージエフェクトイメージ
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"TitleMenuEffectTexture", L"./Resources/textures/HUD/TitleMenuEffectTexture.png");		//タイトルエフェクトイメージ
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"TitleFlashEffect", L"./Resources/textures/HUD/TitleFlashEffect.png");		//タイトルシーン遷移イメージ
+				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"TurnEndBackGroundTexture", L"./Resources/textures/HUD/TurnEndBackGroundTexture.png");		//ターンエンドHUD背景イメージ
+				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"TurnEndArrowTexture", L"./Resources/textures/HUD/TurnEndArrowTexture.png");				//ターンエンドHUD矢印イメージ
 
 				//勝利の方のアニメーションテクスチャ
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"NewsPaperWinTexture", L"./Resources/textures/HUD/NewsPaperWinImage.png");

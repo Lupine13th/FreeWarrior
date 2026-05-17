@@ -733,23 +733,26 @@ bool BattleFieldManager::FrameAction()
 			case Mode::TurnEndMode:
 				if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_RIGHT))			//十字キー右を押したとき
 				{
-					m_TurnEnd = true;																												//ターンエンド処理へ
+					m_TurnEndMenuSelectIndex = 1;																									//一旦戻る(現状、意味は無い)
+					m_HUDManager->GetHUDObject("TurnEndHUD")->SetAnimationState(AnimationState::Init);
 				}
 				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_LEFT))		//十字キー左を押したとき
 				{
-					m_TurnEnd = false;																												//一旦戻る(現状、意味は無い)
+					m_TurnEndMenuSelectIndex = 2;																									//ターンエンド処理
+					m_HUDManager->GetHUDObject("TurnEndHUD")->SetAnimationState(AnimationState::Init);
 				}
 				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK))				//スペースキーを押したとき
 				{
-					switch (m_TurnEnd)
+					switch (m_TurnEndMenuSelectIndex)
 					{
-					case false:
+					case 1:
 						m_Mode = Mode::FieldMode;																									//一旦戻る(現状、意味は無い)
 						break;
-					case true:
+					case 2:
 						m_Mode = Mode::FieldMode;																									//ターンエンド処理
 						MyAccessHub::GetAIManager()->CreateLearningData(m_PlayerActionLogs);														//学習データを作成
-						m_TurnEnd = false;
+						m_HUDManager->GetHUDObject("TurnEndHUD")->SetAnimationState(AnimationState::None);
+						m_TurnEndMenuSelectIndex = 0;
 						m_TurnEndUI->ResetWaitCount();
 						AddTurnCount();
 						ChangeTurn();
@@ -862,6 +865,7 @@ void BattleFieldManager::UpdateBattleField()
 	if (m_MovedCount == m_Lifecount)
 	{
 		m_Mode = Mode::TurnEndMode;
+		m_HUDManager->GetHUDObject("TurnEndHUD")->SetAnimationState(AnimationState::Init);
 		return;
 	}
 

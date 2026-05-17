@@ -117,6 +117,7 @@ private:
 	int m_TargetID = 0;									//攻撃カーソルのマスID
 	vector<int> m_TargetPos = { 0, 0 };					//攻撃カーソルのマス座標
 	int m_MenuSelectIndex = 0;							//メニューの選択インデックス
+	int m_TurnEndMenuSelectIndex = 0;					//ターン終了メニューの選択インデックス
 	int m_SideMenuSelectIndex = 0;						//サイドメニューの選択インデックス
 	int m_MovedCount = 0;								//行動済みの部隊数
 	int m_Lifecount = 0;								//生存している部隊数
@@ -137,7 +138,6 @@ private:
 	bool m_OpenLog = false;								//行動ログを開いているかどうか
 	bool m_Firsttime = false;							//初回のみの処理かどうか
 	bool m_OnlyOneTime = false;							//一回だけの処理
-	bool m_TurnEnd = false;								//ターン終了したかどうか
 	bool m_IsAttacking = false;							//攻撃アニメーション中かどうか
 	bool m_BattleCameraEnable = false;					//バトルカメラが有効かどうか
 	bool m_IsSucceedScout = false;						//直前の偵察が成功したかどうか
@@ -267,10 +267,6 @@ public:
 	{
 		return m_AbillityIndex;
 	}
-	bool GetTurnEnd()
-	{
-		return m_TurnEnd;
-	}
 	vector<int>& GetInRangeIDListForMenu()
 	{
 		return m_InRangeIDListForMenu;
@@ -361,7 +357,7 @@ public:
 	}
 	bool GetHUDEnableCondition()
 	{
-		if (m_Mode != Mode::SideMenuMode && m_CurrentTurn == Turn::Allies && m_BattleCameraEnable == false)
+		if (m_Mode != Mode::SideMenuMode && m_Mode != Mode::TurnEndMode && m_CurrentTurn == Turn::Allies && m_BattleCameraEnable == false)
 		{
 			return true;
 		}
@@ -397,6 +393,10 @@ public:
 	XMFLOAT2 GetStrengthValues()
 	{
 		return m_StrengthValue;
+	}
+	int GetTurnEndMenuSelectIndex()
+	{
+		return m_TurnEndMenuSelectIndex;
 	}
 
 	//==========Method==========

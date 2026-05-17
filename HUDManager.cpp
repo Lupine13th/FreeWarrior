@@ -54,6 +54,10 @@ void HUDManager::InitAction()
     MainMenuHUD* mainMenuHUD = new MainMenuHUD();   //メインメニューHUD
     GetGameObject()->addComponent(mainMenuHUD);
     AddHUDObject("MainMenuHUD", mainMenuHUD);
+
+    TurnEndHUD* turnEndHUD = new TurnEndHUD();   //ターン終了HUD
+    GetGameObject()->addComponent(turnEndHUD);
+    AddHUDObject("TurnEndHUD", turnEndHUD);
 }
 
 bool HUDManager::FrameAction()
@@ -297,6 +301,18 @@ void MeterHUD::SetMoralePersent(FieldCharacter* targetChara)
         moralePercent = 1.15f;
     }
     m_MoraleArrowEndPosX = kArrowLeftPosX + kArrowsRenge * moralePercent;
+}
+
+void HUDObject::MakeSpriteObject(const wchar_t* textureId, wstring cameraLabel, wstring pipeLine, XMFLOAT4 pattern, XMFLOAT4 color)
+{
+    SpriteCharacter* sprite = new SpriteCharacter();
+    m_SpriteList.push_back(std::unique_ptr<SpriteCharacter>(sprite));
+    sprite->SetTextureId(textureId);
+    sprite->SetCameraLabel(cameraLabel, 0);
+    sprite->SetGraphicsPipeLine(pipeLine);
+    sprite->SetSpritePattern(0, 1, 1, pattern);
+    sprite->setSpriteIndex(0);
+    sprite->SetColor(color.x, color.y, color.z, color.w);
 }
 
 void HUDObject::SetEasingAnimation(SpriteCharacter* sprite, EasingVector vector, float startPos, float endPos, float duration, const std::function<float(float, float, float, float)>& easing)
@@ -1955,5 +1971,128 @@ bool LoadAnimationHUD::FrameAction()
 }
 
 void LoadAnimationHUD::FinishAction()
+{
+}
+
+void TurnEndHUD::InitAction()
+{
+    XMFLOAT4 pattern(0.0f, 0.0f, 1.0f, 1.0f);
+
+    m_FontTextureId = L"JPNHUDTexture";
+    m_FontWordList = m_WordList.m_chListJ;
+    m_SpriteCount = 50;
+    SetFont(m_FontTextureId, m_FontWordList);
+
+    m_TextList["ターン終了テキスト"] = L"ターンを終了しますか？";
+
+	MakeSpriteObject(L"TurnEndBackGroundTexture", L"HUDCamera", L"AlphaSprite", pattern, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f)); //メーター背景
+	MakeSpriteObject(L"TurnEndArrowTexture", L"HUDCamera", L"AlphaSprite", pattern, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));      //メーター矢印
+	MakeSpriteObject(L"DogtagBaseTexture", L"HUDCamera", L"AlphaSprite", pattern, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));        //テキスト背景
+
+    //背景
+    m_SpriteList[0]->setScale(600.0f, 600.0f, 0.1f);
+    m_SpriteList[0]->setPosition(0.0f, -50.0f, OrderInLayer::BackGround);
+
+    //矢印
+    m_SpriteList[1]->setScale(600.0f, 600.0f, 0.1f);
+    m_SpriteList[1]->setPosition(0.0f, -150.0f, OrderInLayer::MoveObject);
+
+    //テキスト背景
+    m_SpriteList[2]->setScale(300.0f, 300.0f, 0.1f);
+    m_SpriteList[2]->setPosition(0.0f, 100.0f, OrderInLayer::BackGround);
+}
+
+bool TurnEndHUD::FrameAction()
+{
+    MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
+    GraphicsPipeLineObjectBase* pipeline = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
+
+    int count = 0;
+
+    count = MakeSpriteString(count, pos.x, pos.y, 40, 60, m_TextList["ターン終了テキスト"], XMFLOAT3(1.0f, 1.0f, 1.0f));
+
+    switch (m_AnimationState)
+    {
+    default:
+		break;
+    case AnimationState::Init:
+        SetEasingAnimation(m_SpriteList[0].get(), EasingVector::Verticle, kBackGroundPosY[0], kBackGroundPosY[1], kAnimationTime, Tween::EaseInQuad);
+        SetEasingAnimation(m_SpriteList[1].get(), EasingVector::Verticle, kArrowPosY[0], kArrowPosY[1], kAnimationTime, Tween::EaseInQuad);
+        SetEasingAnimation(m_SpriteList[2].get(), EasingVector::Verticle, kTextBackGroundPosY[0], kTextBackGroundPosY[1], kAnimationTime, Tween::EaseInQuad);
+
+        m_InitAnimationCount += m_TimeManager->GetDeltaTime();
+
+        if (m_InitAnimationCount > kAnimationTime)
+        {
+			m_InitAnimationCount = 0.0f;
+            m_AnimationState = AnimationState::Run;
+        }
+        break;
+    case AnimationState::Run:
+        switch (BFMng->GetTurnEndMenuSelectIndex())
+        {
+        case 0:
+            m_ArrowRotation = 0.0f;
+            break;
+        case 1:
+            m_ArrowRotation = -50.0f * (m_AnimationCount / kAnimationTime);
+            break;
+        case 2:
+            m_ArrowRotation = 50.0f * (m_AnimationCount / kAnimationTime);
+            break;
+        default:
+            break;
+        }
+
+        m_AnimationCount += m_TimeManager->GetDeltaTime();
+
+        if (m_AnimationCount > kAnimationTime)
+        {
+            m_AnimationCount = 0.0f;
+            m_AnimationState = AnimationState::Finish;
+        }
+
+        for (int i = 0; i < count; i++)
+        {
+            pipeline->AddRenderObject(m_WordSpriteList[i].get());
+        }
+        break;
+    case AnimationState::Finish:
+        switch (BFMng->GetTurnEndMenuSelectIndex())
+        {
+        case 0:
+            m_ArrowRotation = 0.0f;
+            break;
+        case 1:
+            m_ArrowRotation = -50.0f;
+            break;
+        case 2:
+            m_ArrowRotation = 50.0f;
+            break;
+        default:
+            break;
+        }
+
+        for (int i = 0; i < count; i++)
+        {
+            pipeline->AddRenderObject(m_WordSpriteList[i].get());
+        }
+        break;
+    }
+
+    m_SpriteList[1]->setRotation(0.0f, 0.0f, m_ArrowRotation);
+
+    if (BFMng->GetMode() == Mode::TurnEndMode)
+    {
+        for (int i = 0; i < m_SpriteList.size(); i++)
+        {
+            pipeline->AddRenderObject(m_SpriteList[i].get());
+        }
+    }
+
+    return true;
+}
+
+void TurnEndHUD::FinishAction()
 {
 }

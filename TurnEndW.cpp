@@ -101,7 +101,7 @@ void TurnEndW::InitAction()
 
 bool TurnEndW::FrameAction()
 {
-	m_TurnEndUI = BFMng->GetTurnEndUI();
+	/*m_TurnEndUI = BFMng->GetTurnEndUI();
 	if (BFMng->GetMode() == Mode::TurnEndMode && m_TurnEndUI->GetCurrentCount() > 3.0f)
 	{
 		MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
@@ -123,7 +123,7 @@ bool TurnEndW::FrameAction()
 		{
 			pipeLine->AddRenderObject(m_Sprites[i].get());
 		}
-	}
+	}*/
 	return true;
 }
 
