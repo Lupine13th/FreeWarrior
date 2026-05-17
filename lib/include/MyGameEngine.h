@@ -192,7 +192,6 @@ public:
         return m_soundMng.get();
     }
 
-    //本当はこれも別クラスにすべきなんだけど、クラス増えすぎると読みづらいのでGameEngineにSwapChain系は結合
     ID3D12GraphicsCommandList* GetInitCommandList()
     {
         return m_initCommand.Get();

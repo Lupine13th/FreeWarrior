@@ -9,7 +9,6 @@
 #include "MyGameEngine.h"
 #include "MyAccessHub.h"
 #include "../../FreeWarriorMark2/FBXResourceManager.h"
-#include "../../FreeWarriorMark2/LoadScene.h"
 
 #include <D3D12Helper.h>
 #include <DXSampleHelper.h>
