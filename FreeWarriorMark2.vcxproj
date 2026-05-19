@@ -202,9 +202,6 @@
     <ClInclude Include="TimeManager.h" />
     <ClInclude Include="TitleScene.h" />
     <ClInclude Include="TowerTerrain.h" />
-    <ClInclude Include="TurnEndUI.h" />
-    <ClInclude Include="TurnEndW.h" />
-    <ClInclude Include="TurnUI.h" />
     <ClInclude Include="Tween.h" />
     <ClInclude Include="WordList.h" />
     <ClInclude Include="FlyingCameraController.h" />
@@ -268,9 +265,6 @@
     <ClCompile Include="TimeManager.cpp" />
     <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="TowerTerrain.cpp" />
-    <ClCompile Include="TurnEndUI.cpp" />
-    <ClCompile Include="TurnEndW.cpp" />
-    <ClCompile Include="TurnUI.cpp" />
     <ClCompile Include="Tween.cpp" />
     <ClCompile Include="FlyingCameraController.cpp" />
     <ClCompile Include="GameMain.cpp" />

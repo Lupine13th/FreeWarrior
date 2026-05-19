@@ -753,7 +753,6 @@ bool BattleFieldManager::FrameAction()
 						MyAccessHub::GetAIManager()->CreateLearningData(m_PlayerActionLogs);														//学習データを作成
 						m_HUDManager->GetHUDObject("TurnEndHUD")->SetAnimationState(AnimationState::None);
 						m_TurnEndMenuSelectIndex = 0;
-						m_TurnEndUI->ResetWaitCount();
 						AddTurnCount();
 						ChangeTurn();
 						break;

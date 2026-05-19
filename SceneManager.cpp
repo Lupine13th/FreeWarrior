@@ -14,7 +14,6 @@
 #include "Squares.h"
 #include "BattleFieldManager.h"
 #include "EnemyAIManager.h"
-#include "TurnUI.h"
 #include "ForestTerrain.h"
 #include "HillTerrain.h"
 #include "RiverTerrain.h"
@@ -30,8 +29,6 @@
 #include "DamageHUD.h"
 #include "DamageHUDW.h"
 #include "OpeningAnimHUD.h"
-#include "TurnEndUI.h"
-#include "TurnEndW.h"
 #include "ResultUI.h"
 #include "TimeManager.h"
 #include "CharacterEquipment.h"
@@ -245,23 +242,6 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"NewsPaperWinResultTexture", L"./Resources/textures/HUD/NewsPaperWinResultImage.png");
 
 				//現在のターンを表すアニメーションテクスチャ
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"TurnHUDAllies00", L"./Resources/textures/HUD/TurnHUDAllies00.png");
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"TurnHUDAllies01", L"./Resources/textures/HUD/TurnHUDAllies01.png");
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"TurnHUDAllies02", L"./Resources/textures/HUD/TurnHUDAllies02.png");
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"TurnHUDAllies03", L"./Resources/textures/HUD/TurnHUDAllies03.png");
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"TurnHUDAllies04", L"./Resources/textures/HUD/TurnHUDAllies04.png");
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"TurnHUDAllies05", L"./Resources/textures/HUD/TurnHUDAllies05.png");
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"TurnHUDAllies06", L"./Resources/textures/HUD/TurnHUDAllies06.png");
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"TurnHUDAllies07", L"./Resources/textures/HUD/TurnHUDAllies07.png");
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"TurnHUDEnemy00", L"./Resources/textures/HUD/TurnHUDEnemy00.png");
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"TurnHUDEnemy01", L"./Resources/textures/HUD/TurnHUDEnemy01.png");
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"TurnHUDEnemy02", L"./Resources/textures/HUD/TurnHUDEnemy02.png");
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"TurnHUDEnemy03", L"./Resources/textures/HUD/TurnHUDEnemy03.png");
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"TurnHUDEnemy04", L"./Resources/textures/HUD/TurnHUDEnemy04.png");
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"TurnHUDEnemy05", L"./Resources/textures/HUD/TurnHUDEnemy05.png");
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"TurnHUDEnemy06", L"./Resources/textures/HUD/TurnHUDEnemy06.png");
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"TurnHUDEnemy07", L"./Resources/textures/HUD/TurnHUDEnemy07.png");
-
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"AliesTurnHUD", L"./Resources/textures/HUD/AliesTurnHUD.png");
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"EnemyTurnHUD", L"./Resources/textures/HUD/EnemyTurnHUD.png");
 				
@@ -487,27 +467,21 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 
 #pragma region UI
 				cameraObj = new GameObject(new CharacterData());
-				TurnUI* m_TurnUI = new TurnUI();
 				LogHUD* m_LogHUD = new LogHUD();
 				LogHUDW* m_LogHUDW = new LogHUDW();
 				DamageHUD* m_DamageHUD = new DamageHUD();
 				DamageHUDW* m_DamageHUDW = new DamageHUDW();
 				OpeningAnimHUD* m_OpeningAnimHUD = new OpeningAnimHUD();
-				TurnEndUI* m_TurnEndUI = new TurnEndUI();
-				TurnEndW* m_TurnEndW = new TurnEndW();
 				ResultUI* m_ResultUI = new ResultUI();
 
 				m_CameraComponents[L"HUDCamera"] = m_HUDManager;	//HUD用カメラをメニューに渡す
 				m_CameraComponents[L"BackGroundHUDCamera"] = m_HUDManager;	//同じ範囲を描画するので、背景用もここに渡す
 
-				cameraObj->addComponent(m_TurnUI);
 				cameraObj->addComponent(m_LogHUD);
 				cameraObj->addComponent(m_LogHUDW);
 				cameraObj->addComponent(m_DamageHUD);
 				cameraObj->addComponent(m_DamageHUDW);
 				cameraObj->addComponent(m_OpeningAnimHUD);
-				cameraObj->addComponent(m_TurnEndUI);
-				cameraObj->addComponent(m_TurnEndW);
 				cameraObj->addComponent(m_ResultUI);
 
 				//==================HUDマネージャ追加==================
@@ -519,8 +493,6 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 				BFMng->SetDamageHUDText(m_DamageHUDW);
 				BFMng->SetOpeningAnimHUD(m_OpeningAnimHUD);
 				BFMng->SetResultUI(m_ResultUI);
-				BFMng->SetTurnEndUI(m_TurnEndUI);
-				BFMng->SetTurnUI(m_TurnUI);
 				BFMng->SetAbiliteis(new Abilities());
 
 				////ロード画面＆UI用カメラ
