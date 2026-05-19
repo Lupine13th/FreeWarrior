@@ -139,7 +139,7 @@ bool TurnUI::FrameAction()
             break;
         }
 
-        pipe->AddRenderObject(m_Sprite.get());
+        //pipe->AddRenderObject(m_Sprite.get());
     }
 
     return true;

@@ -462,7 +462,7 @@ class TurnEndHUD : public HUDTextObject			//ターンエンド画面
 {
 private:
 	//テキストの座標
-	XMFLOAT2 pos = { -200.0f, 100.0f };
+	XMFLOAT2 pos = { -200.0f, 200.0f };
 
 	//現在のアニメーション時間
 	float m_AnimationCount = 0.0f;
@@ -476,23 +476,35 @@ private:
 	//矢印の角度
 	float m_ArrowRotation = 0.0f;
 
-	const vector<float> kBackGroundPosY =
-	{
-		-350.0f,
-		-50.0f
-	};
+	//矢印の角度
+	float m_StartArrowRotation = 0.0f;
 
-	const vector<float> kArrowPosY =
+	const vector<float> kBackGroundPosY =
 	{
 		-450.0f,
 		-150.0f
 	};
 
+	const vector<float> kArrowPosY =
+	{
+		-525.0f,
+		-225.0f
+	};
+
 	const vector<float> kTextBackGroundPosY =
 	{
-		-200.0f,
-		100.0f
+		-100.0f,
+		200.0f
 	};
+public:
+	void InitAction() override;
+	bool FrameAction() override;
+	void FinishAction() override;
+};
+
+class TurnHUD : public HUDTextObject			//ターンエンド画面
+{
+private:
 public:
 	void InitAction() override;
 	bool FrameAction() override;

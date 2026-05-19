@@ -58,6 +58,10 @@ void HUDManager::InitAction()
     TurnEndHUD* turnEndHUD = new TurnEndHUD();   //ターン終了HUD
     GetGameObject()->addComponent(turnEndHUD);
     AddHUDObject("TurnEndHUD", turnEndHUD);
+
+    TurnHUD* turnHUD = new TurnHUD();   //ターン終了HUD
+    GetGameObject()->addComponent(turnHUD);
+    AddHUDObject("TurnHUD", turnHUD);
 }
 
 bool HUDManager::FrameAction()
@@ -1991,15 +1995,15 @@ void TurnEndHUD::InitAction()
 
     //背景
     m_SpriteList[0]->setScale(600.0f, 600.0f, 0.1f);
-    m_SpriteList[0]->setPosition(0.0f, -50.0f, OrderInLayer::BackGround);
+    m_SpriteList[0]->setPosition(0.0f, -75.0f, OrderInLayer::BackGround);
 
     //矢印
     m_SpriteList[1]->setScale(600.0f, 600.0f, 0.1f);
     m_SpriteList[1]->setPosition(0.0f, -150.0f, OrderInLayer::MoveObject);
 
     //テキスト背景
-    m_SpriteList[2]->setScale(300.0f, 300.0f, 0.1f);
-    m_SpriteList[2]->setPosition(0.0f, 100.0f, OrderInLayer::BackGround);
+    m_SpriteList[2]->setScale(500.0f, 300.0f, 0.1f);
+    m_SpriteList[2]->setPosition(0.0f, 120.0f, OrderInLayer::BackGround);
 }
 
 bool TurnEndHUD::FrameAction()
@@ -2016,29 +2020,48 @@ bool TurnEndHUD::FrameAction()
     default:
 		break;
     case AnimationState::Init:
-        SetEasingAnimation(m_SpriteList[0].get(), EasingVector::Verticle, kBackGroundPosY[0], kBackGroundPosY[1], kAnimationTime, Tween::EaseInQuad);
-        SetEasingAnimation(m_SpriteList[1].get(), EasingVector::Verticle, kArrowPosY[0], kArrowPosY[1], kAnimationTime, Tween::EaseInQuad);
-        SetEasingAnimation(m_SpriteList[2].get(), EasingVector::Verticle, kTextBackGroundPosY[0], kTextBackGroundPosY[1], kAnimationTime, Tween::EaseInQuad);
+        if (m_InitAnimationCount == 0.0f)
+        {
+            SetEasingAnimation(m_SpriteList[0].get(), EasingVector::Verticle, kBackGroundPosY[0], kBackGroundPosY[1], kAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[1].get(), EasingVector::Verticle, kArrowPosY[0], kArrowPosY[1], kAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[2].get(), EasingVector::Verticle, kTextBackGroundPosY[0], kTextBackGroundPosY[1], kAnimationTime, Tween::EaseInQuad);
+        }
 
         m_InitAnimationCount += m_TimeManager->GetDeltaTime();
+
+        for (int i = m_ActiveTweenList.size() - 1; i >= 0; --i)
+        {
+            m_ActiveTweenList[i]->Update(m_TimeManager->GetDeltaTime());
+            if (!m_ActiveTweenList[i]->IsActive())
+            {
+                // Tweenが終了したらリストから削除
+                m_ActiveTweenList.erase(m_ActiveTweenList.begin() + i);
+            }
+        }
 
         if (m_InitAnimationCount > kAnimationTime)
         {
 			m_InitAnimationCount = 0.0f;
+			m_StartArrowRotation = 0.0f;
             m_AnimationState = AnimationState::Run;
         }
         break;
     case AnimationState::Run:
+        if (m_AnimationCount == 0.0f)
+        {
+            m_StartArrowRotation = m_ArrowRotation;
+        }
+
         switch (BFMng->GetTurnEndMenuSelectIndex())
         {
         case 0:
             m_ArrowRotation = 0.0f;
             break;
         case 1:
-            m_ArrowRotation = -50.0f * (m_AnimationCount / kAnimationTime);
+            m_ArrowRotation = m_StartArrowRotation + (-60.0f - m_StartArrowRotation) * (m_AnimationCount / kAnimationTime);
             break;
         case 2:
-            m_ArrowRotation = 50.0f * (m_AnimationCount / kAnimationTime);
+            m_ArrowRotation = m_StartArrowRotation + (60.0f - m_StartArrowRotation) * (m_AnimationCount / kAnimationTime);
             break;
         default:
             break;
@@ -2064,10 +2087,10 @@ bool TurnEndHUD::FrameAction()
             m_ArrowRotation = 0.0f;
             break;
         case 1:
-            m_ArrowRotation = -50.0f;
+            m_ArrowRotation = -60.0f;
             break;
         case 2:
-            m_ArrowRotation = 50.0f;
+            m_ArrowRotation = 60.0f;
             break;
         default:
             break;
@@ -2094,5 +2117,76 @@ bool TurnEndHUD::FrameAction()
 }
 
 void TurnEndHUD::FinishAction()
+{
+}
+
+void TurnHUD::InitAction()
+{
+    XMFLOAT4 pattern(0.0f, 0.0f, 0.25f, 0.25f);
+	MakeSpriteObject(L"EnemyTurnHUD", L"HUDCamera", L"AlphaSprite", pattern, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));  //現在のターン表示
+
+    m_SpriteList[0]->setScale(200.0f, 200.0f, 0.1f);
+    m_SpriteList[0]->setPosition(-350.0f, 250.0f, OrderInLayer::BackGround);
+
+    m_AnimationPages = 7;
+    m_FlipDuration = 0.05f;
+
+    SetAnimationState(AnimationState::None);
+}
+
+bool TurnHUD::FrameAction()
+{
+    switch (m_AnimationState)
+    {
+    default:
+        break;
+    case AnimationState::Init:
+        switch (BFMng->GetCurrentTurn())
+        {
+        case Turn::Allies:
+			m_SpriteList[0]->SetTextureId(L"EnemyTurnHUD");
+            break;
+        case Turn::EnemyMove:
+            m_SpriteList[0]->SetTextureId(L"AliesTurnHUD");
+            break;
+        }
+        m_FlipAnimationCount = 0.0f;
+		SetAnimationState(AnimationState::Run);
+        break;
+    case AnimationState::Run:
+		FlipAnimation(m_SpriteList[0].get());
+
+        if (m_FlipAnimationCount > m_FlipDuration * m_AnimationPages)
+        {
+            SetAnimationState(AnimationState::Finish);
+        }
+        break;
+    case AnimationState::Finish:
+        switch (BFMng->GetCurrentTurn())
+        {
+        case Turn::Allies:
+            BFMng->ChangeTurnEnemy();
+            break;
+        case Turn::EnemyMove:
+            BFMng->ChangeTurnAllies();
+            break;
+        }
+
+        SetAnimationState(AnimationState::None);
+        break;
+    }
+
+    if (BFMng->GetCurrentTurn() != Turn::First)
+    {
+        MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
+        GraphicsPipeLineObjectBase* pipeline = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
+
+		pipeline->AddRenderObject(m_SpriteList[0].get());
+    }
+
+    return true;
+}
+
+void TurnHUD::FinishAction()
 {
 }

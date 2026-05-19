@@ -261,6 +261,9 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"TurnHUDEnemy05", L"./Resources/textures/HUD/TurnHUDEnemy05.png");
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"TurnHUDEnemy06", L"./Resources/textures/HUD/TurnHUDEnemy06.png");
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"TurnHUDEnemy07", L"./Resources/textures/HUD/TurnHUDEnemy07.png");
+
+				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"AliesTurnHUD", L"./Resources/textures/HUD/AliesTurnHUD.png");
+				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"EnemyTurnHUD", L"./Resources/textures/HUD/EnemyTurnHUD.png");
 				
 				//テキストテクスチャ
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"HUDTexture", L"./Resources/textures/HUD/UITexture.png");

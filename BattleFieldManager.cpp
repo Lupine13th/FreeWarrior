@@ -734,12 +734,12 @@ bool BattleFieldManager::FrameAction()
 				if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_RIGHT))			//十字キー右を押したとき
 				{
 					m_TurnEndMenuSelectIndex = 1;																									//一旦戻る(現状、意味は無い)
-					m_HUDManager->GetHUDObject("TurnEndHUD")->SetAnimationState(AnimationState::Init);
+					m_HUDManager->GetHUDObject("TurnEndHUD")->SetAnimationState(AnimationState::Run);
 				}
 				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_LEFT))		//十字キー左を押したとき
 				{
 					m_TurnEndMenuSelectIndex = 2;																									//ターンエンド処理
-					m_HUDManager->GetHUDObject("TurnEndHUD")->SetAnimationState(AnimationState::Init);
+					m_HUDManager->GetHUDObject("TurnEndHUD")->SetAnimationState(AnimationState::Run);
 				}
 				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK))				//スペースキーを押したとき
 				{
@@ -1229,24 +1229,26 @@ void BattleFieldManager::ChangeTurn()
 	{
 	case Turn::Allies:
 		m_Firsttime = false;
-		m_CurrentTurn = Turn::TurnChanging;
+		//m_CurrentTurn = Turn::TurnChanging;
 		for (int i = 0; i < m_AlliesCharacterList.size(); i++)
 		{
 			m_AlliesCharacterList[i]->Moved = false;
 		}
 		CheckMoved();
-		m_TurnUI->ChangeHUDState();
+		m_HUDManager->GetHUDObject("TurnHUD")->SetAnimationState(AnimationState::Init);
+		//m_TurnUI->ChangeHUDState();
 		p_scene->SetActiveCameraCompornent(L"ScoutingCamera", false);
 		break;
 	case Turn::EnemyMove:
 		AIMng->OnChangeTurn();
-		m_CurrentTurn = Turn::TurnChanging;
+		//m_CurrentTurn = Turn::TurnChanging;
 		for (int i = 0; i < m_EnemyCharacterList.size(); i++)
 		{
 			m_EnemyCharacterList[i]->Moved = false;
 		}
 		CheckMoved();
-		m_TurnUI->ChangeHUDState();
+		m_HUDManager->GetHUDObject("TurnHUD")->SetAnimationState(AnimationState::Init);
+		//m_TurnUI->ChangeHUDState();
 		break;
 	default:
 		break;
