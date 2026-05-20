@@ -95,7 +95,7 @@ void CameraComponent::ChangeCameraPosition(float x, float y, float z)
 void CameraComponent::ChangeCameraRotation(float x, float y, float z)
 {
 	CharacterData* chData = GetGameObject()->GetCharacterData();
-	chData->setRotation(x, y, z);
+	chData->SetRotation(x, y, z);
 
 	m_UpdateFlg = true;
 }

@@ -6,7 +6,7 @@ void HillTerrain::InitAction()
     FBXCharacterData* chdata = static_cast<FBXCharacterData*>(GetGameObject()->GetCharacterData());
     chdata->SetGraphicsPipeLine(L"StaticFBX");
     chdata->LoadMainFBX(L"./Resources/fbx/HillTerrain.fbx", L"HillsTer");
-    chdata->setScale(0.001f, 0.001f, 0.001f);
+    chdata->SetScale(0.001f, 0.001f, 0.001f);
 
     chdata->GetMainFbx()->SetMeshUniqueFlag(true, true);
     chdata->GetMainFbx()->SetTextureUniqueFlag(true);

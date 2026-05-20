@@ -15,7 +15,7 @@ void InfantryPlayer::InitAction()
 	if (m_admin == Admin::Rebel)	//歩兵Fbxの登録　勢力ごとに違うからif分で分岐
 	{
 		chdata->LoadMainFBX(L"./Resources/fbx/rebelInfantry.fbx", L"RebelInfantry");
-		chdata->setScale(scaleValue, scaleValue, scaleValue);
+		chdata->SetScale(scaleValue, scaleValue, scaleValue);
 
 		//アニメーションを登録
 		HRESULT loadIdleAnim = chdata->LoadAnimationFBX(L"./Resources/fbx/RebelAnime/rebel_Rifle_Idle.fbx", L"WAIT_REBEL_INF");
@@ -54,7 +54,7 @@ void InfantryPlayer::InitAction()
 	else if (m_admin == Admin::Imperial)
 	{
 		chdata->LoadMainFBX(L"./Resources/fbx/imperialInfantry.fbx", L"ImperialInfantry");
-		chdata->setScale(scaleValue, scaleValue, scaleValue);
+		chdata->SetScale(scaleValue, scaleValue, scaleValue);
 
 		//アニメーションを登録
 		HRESULT loadIdleAnim = chdata->LoadAnimationFBX(L"./Resources/fbx/ImperialAnime/imperial_Rifle_Idle.fbx", L"WAIT_IMPER_INF");
@@ -161,7 +161,7 @@ void ArtilleryPlayer::InitAction()
 	}
 
 	float scaleValue = 0.02f;
-	chdata->setScale(scaleValue, scaleValue, scaleValue);
+	chdata->SetScale(scaleValue, scaleValue, scaleValue);
 	chdata->SetScaleValue(scaleValue);
 
 	chdata->GetMainFbx()->SetMeshUniqueFlag(true, true);
@@ -199,7 +199,7 @@ void MachinegunnerPlayer::InitAction()
 
 	chdata->LoadMainFBX(L"./Resources/fbx/rebelInfantry.fbx", L"RebelInfantry");
 	float scaleValue = 0.03f;
-	chdata->setScale(scaleValue, scaleValue, scaleValue);
+	chdata->SetScale(scaleValue, scaleValue, scaleValue);
 	chdata->SetScaleValue(scaleValue);
 
 	//アニメーションを登録
@@ -324,7 +324,7 @@ void ScoutPlayer::InitAction()
 	{
 		chdata->LoadMainFBX(L"./Resources/fbx/rebelScout.fbx", L"RebelSco");
 		
-		chdata->setScale(scaleValue, scaleValue, scaleValue);
+		chdata->SetScale(scaleValue, scaleValue, scaleValue);
 		chdata->SetScaleValue(scaleValue);
 
 		//アニメーションを登録
@@ -365,7 +365,7 @@ void ScoutPlayer::InitAction()
 	{
 		chdata->LoadMainFBX(L"./Resources/fbx/imperialSco.fbx", L"ImperialSco");
 
-		chdata->setScale(scaleValue, scaleValue, scaleValue);
+		chdata->SetScale(scaleValue, scaleValue, scaleValue);
 		chdata->SetScaleValue(scaleValue);
 
 		//アニメーションを登録
@@ -466,14 +466,14 @@ void ArmoredPlayer::InitAction()
 	{
 		chdata->LoadMainFBX(L"./Resources/fbx/rebelarm.fbx", L"RebelArm");
 		float scaleValue = 3.00f;
-		chdata->setScale(scaleValue, scaleValue, scaleValue);
+		chdata->SetScale(scaleValue, scaleValue, scaleValue);
 		chdata->SetScaleValue(scaleValue);
 	}
 	else if (m_admin == Admin::Imperial)
 	{
 		chdata->LoadMainFBX(L"./Resources/fbx/imperialarm.fbx", L"ImperialArm");
 		float scaleValue = 0.03f;
-		chdata->setScale(scaleValue, scaleValue, scaleValue);
+		chdata->SetScale(scaleValue, scaleValue, scaleValue);
 		chdata->SetScaleValue(scaleValue);
 	}
 	chdata->GetMainFbx()->SetMeshUniqueFlag(true, true);

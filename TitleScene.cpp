@@ -57,7 +57,7 @@ void TitleScene::InitAction()
     m_Sprite[0]->SetCameraLabel(L"HUDCamera", 0);
     m_Sprite[0]->SetGraphicsPipeLine(L"AlphaSprite");
     m_Sprite[0]->SetSpritePattern(0, 1, 1, pattern);
-    m_Sprite[0]->setScale(1000.0f, 1000.0f, 0.1f);
+    m_Sprite[0]->SetScale(1000.0f, 1000.0f, 0.1f);
     m_Sprite[0]->setSpriteIndex(0);
     m_Sprite[0]->setPosition(0.0f, -10.0f, 2.0f);
     m_Sprite[0]->SetColor(1.0f, 1.0f, 1.0f, 1);
@@ -68,7 +68,7 @@ void TitleScene::InitAction()
     m_Sprite[1]->SetCameraLabel(L"HUDCamera", 0);
     m_Sprite[1]->SetGraphicsPipeLine(L"AlphaSprite");
     m_Sprite[1]->SetSpritePattern(0, 1, 1, m_PatternRect);
-    m_Sprite[1]->setScale(550.0f, 550.0f, 0.1f);
+    m_Sprite[1]->SetScale(550.0f, 550.0f, 0.1f);
     m_Sprite[1]->setSpriteIndex(0);
     m_Sprite[1]->setPosition(0.0f, -10.0f, 1.0f);
     m_Sprite[1]->SetColor(1.0f, 1.0f, 1.0f, 1);
@@ -79,7 +79,7 @@ void TitleScene::InitAction()
     m_Sprite[2]->SetCameraLabel(L"HUDCamera", 0);
     m_Sprite[2]->SetGraphicsPipeLine(L"AlphaSprite");
     m_Sprite[2]->SetSpritePattern(0, 1, 1, m_PatternRect);
-    m_Sprite[2]->setScale(1000.0f, 1000.0f, 0.1f);
+    m_Sprite[2]->SetScale(1000.0f, 1000.0f, 0.1f);
     m_Sprite[2]->setSpriteIndex(0);
     m_Sprite[2]->setPosition(0.0f, -10.0f, 0.0f);
     m_Sprite[2]->SetColor(1.0f, 1.0f, 1.0f, 1);

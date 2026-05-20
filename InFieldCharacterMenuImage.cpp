@@ -30,7 +30,7 @@ void InFieldCharacterMenuImage::InitAction()
     m_Sprite->SetColor(1.0f, 1.0f, 1.0f, 1);
     m_Sprite->SetGraphicsPipeLine(L"AlphaSprite");
     m_Sprite->SetSpritePattern(0, 1, 1, pattern);
-    m_Sprite->setScale(270.0f, 270.0f, 0.1f);
+    m_Sprite->SetScale(270.0f, 270.0f, 0.1f);
     m_Sprite->setSpriteIndex(0);
     m_Sprite->setPosition(270.0f, 50.0f, 1.0f); // 表示位置を調整
 }

@@ -37,7 +37,7 @@ void DamageHUD::InitAction()
         m_Sprite[i]->SetSpritePattern(0, 1, 1, pattern);
         m_Sprite[i]->setSpriteIndex(0);
         m_Sprite[i]->setPosition(OrigenBarPosX, kBarPosY, 2.0f);
-        m_Sprite[i]->setScale(OriginBarSizeX, 10.0f, 0.1f);
+        m_Sprite[i]->SetScale(OriginBarSizeX, 10.0f, 0.1f);
     }
 
     m_Sprite[0]->SetColor(0.0f, 1.0f, 0.0f, 1);
@@ -46,7 +46,7 @@ void DamageHUD::InitAction()
     m_Sprite[1]->setPosition(OrigenBarPosX, kBarPosY, 2.0f);
     m_Sprite[2]->SetColor(0.0f, 0.0f, 0.0f, 1);
     m_Sprite[2]->setPosition(OrigenBarPosX, kBarPosY, 2.5f);
-    m_Sprite[2]->setScale(OriginBarSizeX + 5.0f, 15.0f, 0.1f);
+    m_Sprite[2]->SetScale(OriginBarSizeX + 5.0f, 15.0f, 0.1f);
 }
 
 bool DamageHUD::FrameAction()
@@ -69,21 +69,21 @@ bool DamageHUD::FrameAction()
         if (animCount == 0.0f)
         {
             RedBarSizeX = startRedSizeX;
-            m_Sprite[1]->setScale(RedBarSizeX, 10.0f, 0.1f);
+            m_Sprite[1]->SetScale(RedBarSizeX, 10.0f, 0.1f);
             m_Sprite[1]->setPosition(kBarPosLeftX + RedBarSizeX / 2.0f, kBarPosY, 2.0f);
         }
         if (animCount < 0.5f)
         {
             float t = animCount / 0.5f;
             GreenBarSizeX = startGreenSizeX + (endGreenSizeX - startGreenSizeX) * t;
-            m_Sprite[0]->setScale(GreenBarSizeX, 10.0f, 0.1f);
+            m_Sprite[0]->SetScale(GreenBarSizeX, 10.0f, 0.1f);
             m_Sprite[0]->setPosition(kBarPosLeftX + GreenBarSizeX / 2.0f, kBarPosY, 1.0f);
         }
         else if (animCount < 1.0f)
         {
             float t = (animCount - 0.5f) / 0.5f;
             RedBarSizeX = startRedSizeX + (endRedSizeX - startRedSizeX) * t;
-            m_Sprite[1]->setScale(RedBarSizeX, 10.0f, 0.1f);
+            m_Sprite[1]->SetScale(RedBarSizeX, 10.0f, 0.1f);
             m_Sprite[1]->setPosition(kBarPosLeftX + RedBarSizeX / 2.0f, kBarPosY, 2.0f);
         }
         else

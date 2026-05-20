@@ -188,7 +188,6 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"MenuBaseTexture", L"./Resources/textures/HUD/MenuBaseImage.png");			//ニキシー管左部イメージ
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"TerrainHUDTexture", L"./Resources/textures/HUD/TerrainHUDImage.png");		//地形HUD背景イメージ
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"SoldierBarArrowTexture", L"./Resources/textures/HUD/BarArrowImage.png");	//メーターの矢印のイメージ
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"NewsPaperTexture", L"./Resources/textures/HUD/NewsPaporImage.png");		//新聞背景イメージ
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"DogtagBaseTexture", L"./Resources/textures/HUD/DogtagBaseImage.png");		//ドックタグ背景イメージ
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"AliesGageTexture", L"./Resources/textures/HUD/AliesGageTexture.png");		//味方優勢ゲージイメージ
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"EnemyGageTexture", L"./Resources/textures/HUD/EnemyGageTexture.png");		//敵優勢ゲージイメージ
@@ -218,28 +217,11 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"TurnEndBackGroundTexture", L"./Resources/textures/HUD/TurnEndBackGroundTexture.png");		//ターンエンドHUD背景イメージ
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"TurnEndArrowTexture", L"./Resources/textures/HUD/TurnEndArrowTexture.png");				//ターンエンドHUD矢印イメージ
 
-				//勝利の方のアニメーションテクスチャ
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"NewsPaperWinTexture", L"./Resources/textures/HUD/NewsPaperWinImage.png");
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"NewsPaperWinTexture01", L"./Resources/textures/HUD/NewsPaperWinImage01.png");
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"NewsPaperWinTexture02", L"./Resources/textures/HUD/NewsPaperWinImage02.png");
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"NewsPaperWinTexture03", L"./Resources/textures/HUD/NewsPaperWinImage03.png");
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"NewsPaperWinTexture04", L"./Resources/textures/HUD/NewsPaperWinImage04.png");
-
-				//敗北の方のアニメーションテクスチャ
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"NewsPaperLoseTexture", L"./Resources/textures/HUD/NewsPaperLoseImage.png");
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"NewsPaperLoseTexture01", L"./Resources/textures/HUD/NewsPaperLoseImage01.png");
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"NewsPaperLoseTexture02", L"./Resources/textures/HUD/NewsPaperLoseImage02.png");
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"NewsPaperLoseTexture03", L"./Resources/textures/HUD/NewsPaperLoseImage03.png");
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"NewsPaperLoseTexture04", L"./Resources/textures/HUD/NewsPaperLoseImage04.png");
-
-				//勝利後のめくるアニメーションテクスチャ
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"NewsPaperWinTextureAfter01", L"./Resources/textures/HUD/NewsPaperWinAfter01.png");
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"NewsPaperWinTextureAfter02", L"./Resources/textures/HUD/NewsPaperWinAfter02.png");
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"NewsPaperWinTextureAfter03", L"./Resources/textures/HUD/NewsPaperWinAfter03.png");
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"NewsPaperWinTextureAfter04", L"./Resources/textures/HUD/NewsPaperWinAfter04.png");
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"NewsPaperWinTextureAfter05", L"./Resources/textures/HUD/NewsPaperWinAfter05.png");
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"NewsPaperWinTextureAfter06", L"./Resources/textures/HUD/NewsPaperWinAfter06.png");
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"NewsPaperWinResultTexture", L"./Resources/textures/HUD/NewsPaperWinResultImage.png");
+				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"WinNewsPaperTexture", L"./Resources/textures/HUD/WinNewsPaperTexture.png");			//勝利新聞イメージ
+				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"LoseNewsPaperTexture", L"./Resources/textures/HUD/LoseNewsPaperTexture.png");			//敗北新聞イメージ
+				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"CloseNewsPaperTexture", L"./Resources/textures/HUD/CloseNewsPaperTexture.png");		//新聞を閉じるイメージ
+				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"NewsPaperWinResultTexture", L"./Resources/textures/HUD/NewsPaperWinResultImage.png");	//勝利した際のリザルトイメージ
+				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"NewsPaperTexture", L"./Resources/textures/HUD/NewsPaperImage.png");					//投函される新聞イメージ
 
 				//現在のターンを表すアニメーションテクスチャ
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"AliesTurnHUD", L"./Resources/textures/HUD/AliesTurnHUD.png");
@@ -586,7 +568,7 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 
 						spriteCharacter->SetColor(1, 1, 1, 1);
 						spriteCharacter->setPosition(SpposX, 1.0f, SpposY);
-						spriteCharacter->setRotation(90.0f, 0.0f, 0.0f);
+						spriteCharacter->SetRotation(90.0f, 0.0f, 0.0f);
 
 						squares->charaPosX = X;
 						squares->charaPosY = Y;
@@ -655,7 +637,7 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 							ForestObj = new GameObject(ForestFbx);
 							XMFLOAT3 pos = BFMng->GetCharaPos(BFMng->GetFieldSquaresList()[(X + (Y * 10))]);
 							ForestFbx->setPosition(pos.x, pos.y, pos.z);
-							ForestFbx->setRotation(0.0f, 0.0f, 0.0f);
+							ForestFbx->SetRotation(0.0f, 0.0f, 0.0f);
 							ForestObj->addComponent(ForestTer);
 							engine->AddGameObject(ForestObj);
 						}
@@ -668,7 +650,7 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 							HillObj = new GameObject(HillFbx);
 							XMFLOAT3 pos = BFMng->GetCharaPos(BFMng->GetFieldSquaresList()[(X + (Y * 10))]);
 							HillFbx->setPosition(pos.x, pos.y, pos.z);
-							HillFbx->setRotation(0.0f, 0.0f, 0.0f);
+							HillFbx->SetRotation(0.0f, 0.0f, 0.0f);
 							HillObj->addComponent(HillTer);
 							engine->AddGameObject(HillObj);
 						}
@@ -681,7 +663,7 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 							RiverObj = new GameObject(RiverFbx);
 							XMFLOAT3 pos = BFMng->GetCharaPos(BFMng->GetFieldSquaresList()[(X + (Y * 10))]);
 							RiverFbx->setPosition(pos.x, pos.y, pos.z);
-							RiverFbx->setRotation(0.0f, 0.0f, 0.0f);
+							RiverFbx->SetRotation(0.0f, 0.0f, 0.0f);
 							RiverObj->addComponent(RiverTer);
 							engine->AddGameObject(RiverObj);
 						}
@@ -694,7 +676,7 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 							TowerObj = new GameObject(TowerFbx);
 							XMFLOAT3 pos = BFMng->GetCharaPos(BFMng->GetFieldSquaresList()[(X + (Y * 10))]);
 							TowerFbx->setPosition(pos.x, pos.y, pos.z);
-							TowerFbx->setRotation(0.0f, 0.0f, 0.0f);
+							TowerFbx->SetRotation(0.0f, 0.0f, 0.0f);
 							TowerObj->addComponent(TowerTer);
 							engine->AddGameObject(TowerObj);
 						}
@@ -738,7 +720,7 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 
 					XMFLOAT3 pos = BFMng->GetCharaPos(BFMng->GetFieldSquaresList()[BFMng->GetAlliesCharacterList()[i]->CharaPos]);
 					rebelInfFbx->setPosition(pos.x, pos.y ,pos.z);
-					rebelInfFbx->setRotation(0.0f, 0.0f, 0.0f);
+					rebelInfFbx->SetRotation(0.0f, 0.0f, 0.0f);
 					BFMng->GetFieldSquaresList()[BFMng->GetAlliesCharacterList()[i]->CharaPos]->fbxD = rebelInfFbx;
 					BFMng->GetFieldSquaresList()[BFMng->GetAlliesCharacterList()[i]->CharaPos]->fbxD->playerData = rebelPlayer;
 
@@ -789,7 +771,7 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 
 					XMFLOAT3 pos = BFMng->GetCharaPos(BFMng->GetFieldSquaresList()[BFMng->GetEnemyCharacterList()[i]->CharaPos]);
 					imperialInfFbx->setPosition(pos.x, pos.y, pos.z);
-					imperialInfFbx->setRotation(0.0f, 180.0f, 0.0f);
+					imperialInfFbx->SetRotation(0.0f, 180.0f, 0.0f);
 					BFMng->GetFieldSquaresList()[BFMng->GetEnemyCharacterList()[i]->CharaPos]->fbxD = imperialInfFbx;
 					BFMng->GetFieldSquaresList()[BFMng->GetEnemyCharacterList()[i]->CharaPos]->fbxD->playerData = imperialPlayer;
 

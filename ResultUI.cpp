@@ -45,7 +45,7 @@ void ResultUI::InitAction()
     m_FoldPaperSprite->SetColor(1.0f, 1.0f, 1.0f, 1);
     m_FoldPaperSprite->SetGraphicsPipeLine(L"AlphaSprite");
     m_FoldPaperSprite->SetSpritePattern(0, 1, 1, pattern);
-    m_FoldPaperSprite->setScale(200.0f, 200.0f, 0.1f);
+    m_FoldPaperSprite->SetScale(200.0f, 200.0f, 0.1f);
     m_FoldPaperSprite->setPosition(m_FoldNewsPaperPos.x, m_FoldNewsPaperPos.y, m_FoldNewsPaperPos.z);
     m_FoldPaperSprite->setSpriteIndex(0);
     m_FoldPaperSprite->SetTextureId(L"NewsPaperTexture");
@@ -55,7 +55,7 @@ void ResultUI::InitAction()
     m_NewsPaperSprite->SetColor(1.0f, 1.0f, 1.0f, 1);
     m_NewsPaperSprite->SetGraphicsPipeLine(L"AlphaSprite");
     m_NewsPaperSprite->SetSpritePattern(0, 1, 1, pattern);
-    m_NewsPaperSprite->setScale(500.0f, 500.0f, 0.1f);
+    m_NewsPaperSprite->SetScale(500.0f, 500.0f, 0.1f);
     m_NewsPaperSprite->setPosition(0.0f, 0.0f, 1.0f);
     m_NewsPaperSprite->setSpriteIndex(0);
     m_NewsPaperSprite->SetTextureId(L"NewsPaperWinTexture"); //表示されるタイミングでまたイメージを切り替える
@@ -65,7 +65,7 @@ void ResultUI::InitAction()
     m_NewsPaperResultSprite->SetColor(1.0f, 1.0f, 1.0f, 1);
     m_NewsPaperResultSprite->SetGraphicsPipeLine(L"AlphaSprite");
     m_NewsPaperResultSprite->SetSpritePattern(0, 1, 1, pattern);
-    m_NewsPaperResultSprite->setScale(500.0f, 500.0f, 0.1f);
+    m_NewsPaperResultSprite->SetScale(500.0f, 500.0f, 0.1f);
     m_NewsPaperResultSprite->setPosition(0.0f, 0.0f, 1.5f);
     m_NewsPaperResultSprite->setSpriteIndex(0);
     m_NewsPaperResultSprite->SetTextureId(L"NewsPaperWinResultTexture");
@@ -75,7 +75,7 @@ void ResultUI::InitAction()
     m_Fadeprite->SetColor(1.0f, 1.0f, 1.0f, 0.0f);
     m_Fadeprite->SetGraphicsPipeLine(L"AlphaSprite");
     m_Fadeprite->SetSpritePattern(0, 1, 1, pattern);
-    m_Fadeprite->setScale(1000.0f, 600.0f, 0.1f);
+    m_Fadeprite->SetScale(1000.0f, 600.0f, 0.1f);
     m_Fadeprite->setPosition(0.0f, 0.0f, 2.0f);
     m_Fadeprite->setSpriteIndex(0);
     m_Fadeprite->SetTextureId(L"Sprite00");
@@ -145,320 +145,320 @@ bool ResultUI::FrameAction()
     wstring lastScore = L"";
     wstring pressSpace = L"スペースキーで終了";
 
-    if (BFMng->GetCurrentTurn() == Turn::Result)
-    {
-        switch (m_ResultStates)
-        {
-        case ResultStates::Init:
-            if (BFMng->GetPlayerWin())  //プレイヤーが勝利した場合
-            {
-                m_PlayerWin = true;
-            }
-            else
-            {
-                m_PlayerWin = false;
-            }
-            m_ResultStates = ResultStates::PostedAnim;
-            break;
-        case ResultStates::PostedAnim:    //新聞が投函されるアニメーション
+    //if (BFMng->GetCurrentTurn() == Turn::Result)
+    //{
+    //    switch (m_ResultStates)
+    //    {
+    //    case ResultStates::Init:
+    //        if (BFMng->GetPlayerWin())  //プレイヤーが勝利した場合
+    //        {
+    //            m_PlayerWin = true;
+    //        }
+    //        else
+    //        {
+    //            m_PlayerWin = false;
+    //        }
+    //        m_ResultStates = ResultStates::PostedAnim;
+    //        break;
+    //    case ResultStates::PostedAnim:    //新聞が投函されるアニメーション
 
-            m_PostedAnimCount += m_TimeManager->GetDeltaTime();
-            if (m_PostedAnimCount < 1.0f)
-            {
-                //暗転していくアニメーション
-                m_FadeAlpha += 0.05f;
-                if (m_FadeAlpha > 1.0f)
-                {
-                    m_FadeAlpha = 1.0f;
-                }
-                m_Fadeprite->SetColor(0, 0, 0, m_FadeAlpha);
+    //        m_PostedAnimCount += m_TimeManager->GetDeltaTime();
+    //        if (m_PostedAnimCount < 1.0f)
+    //        {
+    //            //暗転していくアニメーション
+    //            m_FadeAlpha += 0.05f;
+    //            if (m_FadeAlpha > 1.0f)
+    //            {
+    //                m_FadeAlpha = 1.0f;
+    //            }
+    //            m_Fadeprite->SetColor(0, 0, 0, m_FadeAlpha);
 
-                //新聞が下に落ちるアニメーション
-                m_FoldNewsPaperPos.y -= 15.0f;
-                m_FoldPaperSprite->setPosition(m_FoldNewsPaperPos.x, m_FoldNewsPaperPos.y, m_FoldNewsPaperPos.z);
-            }
-            else if (m_PostedAnimCount > 1.0f && m_PostedAnimCount < 3.0f)
-            {
-                m_FoldNewsPaperScale.x += 7.0f;
-                m_FoldNewsPaperScale.y += 7.0f;
+    //            //新聞が下に落ちるアニメーション
+    //            m_FoldNewsPaperPos.y -= 15.0f;
+    //            m_FoldPaperSprite->setPosition(m_FoldNewsPaperPos.x, m_FoldNewsPaperPos.y, m_FoldNewsPaperPos.z);
+    //        }
+    //        else if (m_PostedAnimCount > 1.0f && m_PostedAnimCount < 3.0f)
+    //        {
+    //            m_FoldNewsPaperScale.x += 7.0f;
+    //            m_FoldNewsPaperScale.y += 7.0f;
 
-                auto FoldNewsPaperRotate = m_FoldPaperSprite->getRotation();
+    //            auto FoldNewsPaperRotate = m_FoldPaperSprite->GetRotation();
 
-                m_FoldPaperSprite->setRotation(FoldNewsPaperRotate.x, FoldNewsPaperRotate.y, FoldNewsPaperRotate.z + 5.0f);
-                m_FoldPaperSprite->setScale(m_FoldNewsPaperScale.x, m_FoldNewsPaperScale.y, m_FoldNewsPaperScale.z);
-            }
-            else if (m_PostedAnimCount > 3.0f)
-            {
-                if (m_PlayerWin)
-                m_ResultStates = ResultStates::WinAnim;
-                else if (!m_PlayerWin)
-                m_ResultStates = ResultStates::LoseAnim;
-            }
-            spritePipeLine->AddRenderObject(m_FoldPaperSprite.get());
-            spritePipeLine->AddRenderObject(m_Fadeprite.get());
-            break;
-        case ResultStates::WinAnim:
-            if (m_OpenAnimCount < kAnimSpace)
-            {
-                m_NewsPaperSprite->SetTextureId(L"NewsPaperWinTexture04");
-                m_OpenAnimCount += m_TimeManager->GetDeltaTime();
-            }
-            else if (m_OpenAnimCount > kAnimSpace && m_OpenAnimCount < kAnimSpace * 2)
-            {
-                m_NewsPaperSprite->SetTextureId(L"NewsPaperWinTexture03");
-                m_OpenAnimCount += m_TimeManager->GetDeltaTime();
-            }
-            else if (m_OpenAnimCount > kAnimSpace * 2 && m_OpenAnimCount < kAnimSpace * 3)
-            {
-                m_NewsPaperSprite->SetTextureId(L"NewsPaperWinTexture02");
-                m_OpenAnimCount += m_TimeManager->GetDeltaTime();
-            }
-            else if (m_OpenAnimCount > kAnimSpace * 3 && m_OpenAnimCount < kAnimSpace * 4)
-            {
-                m_NewsPaperSprite->SetTextureId(L"NewsPaperWinTexture01");
-                m_OpenAnimCount += m_TimeManager->GetDeltaTime();
-            }
-            else if (m_OpenAnimCount > kAnimSpace * 4)
-            {
-                m_NewsPaperSprite->SetTextureId(L"NewsPaperWinTexture");
-            }
+    //            m_FoldPaperSprite->SetRotation(FoldNewsPaperRotate.x, FoldNewsPaperRotate.y, FoldNewsPaperRotate.z + 5.0f);
+    //            m_FoldPaperSprite->SetScale(m_FoldNewsPaperScale.x, m_FoldNewsPaperScale.y, m_FoldNewsPaperScale.z);
+    //        }
+    //        else if (m_PostedAnimCount > 3.0f)
+    //        {
+    //            if (m_PlayerWin)
+    //            m_ResultStates = ResultStates::WinAnim;
+    //            else if (!m_PlayerWin)
+    //            m_ResultStates = ResultStates::LoseAnim;
+    //        }
+    //        spritePipeLine->AddRenderObject(m_FoldPaperSprite.get());
+    //        spritePipeLine->AddRenderObject(m_Fadeprite.get());
+    //        break;
+    //    case ResultStates::WinAnim:
+    //        if (m_OpenAnimCount < kAnimSpace)
+    //        {
+    //            m_NewsPaperSprite->SetTextureId(L"NewsPaperWinTexture04");
+    //            m_OpenAnimCount += m_TimeManager->GetDeltaTime();
+    //        }
+    //        else if (m_OpenAnimCount > kAnimSpace && m_OpenAnimCount < kAnimSpace * 2)
+    //        {
+    //            m_NewsPaperSprite->SetTextureId(L"NewsPaperWinTexture03");
+    //            m_OpenAnimCount += m_TimeManager->GetDeltaTime();
+    //        }
+    //        else if (m_OpenAnimCount > kAnimSpace * 2 && m_OpenAnimCount < kAnimSpace * 3)
+    //        {
+    //            m_NewsPaperSprite->SetTextureId(L"NewsPaperWinTexture02");
+    //            m_OpenAnimCount += m_TimeManager->GetDeltaTime();
+    //        }
+    //        else if (m_OpenAnimCount > kAnimSpace * 3 && m_OpenAnimCount < kAnimSpace * 4)
+    //        {
+    //            m_NewsPaperSprite->SetTextureId(L"NewsPaperWinTexture01");
+    //            m_OpenAnimCount += m_TimeManager->GetDeltaTime();
+    //        }
+    //        else if (m_OpenAnimCount > kAnimSpace * 4)
+    //        {
+    //            m_NewsPaperSprite->SetTextureId(L"NewsPaperWinTexture");
+    //        }
 
-            if (m_OpenAnimCount > kAnimSpace * 4 && keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK))
-            {
-                m_ResultStates = ResultStates::WinResultAnim;
-            }
-            spritePipeLine->AddRenderObject(m_NewsPaperSprite.get());
-            spritePipeLine->AddRenderObject(m_Fadeprite.get());
-            break;
-        case ResultStates::LoseAnim:
-            if (m_OpenAnimCount < kAnimSpace)
-            {
-                m_NewsPaperSprite->SetTextureId(L"NewsPaperLoseTexture04");
-                m_OpenAnimCount += m_TimeManager->GetDeltaTime();
-            }
-            else if (m_OpenAnimCount > kAnimSpace && m_OpenAnimCount < kAnimSpace * 2)
-            {
-                m_NewsPaperSprite->SetTextureId(L"NewsPaperLoseTexture03");
-                m_OpenAnimCount += m_TimeManager->GetDeltaTime();
-            }
-            else if (m_OpenAnimCount > kAnimSpace * 2 && m_OpenAnimCount < kAnimSpace * 3)
-            {
-                m_NewsPaperSprite->SetTextureId(L"NewsPaperLoseTexture02");
-                m_OpenAnimCount += m_TimeManager->GetDeltaTime();
-            }
-            else if (m_OpenAnimCount > kAnimSpace * 3 && m_OpenAnimCount < kAnimSpace * 4)
-            {
-                m_NewsPaperSprite->SetTextureId(L"NewsPaperLoseTexture01");
-                m_OpenAnimCount += m_TimeManager->GetDeltaTime();
-            }
-            else if (m_OpenAnimCount > kAnimSpace * 4)
-            {
-                m_NewsPaperSprite->SetTextureId(L"NewsPaperLoseTexture");
-            }
-            spritePipeLine->AddRenderObject(m_NewsPaperSprite.get());
-            spritePipeLine->AddRenderObject(m_Fadeprite.get());
-            break;
-        case ResultStates::WinResultAnim:
-            spritePipeLine->AddRenderObject(m_Fadeprite.get());
-            switch (m_ResultAnimStates)
-            {
-            default:
-                break;
-            case ResultAnimState::Init:
-                if (m_ResultAnimCount < kAnimSpace)
-                {
-                    m_NewsPaperSprite->SetTextureId(L"NewsPaperWinTextureAfter01");
-                }
-                else if (m_ResultAnimCount > kAnimSpace && m_ResultAnimCount < kAnimSpace * 2)
-                {
-                    m_NewsPaperSprite->SetTextureId(L"NewsPaperWinTextureAfter02");
-                }
-                else if (m_ResultAnimCount > kAnimSpace * 2 && m_ResultAnimCount < kAnimSpace * 3)
-                {
-                    m_NewsPaperSprite->SetTextureId(L"NewsPaperWinTextureAfter03");
-                }
-                else if (m_ResultAnimCount > kAnimSpace * 3 && m_ResultAnimCount < kAnimSpace * 4)
-                {
-                    m_NewsPaperSprite->SetTextureId(L"NewsPaperWinTextureAfter04");
-                }
-                else if (m_ResultAnimCount > kAnimSpace * 4 && m_ResultAnimCount < kAnimSpace * 5)
-                {
-                    m_NewsPaperSprite->SetTextureId(L"NewsPaperWinTextureAfter05");
-                }
-                else if (m_ResultAnimCount > kAnimSpace * 5 && m_ResultAnimCount < kAnimSpace * 6)
-                {
-                    m_NewsPaperSprite->SetTextureId(L"NewsPaperWinTextureAfter06");
-                }
-                else if (m_ResultAnimCount > kAnimSpace * 6)
-                {
-                    m_ResultAnimCount = 0.0f;
-                    m_ResultAnimStates = ResultAnimState::Turn;
-                }
-                m_ResultAnimCount += m_TimeManager->GetDeltaTime();
-                spritePipeLine->AddRenderObject(m_NewsPaperSprite.get());
-                spritePipeLine->AddRenderObject(m_NewsPaperResultSprite.get());
-                break;
-            case ResultAnimState::Turn:
-                spritePipeLine->AddRenderObject(m_NewsPaperResultSprite.get());
-                if (m_ResultAnimCount < 1.0f)
-                {
-                    m_ResultAnimCount += m_TimeManager->GetDeltaTime();
+    //        if (m_OpenAnimCount > kAnimSpace * 4 && keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK))
+    //        {
+    //            m_ResultStates = ResultStates::WinResultAnim;
+    //        }
+    //        spritePipeLine->AddRenderObject(m_NewsPaperSprite.get());
+    //        spritePipeLine->AddRenderObject(m_Fadeprite.get());
+    //        break;
+    //    case ResultStates::LoseAnim:
+    //        if (m_OpenAnimCount < kAnimSpace)
+    //        {
+    //            m_NewsPaperSprite->SetTextureId(L"NewsPaperLoseTexture04");
+    //            m_OpenAnimCount += m_TimeManager->GetDeltaTime();
+    //        }
+    //        else if (m_OpenAnimCount > kAnimSpace && m_OpenAnimCount < kAnimSpace * 2)
+    //        {
+    //            m_NewsPaperSprite->SetTextureId(L"NewsPaperLoseTexture03");
+    //            m_OpenAnimCount += m_TimeManager->GetDeltaTime();
+    //        }
+    //        else if (m_OpenAnimCount > kAnimSpace * 2 && m_OpenAnimCount < kAnimSpace * 3)
+    //        {
+    //            m_NewsPaperSprite->SetTextureId(L"NewsPaperLoseTexture02");
+    //            m_OpenAnimCount += m_TimeManager->GetDeltaTime();
+    //        }
+    //        else if (m_OpenAnimCount > kAnimSpace * 3 && m_OpenAnimCount < kAnimSpace * 4)
+    //        {
+    //            m_NewsPaperSprite->SetTextureId(L"NewsPaperLoseTexture01");
+    //            m_OpenAnimCount += m_TimeManager->GetDeltaTime();
+    //        }
+    //        else if (m_OpenAnimCount > kAnimSpace * 4)
+    //        {
+    //            m_NewsPaperSprite->SetTextureId(L"NewsPaperLoseTexture");
+    //        }
+    //        spritePipeLine->AddRenderObject(m_NewsPaperSprite.get());
+    //        spritePipeLine->AddRenderObject(m_Fadeprite.get());
+    //        break;
+    //    case ResultStates::WinResultAnim:
+    //        spritePipeLine->AddRenderObject(m_Fadeprite.get());
+    //        switch (m_ResultAnimStates)
+    //        {
+    //        default:
+    //            break;
+    //        case ResultAnimState::Init:
+    //            if (m_ResultAnimCount < kAnimSpace)
+    //            {
+    //                m_NewsPaperSprite->SetTextureId(L"NewsPaperWinTextureAfter01");
+    //            }
+    //            else if (m_ResultAnimCount > kAnimSpace && m_ResultAnimCount < kAnimSpace * 2)
+    //            {
+    //                m_NewsPaperSprite->SetTextureId(L"NewsPaperWinTextureAfter02");
+    //            }
+    //            else if (m_ResultAnimCount > kAnimSpace * 2 && m_ResultAnimCount < kAnimSpace * 3)
+    //            {
+    //                m_NewsPaperSprite->SetTextureId(L"NewsPaperWinTextureAfter03");
+    //            }
+    //            else if (m_ResultAnimCount > kAnimSpace * 3 && m_ResultAnimCount < kAnimSpace * 4)
+    //            {
+    //                m_NewsPaperSprite->SetTextureId(L"NewsPaperWinTextureAfter04");
+    //            }
+    //            else if (m_ResultAnimCount > kAnimSpace * 4 && m_ResultAnimCount < kAnimSpace * 5)
+    //            {
+    //                m_NewsPaperSprite->SetTextureId(L"NewsPaperWinTextureAfter05");
+    //            }
+    //            else if (m_ResultAnimCount > kAnimSpace * 5 && m_ResultAnimCount < kAnimSpace * 6)
+    //            {
+    //                m_NewsPaperSprite->SetTextureId(L"NewsPaperWinTextureAfter06");
+    //            }
+    //            else if (m_ResultAnimCount > kAnimSpace * 6)
+    //            {
+    //                m_ResultAnimCount = 0.0f;
+    //                m_ResultAnimStates = ResultAnimState::Turn;
+    //            }
+    //            m_ResultAnimCount += m_TimeManager->GetDeltaTime();
+    //            spritePipeLine->AddRenderObject(m_NewsPaperSprite.get());
+    //            spritePipeLine->AddRenderObject(m_NewsPaperResultSprite.get());
+    //            break;
+    //        case ResultAnimState::Turn:
+    //            spritePipeLine->AddRenderObject(m_NewsPaperResultSprite.get());
+    //            if (m_ResultAnimCount < 1.0f)
+    //            {
+    //                m_ResultAnimCount += m_TimeManager->GetDeltaTime();
 
-                    turn = L"経過ターン数:";
+    //                turn = L"経過ターン数:";
 
-                    count = MakeSpriteString(count, kResultTextPosX, kTurnTextPosY, 30, 45, turn.c_str());
+    //                count = MakeSpriteString(count, kResultTextPosX, kTurnTextPosY, 30, 45, turn.c_str());
 
-                    for (int i = 0; i < count; i++)
-                    {
-                        wordPipeLine->AddRenderObject(m_WordSprites[i].get());
-                    }
-                }
-                else if (m_ResultAnimCount > 1.0f && m_ResultAnimCount < 2.0f)
-                {
-                    m_ResultAnimCount += m_TimeManager->GetDeltaTime();
+    //                for (int i = 0; i < count; i++)
+    //                {
+    //                    wordPipeLine->AddRenderObject(m_WordSprites[i].get());
+    //                }
+    //            }
+    //            else if (m_ResultAnimCount > 1.0f && m_ResultAnimCount < 2.0f)
+    //            {
+    //                m_ResultAnimCount += m_TimeManager->GetDeltaTime();
 
-                    turn = L"経過ターン数:" + to_wstring(BFMng->GetTurnCount());
+    //                turn = L"経過ターン数:" + to_wstring(BFMng->GetTurnCount());
 
-                    count = MakeSpriteString(count, kResultTextPosX, kTurnTextPosY, 30, 45, turn.c_str());
+    //                count = MakeSpriteString(count, kResultTextPosX, kTurnTextPosY, 30, 45, turn.c_str());
 
-                    for (int i = 0; i < count; i++)
-                    {
-                        wordPipeLine->AddRenderObject(m_WordSprites[i].get());
-                    }
-                }
-                else if (m_ResultAnimCount > 2.0f && m_ResultAnimCount < 3.0f)
-                {
-                    m_ResultAnimCount += m_TimeManager->GetDeltaTime();
+    //                for (int i = 0; i < count; i++)
+    //                {
+    //                    wordPipeLine->AddRenderObject(m_WordSprites[i].get());
+    //                }
+    //            }
+    //            else if (m_ResultAnimCount > 2.0f && m_ResultAnimCount < 3.0f)
+    //            {
+    //                m_ResultAnimCount += m_TimeManager->GetDeltaTime();
 
-                    turn = L"経過ターン数:" + to_wstring(BFMng->GetTurnCount());
-                    killCount = L"倒した部隊数:";
+    //                turn = L"経過ターン数:" + to_wstring(BFMng->GetTurnCount());
+    //                killCount = L"倒した部隊数:";
 
-                    count = MakeSpriteString(count, kResultTextPosX, kTurnTextPosY, 30, 45, turn.c_str());
-                    count = MakeSpriteString(count, kResultTextPosX, kKillTextPosY, 30, 45, killCount.c_str());
+    //                count = MakeSpriteString(count, kResultTextPosX, kTurnTextPosY, 30, 45, turn.c_str());
+    //                count = MakeSpriteString(count, kResultTextPosX, kKillTextPosY, 30, 45, killCount.c_str());
 
-                    for (int i = 0; i < count; i++)
-                    {
-                        wordPipeLine->AddRenderObject(m_WordSprites[i].get());
-                    }
-                }
-                else if (m_ResultAnimCount > 3.0f && m_ResultAnimCount < 4.0f)
-                {
-                    m_ResultAnimCount += m_TimeManager->GetDeltaTime();
+    //                for (int i = 0; i < count; i++)
+    //                {
+    //                    wordPipeLine->AddRenderObject(m_WordSprites[i].get());
+    //                }
+    //            }
+    //            else if (m_ResultAnimCount > 3.0f && m_ResultAnimCount < 4.0f)
+    //            {
+    //                m_ResultAnimCount += m_TimeManager->GetDeltaTime();
 
-                    turn = L"経過ターン数:" + to_wstring(BFMng->GetTurnCount());
-                    killCount = L"倒した部隊数:" + to_wstring(BFMng->GetPlayerKillCount());
+    //                turn = L"経過ターン数:" + to_wstring(BFMng->GetTurnCount());
+    //                killCount = L"倒した部隊数:" + to_wstring(BFMng->GetPlayerKillCount());
 
-                    count = MakeSpriteString(count, kResultTextPosX, kTurnTextPosY, 30, 45, turn.c_str());
-                    count = MakeSpriteString(count, kResultTextPosX, kKillTextPosY, 30, 45, killCount.c_str());
+    //                count = MakeSpriteString(count, kResultTextPosX, kTurnTextPosY, 30, 45, turn.c_str());
+    //                count = MakeSpriteString(count, kResultTextPosX, kKillTextPosY, 30, 45, killCount.c_str());
 
-                    for (int i = 0; i < count; i++)
-                    {
-                        wordPipeLine->AddRenderObject(m_WordSprites[i].get());
-                    }
-                }
-                else if (m_ResultAnimCount > 4.0f && m_ResultAnimCount < 5.0f)
-                {
-                    m_ResultAnimCount += m_TimeManager->GetDeltaTime();
+    //                for (int i = 0; i < count; i++)
+    //                {
+    //                    wordPipeLine->AddRenderObject(m_WordSprites[i].get());
+    //                }
+    //            }
+    //            else if (m_ResultAnimCount > 4.0f && m_ResultAnimCount < 5.0f)
+    //            {
+    //                m_ResultAnimCount += m_TimeManager->GetDeltaTime();
 
-                    turn = L"経過ターン数:" + to_wstring(BFMng->GetTurnCount());
-                    killCount = L"倒した部隊数:" + to_wstring(BFMng->GetPlayerKillCount());
-                    killedCount = L"倒された部隊数:";
+    //                turn = L"経過ターン数:" + to_wstring(BFMng->GetTurnCount());
+    //                killCount = L"倒した部隊数:" + to_wstring(BFMng->GetPlayerKillCount());
+    //                killedCount = L"倒された部隊数:";
 
-                    count = MakeSpriteString(count, kResultTextPosX, kTurnTextPosY, 30, 45, turn.c_str());
-                    count = MakeSpriteString(count, kResultTextPosX, kKillTextPosY, 30, 45, killCount.c_str());
-                    count = MakeSpriteString(count, kResultTextPosX, kKilledTextPosY, 30, 45, killedCount.c_str());
+    //                count = MakeSpriteString(count, kResultTextPosX, kTurnTextPosY, 30, 45, turn.c_str());
+    //                count = MakeSpriteString(count, kResultTextPosX, kKillTextPosY, 30, 45, killCount.c_str());
+    //                count = MakeSpriteString(count, kResultTextPosX, kKilledTextPosY, 30, 45, killedCount.c_str());
 
-                    for (int i = 0; i < count; i++)
-                    {
-                        wordPipeLine->AddRenderObject(m_WordSprites[i].get());
-                    }
-                }
-                else if (m_ResultAnimCount > 5.0f && m_ResultAnimCount < 6.0f)
-                {
-                    m_ResultAnimCount += m_TimeManager->GetDeltaTime();
+    //                for (int i = 0; i < count; i++)
+    //                {
+    //                    wordPipeLine->AddRenderObject(m_WordSprites[i].get());
+    //                }
+    //            }
+    //            else if (m_ResultAnimCount > 5.0f && m_ResultAnimCount < 6.0f)
+    //            {
+    //                m_ResultAnimCount += m_TimeManager->GetDeltaTime();
 
-                    turn = L"経過ターン数:" + to_wstring(BFMng->GetTurnCount());
-                    killCount = L"倒した部隊数:" + to_wstring(BFMng->GetPlayerKillCount());
-                    killedCount = L"倒された部隊数:" + to_wstring(BFMng->GetEnemyKillCount());
+    //                turn = L"経過ターン数:" + to_wstring(BFMng->GetTurnCount());
+    //                killCount = L"倒した部隊数:" + to_wstring(BFMng->GetPlayerKillCount());
+    //                killedCount = L"倒された部隊数:" + to_wstring(BFMng->GetEnemyKillCount());
 
-                    count = MakeSpriteString(count, kResultTextPosX, kTurnTextPosY, 30, 45, turn.c_str());
-                    count = MakeSpriteString(count, kResultTextPosX, kKillTextPosY, 30, 45, killCount.c_str());
-                    count = MakeSpriteString(count, kResultTextPosX, kKilledTextPosY, 30, 45, killedCount.c_str());
+    //                count = MakeSpriteString(count, kResultTextPosX, kTurnTextPosY, 30, 45, turn.c_str());
+    //                count = MakeSpriteString(count, kResultTextPosX, kKillTextPosY, 30, 45, killCount.c_str());
+    //                count = MakeSpriteString(count, kResultTextPosX, kKilledTextPosY, 30, 45, killedCount.c_str());
 
-                    for (int i = 0; i < count; i++)
-                    {
-                        wordPipeLine->AddRenderObject(m_WordSprites[i].get());
-                    }
-                }
-                else if (m_ResultAnimCount > 6.0f && m_ResultAnimCount < 8.0f)
-                {
-                    m_ResultAnimCount += m_TimeManager->GetDeltaTime();
+    //                for (int i = 0; i < count; i++)
+    //                {
+    //                    wordPipeLine->AddRenderObject(m_WordSprites[i].get());
+    //                }
+    //            }
+    //            else if (m_ResultAnimCount > 6.0f && m_ResultAnimCount < 8.0f)
+    //            {
+    //                m_ResultAnimCount += m_TimeManager->GetDeltaTime();
 
-                    turn = L"経過ターン数:" + to_wstring(BFMng->GetTurnCount());
-                    killCount = L"倒した部隊数:" + to_wstring(BFMng->GetPlayerKillCount());
-                    killedCount = L"倒された部隊数:" + to_wstring(BFMng->GetEnemyKillCount());
-                    lastScore = L"戦闘スコア:";
+    //                turn = L"経過ターン数:" + to_wstring(BFMng->GetTurnCount());
+    //                killCount = L"倒した部隊数:" + to_wstring(BFMng->GetPlayerKillCount());
+    //                killedCount = L"倒された部隊数:" + to_wstring(BFMng->GetEnemyKillCount());
+    //                lastScore = L"戦闘スコア:";
 
-                    count = MakeSpriteString(count, kResultTextPosX, kTurnTextPosY, 30, 45, turn.c_str());
-                    count = MakeSpriteString(count, kResultTextPosX, kKillTextPosY, 30, 45, killCount.c_str());
-                    count = MakeSpriteString(count, kResultTextPosX, kKilledTextPosY, 30, 45, killedCount.c_str());
-                    count = MakeSpriteString(count, kLastScoreTextPosX, kLastScoreTextPosY, 40, 60, lastScore.c_str());
+    //                count = MakeSpriteString(count, kResultTextPosX, kTurnTextPosY, 30, 45, turn.c_str());
+    //                count = MakeSpriteString(count, kResultTextPosX, kKillTextPosY, 30, 45, killCount.c_str());
+    //                count = MakeSpriteString(count, kResultTextPosX, kKilledTextPosY, 30, 45, killedCount.c_str());
+    //                count = MakeSpriteString(count, kLastScoreTextPosX, kLastScoreTextPosY, 40, 60, lastScore.c_str());
 
-                    for (int i = 0; i < count; i++)
-                    {
-                        wordPipeLine->AddRenderObject(m_WordSprites[i].get());
-                    }
-                }
-                else if (m_ResultAnimCount > 8.0f && m_ResultAnimCount < 10.0f)
-                {
-                    m_ResultAnimCount += m_TimeManager->GetDeltaTime();
+    //                for (int i = 0; i < count; i++)
+    //                {
+    //                    wordPipeLine->AddRenderObject(m_WordSprites[i].get());
+    //                }
+    //            }
+    //            else if (m_ResultAnimCount > 8.0f && m_ResultAnimCount < 10.0f)
+    //            {
+    //                m_ResultAnimCount += m_TimeManager->GetDeltaTime();
 
-                    turn = L"経過ターン数:" + to_wstring(BFMng->GetTurnCount());
-                    killCount = L"倒した部隊数:" + to_wstring(BFMng->GetPlayerKillCount());
-                    killedCount = L"倒された部隊数:" + to_wstring(BFMng->GetEnemyKillCount());
-                    lastScore = L"戦闘スコア:" + to_wstring(GetLastScoreValue());
+    //                turn = L"経過ターン数:" + to_wstring(BFMng->GetTurnCount());
+    //                killCount = L"倒した部隊数:" + to_wstring(BFMng->GetPlayerKillCount());
+    //                killedCount = L"倒された部隊数:" + to_wstring(BFMng->GetEnemyKillCount());
+    //                lastScore = L"戦闘スコア:" + to_wstring(GetLastScoreValue());
 
-                    count = MakeSpriteString(count, kResultTextPosX, kTurnTextPosY, 30, 45, turn.c_str());
-                    count = MakeSpriteString(count, kResultTextPosX, kKillTextPosY, 30, 45, killCount.c_str());
-                    count = MakeSpriteString(count, kResultTextPosX, kKilledTextPosY, 30, 45, killedCount.c_str());
-                    count = MakeSpriteString(count, kLastScoreTextPosX, kLastScoreTextPosY, 40, 60, lastScore.c_str());
+    //                count = MakeSpriteString(count, kResultTextPosX, kTurnTextPosY, 30, 45, turn.c_str());
+    //                count = MakeSpriteString(count, kResultTextPosX, kKillTextPosY, 30, 45, killCount.c_str());
+    //                count = MakeSpriteString(count, kResultTextPosX, kKilledTextPosY, 30, 45, killedCount.c_str());
+    //                count = MakeSpriteString(count, kLastScoreTextPosX, kLastScoreTextPosY, 40, 60, lastScore.c_str());
 
-                    for (int i = 0; i < count; i++)
-                    {
-                        wordPipeLine->AddRenderObject(m_WordSprites[i].get());
-                    }
-                }
-                else if (m_ResultAnimCount > 10.0f)
-                {
-                    turn = L"経過ターン数:" + to_wstring(BFMng->GetTurnCount());
-                    killCount = L"倒した部隊数:" + to_wstring(BFMng->GetPlayerKillCount());
-                    killedCount = L"倒された部隊数:" + to_wstring(BFMng->GetEnemyKillCount());
-                    lastScore = L"戦闘スコア:" + to_wstring(GetLastScoreValue());
+    //                for (int i = 0; i < count; i++)
+    //                {
+    //                    wordPipeLine->AddRenderObject(m_WordSprites[i].get());
+    //                }
+    //            }
+    //            else if (m_ResultAnimCount > 10.0f)
+    //            {
+    //                turn = L"経過ターン数:" + to_wstring(BFMng->GetTurnCount());
+    //                killCount = L"倒した部隊数:" + to_wstring(BFMng->GetPlayerKillCount());
+    //                killedCount = L"倒された部隊数:" + to_wstring(BFMng->GetEnemyKillCount());
+    //                lastScore = L"戦闘スコア:" + to_wstring(GetLastScoreValue());
 
-                    count = MakeSpriteString(count, kResultTextPosX, kTurnTextPosY, 30, 45, turn.c_str());
-                    count = MakeSpriteString(count, kResultTextPosX, kKillTextPosY, 30, 45, killCount.c_str());
-                    count = MakeSpriteString(count, kResultTextPosX, kKilledTextPosY, 30, 45, killedCount.c_str());
-                    count = MakeSpriteString(count, kLastScoreTextPosX, kLastScoreTextPosY, 40, 60, lastScore.c_str());
-                    count = MakeSpriteString(count, kPressSpaceTextPosX, kPressSpaceTextPosY, 30, 45, pressSpace.c_str());
+    //                count = MakeSpriteString(count, kResultTextPosX, kTurnTextPosY, 30, 45, turn.c_str());
+    //                count = MakeSpriteString(count, kResultTextPosX, kKillTextPosY, 30, 45, killCount.c_str());
+    //                count = MakeSpriteString(count, kResultTextPosX, kKilledTextPosY, 30, 45, killedCount.c_str());
+    //                count = MakeSpriteString(count, kLastScoreTextPosX, kLastScoreTextPosY, 40, 60, lastScore.c_str());
+    //                count = MakeSpriteString(count, kPressSpaceTextPosX, kPressSpaceTextPosY, 30, 45, pressSpace.c_str());
 
-                    for (int i = 0; i < count; i++)
-                    {
-                        wordPipeLine->AddRenderObject(m_WordSprites[i].get());
-                    }
+    //                for (int i = 0; i < count; i++)
+    //                {
+    //                    wordPipeLine->AddRenderObject(m_WordSprites[i].get());
+    //                }
 
-                    if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK))
-                    {
-                        PostQuitMessage(0);
-                    }
-                }
-                break;
-            }
-            
-            break;
-        default:
-            break;
-        }
-    }
+    //                if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK))
+    //                {
+    //                    PostQuitMessage(0);
+    //                }
+    //            }
+    //            break;
+    //        }
+    //        
+    //        break;
+    //    default:
+    //        break;
+    //    }
+    //}
 
 
 

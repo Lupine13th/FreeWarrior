@@ -14,8 +14,8 @@ using namespace std::chrono;
 void Squares::InitAction()
 {
 	CharacterData* SqData = GetGameObject()->GetCharacterData();
-	SqData->setScale(0.5f, 0.5f, 0.5f);
-	SqData->setRotation(90.0f, 0.0f, 0.0f);
+	SqData->SetScale(0.5f, 0.5f, 0.5f);
+	SqData->SetRotation(90.0f, 0.0f, 0.0f);
 	SqData->SetGraphicsPipeLine(L"AlphaSprite3D");
 
 	m_TimeManager = MyAccessHub::GetTimeManager();
@@ -36,7 +36,7 @@ bool Squares::FrameAction()
 
 		if (!m_IsFirstAnimation)
 		{
-			NowChara->fbxD->setRotation(0.0f, m_Rotate, 0.0f);
+			NowChara->fbxD->SetRotation(0.0f, m_Rotate, 0.0f);
 			m_IsFirstAnimation = true;
 		}
 
@@ -303,12 +303,12 @@ void Squares::SetAnimation(Animations anim, Admin admin, Squares* chara, Squares
 	NextChara = next;
 	NowCharaPos = NowChara->SqPos;
 	NextCharaPos = NextChara->SqPos;
-	NowCharaRot = NowChara->fbxD->getRotation();
+	NowCharaRot = NowChara->fbxD->GetRotation();
 
 	if (anim == Animations::Attack || anim == Animations::Scout)	//攻撃か偵察の場合、被害を受けたユニットの情報と回転を入手　(後で元の位置に戻すため)
 	{
 		BFMng->SetAttackingCharacterSquares(NowChara);
-		NextCharaRot = NextChara->fbxD->getRotation();
+		NextCharaRot = NextChara->fbxD->GetRotation();
 	}
 
 	//移動アニメーション用に平面の距離を入手
@@ -329,9 +329,9 @@ void Squares::SetAnimation(Animations anim, Admin admin, Squares* chara, Squares
 void Squares::SetBattlePosition()
 {
 	NowChara->fbxD->setPosition(25.0f, 5.0f, -40.0f);
-	NowChara->fbxD->setRotation(0.0f, 180.0f, 0.0f);
+	NowChara->fbxD->SetRotation(0.0f, 180.0f, 0.0f);
 	NextChara->fbxD->setPosition(25.0f, 5.0f, 40.0f);
-	NextChara->fbxD->setRotation(0.0f, 0.0f, 0.0f);
+	NextChara->fbxD->SetRotation(0.0f, 0.0f, 0.0f);
 }
 
 //モデルを元のマスの位置、角度へ
@@ -340,13 +340,13 @@ void Squares::SetPreviousPosition()
 	if (NowChara->fbxD != nullptr)
 	{
 		NowChara->fbxD->setPosition(NowCharaPos.x, NowCharaPos.y, NowCharaPos.z);
-		NowChara->fbxD->setRotation(NowCharaRot.x, NowCharaRot.y, NowCharaRot.z);
+		NowChara->fbxD->SetRotation(NowCharaRot.x, NowCharaRot.y, NowCharaRot.z);
 	}
 
 	if (NextChara->fbxD != nullptr)
 	{
 		NextChara->fbxD->setPosition(NextCharaPos.x, NextCharaPos.y, NextCharaPos.z);
-		NextChara->fbxD->setRotation(NextCharaRot.x, NextCharaRot.y, NextCharaRot.z);
+		NextChara->fbxD->SetRotation(NextCharaRot.x, NextCharaRot.y, NextCharaRot.z);
 	}
 
 	MyAccessHub::GetHUDManager()->GetHUDObject("SuperiorityGaugeHUD")->SetAnimationState(AnimationState::Init);

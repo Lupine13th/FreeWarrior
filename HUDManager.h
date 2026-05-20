@@ -99,7 +99,7 @@ public:
 	}
 	void MakeSpriteObject(const wchar_t* textureId, wstring cameraLabel, wstring pipeLine, XMFLOAT4 pattern, XMFLOAT4 color);
 	void SetEasingAnimation(SpriteCharacter* sprite, EasingVector vector, float startPos, float endPos, float duration, const std::function<float(float, float, float, float)>& easing);
-	void FlipAnimation(SpriteCharacter* sprite);
+	void FlipAnimation(SpriteCharacter* sprite, int pages, float duration);
 
 	void SetShaderResoruce();
 	virtual void ResetHUD();
@@ -116,7 +116,7 @@ protected:
 	const wchar_t* m_FontTextureId;
 	const wchar_t* m_FontWordList;
 
-	unordered_map<string, const wchar_t*> m_TextList;
+	unordered_map<string, wstring> m_TextList;
 
 	std::unordered_map<wchar_t, XMFLOAT4> m_FontMap;
 
@@ -509,4 +509,78 @@ public:
 	void InitAction() override;
 	bool FrameAction() override;
 	void FinishAction() override;
+};
+
+class EndingHUD : public HUDTextObject			//ターンエンド画面
+{
+private:
+	enum class EndingState
+	{
+		None,
+		FadeIn,
+		NewsPaperDrop,
+		NewsPaperZoom,
+		NewsPaper,
+		NewsPaperClose,
+		Result,
+		Finish
+	};
+
+	enum class ResultState
+	{
+		None,
+		Turns,
+		TurnsPlus,
+		KillCount,
+		KillCountPlus,
+		KilledCount,
+		KilledCountPlus,
+		Score,	
+		ScorePlus,
+		PressSpace
+	};
+
+	EndingState m_EndingState = EndingState::None;
+	ResultState m_ResultState = ResultState::None;
+
+	int m_NewsPaperAnimationPages = 5;
+
+	float m_AnimationCount = 0.0f;
+
+	float m_NewsPaperScale = 300.0f;
+
+	const XMFLOAT2 kNewsPaperDropPositionY = { 300.0f, 0.0f };
+
+	const float kFadeInDuration = 0.5f;
+	const float kNewsPaperDropDuration = 0.5f;
+	const float kNewsPaperRotateDuration = 0.7f;
+	const float kResultTextPosX = -200.0f;			//リザルトのテキストのX座標
+	const float kPressSpaceTextPosX = -50.0f;		//PressSpaceテキストのX座標
+	const float kTurnTextPosY = 50.0f;
+	const float kKillTextPosY = 0.0f;
+	const float kKilledTextPosY = -50.0f;
+	const float kLastScoreTextPosY = -125.0f;
+	const float kPressSpaceTextPosY = -200.0f;
+
+	const wchar_t* kResultTextList[5] =
+	{
+		L"経過ターン:",
+		L"倒した部隊数:",
+		L"倒された部隊数:"
+		L"スコア:"
+		L"スペースキーで終了"
+	};
+
+	const XMFLOAT3 kNewsPaperTextColor = { 0.0f, 0.0f, 0.0f };
+public:
+	void InitAction() override;
+	bool FrameAction() override;
+	void FinishAction() override;
+
+	int GetLastScoreValue();
+
+	void SetEndingState(EndingState state)
+	{
+		m_EndingState = state;
+	}
 };

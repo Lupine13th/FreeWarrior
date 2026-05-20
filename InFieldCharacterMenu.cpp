@@ -39,34 +39,34 @@ void InFieldCharacterMenu::InitAction()
         m_Sprite[i]->SetColor(0.0f, 0.0f, 0.0f, 1);
     }
 
-    m_Sprite[0]->setScale(50.0f, 3.0f, 0.1f);
+    m_Sprite[0]->SetScale(50.0f, 3.0f, 0.1f);
     m_Sprite[0]->setPosition(-180.0f, 180.0f, 1.0f);
 
-    m_Sprite[1]->setScale(50.0f, 3.0f, 0.1f);
+    m_Sprite[1]->SetScale(50.0f, 3.0f, 0.1f);
     m_Sprite[1]->setPosition(-180.0f, 140.0f, 1.0f);
 
-    m_Sprite[2]->setScale(50.0f, 3.0f, 0.1f);
+    m_Sprite[2]->SetScale(50.0f, 3.0f, 0.1f);
     m_Sprite[2]->setPosition(-180.0f, 100.0f, 1.0f);
 
-    m_Sprite[3]->setScale(50.0f, 3.0f, 0.1f);
+    m_Sprite[3]->SetScale(50.0f, 3.0f, 0.1f);
     m_Sprite[3]->setPosition(-180.0f, 60.0f, 1.0f);
 
-    m_Sprite[4]->setScale(50.0f, 3.0f, 0.1f);
+    m_Sprite[4]->SetScale(50.0f, 3.0f, 0.1f);
     m_Sprite[4]->setPosition(-180.0f, 20.0f, 1.0f);
 
-    m_Sprite[5]->setScale(50.0f, 3.0f, 0.1f);
+    m_Sprite[5]->SetScale(50.0f, 3.0f, 0.1f);
     m_Sprite[5]->setPosition(-180.0f, -20.0f, 1.0f);
 
-    m_Sprite[6]->setScale(50.0f, 3.0f, 0.1f);
+    m_Sprite[6]->SetScale(50.0f, 3.0f, 0.1f);
     m_Sprite[6]->setPosition(-180.0f,-60.0f, 1.0f);
 
-    m_Sprite[7]->setScale(50.0f, 3.0f, 0.1f);
+    m_Sprite[7]->SetScale(50.0f, 3.0f, 0.1f);
     m_Sprite[7]->setPosition(-180.0f, -100.0f, 1.0f);
 
-    m_Sprite[8]->setScale(50.0f, 3.0f, 0.1f);
+    m_Sprite[8]->SetScale(50.0f, 3.0f, 0.1f);
     m_Sprite[8]->setPosition(-180.0f, -140.0f, 1.0f);
 
-    m_Sprite[9]->setScale(50.0f, 3.0f, 0.1f);
+    m_Sprite[9]->SetScale(50.0f, 3.0f, 0.1f);
     m_Sprite[9]->setPosition(-180.0f, -180.0f, 1.0f);
 }
 

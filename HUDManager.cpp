@@ -62,6 +62,10 @@ void HUDManager::InitAction()
     TurnHUD* turnHUD = new TurnHUD();   //ターン終了HUD
     GetGameObject()->addComponent(turnHUD);
     AddHUDObject("TurnHUD", turnHUD);
+
+    EndingHUD* endingHUD = new EndingHUD();   //ターン終了HUD
+    GetGameObject()->addComponent(endingHUD);
+    AddHUDObject("EndingHUD", endingHUD);
 }
 
 bool HUDManager::FrameAction()
@@ -105,22 +109,22 @@ void MeterHUD::InitAction()
         {
         case 0:
             m_SpriteList[i]->setPosition(kArrowLeftPosX, kSoldierArrowPosY, OrderInLayer::MoveObject);
-            m_SpriteList[i]->setScale(25.0f, 25.0f, 0.1f);
+            m_SpriteList[i]->SetScale(25.0f, 25.0f, 0.1f);
             m_SpriteList[i]->SetTextureId(L"SoldierBarArrowTexture");
             break;
         case 1:
             m_SpriteList[i]->setPosition(kArrowLeftPosX, kMoraleArrowPosY, OrderInLayer::MoveObject);
-            m_SpriteList[i]->setScale(25.0f, 25.0f, 0.1f);
+            m_SpriteList[i]->SetScale(25.0f, 25.0f, 0.1f);
             m_SpriteList[i]->SetTextureId(L"SoldierBarArrowTexture");
             break;
         case 2:
             m_SpriteList[i]->setPosition(kMeterPositionX, kSoldierMeterPositionY, OrderInLayer::BackGround);
-            m_SpriteList[i]->setScale(200.0f, 200.0f, 0.1f);
+            m_SpriteList[i]->SetScale(200.0f, 200.0f, 0.1f);
             m_SpriteList[i]->SetTextureId(L"SoldierTexture");
             break;
         case 3:
             m_SpriteList[i]->setPosition(kMeterPositionX, kMoraleMeterPositionY, OrderInLayer::BackGround);
-            m_SpriteList[i]->setScale(200.0f, 200.0f, 0.1f);
+            m_SpriteList[i]->SetScale(200.0f, 200.0f, 0.1f);
             m_SpriteList[i]->SetTextureId(L"MoraleTexture");
             break;
         }
@@ -246,8 +250,8 @@ bool MeterHUD::FrameAction()
         m_TextList["兵数"] = soldiers.c_str();
         m_TextList["士気"] = morale.c_str();
 
-        count = MakeSpriteStringRightAligned(count, kSoldierTextPos.x, kSoldierTextPos.y, 15, 23, m_TextList["兵数"], XMFLOAT3(1.0f, 1.0f, 1.0f));
-        count = MakeSpriteStringRightAligned(count, kMoraleTextPos.x, kMoraleTextPos.y, 15, 23, m_TextList["士気"], XMFLOAT3(1.0f, 1.0f, 1.0f));
+        count = MakeSpriteStringRightAligned(count, kSoldierTextPos.x, kSoldierTextPos.y, 15, 23, m_TextList["兵数"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
+        count = MakeSpriteStringRightAligned(count, kMoraleTextPos.x, kMoraleTextPos.y, 15, 23, m_TextList["士気"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
 
         if (BFMng->GetHUDEnableCondition())
         {
@@ -347,11 +351,11 @@ void HUDObject::SetEasingAnimation(SpriteCharacter* sprite, EasingVector vector,
     ));
 }
 
-void HUDObject::FlipAnimation(SpriteCharacter* sprite)
+void HUDObject::FlipAnimation(SpriteCharacter* sprite, int pages, float duration)
 {
     int activePage = 0;
 
-    if (m_FlipDuration * m_AnimationPages < m_FlipAnimationCount)
+    if (duration * pages < m_FlipAnimationCount)
     {
         SetAnimationState(AnimationState::Finish);
         return;
@@ -422,23 +426,23 @@ void StatusHUD::InitAction()
         {
         case 0:     //ブラウン管のノイズ
             m_SpriteList[i]->setPosition(380.0f, 200.0f, OrderInLayer::MoveObject);
-            m_SpriteList[i]->setScale(160.0f, 120.0f, 0.1f);
+            m_SpriteList[i]->SetScale(160.0f, 120.0f, 0.1f);
             m_SpriteList[i]->SetTextureId(L"BrownTelevisionNoizeTexture");
             break;
         case 2:     //テレビラベル
             m_SpriteList[i]->setPosition(380.0f, 155.0f, OrderInLayer::BackGround);
-            m_SpriteList[i]->setScale(200.0f, 40.0f, 0.1f);
+            m_SpriteList[i]->SetScale(200.0f, 40.0f, 0.1f);
             m_SpriteList[i]->SetTextureId(L"Sprite00");
             break;
         case 1:     //ブラウン管テレビフレーム
             m_SpriteList[i]->setPosition(380.0f, 200.0f, OrderInLayer::Text + 0.2f);
-            m_SpriteList[i]->setScale(200.0f, 200.0f, 0.1f);
+            m_SpriteList[i]->SetScale(200.0f, 200.0f, 0.1f);
             m_SpriteList[i]->SetTextureId(L"BrownTelevisiomnFrameImage");
             break;
         case 3:     //テレビの背景
             m_SpriteList[i]->setPosition(380.0f, 225.0f, OrderInLayer::BackGround + 0.2f);
             m_SpriteList[i]->SetCameraLabel(L"BackGroundHUDCamera", 0); //背景用ラベルに切り替え
-            m_SpriteList[i]->setScale(200.0f, 150.0f, 0.1f);
+            m_SpriteList[i]->SetScale(200.0f, 150.0f, 0.1f);
             m_SpriteList[i]->SetTextureId(L"Sprite00");
             break;
         }
@@ -466,7 +470,7 @@ bool StatusHUD::FrameAction()
 		SetAnimationState(AnimationState::Run);
         break;
     case AnimationState::Run:
-		FlipAnimation(m_SpriteList[0].get());   //テレビのノイズアニメーション
+		FlipAnimation(m_SpriteList[0].get(), m_AnimationPages, m_FlipDuration);   //テレビのノイズアニメーション
         index = 2;
         break;
     case AnimationState::Finish:
@@ -812,25 +816,25 @@ void AbilityHUD::InitAction()
         {
         case 0:
             m_SpriteList[i]->setPosition(0.0f, 0.0f, OrderInLayer::BackGround);
-            m_SpriteList[i]->setScale(500.0f, 500.0f, 0.1f);
+            m_SpriteList[i]->SetScale(500.0f, 500.0f, 0.1f);
             m_SpriteList[i]->SetColor(1.0f, 1.0f, 1.0f, 1);
             m_SpriteList[i]->SetTextureId(L"AbillityBackGroundTexture");
             break;
         case 1:
             m_SpriteList[i]->setPosition(0.0f, 0.0f, OrderInLayer::MoveObject);
-            m_SpriteList[i]->setScale(400.0f, 400.0f, 0.1f);
+            m_SpriteList[i]->SetScale(400.0f, 400.0f, 0.1f);
             m_SpriteList[i]->SetColor(1.0f, 1.0f, 1.0f, 1);
             m_SpriteList[i]->SetTextureId(L"AbillityNoteTexture");
             break;
         case 2:
             m_SpriteList[i]->setPosition(0.0f, 0.0f, OrderInLayer::MoveObject);
-            m_SpriteList[i]->setScale(400.0f, 400.0f, 0.1f);
+            m_SpriteList[i]->SetScale(400.0f, 400.0f, 0.1f);
             m_SpriteList[i]->SetColor(1.0f, 1.0f, 1.0f, 1);
             m_SpriteList[i]->SetTextureId(L"AbillityNoteTexture");
             break;
         case 3:
             m_SpriteList[i]->setPosition(0.0f, 0.0f, OrderInLayer::MoveObject);
-            m_SpriteList[i]->setScale(400.0f, 400.0f, 0.1f);
+            m_SpriteList[i]->SetScale(400.0f, 400.0f, 0.1f);
             m_SpriteList[i]->SetColor(1.0f, 1.0f, 1.0f, 1);
             m_SpriteList[i]->SetTextureId(L"AbillityNoteTexture");
             break;
@@ -934,7 +938,7 @@ bool AbilityHUD::FrameAction()
                         m_AbillityNoteScale += 0.5f;
                         for (int i = 1; i < 4; i++)
                         {
-                            m_SpriteList[i]->setScale(m_AbillityNoteScale, m_AbillityNoteScale, 0.1f);
+                            m_SpriteList[i]->SetScale(m_AbillityNoteScale, m_AbillityNoteScale, 0.1f);
                         }
                     }
                     if (m_AnimationCount > kBackGroundAnimationCount * 3)
@@ -1049,7 +1053,7 @@ void GuideHUD::InitAction()
         {
         case 0:
             m_SpriteList[i]->setPosition(kGuideBackGroundPos.x, kGuideBackGroundPos.y, OrderInLayer::BackGround);
-            m_SpriteList[i]->setScale(700.0f, 700.0f, 0.1f);
+            m_SpriteList[i]->SetScale(700.0f, 700.0f, 0.1f);
             m_SpriteList[i]->SetTextureId(L"WindowTexture");
             break;
         }
@@ -1076,28 +1080,28 @@ bool GuideHUD::FrameAction()
         default:
 			break;
         case Mode::FieldMode:
-            count = MakeSpriteString(count, kGuideTextPos.x, kGuideTextPos.y, 20, 30, m_TextList["フィールド"], XMFLOAT3(0.0f, 0.0f, 0.0f));
-            count = MakeSpriteString(count, kGuideTextPos2.x, kGuideTextPos2.y, 20, 30, m_TextList["フィールド2"], XMFLOAT3(0.0f, 0.0f, 0.0f));
+            count = MakeSpriteString(count, kGuideTextPos.x, kGuideTextPos.y, 20, 30, m_TextList["フィールド"].c_str(), XMFLOAT3(0.0f, 0.0f, 0.0f));
+            count = MakeSpriteString(count, kGuideTextPos2.x, kGuideTextPos2.y, 20, 30, m_TextList["フィールド2"].c_str(), XMFLOAT3(0.0f, 0.0f, 0.0f));
             break;
         case Mode::MenuMode:
-            count = MakeSpriteString(count, kGuideTextPos.x, kGuideTextPos.y, 20, 30, m_TextList["メニュー"], XMFLOAT3(0.0f, 0.0f, 0.0f));
+            count = MakeSpriteString(count, kGuideTextPos.x, kGuideTextPos.y, 20, 30, m_TextList["メニュー"].c_str(), XMFLOAT3(0.0f, 0.0f, 0.0f));
 			break;
         case Mode::AbilityMode:
             switch (BFMng->GetAbillityMenuState())
             {
                 case AbillityMenuState::Menu:
-                    count = MakeSpriteString(count, kGuideTextPos.x, kGuideTextPos.y, 20, 30, m_TextList["アビリティ"], XMFLOAT3(0.0f, 0.0f, 0.0f));
+                    count = MakeSpriteString(count, kGuideTextPos.x, kGuideTextPos.y, 20, 30, m_TextList["アビリティ"].c_str(), XMFLOAT3(0.0f, 0.0f, 0.0f));
 					break;
                 case AbillityMenuState::Target:
-                    count = MakeSpriteString(count, kGuideTextPos.x, kGuideTextPos.y, 20, 30, m_TextList["攻撃"], XMFLOAT3(0.0f, 0.0f, 0.0f));
+                    count = MakeSpriteString(count, kGuideTextPos.x, kGuideTextPos.y, 20, 30, m_TextList["攻撃"].c_str(), XMFLOAT3(0.0f, 0.0f, 0.0f));
 					break;
             }
 			break;
         case Mode::AttackMode:
-            count = MakeSpriteString(count, kGuideTextPos.x, kGuideTextPos.y, 20, 30, m_TextList["攻撃"], XMFLOAT3(0.0f, 0.0f, 0.0f));
+            count = MakeSpriteString(count, kGuideTextPos.x, kGuideTextPos.y, 20, 30, m_TextList["攻撃"].c_str(), XMFLOAT3(0.0f, 0.0f, 0.0f));
 			break;
         case Mode::MoveMode:
-            count = MakeSpriteString(count, kGuideTextPos.x, kGuideTextPos.y, 20, 30, m_TextList["移動"], XMFLOAT3(0.0f, 0.0f, 0.0f));
+            count = MakeSpriteString(count, kGuideTextPos.x, kGuideTextPos.y, 20, 30, m_TextList["移動"].c_str(), XMFLOAT3(0.0f, 0.0f, 0.0f));
 			break;
     }
 
@@ -1141,12 +1145,12 @@ void SideMenuHUD::InitAction()
         case 1:
         case 2:
             m_SpriteList[i]->setPosition(kSideMenuBackGroundPos.x, kTextPositionY[i], OrderInLayer::MoveObject);
-            m_SpriteList[i]->setScale(400.0f, 50.0f, 0.1f);
+            m_SpriteList[i]->SetScale(400.0f, 50.0f, 0.1f);
             m_SpriteList[i]->SetTextureId(L"Sprite00");
             break;
         case 3:
             m_SpriteList[i]->setPosition(kSideMenuBackGroundPos.x, kSideMenuBackGroundPos.y, OrderInLayer::BackGround);
-            m_SpriteList[i]->setScale(600.0f, 600.0f, 0.1f);
+            m_SpriteList[i]->SetScale(600.0f, 600.0f, 0.1f);
             m_SpriteList[i]->SetTextureId(L"SideMenuTexture");
             break;
         }
@@ -1172,21 +1176,21 @@ bool SideMenuHUD::FrameAction()
             break;
         case 0:
             pipeline->AddRenderObject(m_SpriteList[0].get());
-            count = MakeSpriteString(count, kTextPositionX, kTextPositionY[0], 35, 50, m_TextList["ターン終了"], XMFLOAT3(0.0f, 0.0f, 0.0f));
-            count = MakeSpriteString(count, kTextPositionX, kTextPositionY[1], 35, 50, m_TextList["ゲーム終了"], XMFLOAT3(1.0f, 1.0f, 1.0f));
-            count = MakeSpriteString(count, kTextPositionX, kTextPositionY[2], 35, 50, m_TextList["キャンセル"], XMFLOAT3(1.0f, 1.0f, 1.0f));
+            count = MakeSpriteString(count, kTextPositionX, kTextPositionY[0], 35, 50, m_TextList["ターン終了"].c_str(), XMFLOAT3(0.0f, 0.0f, 0.0f));
+            count = MakeSpriteString(count, kTextPositionX, kTextPositionY[1], 35, 50, m_TextList["ゲーム終了"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
+            count = MakeSpriteString(count, kTextPositionX, kTextPositionY[2], 35, 50, m_TextList["キャンセル"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
             break;
         case 1:
             pipeline->AddRenderObject(m_SpriteList[1].get());
-            count = MakeSpriteString(count, kTextPositionX, kTextPositionY[0], 35, 50, m_TextList["ターン終了"], XMFLOAT3(1.0f, 1.0f, 1.0f));
-            count = MakeSpriteString(count, kTextPositionX, kTextPositionY[1], 35, 50, m_TextList["ゲーム終了"], XMFLOAT3(0.0f, 0.0f, 0.0f));
-            count = MakeSpriteString(count, kTextPositionX, kTextPositionY[2], 35, 50, m_TextList["キャンセル"], XMFLOAT3(1.0f, 1.0f, 1.0f));
+            count = MakeSpriteString(count, kTextPositionX, kTextPositionY[0], 35, 50, m_TextList["ターン終了"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
+            count = MakeSpriteString(count, kTextPositionX, kTextPositionY[1], 35, 50, m_TextList["ゲーム終了"].c_str(), XMFLOAT3(0.0f, 0.0f, 0.0f));
+            count = MakeSpriteString(count, kTextPositionX, kTextPositionY[2], 35, 50, m_TextList["キャンセル"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
             break;
         case 2:
             pipeline->AddRenderObject(m_SpriteList[2].get());
-            count = MakeSpriteString(count, kTextPositionX, kTextPositionY[0], 35, 50, m_TextList["ターン終了"], XMFLOAT3(1.0f, 1.0f, 1.0f));
-            count = MakeSpriteString(count, kTextPositionX, kTextPositionY[1], 35, 50, m_TextList["ゲーム終了"], XMFLOAT3(1.0f, 1.0f, 1.0f));
-            count = MakeSpriteString(count, kTextPositionX, kTextPositionY[2], 35, 50, m_TextList["キャンセル"], XMFLOAT3(0.0f, 0.0f, 0.0f));
+            count = MakeSpriteString(count, kTextPositionX, kTextPositionY[0], 35, 50, m_TextList["ターン終了"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
+            count = MakeSpriteString(count, kTextPositionX, kTextPositionY[1], 35, 50, m_TextList["ゲーム終了"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
+            count = MakeSpriteString(count, kTextPositionX, kTextPositionY[2], 35, 50, m_TextList["キャンセル"].c_str(), XMFLOAT3(0.0f, 0.0f, 0.0f));
             break;
         }
 
@@ -1229,7 +1233,7 @@ void CurrentTerrainHUD::InitAction()
         {
         case 0:
             m_SpriteList[i]->setPosition(kBackGroundPos.x, kBackGroundPos.y, OrderInLayer::BackGround);
-            m_SpriteList[i]->setScale(200.0f, 200.0f, 0.1f);
+            m_SpriteList[i]->SetScale(200.0f, 200.0f, 0.1f);
             m_SpriteList[i]->SetTextureId(L"TerrainHUDTexture");
             break;
         }
@@ -1309,10 +1313,10 @@ bool CurrentTerrainHUD::FrameAction()
 
     m_TextList["座標"] = squarePosition.c_str();
 
-    count = MakeSpriteString(count, kTextPositionX, kTextPositionY[0], 30, 45, m_TextList["地形名称"], XMFLOAT3(1.0f, 1.0f, 1.0f));
-    count = MakeSpriteString(count, kTextPositionX, kTextPositionY[1], 20, 30, m_TextList["地形効果"], XMFLOAT3(1.0f, 1.0f, 1.0f));
-    count = MakeSpriteString(count, kTextPositionX, kTextPositionY[2], 18, 27, m_TextList["地形効果詳細"], XMFLOAT3(1.0f, 1.0f, 1.0f));
-    count = MakeSpriteString(count, kTextPositionX, kTextPositionY[3], 20, 30, m_TextList["座標"], XMFLOAT3(1.0f, 1.0f, 1.0f));
+    count = MakeSpriteString(count, kTextPositionX, kTextPositionY[0], 30, 45, m_TextList["地形名称"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
+    count = MakeSpriteString(count, kTextPositionX, kTextPositionY[1], 20, 30, m_TextList["地形効果"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
+    count = MakeSpriteString(count, kTextPositionX, kTextPositionY[2], 18, 27, m_TextList["地形効果詳細"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
+    count = MakeSpriteString(count, kTextPositionX, kTextPositionY[3], 20, 30, m_TextList["座標"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
 
     pipeline->AddRenderObject(m_SpriteList[0].get());
 
@@ -1349,7 +1353,7 @@ void BattleCameraHUD::InitAction()
         {
         case 0:
             m_SpriteList[i]->setPosition(kBackGroundPos.x, kBackGroundPos.y, OrderInLayer::BackGround);
-            m_SpriteList[i]->setScale(960.0f, 950.0f, 0.1f);
+            m_SpriteList[i]->SetScale(960.0f, 950.0f, 0.1f);
             m_SpriteList[i]->SetTextureId(L"BattleCameraHUDTexture");
             break;
         }
@@ -1378,8 +1382,8 @@ bool BattleCameraHUD::FrameAction()
             m_TextList["攻撃側"] = (attackerCharacterSquare->CharaName.c_str());
             m_TextList["防御側"] = (defenderCharacterSquare->CharaName.c_str());
 
-            count = MakeSpriteString(count, kAttackerTextPos.x, kAttackerTextPos.y, 30, 45, m_TextList["攻撃側"], XMFLOAT3(1.0f, 1.0f, 1.0f));
-            count = MakeSpriteString(count, kDefenderTextPos.x, kDefenderTextPos.y, 30, 45, m_TextList["防御側"], XMFLOAT3(1.0f, 1.0f, 1.0f));
+            count = MakeSpriteString(count, kAttackerTextPos.x, kAttackerTextPos.y, 30, 45, m_TextList["攻撃側"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
+            count = MakeSpriteString(count, kDefenderTextPos.x, kDefenderTextPos.y, 30, 45, m_TextList["防御側"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
         }
 
 		pipeline->AddRenderObject(m_SpriteList[0].get());    //外枠を描画
@@ -1419,22 +1423,22 @@ void MainMenuHUD::InitAction()
         if (i < 18) //0～17はテキストを表示する場所
         {
             m_SpriteList[i]->SetTextureId(L"NixieTubesTexture");
-            m_SpriteList[i]->setScale(110.0f, 90.0f, 0.1f);
+            m_SpriteList[i]->SetScale(110.0f, 90.0f, 0.1f);
         }
         else if (i < 23)    //18～22は表示部分の基盤の柱
         {
             m_SpriteList[i]->SetTextureId(L"NixieBaseTexture");
-            m_SpriteList[i]->setScale(250.0f, 250.0f, 0.1f);
+            m_SpriteList[i]->SetScale(250.0f, 250.0f, 0.1f);
         }
         else if (i < 24)    //23はメニュー部分の基盤
         {
             m_SpriteList[i]->SetTextureId(L"MenuBaseTexture");
-            m_SpriteList[i]->setScale(200.0f, 330.0f, 0.1f);
+            m_SpriteList[i]->SetScale(200.0f, 330.0f, 0.1f);
         }
 		else if (i < 25)    //24はゲージ部分の基盤
         {
             m_SpriteList[i]->SetTextureId(L"NixieGageTexture");
-            m_SpriteList[i]->setScale(300.0f, 300.0f, 0.1f);
+            m_SpriteList[i]->SetScale(300.0f, 300.0f, 0.1f);
         }
     }
 
@@ -1512,37 +1516,37 @@ bool MainMenuHUD::FrameAction()
 
         if (m_MenuAnimationCount == 0.0f)   //最初のフレームでメニュー全体を動かす
         {
-            SetEasingAnimation(m_SpriteList[0].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[1], kNixieTubeMovedPositionX[1], kMenuAnimationTime, Tween::EaseInQuad);
-            SetEasingAnimation(m_SpriteList[1].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[2], kNixieTubeMovedPositionX[2], kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[0].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[1], kNixieTubeMovedPositionX[1], kMenuAnimationTime, Tween::EaseOutQuad);
+            SetEasingAnimation(m_SpriteList[1].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[2], kNixieTubeMovedPositionX[2], kMenuAnimationTime, Tween::EaseOutQuad);
 
-            SetEasingAnimation(m_SpriteList[2].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[1], kNixieTubeMovedPositionX[1], kMenuAnimationTime, Tween::EaseInQuad);
-            SetEasingAnimation(m_SpriteList[3].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[2], kNixieTubeMovedPositionX[2], kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[2].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[1], kNixieTubeMovedPositionX[1], kMenuAnimationTime, Tween::EaseOutQuad);
+            SetEasingAnimation(m_SpriteList[3].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[2], kNixieTubeMovedPositionX[2], kMenuAnimationTime, Tween::EaseOutQuad);
 
-            SetEasingAnimation(m_SpriteList[4].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[1], kNixieTubeMovedPositionX[1], kMenuAnimationTime, Tween::EaseInQuad);
-            SetEasingAnimation(m_SpriteList[5].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[2], kNixieTubeMovedPositionX[2], kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[4].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[1], kNixieTubeMovedPositionX[1], kMenuAnimationTime, Tween::EaseOutQuad);
+            SetEasingAnimation(m_SpriteList[5].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[2], kNixieTubeMovedPositionX[2], kMenuAnimationTime, Tween::EaseOutQuad);
 
-            SetEasingAnimation(m_SpriteList[6].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[1], kNixieTubeMovedPositionX[1], kMenuAnimationTime, Tween::EaseInQuad);
-            SetEasingAnimation(m_SpriteList[7].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[2], kNixieTubeMovedPositionX[2], kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[6].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[1], kNixieTubeMovedPositionX[1], kMenuAnimationTime, Tween::EaseOutQuad);
+            SetEasingAnimation(m_SpriteList[7].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[2], kNixieTubeMovedPositionX[2], kMenuAnimationTime, Tween::EaseOutQuad);
 
-            SetEasingAnimation(m_SpriteList[8].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[1], kNixieTubeMovedPositionX[1], kMenuAnimationTime, Tween::EaseInQuad);
-            SetEasingAnimation(m_SpriteList[9].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[2], kNixieTubeMovedPositionX[2], kMenuAnimationTime, Tween::EaseInQuad);
-            SetEasingAnimation(m_SpriteList[10].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[3], kNixieTubeMovedPositionX[3], kMenuAnimationTime, Tween::EaseInQuad);
-            SetEasingAnimation(m_SpriteList[11].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[4], kNixieTubeMovedPositionX[4], kMenuAnimationTime, Tween::EaseInQuad);
-            SetEasingAnimation(m_SpriteList[12].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[5], kNixieTubeMovedPositionX[5], kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[8].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[1], kNixieTubeMovedPositionX[1], kMenuAnimationTime, Tween::EaseOutQuad);
+            SetEasingAnimation(m_SpriteList[9].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[2], kNixieTubeMovedPositionX[2], kMenuAnimationTime, Tween::EaseOutQuad);
+            SetEasingAnimation(m_SpriteList[10].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[3], kNixieTubeMovedPositionX[3], kMenuAnimationTime, Tween::EaseOutQuad);
+            SetEasingAnimation(m_SpriteList[11].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[4], kNixieTubeMovedPositionX[4], kMenuAnimationTime, Tween::EaseOutQuad);
+            SetEasingAnimation(m_SpriteList[12].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[5], kNixieTubeMovedPositionX[5], kMenuAnimationTime, Tween::EaseOutQuad);
 
-            SetEasingAnimation(m_SpriteList[13].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[0], kNixieTubeMovedPositionX[0], kMenuAnimationTime, Tween::EaseInQuad);
-            SetEasingAnimation(m_SpriteList[14].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[0], kNixieTubeMovedPositionX[0], kMenuAnimationTime, Tween::EaseInQuad);
-            SetEasingAnimation(m_SpriteList[15].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[0], kNixieTubeMovedPositionX[0], kMenuAnimationTime, Tween::EaseInQuad);
-            SetEasingAnimation(m_SpriteList[16].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[0], kNixieTubeMovedPositionX[0], kMenuAnimationTime, Tween::EaseInQuad);
-            SetEasingAnimation(m_SpriteList[17].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[0], kNixieTubeMovedPositionX[0], kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[13].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[0], kNixieTubeMovedPositionX[0], kMenuAnimationTime, Tween::EaseOutQuad);
+            SetEasingAnimation(m_SpriteList[14].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[0], kNixieTubeMovedPositionX[0], kMenuAnimationTime, Tween::EaseOutQuad);
+            SetEasingAnimation(m_SpriteList[15].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[0], kNixieTubeMovedPositionX[0], kMenuAnimationTime, Tween::EaseOutQuad);
+            SetEasingAnimation(m_SpriteList[16].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[0], kNixieTubeMovedPositionX[0], kMenuAnimationTime, Tween::EaseOutQuad);
+            SetEasingAnimation(m_SpriteList[17].get(), EasingVector::Horizontal, kNixieTubeDefaultPositionX[0], kNixieTubeMovedPositionX[0], kMenuAnimationTime, Tween::EaseOutQuad);
 
-            SetEasingAnimation(m_SpriteList[18].get(), EasingVector::Horizontal, kNixieBaseDefaultPositionX, kNixieBaseMovedPositionX, kMenuAnimationTime, Tween::EaseInQuad);
-            SetEasingAnimation(m_SpriteList[19].get(), EasingVector::Horizontal, kNixieBaseDefaultPositionX, kNixieBaseMovedPositionX, kMenuAnimationTime, Tween::EaseInQuad);
-            SetEasingAnimation(m_SpriteList[20].get(), EasingVector::Horizontal, kNixieBaseDefaultPositionX, kNixieBaseMovedPositionX, kMenuAnimationTime, Tween::EaseInQuad);
-            SetEasingAnimation(m_SpriteList[21].get(), EasingVector::Horizontal, kNixieBaseDefaultPositionX, kNixieBaseMovedPositionX, kMenuAnimationTime, Tween::EaseInQuad);
-            SetEasingAnimation(m_SpriteList[22].get(), EasingVector::Horizontal, kNixieBaseDefaultPositionX, kNixieBaseMovedPositionX, kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[18].get(), EasingVector::Horizontal, kNixieBaseDefaultPositionX, kNixieBaseMovedPositionX, kMenuAnimationTime, Tween::EaseOutQuad);
+            SetEasingAnimation(m_SpriteList[19].get(), EasingVector::Horizontal, kNixieBaseDefaultPositionX, kNixieBaseMovedPositionX, kMenuAnimationTime, Tween::EaseOutQuad);
+            SetEasingAnimation(m_SpriteList[20].get(), EasingVector::Horizontal, kNixieBaseDefaultPositionX, kNixieBaseMovedPositionX, kMenuAnimationTime, Tween::EaseOutQuad);
+            SetEasingAnimation(m_SpriteList[21].get(), EasingVector::Horizontal, kNixieBaseDefaultPositionX, kNixieBaseMovedPositionX, kMenuAnimationTime, Tween::EaseOutQuad);
+            SetEasingAnimation(m_SpriteList[22].get(), EasingVector::Horizontal, kNixieBaseDefaultPositionX, kNixieBaseMovedPositionX, kMenuAnimationTime, Tween::EaseOutQuad);
 
-            SetEasingAnimation(m_SpriteList[23].get(), EasingVector::Horizontal, kMenuBaseDefaultPositionX, kMenuBaseMovedPositionX, kMenuAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[23].get(), EasingVector::Horizontal, kMenuBaseDefaultPositionX, kMenuBaseMovedPositionX, kMenuAnimationTime, Tween::EaseOutQuad);
         }
 		else if (m_MenuAnimationCount > kMenuAnimationTime) //メニュー全体のアニメーション終了後
         {
@@ -1624,23 +1628,23 @@ bool MainMenuHUD::FrameAction()
     //攻撃表示
     if (BFMng->GetInLengeEnemyCount() > 0)
     {
-        count = MakeSpriteString(count, kMenuTextPositionX, kMenuTextPositionY[0], 32, 54, m_TextList["攻撃"], XMFLOAT3(1.0f, 1.0f, 1.0f));
+        count = MakeSpriteString(count, kMenuTextPositionX, kMenuTextPositionY[0], 32, 54, m_TextList["攻撃"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
     }
 
     //移動表示
-    count = MakeSpriteString(count, kMenuTextPositionX, kMenuTextPositionY[1], 32, 54, m_TextList["移動"], XMFLOAT3(1.0f, 1.0f, 1.0f));
+    count = MakeSpriteString(count, kMenuTextPositionX, kMenuTextPositionY[1], 32, 54, m_TextList["移動"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
 
     //アビリティ表示
     if (BFMng->GetInLengeEnemyCount() > 0)
     {
-        count = MakeSpriteString(count, kMenuTextPositionX, kMenuTextPositionY[2], 32, 54, m_TextList["行動"], XMFLOAT3(1.0f, 1.0f, 1.0f));
+        count = MakeSpriteString(count, kMenuTextPositionX, kMenuTextPositionY[2], 32, 54, m_TextList["行動"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
     }
 
     //待機表示
-    count = MakeSpriteString(count, kMenuTextPositionX, kMenuTextPositionY[3], 32, 54, m_TextList["待機"], XMFLOAT3(1.0f, 1.0f, 1.0f));
+    count = MakeSpriteString(count, kMenuTextPositionX, kMenuTextPositionY[3], 32, 54, m_TextList["待機"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
 
     //キャンセル表示
-    count = MakeSpriteString(count, kMenuTextPositionX, kMenuTextPositionY[4], 32, 54, m_TextList["キャンセル"], XMFLOAT3(1.0f, 1.0f, 1.0f));
+    count = MakeSpriteString(count, kMenuTextPositionX, kMenuTextPositionY[4], 32, 54, m_TextList["キャンセル"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
 
     //矢印表示
     float arrowPositionY = 0.0f;
@@ -1667,7 +1671,7 @@ bool MainMenuHUD::FrameAction()
         break;
     }
 
-    count = MakeSpriteString(count, kMenuArrowPositionX, arrowPositionY, 32, 54, m_TextList[">"], XMFLOAT3(1.0f, 1.0f, 1.0f));
+    count = MakeSpriteString(count, kMenuArrowPositionX, arrowPositionY, 32, 54, m_TextList[">"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
 
     for (int i = 0; i < renderCount; i++)
     {
@@ -1704,17 +1708,17 @@ void DamageEffectHUD::InitAction()
         {
         case 0:
             m_SpriteList[i]->setPosition(kLowDamageEffectPosition.x, kLowDamageEffectPosition.y, OrderInLayer::BackGround);
-            m_SpriteList[i]->setScale(kSmallDamageEffectScale, kSmallDamageEffectScale, 0.1f);
+            m_SpriteList[i]->SetScale(kSmallDamageEffectScale, kSmallDamageEffectScale, 0.1f);
             m_SpriteList[i]->SetTextureId(L"DamagedEffectTexture");
             break;
         case 1:
             m_SpriteList[i]->setPosition(kMidDamageEffectPosition.x, kMidDamageEffectPosition.y, OrderInLayer::BackGround);
-            m_SpriteList[i]->setScale(kLargeDamageEffectScale, kLargeDamageEffectScale, 0.1f);
+            m_SpriteList[i]->SetScale(kLargeDamageEffectScale, kLargeDamageEffectScale, 0.1f);
             m_SpriteList[i]->SetTextureId(L"DamagedEffectTexture");
             break;
         case 2:
             m_SpriteList[i]->setPosition(kHighDamageEffectPosition.x, kHighDamageEffectPosition.y, OrderInLayer::BackGround);
-            m_SpriteList[i]->setScale(kSmallDamageEffectScale, kSmallDamageEffectScale, 0.1f);
+            m_SpriteList[i]->SetScale(kSmallDamageEffectScale, kSmallDamageEffectScale, 0.1f);
             m_SpriteList[i]->SetTextureId(L"DamagedEffectTexture");
             break;
         }
@@ -1800,34 +1804,34 @@ void SuperiorityGaugeHUD::InitAction()
         {
 		case 0: //ゲージの背景
             m_SpriteList[i]->setPosition(0.0f, kGagePositionY, OrderInLayer::BackGround);
-            m_SpriteList[i]->setScale(310.0f, 100.0f, 0.1f);
+            m_SpriteList[i]->SetScale(310.0f, 100.0f, 0.1f);
             m_SpriteList[i]->SetTextureId(L"DogtagBaseTexture");
             break;
         case 1: //味方ゲージ
             m_SpriteList[i]->setPosition(0.0f, kGagePositionY, OrderInLayer::MoveObject);
-            m_SpriteList[i]->setScale(300.0f, 300.0f, 0.1f);
+            m_SpriteList[i]->SetScale(300.0f, 300.0f, 0.1f);
             m_SpriteList[i]->SetTextureId(L"AliesGageTexture");
             break;
 		case 2: //敵ゲージ
             m_SpriteList[i]->setPosition(0.0f, kGagePositionY, OrderInLayer::MoveObject);
-            m_SpriteList[i]->setScale(300.0f, 300.0f, 0.1f);
+            m_SpriteList[i]->SetScale(300.0f, 300.0f, 0.1f);
             m_SpriteList[i]->SetTextureId(L"EnemyGageTexture");
             break;
 		case 3: //ゲージの節　左
             m_SpriteList[i]->setPosition(-75.0f, kGagePositionY, OrderInLayer::Text);
-            m_SpriteList[i]->setScale(2.0f, 30.0f, 0.1f);
+            m_SpriteList[i]->SetScale(2.0f, 30.0f, 0.1f);
             m_SpriteList[i]->SetColor(1.0f, 1.0f, 0.0f, 1);
             m_SpriteList[i]->SetTextureId(L"Sprite00");
             break;
         case 4: //ゲージの節　中央
             m_SpriteList[i]->setPosition(0.0f, kGagePositionY, OrderInLayer::Text);
-            m_SpriteList[i]->setScale(2.0f, 30.0f, 0.1f);
+            m_SpriteList[i]->SetScale(2.0f, 30.0f, 0.1f);
             m_SpriteList[i]->SetColor(1.0f, 1.0f, 0.0f, 1);
             m_SpriteList[i]->SetTextureId(L"Sprite00");
             break;
 		case 5: //ゲージの節　右
             m_SpriteList[i]->setPosition(75.0f, kGagePositionY, OrderInLayer::Text);
-            m_SpriteList[i]->setScale(2.0f, 30.0f, 0.1f);
+            m_SpriteList[i]->SetScale(2.0f, 30.0f, 0.1f);
             m_SpriteList[i]->SetColor(1.0f, 1.0f, 0.0f, 1);
             m_SpriteList[i]->SetTextureId(L"Sprite00");
             break;
@@ -1857,10 +1861,10 @@ bool SuperiorityGaugeHUD::FrameAction()
 			XMFLOAT4 aliesGagePatternRect = { 0.0f, 0.0f, m_GageSizeX / 300.0f, 1.0f }; //味方ゲージのパターン矩形を計算
 			XMFLOAT4 enemyGagePatternRect = { 0.0f, 0.0f, 1.0f - (m_GageSizeX / 300.0f), 1.0f }; //敵ゲージのパターン矩形を計算
 
-			m_SpriteList[1]->setScale(m_GageSizeX, 300.0f, 0.1f);           //味方ゲージのサイズを更新
+			m_SpriteList[1]->SetScale(m_GageSizeX, 300.0f, 0.1f);           //味方ゲージのサイズを更新
             m_SpriteList[1]->SetSpritePattern(0, 1, 1, aliesGagePatternRect);
 			m_SpriteList[1]->setPosition(kGageLeftPosition + m_GageSizeX / 2, kGagePositionY, OrderInLayer::MoveObject); //味方ゲージの位置を更新
-			m_SpriteList[2]->setScale(300.0f - m_GageSizeX, 300.0f, 0.1f);  //敵ゲージのサイズを更新
+			m_SpriteList[2]->SetScale(300.0f - m_GageSizeX, 300.0f, 0.1f);  //敵ゲージのサイズを更新
 			m_SpriteList[2]->setPosition(kGageRightPosition - (300.0f - m_GageSizeX) / 2, kGagePositionY, OrderInLayer::MoveObject); //敵ゲージの位置を更新
             m_SpriteList[2]->SetSpritePattern(0, 1, 1, enemyGagePatternRect);
 			m_AnimationCount += m_TimeManager->GetDeltaTime();
@@ -1921,7 +1925,7 @@ void LoadAnimationHUD::InitAction()
     }
 
     //背景
-    m_SpriteList[0]->setScale(1000.0f, 800.0f, 0.1f);
+    m_SpriteList[0]->SetScale(1000.0f, 800.0f, 0.1f);
     m_SpriteList[0]->setPosition(0.0f, 0.0f, 1.0f);
 }
 
@@ -1957,7 +1961,7 @@ bool LoadAnimationHUD::FrameAction()
 		m_AnimationCount = 0.0f;
     }
 
-    count = MakeSpriteString(count, pos.x, pos.y, 40, 60, m_TextList["ロードテキスト"], XMFLOAT3( 1.0f, 1.0f, 0.7f ));
+    count = MakeSpriteString(count, pos.x, pos.y, 40, 60, m_TextList["ロードテキスト"].c_str(), XMFLOAT3( 1.0f, 1.0f, 0.7f ));
 
     for (int i = 0; i < m_SpriteList.size(); i++)
     {
@@ -1994,15 +1998,15 @@ void TurnEndHUD::InitAction()
 	MakeSpriteObject(L"DogtagBaseTexture", L"HUDCamera", L"AlphaSprite", pattern, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));        //テキスト背景
 
     //背景
-    m_SpriteList[0]->setScale(600.0f, 600.0f, 0.1f);
+    m_SpriteList[0]->SetScale(600.0f, 600.0f, 0.1f);
     m_SpriteList[0]->setPosition(0.0f, -75.0f, OrderInLayer::BackGround);
 
     //矢印
-    m_SpriteList[1]->setScale(600.0f, 600.0f, 0.1f);
+    m_SpriteList[1]->SetScale(600.0f, 600.0f, 0.1f);
     m_SpriteList[1]->setPosition(0.0f, -150.0f, OrderInLayer::MoveObject);
 
     //テキスト背景
-    m_SpriteList[2]->setScale(500.0f, 300.0f, 0.1f);
+    m_SpriteList[2]->SetScale(500.0f, 300.0f, 0.1f);
     m_SpriteList[2]->setPosition(0.0f, 120.0f, OrderInLayer::BackGround);
 }
 
@@ -2013,7 +2017,7 @@ bool TurnEndHUD::FrameAction()
 
     int count = 0;
 
-    count = MakeSpriteString(count, pos.x, pos.y, 40, 60, m_TextList["ターン終了テキスト"], XMFLOAT3(1.0f, 1.0f, 1.0f));
+    count = MakeSpriteString(count, pos.x, pos.y, 40, 60, m_TextList["ターン終了テキスト"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
 
     switch (m_AnimationState)
     {
@@ -2103,7 +2107,7 @@ bool TurnEndHUD::FrameAction()
         break;
     }
 
-    m_SpriteList[1]->setRotation(0.0f, 0.0f, m_ArrowRotation);
+    m_SpriteList[1]->SetRotation(0.0f, 0.0f, m_ArrowRotation);
 
     if (BFMng->GetMode() == Mode::TurnEndMode)
     {
@@ -2125,7 +2129,7 @@ void TurnHUD::InitAction()
     XMFLOAT4 pattern(0.0f, 0.0f, 0.25f, 0.25f);
 	MakeSpriteObject(L"EnemyTurnHUD", L"HUDCamera", L"AlphaSprite", pattern, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));  //現在のターン表示
 
-    m_SpriteList[0]->setScale(200.0f, 200.0f, 0.1f);
+    m_SpriteList[0]->SetScale(200.0f, 200.0f, 0.1f);
     m_SpriteList[0]->setPosition(-350.0f, 250.0f, OrderInLayer::BackGround);
 
     m_AnimationPages = 7;
@@ -2154,7 +2158,7 @@ bool TurnHUD::FrameAction()
 		SetAnimationState(AnimationState::Run);
         break;
     case AnimationState::Run:
-		FlipAnimation(m_SpriteList[0].get());
+		FlipAnimation(m_SpriteList[0].get(), m_AnimationPages, m_FlipDuration);
 
         if (m_FlipAnimationCount > m_FlipDuration * m_AnimationPages)
         {
@@ -2189,4 +2193,283 @@ bool TurnHUD::FrameAction()
 
 void TurnHUD::FinishAction()
 {
+}
+
+void EndingHUD::InitAction()
+{
+    XMFLOAT4 pattern(0.0f, 0.0f, 1.0f, 1.0f);
+
+    m_FontTextureId = L"JPNHUDTextureNP";
+    m_FontWordList = m_WordList.m_chListNewsPaperJ;
+    m_SpriteCount = 50;
+    SetFont(m_FontTextureId, m_FontWordList);
+
+    MakeSpriteObject(L"Sprite00", L"HUDCamera", L"AlphaSprite", pattern, XMFLOAT4(1.0f, 1.0f, 1.0f, 0.0f));                         //フェードイン
+    MakeSpriteObject(L"NewsPaperTexture", L"HUDCamera", L"AlphaSprite", pattern, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));                 //投函された新聞のイメージ
+    MakeSpriteObject(L"WinNewsPaperTexture", L"HUDCamera", L"AlphaSprite", pattern, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));              //勝利新聞イメージ
+    MakeSpriteObject(L"NewsPaperWinResultTexture", L"HUDCamera", L"AlphaSprite", pattern, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));        //勝利新聞イメージ
+
+    m_SpriteList[0]->SetScale(1000.0f, 700.0f, 0.1f);
+    m_SpriteList[0]->setPosition(0.0f, 0.0f, OrderInLayer::BackGround);
+
+    m_SpriteList[1]->SetScale(300.0f, 300.0f, 0.1f);
+    m_SpriteList[1]->setPosition(0.0f, 1000.0f, OrderInLayer::MoveObject);
+
+    m_SpriteList[2]->SetScale(550.0f, 550.0f, 0.1f);
+    m_SpriteList[2]->setPosition(0.0f, 0.0f, OrderInLayer::MoveObject);
+
+    m_SpriteList[3]->SetScale(550.0f, 550.0f, 0.1f);
+    m_SpriteList[3]->setPosition(0.0f, 0.0f, OrderInLayer::MoveObject + 0.5f);
+
+    m_AnimationPages = 7;   //こっちは新聞を閉じる用
+    m_FlipDuration = 0.05f;
+
+    SetAnimationState(AnimationState::None);
+}
+
+bool EndingHUD::FrameAction()
+{
+    MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
+    GraphicsPipeLineObjectBase* pipeline = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
+
+    switch (m_AnimationState)
+    {
+    default:
+        break;
+    case AnimationState::OnInit:
+        if (BFMng->GetPlayerWin())
+        {
+			m_SpriteList[2]->SetTextureId(L"WinNewsPaperTexture");
+        }
+        else
+        {
+            m_SpriteList[2]->SetTextureId(L"LoseNewsPaperTexture");
+        }
+
+		m_FlipAnimationCount = 0.0f;
+        m_AnimationCount = 0.0f;
+
+        SetAnimationState(AnimationState::Init);
+        break;
+	case AnimationState::Init:   //=============フェードイン～新聞を開くまで==============
+        switch (m_EndingState)
+        {
+        case EndingState::None:
+            m_EndingState = EndingState::FadeIn;
+            break;
+        case EndingState::FadeIn:
+            if (m_AnimationCount < kFadeInDuration)
+            {
+                m_AnimationCount += m_TimeManager->GetDeltaTime();
+                m_SpriteList[0]->SetColor(0.0f, 0.0f, 0.0f, m_AnimationCount / kFadeInDuration);
+            }
+            else
+            {
+                m_EndingState = EndingState::NewsPaperDrop;
+                m_AnimationCount = 0.0f;
+            }
+            pipeline->AddRenderObject(m_SpriteList[0].get());   //フェードインの背景を描画
+            break;
+        case EndingState::NewsPaperDrop:
+            if (m_AnimationCount == 0.0f)
+            {
+                m_AnimationCount += m_TimeManager->GetDeltaTime();
+                SetEasingAnimation(m_SpriteList[1].get(), EasingVector::Verticle, kNewsPaperDropPositionY.x, kNewsPaperDropPositionY.y, kNewsPaperDropDuration, Tween::EaseInQuad);
+            }
+            else if (m_AnimationCount < kNewsPaperDropDuration)
+            {
+                m_AnimationCount += m_TimeManager->GetDeltaTime();
+                for (int i = m_ActiveTweenList.size() - 1; i >= 0; --i)
+                {
+                    m_ActiveTweenList[i]->Update(m_TimeManager->GetDeltaTime());
+                    if (!m_ActiveTweenList[i]->IsActive())
+                    {
+                        // Tweenが終了したらリストから削除
+                        m_ActiveTweenList.erase(m_ActiveTweenList.begin() + i);
+                    }
+                }
+            }
+            else
+            {
+                m_EndingState = EndingState::NewsPaperZoom;
+                m_AnimationCount = 0.0f;
+            }
+            pipeline->AddRenderObject(m_SpriteList[0].get());   //フェードインの背景を描画
+            pipeline->AddRenderObject(m_SpriteList[1].get());   //新聞を描画
+            break;
+        case EndingState::NewsPaperZoom:
+            if (m_AnimationCount < kNewsPaperRotateDuration)
+            {
+                m_AnimationCount += m_TimeManager->GetDeltaTime();
+                m_NewsPaperScale += 20.0f;
+                m_SpriteList[1]->SetRotation(0.0f, 0.0f, m_SpriteList[1]->GetRotation().z + 20.0f);
+                m_SpriteList[1]->SetScale(m_NewsPaperScale, m_NewsPaperScale, 0.1f);
+            }
+            else
+            {
+                m_EndingState = EndingState::NewsPaper;
+                m_AnimationCount = 0.0f;
+            }
+            pipeline->AddRenderObject(m_SpriteList[0].get());   //フェードインの背景を描画
+            pipeline->AddRenderObject(m_SpriteList[1].get());   //新聞を描画
+            break;
+        case EndingState::NewsPaper:
+            if (m_AnimationCount < m_NewsPaperAnimationPages * m_FlipDuration)
+            {
+                m_AnimationCount += m_TimeManager->GetDeltaTime();
+                FlipAnimation(m_SpriteList[2].get(), m_NewsPaperAnimationPages, m_FlipDuration);
+            }
+            else
+            {
+				SetAnimationState(AnimationState::Run);
+                m_EndingState = EndingState::NewsPaperClose;
+				m_AnimationCount = 0.0f;
+            }
+            pipeline->AddRenderObject(m_SpriteList[0].get());   //フェードインの背景を描画
+            pipeline->AddRenderObject(m_SpriteList[2].get());   //新聞のページを描画
+            break;
+        }
+        break;
+
+        //=============フェードイン～新聞を開くまで==============End
+
+    case AnimationState::Run:       //==========スペースキー入力待ち===========
+        pipeline->AddRenderObject(m_SpriteList[0].get());   //フェードインの背景を描画
+        pipeline->AddRenderObject(m_SpriteList[2].get());   //新聞のページを描画
+        break;
+    case AnimationState::Finish:    //==========新聞を閉じる～リザルト表示まで===========
+        switch (m_EndingState)
+        {
+        case EndingState::NewsPaperClose:
+            if (m_AnimationCount == 0.0f)
+            {
+                m_AnimationCount += m_TimeManager->GetDeltaTime();
+                m_SpriteList[2]->SetTextureId(L"CloseNewsPaperTexture");
+            }
+            if (m_AnimationCount < m_AnimationPages * m_FlipDuration)
+            {
+                m_AnimationCount += m_TimeManager->GetDeltaTime();
+                FlipAnimation(m_SpriteList[2].get(), m_AnimationPages, m_FlipDuration);
+            }
+            else
+            {
+                m_EndingState = EndingState::Result;
+                m_ResultState = ResultState::Turns;
+                m_AnimationCount = 0.0f;
+            }
+            pipeline->AddRenderObject(m_SpriteList[0].get());   //フェードインの背景を描画
+            pipeline->AddRenderObject(m_SpriteList[2].get());   //新聞のページを描画
+            pipeline->AddRenderObject(m_SpriteList[3].get());   //新聞のリザルトを描画
+            break;
+        case EndingState::Result:
+
+            if (m_ResultState != ResultState::PressSpace)
+            {
+                m_AnimationCount += m_TimeManager->GetDeltaTime();
+            }
+
+            int count = 0;
+
+            switch (m_ResultState)
+            {
+            case ResultState::Turns:
+                m_TextList["ターン"] = kResultTextList[0];
+                count = MakeSpriteString(count, kResultTextPosX, kTurnTextPosY, 30, 45, m_TextList["ターン"].c_str(), kNewsPaperTextColor);
+                if (m_AnimationCount > 1.0f) m_ResultState = ResultState::TurnsPlus;
+                break;
+            case ResultState::TurnsPlus:
+                m_TextList["ターン"] = kResultTextList[0] + std::to_wstring(BFMng->GetTurnCount());
+                count = MakeSpriteString(count, kResultTextPosX, kTurnTextPosY, 30, 45, m_TextList["ターン"].c_str(), kNewsPaperTextColor);
+                if (m_AnimationCount > 2.0f) m_ResultState = ResultState::KillCount;
+                break;
+            case ResultState::KillCount:
+                m_TextList["ターン"] = kResultTextList[0] + std::to_wstring(BFMng->GetTurnCount());
+                m_TextList["撃退した数"] = kResultTextList[1];
+                count = MakeSpriteString(count, kResultTextPosX, kTurnTextPosY, 30, 45, m_TextList["ターン"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteString(count, kResultTextPosX, kKillTextPosY, 30, 45, m_TextList["撃退した数"].c_str(), kNewsPaperTextColor);
+                if (m_AnimationCount > 3.0f) m_ResultState = ResultState::KillCountPlus;
+                break;
+            case ResultState::KillCountPlus:
+                m_TextList["ターン"] = kResultTextList[0] + std::to_wstring(BFMng->GetTurnCount());
+                m_TextList["撃退した数"] = kResultTextList[1] + std::to_wstring(BFMng->GetPlayerKillCount());
+                count = MakeSpriteString(count, kResultTextPosX, kTurnTextPosY, 30, 45, m_TextList["ターン"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteString(count, kResultTextPosX, kKillTextPosY, 30, 45, m_TextList["撃退した数"].c_str(), kNewsPaperTextColor);
+                if (m_AnimationCount > 4.0f) m_ResultState = ResultState::KilledCount;
+                break;
+            case ResultState::KilledCount:
+                m_TextList["ターン"] = kResultTextList[0] + std::to_wstring(BFMng->GetTurnCount());
+                m_TextList["撃退した数"] = kResultTextList[1] + std::to_wstring(BFMng->GetPlayerKillCount());
+                m_TextList["撃退された数"] = kResultTextList[2];
+                count = MakeSpriteString(count, kResultTextPosX, kTurnTextPosY, 30, 45, m_TextList["ターン"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteString(count, kResultTextPosX, kKillTextPosY, 30, 45, m_TextList["撃退した数"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteString(count, kResultTextPosX, kKilledTextPosY, 30, 45, m_TextList["撃退された数"].c_str(), kNewsPaperTextColor);
+                if (m_AnimationCount > 5.0f) m_ResultState = ResultState::KilledCountPlus;
+                break;
+            case ResultState::KilledCountPlus:
+                m_TextList["ターン"] = kResultTextList[0] + std::to_wstring(BFMng->GetTurnCount());
+                m_TextList["撃退した数"] = kResultTextList[1] + std::to_wstring(BFMng->GetPlayerKillCount());
+                m_TextList["撃退された数"] = kResultTextList[2] + std::to_wstring(BFMng->GetEnemyKillCount());
+                count = MakeSpriteString(count, kResultTextPosX, kTurnTextPosY, 30, 45, m_TextList["ターン"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteString(count, kResultTextPosX, kKillTextPosY, 30, 45, m_TextList["撃退した数"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteString(count, kResultTextPosX, kKilledTextPosY, 30, 45, m_TextList["撃退された数"].c_str(), kNewsPaperTextColor);
+                if (m_AnimationCount > 6.0f) m_ResultState = ResultState::Score;
+                break;
+            case ResultState::Score:
+                m_TextList["ターン"] = kResultTextList[0] + std::to_wstring(BFMng->GetTurnCount());
+                m_TextList["撃退した数"] = kResultTextList[1] + std::to_wstring(BFMng->GetPlayerKillCount());
+                m_TextList["撃退された数"] = kResultTextList[2] + std::to_wstring(BFMng->GetEnemyKillCount());
+                m_TextList["スコア"] = kResultTextList[3];
+                count = MakeSpriteString(count, kResultTextPosX, kTurnTextPosY, 30, 45, m_TextList["ターン"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteString(count, kResultTextPosX, kKillTextPosY, 30, 45, m_TextList["撃退した数"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteString(count, kResultTextPosX, kKilledTextPosY, 30, 45, m_TextList["撃退された数"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteString(count, kResultTextPosX, kLastScoreTextPosY, 40, 60, m_TextList["スコア"].c_str(), kNewsPaperTextColor);
+                if (m_AnimationCount > 8.0f) m_ResultState = ResultState::ScorePlus;
+                break;
+            case ResultState::ScorePlus:
+                m_TextList["ターン"] = kResultTextList[0] + std::to_wstring(BFMng->GetTurnCount());
+                m_TextList["撃退した数"] = kResultTextList[1] + std::to_wstring(BFMng->GetPlayerKillCount());
+                m_TextList["撃退された数"] = kResultTextList[2] + std::to_wstring(BFMng->GetEnemyKillCount());
+                m_TextList["スコア"] = kResultTextList[3] + std::to_wstring(GetLastScoreValue());
+                count = MakeSpriteString(count, kResultTextPosX, kTurnTextPosY, 30, 45, m_TextList["ターン"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteString(count, kResultTextPosX, kKillTextPosY, 30, 45, m_TextList["撃退した数"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteString(count, kResultTextPosX, kKilledTextPosY, 30, 45, m_TextList["撃退された数"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteString(count, kResultTextPosX, kLastScoreTextPosY, 40, 60, m_TextList["スコア"].c_str(), kNewsPaperTextColor);
+                if (m_AnimationCount > 9.0f) m_ResultState = ResultState::PressSpace;
+                break;
+            case ResultState::PressSpace:
+                m_TextList["ターン"] = kResultTextList[0] + std::to_wstring(BFMng->GetTurnCount());
+                m_TextList["撃退した数"] = kResultTextList[1] + std::to_wstring(BFMng->GetPlayerKillCount());
+                m_TextList["撃退された数"] = kResultTextList[2] + std::to_wstring(BFMng->GetEnemyKillCount());
+                m_TextList["スコア"] = kResultTextList[3] + std::to_wstring(GetLastScoreValue());
+                m_TextList["スペース"] = kResultTextList[4];
+                count = MakeSpriteString(count, kResultTextPosX, kTurnTextPosY, 30, 45, m_TextList["ターン"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteString(count, kResultTextPosX, kKillTextPosY, 30, 45, m_TextList["撃退した数"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteString(count, kResultTextPosX, kKilledTextPosY, 30, 45, m_TextList["撃退された数"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteString(count, kResultTextPosX, kLastScoreTextPosY, 40, 60, m_TextList["スコア"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteString(count, kPressSpaceTextPosX, kPressSpaceTextPosY, 30, 45, m_TextList["スペース"].c_str(), kNewsPaperTextColor);
+                break;
+            }
+
+            pipeline->AddRenderObject(m_SpriteList[0].get());   //フェードインの背景を描画
+            pipeline->AddRenderObject(m_SpriteList[3].get());   //新聞のリザルトを描画
+
+            for (int i = 0; i < count; i++)
+            {
+                pipeline->AddRenderObject(m_WordSpriteList[i].get());
+            }
+        }
+        break;
+
+        //==========新聞を閉じる～リザルト表示まで===========End
+    }
+    return true;
+}
+
+void EndingHUD::FinishAction()
+{
+}
+
+int EndingHUD::GetLastScoreValue()
+{
+    return 10000 - (BFMng->GetTurnCount() * 1000) + (BFMng->GetEnemyKillCount() * 1500) + (BFMng->GetPlayerKillCount() * 1000);
 }

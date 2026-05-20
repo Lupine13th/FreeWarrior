@@ -26,9 +26,9 @@ void CharacterEquipment::FinishAction()
 void RebelAssaltRifle::InInit(FBXCharacterData* chData)
 {
 	chData->LoadMainFBX(L"./Resources/fbx/RebelAssaltRifle.fbx", L"RebelAssaltRifle");
-	chData->setScale(1.0f, 1.0f, 1.0f);
+	chData->SetScale(1.0f, 1.0f, 1.0f);
 	chData->setPosition(0.0f, 0.0f, 0.0f);
-	chData->setRotation(0.0f, 0.0f, 0.0f);
+	chData->SetRotation(0.0f, 0.0f, 0.0f);
 }
 
 bool RebelAssaltRifle::InFrame()
@@ -57,9 +57,9 @@ void CharacterEquipment::SetActive(bool active)
 void ImperialAssaltRifle::InInit(FBXCharacterData* chData)
 {
 	chData->LoadMainFBX(L"./Resources/fbx/ImperialAssaltRifle.fbx", L"ImperialAssaltRifle");
-	chData->setScale(1.0f, 1.0f, 1.0f);
+	chData->SetScale(1.0f, 1.0f, 1.0f);
 	chData->setPosition(0.0f, 0.0f, 0.0f);
-	chData->setRotation(0.0f, 0.0f, 0.0f);
+	chData->SetRotation(0.0f, 0.0f, 0.0f);
 }
 
 bool ImperialAssaltRifle::InFrame()
@@ -83,9 +83,9 @@ void ImperialAssaltRifle::InFinish()
 void RebelMachinegun::InInit(FBXCharacterData* chData)
 {
 	chData->LoadMainFBX(L"./Resources/fbx/RebelMachinegun.fbx", L"RebelMachinegun");
-	chData->setScale(1.0f, 1.0f, 1.0f);
+	chData->SetScale(1.0f, 1.0f, 1.0f);
 	chData->setPosition(0.0f, 0.0f, 0.0f);
-	chData->setRotation(0.0f, 0.0f, 0.0f);
+	chData->SetRotation(0.0f, 0.0f, 0.0f);
 }
 
 bool RebelMachinegun::InFrame()
@@ -109,9 +109,9 @@ void RebelMachinegun::InFinish()
 void RebelScoutRifle::InInit(FBXCharacterData* chData)
 {
 	chData->LoadMainFBX(L"./Resources/fbx/RebelScoutRifle.fbx", L"RebelScoutRifle");
-	chData->setScale(1.0f, 1.0f, 1.0f);
+	chData->SetScale(1.0f, 1.0f, 1.0f);
 	chData->setPosition(0.0f, 0.0f, 0.0f);
-	chData->setRotation(0.0f, 0.0f, 0.0f);
+	chData->SetRotation(0.0f, 0.0f, 0.0f);
 }
 
 bool RebelScoutRifle::InFrame()
@@ -135,9 +135,9 @@ void RebelScoutRifle::InFinish()
 void ImperialScoutRifle::InInit(FBXCharacterData* chData)
 {
 	chData->LoadMainFBX(L"./Resources/fbx/ImperialScoutRifle.fbx", L"ImperialScoutRifle");
-	chData->setScale(1.0f, 1.0f, 1.0f);
+	chData->SetScale(1.0f, 1.0f, 1.0f);
 	chData->setPosition(0.0f, 0.0f, 0.0f);
-	chData->setRotation(0.0f, 0.0f, 0.0f);
+	chData->SetRotation(0.0f, 0.0f, 0.0f);
 }
 
 bool ImperialScoutRifle::InFrame()
@@ -162,9 +162,9 @@ void ImperialScoutRifle::InFinish()
 void Backpack::InInit(FBXCharacterData* chData)
 {
 	chData->LoadMainFBX(L"./Resources/fbx/backpackObject.fbx", L"backpackObject");
-	chData->setScale(1.0f, 1.0f, 1.0f);
+	chData->SetScale(1.0f, 1.0f, 1.0f);
 	chData->setPosition(0.0f, 0.0f, 0.0f);
-	chData->setRotation(0.0f, 0.0f, 0.0f);
+	chData->SetRotation(0.0f, 0.0f, 0.0f);
 }
 
 bool Backpack::InFrame()

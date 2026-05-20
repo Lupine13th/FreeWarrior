@@ -13,8 +13,6 @@
 #include <chrono>
 #include <algorithm>
 
-#define DEBUG_FLOAT(val) { char buf[128]; sprintf_s(buf, "%f\n", val); OutputDebugStringA(buf); }
-
 using namespace std::chrono;
 
 void BattleFieldManager::InitAction()
@@ -765,6 +763,27 @@ bool BattleFieldManager::FrameAction()
 		}
 		}//AlliesTurn
 	}
+	else if (m_CurrentTurn == Turn::Result)
+	{
+		if (m_HUDManager->GetHUDObject("EndingHUD")->GetAnimationState() == AnimationState::None)
+		{
+			m_HUDManager->GetHUDObject("EndingHUD")->SetAnimationState(AnimationState::OnInit);
+		}
+		else if (m_HUDManager->GetHUDObject("EndingHUD")->GetAnimationState() == AnimationState::Run)
+		{
+			if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK))
+			{
+				m_HUDManager->GetHUDObject("EndingHUD")->SetAnimationState(AnimationState::Finish);
+			}
+		}
+		else if (m_HUDManager->GetHUDObject("EndingHUD")->GetAnimationState() == AnimationState::Finish)
+		{
+			if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK))
+			{
+				PostQuitMessage(0);
+			}
+		}
+	}
 
 	if (m_IsAttacking)	//攻撃アニメーション中
 	{
@@ -1061,11 +1080,11 @@ void BattleFieldManager::CheckMoved()
 
 			if (m_AlliesCharacterList[i]->Moved)
 			{
-				fbxData->setScale(fbxData->GetScaleValue() / 2, fbxData->GetScaleValue() / 2, fbxData->GetScaleValue() / 2);
+				fbxData->SetScale(fbxData->GetScaleValue() / 2, fbxData->GetScaleValue() / 2, fbxData->GetScaleValue() / 2);
 			}
 			else
 			{
-				fbxData->setScale(fbxData->GetScaleValue(), fbxData->GetScaleValue(), fbxData->GetScaleValue());
+				fbxData->SetScale(fbxData->GetScaleValue(), fbxData->GetScaleValue(), fbxData->GetScaleValue());
 			}
 		}
 	}
@@ -1078,11 +1097,11 @@ void BattleFieldManager::CheckMoved()
 
 			if (m_EnemyCharacterList[i]->Moved)
 			{
-				fbxData->setScale(fbxData->GetScaleValue() / 2, fbxData->GetScaleValue() / 2, fbxData->GetScaleValue() / 2);
+				fbxData->SetScale(fbxData->GetScaleValue() / 2, fbxData->GetScaleValue() / 2, fbxData->GetScaleValue() / 2);
 			}
 			else
 			{
-				fbxData->setScale(fbxData->GetScaleValue(), fbxData->GetScaleValue(), fbxData->GetScaleValue());
+				fbxData->SetScale(fbxData->GetScaleValue(), fbxData->GetScaleValue(), fbxData->GetScaleValue());
 			}
 		}
 	}

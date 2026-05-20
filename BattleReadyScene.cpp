@@ -57,7 +57,7 @@ void BattleReadyScene::InitAction()
 
     XMFLOAT4 pattern(0.0f, 0.0f, 1.0f / 512.0f, 1.0f / 512.0f);
     m_Sprite->SetSpritePattern(0, 10, 10, pattern);
-    m_Sprite->setScale(100.0f, 60.0f, 0.1f);
+    m_Sprite->SetScale(100.0f, 60.0f, 0.1f);
     m_Sprite->setSpriteIndex(0);
     m_Sprite->setPosition(0.0f, 0.0f, 2.0f);
     m_Sprite->SetColor(0.0f, 0.0f, 0.0f, 1);

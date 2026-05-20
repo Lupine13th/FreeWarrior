@@ -30,7 +30,7 @@ void LogHUD::InitAction()
         spc->SetSpritePattern(0, 10, 10, pattern);
         spc->setSpriteIndex(0);
         spc->setPosition(-360.0f, (-90.0f - i * 25.0f), 2.0f);
-        spc->setScale(25.0f, 3.0f, 0.1f);
+        spc->SetScale(25.0f, 3.0f, 0.1f);
 
         m_Sprites.push_back(std::unique_ptr<SpriteCharacter>(spc));
     }

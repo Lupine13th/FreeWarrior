@@ -43,23 +43,23 @@ void OpeningAnimHUD::InitAction()
     }
 
     o_sprite[0]->SetTextureId(L"RadioTexture");
-    o_sprite[0]->setScale(RadioScale.x, RadioScale.y, 0.1f);
+    o_sprite[0]->SetScale(RadioScale.x, RadioScale.y, 0.1f);
     o_sprite[0]->setPosition(RadioPos.x, RadioPos.y, 1.0f);
 
     o_sprite[1]->SetTextureId(L"PaporTexture");
-    o_sprite[1]->setScale(RadioScale.x, RadioScale.y, 0.1f);
+    o_sprite[1]->SetScale(RadioScale.x, RadioScale.y, 0.1f);
     o_sprite[1]->setPosition(RadioPos.x, RadioPos.y, 2.5f);
 
     o_sprite[2]->SetTextureId(L"TargetWinTexture");
-    o_sprite[2]->setScale(TarWinScale.x, TarWinScale.y, 0.1f);
+    o_sprite[2]->SetScale(TarWinScale.x, TarWinScale.y, 0.1f);
     o_sprite[2]->setPosition(TarWinPos.x, TarWinPos.y, 2.0f);
 
     o_sprite[3]->SetTextureId(L"TargetDefTexture");
-    o_sprite[3]->setScale(TarDefScale.x, TarDefScale.y, 0.1f);
+    o_sprite[3]->SetScale(TarDefScale.x, TarDefScale.y, 0.1f);
     o_sprite[3]->setPosition(TarDefPos.x, TarDefPos.y, 2.0f);
 
     o_sprite[4]->SetTextureId(L"FadeInTexture");
-    o_sprite[4]->setScale(FadeScale.x, FadeScale.y, 0.1f);
+    o_sprite[4]->SetScale(FadeScale.x, FadeScale.y, 0.1f);
     o_sprite[4]->setPosition(FadePos.x, FadePos.y, 2.0f);
 }
 
@@ -118,10 +118,10 @@ bool OpeningAnimHUD::FrameAction()
                 RadioScale.y += 16.0f;
 
                 o_sprite[0]->setPosition(RadioPos.x, RadioPos.y, 1.0f);
-                o_sprite[0]->setScale(RadioScale.x, RadioScale.y, 0.1f);
+                o_sprite[0]->SetScale(RadioScale.x, RadioScale.y, 0.1f);
 
                 o_sprite[1]->setPosition(RadioPos.x, RadioPos.y, 2.5f);
-                o_sprite[1]->setScale(RadioScale.x, RadioScale.y, 0.1f);
+                o_sprite[1]->SetScale(RadioScale.x, RadioScale.y, 0.1f);
             }
             else if (OPAnimCount > 1.0f)
             {
@@ -168,7 +168,7 @@ bool OpeningAnimHUD::FrameAction()
                 TarWinScale.y -= 6.0f;
 
                 o_sprite[2]->setPosition(TarWinPos.x, TarWinPos.y, 2.0f);
-                o_sprite[2]->setScale(TarWinScale.x, TarWinScale.y, 0.1f);
+                o_sprite[2]->SetScale(TarWinScale.x, TarWinScale.y, 0.1f);
 
                 pipe->AddRenderObject(o_sprite[2].get());
             }
@@ -222,7 +222,7 @@ bool OpeningAnimHUD::FrameAction()
                 TarDefScale.y -= 6.0f;
 
                 o_sprite[3]->setPosition(TarDefPos.x, TarDefPos.y, 2.0f);
-                o_sprite[3]->setScale(TarDefScale.x, TarDefScale.y, 0.1f);
+                o_sprite[3]->SetScale(TarDefScale.x, TarDefScale.y, 0.1f);
 
                 pipe->AddRenderObject(o_sprite[3].get());
             }

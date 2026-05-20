@@ -43,8 +43,8 @@ public:
 	CharacterData()
 	{
 		setPosition(0.0f, 0.0f, 0.0f);
-		setRotation(0.0f, 0.0f, 0.0f);
-		setScale(1.0f, 1.0f, 1.0f);
+		SetRotation(0.0f, 0.0f, 0.0f);
+		SetScale(1.0f, 1.0f, 1.0f);
 
 		m_constantBuffers.clear();
 		m_cbuffCount = 0;
@@ -77,7 +77,7 @@ public:
 		m_mtxChange = true;
 	}
 
-	void setRotation(float x, float y, float z)
+	void SetRotation(float x, float y, float z)
 	{
 		rotation.x = x;
 		rotation.y = y;
@@ -86,7 +86,7 @@ public:
 		m_mtxChange = true;
 	}
 
-	void setScale(float x, float y, float z)
+	void SetScale(float x, float y, float z)
 	{
 		scale.x = x;
 		scale.y = y;
@@ -100,7 +100,7 @@ public:
 		return position;
 	}
 
-	const XMFLOAT3 getRotation()
+	const XMFLOAT3 GetRotation()
 	{
 		return rotation;
 	}

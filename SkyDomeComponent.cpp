@@ -6,7 +6,7 @@
 void SkyDomeComponent::InitAction()
 {
 	CharacterData* chdata = GetGameObject()->GetCharacterData();
-	chdata->setScale(10.0f, 10.0f, 10.0f);
+	chdata->SetScale(10.0f, 10.0f, 10.0f);
 
 	chdata->SetGraphicsPipeLine(L"StaticFBX");
 	chdata->AddCameraLabel(L"DefenderCamera");
