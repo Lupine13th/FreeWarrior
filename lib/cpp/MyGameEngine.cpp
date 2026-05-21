@@ -366,8 +366,6 @@ HRESULT MyGameEngine::InitMyGameEngine(HINSTANCE hInst, HWND hwnd)
     }
 #endif
 
-    m_hitMng = make_unique<HitManager>();
-
     //Scene
     //インスタンスは別作成
     hr = m_sceneCont->initSceneController();
@@ -383,12 +381,6 @@ HRESULT MyGameEngine::InitMyGameEngine(HINSTANCE hInst, HWND hwnd)
 void MyGameEngine::SetSceneController(SceneController* pSceneCont)
 {
     m_sceneCont.reset(pSceneCont);
-}
-
-
-HitManager* MyGameEngine::GetHitManager()
-{
-    return m_hitMng.get();
 }
 
 void MyGameEngine::AddGameObject(GameObject* obj)
@@ -463,9 +455,6 @@ void MyGameEngine::FrameUpdate()
         m_preTimer = nowTimer;  //タイマー更新。次回は現在の時間から1/60秒後
         m_inputMng->update();
 
-        //ヒットバッファフラッシュ
-        m_hitMng->refreshHitSystem();
-
         std::for_each(m_gameObjects.begin(), m_gameObjects.end(),   //gameObjectsの中身全てで
             [this, &deleteObjects](GameObject* obj) {
                 if (!obj->action()) {                           //actionメソッドを実行
@@ -473,8 +462,6 @@ void MyGameEngine::FrameUpdate()
                 }
             }
         );
-
-        m_hitMng->hitFrameAction();
 
         m_inputMng->refreshBuffer();
 

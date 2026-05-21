@@ -27,13 +27,10 @@ class Abilities;
 #include "GameObject.h"
 #include "FieldCharacter.h"
 #include "Abilities.h"
-#include "LogHUD.h"
-#include "LogHUDW.h"
 #include "BattleReadyScene.h"
 #include "DamageHUD.h"
 #include "DamageHUDW.h"
 #include "OpeningAnimHUD.h"
-#include "ResultUI.h"
 #include "HUDManager.h"
 #include "CameraChangerComponent.h"
 #include "TimeManager.h"
@@ -396,6 +393,10 @@ public:
 	{
 		return m_TurnEndMenuSelectIndex;
 	}
+	Abilities* GetAbilities()
+	{
+		return m_Abilities;
+	}
 
 	//==========Method==========
 	void ChangeTurnAllies();
@@ -408,7 +409,6 @@ public:
 	void ChangeTurn();
 	void ResetHUDs(int SEindex);
 	void Abiliting(FieldCharacter* attackingchara, FieldCharacter* attackedchara);
-	void RefreshLogs(FieldCharacter* attackingchara, FieldCharacter* attackedchara, ActionName action, int damage, bool sccess);
 	void DeleteChara(int deadCharaPos);
 	void CheckDead(FieldCharacter* chara);
 	void CheckMoved();

@@ -15,7 +15,6 @@
 #include "TextureManager.h"
 #include "PipeLineManager.h"
 #include "d3dx12.h"
-#include "HitManager.h"
 #include "InputManager.h"
 #include "MeshManager.h"
 
@@ -33,7 +32,6 @@ using Microsoft::WRL::ComPtr;
 using namespace DirectX;
 
 class PipeLineManager;
-class HitManager;
 class GameObject;
 class CharacterData;
 class FBXResourceManager;
@@ -90,9 +88,6 @@ private:
 
     //入力
     unique_ptr<InputManager>    m_inputMng;
-
-    //ヒット
-    unique_ptr<HitManager>      m_hitMng;
 
     //サウンド
     unique_ptr<SoundManager>    m_soundMng;
@@ -184,8 +179,6 @@ public:
     {
         return m_inputMng.get();
     }
-
-    HitManager* GetHitManager();
 
     SoundManager* GetSoundManager()
     {

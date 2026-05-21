@@ -2023,7 +2023,7 @@ bool TurnEndHUD::FrameAction()
     {
     default:
 		break;
-    case AnimationState::Init:
+    case AnimationState::Init:  //出現アニメーション
         if (m_InitAnimationCount == 0.0f)
         {
             SetEasingAnimation(m_SpriteList[0].get(), EasingVector::Verticle, kBackGroundPosY[0], kBackGroundPosY[1], kAnimationTime, Tween::EaseInQuad);
@@ -2050,7 +2050,7 @@ bool TurnEndHUD::FrameAction()
             m_AnimationState = AnimationState::Run;
         }
         break;
-    case AnimationState::Run:
+	case AnimationState::Run:   //針が動くアニメーション
         if (m_AnimationCount == 0.0f)
         {
             m_StartArrowRotation = m_ArrowRotation;
@@ -2084,7 +2084,7 @@ bool TurnEndHUD::FrameAction()
             pipeline->AddRenderObject(m_WordSpriteList[i].get());
         }
         break;
-    case AnimationState::Finish:
+    case AnimationState::Finish:    //針の最終地点
         switch (BFMng->GetTurnEndMenuSelectIndex())
         {
         case 0:
@@ -2130,9 +2130,9 @@ void TurnHUD::InitAction()
 	MakeSpriteObject(L"EnemyTurnHUD", L"HUDCamera", L"AlphaSprite", pattern, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));  //現在のターン表示
 
     m_SpriteList[0]->SetScale(200.0f, 200.0f, 0.1f);
-    m_SpriteList[0]->setPosition(-350.0f, 250.0f, OrderInLayer::BackGround);
+    m_SpriteList[0]->setPosition(-380.0f, 250.0f, OrderInLayer::BackGround);
 
-    m_AnimationPages = 7;
+    m_AnimationPages = 8;
     m_FlipDuration = 0.05f;
 
     SetAnimationState(AnimationState::None);
@@ -2144,7 +2144,7 @@ bool TurnHUD::FrameAction()
     {
     default:
         break;
-    case AnimationState::Init:
+    case AnimationState::Init:  //BattleFieldManagerで手動変換→現在のターンからテクスチャを切り替え
         switch (BFMng->GetCurrentTurn())
         {
         case Turn::Allies:
@@ -2157,7 +2157,7 @@ bool TurnHUD::FrameAction()
         m_FlipAnimationCount = 0.0f;
 		SetAnimationState(AnimationState::Run);
         break;
-    case AnimationState::Run:
+    case AnimationState::Run:   //表示を切り替えるアニメーション
 		FlipAnimation(m_SpriteList[0].get(), m_AnimationPages, m_FlipDuration);
 
         if (m_FlipAnimationCount > m_FlipDuration * m_AnimationPages)
@@ -2180,7 +2180,7 @@ bool TurnHUD::FrameAction()
         break;
     }
 
-    if (BFMng->GetCurrentTurn() != Turn::First)
+    if (BFMng->GetCurrentTurn() != Turn::First && !BFMng->GetBattleCameraEnable())
     {
         MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
         GraphicsPipeLineObjectBase* pipeline = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
@@ -2236,7 +2236,7 @@ bool EndingHUD::FrameAction()
     {
     default:
         break;
-    case AnimationState::OnInit:
+	case AnimationState::OnInit:    //==========アニメーション開始前の初期設定===========
         if (BFMng->GetPlayerWin())
         {
 			m_SpriteList[2]->SetTextureId(L"WinNewsPaperTexture");

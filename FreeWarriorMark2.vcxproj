@@ -152,8 +152,6 @@
     <ClInclude Include="..\lib\include\DX11Helper.h" />
     <ClInclude Include="..\lib\include\DXSampleHelper.h" />
     <ClInclude Include="..\lib\include\GameObject.h" />
-    <ClInclude Include="..\lib\include\HitManager.h" />
-    <ClInclude Include="..\lib\include\HitShapes.h" />
     <ClInclude Include="..\lib\include\InputManager.h" />
     <ClInclude Include="..\lib\include\MeshManager.h" />
     <ClInclude Include="..\lib\include\MyAccessHub.h" />
@@ -189,12 +187,9 @@
     <ClInclude Include="InFieldCharacterMenu.h" />
     <ClInclude Include="InFieldCharacterMenuImage.h" />
     <ClInclude Include="InFieldCharacterMenuWord.h" />
-    <ClInclude Include="LogHUD.h" />
-    <ClInclude Include="LogHUDW.h" />
     <ClInclude Include="OpeningAnimHUD.h" />
     <ClInclude Include="ReadyCharacterHUD.h" />
     <ClInclude Include="ReadyCharacterHUDW.h" />
-    <ClInclude Include="ResultUI.h" />
     <ClInclude Include="RiverTerrain.h" />
     <ClInclude Include="SquareColor.h" />
     <ClInclude Include="SquareGenerator.h" />
@@ -221,8 +216,6 @@
     <ClCompile Include="..\lib\cpp\D3D12Helper.cpp" />
     <ClCompile Include="..\lib\cpp\DX11Helper.cpp" />
     <ClCompile Include="..\lib\cpp\GameObject.cpp" />
-    <ClCompile Include="..\lib\cpp\HitManager.cpp" />
-    <ClCompile Include="..\lib\cpp\HitShapes.cpp" />
     <ClCompile Include="..\lib\cpp\InputManager.cpp" />
     <ClCompile Include="..\lib\cpp\MeshManager.cpp" />
     <ClCompile Include="..\lib\cpp\MyAccessHub.cpp" />
@@ -253,13 +246,10 @@
     <ClCompile Include="InFieldCharacterMenu.cpp" />
     <ClCompile Include="InFieldCharacterMenuImage.cpp" />
     <ClCompile Include="InFieldCharacterMenuWord.cpp" />
-    <ClCompile Include="LogHUD.cpp" />
-    <ClCompile Include="LogHUDW.cpp" />
     <ClCompile Include="OpeningAnimHUD.cpp" />
     <ClCompile Include="PlayerFBXs.cpp" />
     <ClCompile Include="ReadyCharacterHUD.cpp" />
     <ClCompile Include="ReadyCharacterHUDW.cpp" />
-    <ClCompile Include="ResultUI.cpp" />
     <ClCompile Include="RiverTerrain.cpp" />
     <ClCompile Include="Squares.cpp" />
     <ClCompile Include="TimeManager.cpp" />

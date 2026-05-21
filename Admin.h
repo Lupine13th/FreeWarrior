@@ -12,6 +12,8 @@ enum class Animations
 	None,
 	Move,
 	Attack,
+	ConcentratedFire,
+	BayonetCharge,
 	Scout,
 	Damage,
 	Dead

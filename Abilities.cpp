@@ -32,11 +32,11 @@ void Abilities::ConcentratedFire(FieldCharacter* attackingchara, FieldCharacter*
 	attackingchara->CharaMorales = attackingchara->CharaMorales - 20;				//攻撃側の士気を減少
 	attackedchara->CharaSoldiers = attackedchara->CharaSoldiers - damage * 1.2f;	//防御側の兵力を減少
 
+	attackingchara->Moved = true;	//攻撃側の行動済みフラグを立てる
+
 	BFMng->CreateAbilityLog(attackingchara, ActionName::ConcentratedFire, damage * 1.2f);	//行動ログ作成
 
 	BFMng->SetStrengthValues();	//優勢ゲージ更新
-
-	BFMng->RefreshLogs(attackingchara, attackedchara, ActionName::ConcentratedFire, damage * 1.2f, false);	//行動ログ更新
 }
 
 void Abilities::BayonetCharge(FieldCharacter* attackingchara, FieldCharacter* attackedchara)	//銃剣突撃アビリティ
@@ -63,11 +63,11 @@ void Abilities::BayonetCharge(FieldCharacter* attackingchara, FieldCharacter* at
 	attackingchara->CharaSoldiers = attackingchara->CharaSoldiers - attackingchara->CharaSoldiers * 0.1;	//攻撃側の兵力を減少
 	attackedchara->CharaSoldiers = attackedchara->CharaSoldiers - damage * 1.2f;							//防御側の兵力を減少
 
+	attackingchara->Moved = true;	//攻撃側の行動済みフラグを立てる
+
 	BFMng->CreateAbilityLog(attackingchara, ActionName::BayonetCharge, damage * 1.2f);						//行動ログ作成
 
 	BFMng->SetStrengthValues();																				//優勢ゲージ更新
-
-	BFMng->RefreshLogs(attackingchara, attackedchara, ActionName::BayonetCharge, damage * 1.2f, false);		//行動ログ更新
 }
 
 bool Abilities::Scout(FieldCharacter* attackingchara, FieldCharacter* attackedchara)
@@ -81,15 +81,15 @@ bool Abilities::Scout(FieldCharacter* attackingchara, FieldCharacter* attackedch
 	if (value > -1)
 	{
 		attackedchara->Detected = true; // 偵察成功
-		BFMng->RefreshLogs(attackingchara, attackedchara, ActionName::Scout, 0, attackedchara->Detected);
 		return true;
 	}
 	else
 	{
 		attackedchara->Detected = false; // 偵察失敗
-		BFMng->RefreshLogs(attackingchara, attackedchara, ActionName::Scout, 0, attackedchara->Detected);
 		return false;
 	}
+
+	attackingchara->Moved = true;	//攻撃側の行動済みフラグを立てる
 
 	BFMng->CreateAbilityLog(attackingchara, ActionName::Scout, 0.0f);	//行動ログ更新
 }

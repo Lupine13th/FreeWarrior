@@ -4,6 +4,7 @@
 #include "Admin.h"
 #include "SoundManager.h"
 #include "FlyingCameraController.h"
+#include "Abilities.h"
 
 #include <MyAccessHub.h>
 #include <vector>
@@ -31,7 +32,9 @@ bool EnemyAIManager::FrameAction()
 
 	FlyingCameraController* Fcam = MyAccessHub::GetFlyingCameraController();
 
+	//==============================================
 	//==========敵の行動パターンを各自設定==========
+	//==============================================
 
 	if (BFMng->GetCurrentTurn() == Turn::Enemy)	
 	{
@@ -112,8 +115,9 @@ bool EnemyAIManager::FrameAction()
 		
 	}
 
-
+	//================================
 	//==========敵の行動実行==========
+	//================================
 
 	FieldCharacter* currentEnemy = BFMng->GetEnemyCharacterList()[m_MoveAIcount];
 
@@ -169,12 +173,24 @@ bool EnemyAIManager::FrameAction()
 				if (BFMng->GetFieldSquaresList()[currentEnemy->targetAISquare->GetSquareID()]->chara != nullptr)	
 				{
 					BFMng->SetAttackingCharacterSquares(BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]);
-					BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->SetAnimation(Animations::Attack, currentEnemy->CharaAdmin, BFMng->GetFieldSquaresList()[currentEnemy->CharaPos], currentEnemy->targetAISquare);
-					BFMng->Attack(currentEnemy, BFMng->GetAlliesCharacterList()[currentEnemy->targetAICharacterID]);
-				}
-				else	//攻撃対象がいなかった場合の処理（念のため）
-				{
-					//BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->SetAnimation(Animations::Attack, currentEnemy->CharaAdmin, BFMng->GetFieldSquaresList()[currentEnemy->CharaPos], currentEnemy->targetAISquare);
+
+					switch (SelectAttackAction(currentEnemy, BFMng->GetAlliesCharacterList()[currentEnemy->targetAICharacterID]))
+					{
+						case AbilityType::None:
+							BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->SetAnimation(Animations::Attack, currentEnemy->CharaAdmin, BFMng->GetFieldSquaresList()[currentEnemy->CharaPos], currentEnemy->targetAISquare);
+							BFMng->Attack(currentEnemy, BFMng->GetAlliesCharacterList()[currentEnemy->targetAICharacterID]);
+							break;
+						case AbilityType::ConcentratedFire:
+							BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->SetAnimation(Animations::ConcentratedFire, currentEnemy->CharaAdmin, BFMng->GetFieldSquaresList()[currentEnemy->CharaPos], currentEnemy->targetAISquare);
+							break;
+						case AbilityType::BayonetCharge:
+							BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->SetAnimation(Animations::BayonetCharge, currentEnemy->CharaAdmin, BFMng->GetFieldSquaresList()[currentEnemy->CharaPos], currentEnemy->targetAISquare);
+							break;
+						case AbilityType::Scout:
+							BFMng->GetFieldSquaresList()[currentEnemy->CharaPos]->SetAnimation(Animations::Scout, currentEnemy->CharaAdmin, BFMng->GetFieldSquaresList()[currentEnemy->CharaPos], currentEnemy->targetAISquare);
+							break;
+					}
+
 				}
 				m_OnlyOneTime = true;
 				break;
@@ -247,7 +263,7 @@ void EnemyAIManager::FinishAction()
 {
 }
 
-bool EnemyAIManager::checkEnemyData()
+bool EnemyAIManager::CheckEnemyData()
 {
 	BattleFieldManager* BFMng = MyAccessHub::GetBFManager();
 	int movedcount = 0;
@@ -559,6 +575,87 @@ float EnemyAIManager::CalculateDistance(int currentID, int nextID)
 	int nextY = nextID / 10;
 
 	return std::abs(currentX - nextX) + std::abs(currentY - nextY);
+}
+
+AbilityType EnemyAIManager::SelectAttackAction(FieldCharacter* attackingCharacter, FieldCharacter* attackedCharacter)
+{
+	struct AbilityScore
+	{
+		AbilityType type;
+		float score;
+	};
+
+	std::vector<AbilityType> currentCharacterAbilities = attackingCharacter->GetAbilityList();
+
+	std::vector<AbilityScore> abilityScores;
+
+	float maxScore = 0.0f;
+
+	AbilityType bestAbility = AbilityType::None;
+
+	Abilities* Abilities = BFMng->GetAbilities();
+
+	for (int i = 0; i < 3; i++)
+	{
+		float score = 0.0f;
+
+		switch (currentCharacterAbilities[i])
+		{
+			case AbilityType::ConcentratedFire:
+				if (attackingCharacter->GetMorale() > 20.0f)
+				{
+					score += 100.0f;
+
+					if (attackedCharacter->GetSoldiersPercent() < 0.3f)
+					{
+						score += 300.0f;
+					}
+
+					abilityScores.push_back({ AbilityType::ConcentratedFire, score });
+				}
+				break;
+			case AbilityType::BayonetCharge:
+				if (attackingCharacter->GetMorale() > 10.0f && attackingCharacter->GetSoldiersPercent() > 0.3f)
+				{
+					score += 300.0f;
+
+					abilityScores.push_back({ AbilityType::ConcentratedFire, score });
+				}
+				break;
+			case AbilityType::Scout:
+				if (!attackedCharacter->GetDetected())
+				{
+					score += 500.0f;
+
+					abilityScores.push_back({ AbilityType::Scout, score });
+				}
+				break;
+		}
+	}
+
+	for (int i = 0; i < abilityScores.size(); i++)
+	{
+		if (abilityScores[i].score > maxScore)
+		{
+			maxScore = abilityScores[i].score;
+			bestAbility = abilityScores[i].type;
+		}
+	}
+
+	switch (bestAbility)
+	{
+		case AbilityType::ConcentratedFire:
+			Abilities->ConcentratedFire(attackingCharacter, attackedCharacter);
+			return bestAbility;
+		case AbilityType::BayonetCharge:
+			Abilities->BayonetCharge(attackingCharacter, attackedCharacter);
+			return bestAbility;
+		case AbilityType::Scout:
+			Abilities->Scout(attackingCharacter, attackedCharacter);
+			return bestAbility;
+	}
+
+	return bestAbility;
 }
 
 void EnemyAIManager::ResetAI(FieldCharacter* chara)

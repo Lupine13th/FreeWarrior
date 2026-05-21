@@ -83,7 +83,7 @@ public:
 	bool FrameAction() override;
 	void FinishAction() override;
 
-	bool checkEnemyData();
+	bool CheckEnemyData();
 
 	void ResetAI(FieldCharacter* chara);
 
@@ -264,5 +264,7 @@ public:
 			return;
 		}
 	}
+
+	AbilityType SelectAttackAction(FieldCharacter* attackingCharacter, FieldCharacter* attackedCharacter);
 };
 

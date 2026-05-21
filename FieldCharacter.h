@@ -5,7 +5,6 @@
 #include <cmath> 
 
 #include "EnemyTypes.h"
-#include "Abilities.h"
 #include "AbilityType.h"
 #include "Admin.h"
 #include "GameObject.h"
@@ -75,12 +74,12 @@ public:
 	Squares* targetAISquare = nullptr;	//攻撃する敵部隊のマス
 	Squares* m_NearestEnemySquare = nullptr;	//最も近い敵部隊のマス
 
-	std::vector<AbilityType> Abilities = //アビリティのリスト
+	vector<AbilityType> Abilities
 	{
 		AbilityType::None,
 		AbilityType::None,
 		AbilityType::None
-	};	
+	};//アビリティのリスト
 
 	virtual void InitAction() override;
 	virtual bool FrameAction() override;
@@ -96,10 +95,37 @@ public:
 		return m_PlayerBase;
 	}
 
+	std::vector<AbilityType> GetAbilityList()
+	{
+		return Abilities;
+	};
+
+	float GetSoldiers()
+	{
+		return CharaSoldiers;
+	}
+
+	float GetMorale()
+	{
+		return CharaMorales;
+	}
+
+	float GetSoldiersPercent()
+	{
+		return CharaSoldiers / CharaMaxSoldiers;
+	}
+
+	bool GetDetected()
+	{
+		return Detected;
+	}
+
 private:
 	BattleFieldManager* BFMng = MyAccessHub::GetBFManager();
 
 	PlayerBase* m_PlayerBase = nullptr;
+
+	
 };
 
 class Infantry : public FieldCharacter
@@ -117,7 +143,7 @@ public:
 		CharaMorales = 50.0f;
 		CharaMaxMorales = 100.0f;
 		Abilities[0] = AbilityType::BayonetCharge;
-		Abilities[1] = AbilityType::Scout;
+		Abilities[1] = AbilityType::ConcentratedFire;
 	}
 };
 

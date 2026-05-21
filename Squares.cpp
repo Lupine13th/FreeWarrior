@@ -272,23 +272,24 @@ void Squares::SetSquaresColor(SquareColor color)
 		SqData->SetColor(0.0f, 1.0f, 1.0f, 1.0f);
 		break;
 	case SquareColor::EnemyRengeCursor:
+		SqData->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
 		SqData->SetTextureId(L"TargetTundraTexture");
 		break;
 	case SquareColor::EnemyCursor:
 		SqData->SetColor(1.0f, 0.0f, 0.0f, 1.0f);
 		break;
 	case SquareColor::NotCursor:
-		SqData->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
+		SqData->SetColor(1.0f, 1.0f, 1.0f, 0.5f);
 		SqData->SetTextureId(L"TundraTexture");
 		break;
 	case SquareColor::PassColor:
 		SqData->SetColor(0.5f, 0.7f, 0.5f, 1.0f);
 		break;
 	case SquareColor::TargetColor:
-		SqData->SetColor(1.0f, 0.3f, 0.3f, 1.0f);
+		SqData->SetColor(1.0f, 0.3f, 0.3f, 0.7f);
 		break;
 	default:
-		SqData->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
+		SqData->SetColor(1.0f, 1.0f, 1.0f, 0.5f);
 		SqData->SetTextureId(L"TundraTexture");
 		break;
 	}

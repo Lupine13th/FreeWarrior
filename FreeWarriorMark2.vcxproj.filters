@@ -87,12 +87,6 @@
     <ClInclude Include="..\lib\include\GameObject.h">
       <Filter>ヘッダー ファイル\engine</Filter>
     </ClInclude>
-    <ClInclude Include="..\lib\include\HitManager.h">
-      <Filter>ヘッダー ファイル\engine</Filter>
-    </ClInclude>
-    <ClInclude Include="..\lib\include\HitShapes.h">
-      <Filter>ヘッダー ファイル\engine</Filter>
-    </ClInclude>
     <ClInclude Include="..\lib\include\InputManager.h">
       <Filter>ヘッダー ファイル\engine</Filter>
     </ClInclude>
@@ -165,12 +159,6 @@
     <ClInclude Include="AbilityType.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="LogHUD.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="LogHUDW.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Admin.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -202,9 +190,6 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="OpeningAnimHUD.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="ResultUI.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="TimeManager.h">
@@ -302,12 +287,6 @@
     <ClCompile Include="Abilities.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="LogHUD.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="LogHUDW.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="BattleReadyScene.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -336,9 +315,6 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="PlayerFBXs.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="ResultUI.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="TimeManager.cpp">
@@ -390,12 +366,6 @@
       <Filter>ソース ファイル\engine</Filter>
     </ClCompile>
     <ClCompile Include="..\lib\cpp\InputManager.cpp">
-      <Filter>ソース ファイル\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\lib\cpp\HitShapes.cpp">
-      <Filter>ソース ファイル\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\lib\cpp\HitManager.cpp">
       <Filter>ソース ファイル\engine</Filter>
     </ClCompile>
     <ClCompile Include="..\lib\cpp\GameObject.cpp">

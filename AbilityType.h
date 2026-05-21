@@ -5,5 +5,5 @@ enum class AbilityType
 	None,
 	ConcentratedFire,
 	BayonetCharge,
-	Scout,
+	Scout
 };

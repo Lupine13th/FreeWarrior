@@ -773,7 +773,14 @@ bool BattleFieldManager::FrameAction()
 		{
 			if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK))
 			{
-				m_HUDManager->GetHUDObject("EndingHUD")->SetAnimationState(AnimationState::Finish);
+				if (m_PlayerWin)
+				{
+					m_HUDManager->GetHUDObject("EndingHUD")->SetAnimationState(AnimationState::Finish);
+				}
+				else
+				{
+					PostQuitMessage(0);
+				}
 			}
 		}
 		else if (m_HUDManager->GetHUDObject("EndingHUD")->GetAnimationState() == AnimationState::Finish)
@@ -934,90 +941,6 @@ void BattleFieldManager::Abiliting(FieldCharacter* attackingchara, FieldCharacte
 		break;
 	default:
 		break;
-	}
-}
-
-void BattleFieldManager::RefreshLogs(FieldCharacter* actionchara, FieldCharacter* actionedchara, ActionName action, int damage , bool sccess)
-{
-	switch (action)
-	{
-	case ActionName::Attack:
-		//攻撃ログ更新
-		logs = actionchara->CharaName + L"が" + actionedchara->CharaName + L"に" + to_wstring(damage) + L"ダメージを与えた！";
-		break;
-	case ActionName::Move:
-		//移動ログ更新
-		logs = actionchara->CharaName + L"が" + to_wstring(actionchara->CharaPos) + L"へ移動した！";
-		break;
-	case ActionName::BayonetCharge:
-		//突撃ログ更新
-		logs = actionchara->CharaName + L"が" + actionedchara->CharaName + L"に突撃で" + to_wstring(damage) + L"ダメージを与えた！";
-		break;
-	case ActionName::ConcentratedFire:
-		//集中砲火ログ更新
-		logs = actionchara->CharaName + L"が" + actionedchara->CharaName + L"に集中砲火で" + to_wstring(damage) + L"ダメージを与えた！";
-		break;
-	case ActionName::Scout:
-		//偵察ログ更新
-		if (sccess)
-		{
-			logs = actionchara->CharaName + L"は" + actionedchara->CharaName + L"の偵察に成功した！";
-		}
-		else
-		{
-			logs = actionchara->CharaName + L"は" + actionedchara->CharaName + L"の偵察に失敗した！";
-		}
-		break;
-	}
-
-	if (m_LogHUDText->ctrs[7] == L"")
-	{
-		m_LogHUDText->ctrs[m_LogHUDText->LogCount] = logs;
-		switch (actionchara->CharaAdmin)
-		{
-		default:
-			break;
-		case Admin::Rebel:
-			m_LogHUD->m_Sprites[m_LogHUDText->LogCount]->SetColor(0.5f, 0.5f, 0.7f, 1);
-			logColors[m_LogHUDText->LogCount] = XMFLOAT4(0.5f, 0.5f, 0.7f, 1);
-			break;
-		case Admin::Imperial:
-			m_LogHUD->m_Sprites[m_LogHUDText->LogCount]->SetColor(0.7f, 0.5f, 0.5f, 1);
-			logColors[m_LogHUDText->LogCount] = XMFLOAT4(0.7f, 0.5f, 0.5f, 1);
-			break;
-		case Admin::None:
-			m_LogHUD->m_Sprites[m_LogHUDText->LogCount]->SetColor(0.9f, 0.9f, 0.9f, 1);
-			logColors[m_LogHUDText->LogCount] = XMFLOAT4(0.9f, 0.9f, 0.9f, 1);
-			break;
-		}
-		m_LogHUDText->LogCount++;
-	}
-	else
-	{
-		for (int i = 1; i < 8; i++)
-		{
-			m_LogHUDText->ctrs[i - 1] = m_LogHUDText->ctrs[i];
-			m_LogHUD->m_Sprites[i - 1]->SetColor(logColors[i].x, logColors[i].y, logColors[i].z, logColors[i].w);
-			logColors[i - 1] = logColors[i];
-		}
-		m_LogHUDText->ctrs[7] = logs;
-		switch (actionchara->CharaAdmin)
-		{
-		default:
-			break;
-		case Admin::Rebel:
-			m_LogHUD->m_Sprites[7]->SetColor(0.5f, 0.5f, 0.7f, 1);
-			logColors[7] = XMFLOAT4(0.5f, 0.5f, 0.7f, 1);
-			break;
-		case Admin::Imperial:
-			m_LogHUD->m_Sprites[7]->SetColor(0.7f, 0.5f, 0.5f, 1);
-			logColors[7] = XMFLOAT4(0.7f, 0.5f, 0.5f, 1);
-			break;
-		case Admin::None:
-			m_LogHUD->m_Sprites[7]->SetColor(0.9f, 0.9f, 0.9f, 1);
-			logColors[7] = XMFLOAT4(0.9f, 0.9f, 0.9f, 1);
-			break;
-		}
 	}
 }
 
@@ -1543,8 +1466,6 @@ void BattleFieldManager::Attack(FieldCharacter* attackingchara, FieldCharacter* 
 	CreateAttackLog(attackingchara, damage);	//プレイヤーのログを制作
 
 	SetStrengthValues();
-
-	RefreshLogs(attackingchara, attackedchara, ActionName::Attack, damage, false);
 }
 
 void BattleFieldManager::Move(int nowPos, int nextPos, float charaID)
@@ -1578,8 +1499,6 @@ void BattleFieldManager::Move(int nowPos, int nextPos, float charaID)
 	m_PassedSquaresList.clear();
 
 	CreateMoveLog(m_AlliesCharacterList[charaID], nowPos, nextPos);					//プレイヤーのログを制作
-
-	RefreshLogs(m_FieldSquaresList[nextPos]->chara, m_FieldSquaresList[nextPos]->chara, ActionName::Move, 0, false);
 }
 
 void BattleFieldManager::Wait(int nowPos)
