@@ -14,8 +14,6 @@
 #define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
 #include <experimental/filesystem>
 
-#include "HitShapes.h"
-
 using Microsoft::WRL::ComPtr;
 using namespace DirectX;
 namespace fs = std::experimental::filesystem;

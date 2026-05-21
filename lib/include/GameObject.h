@@ -1,16 +1,12 @@
 ﻿#pragma once
 #include <DirectXMath.h>
 #include <list>
-#include "HitManager.h"
-#include "HitShapes.h"
+#include <memory>
 #include "CharacterData.h"
-#include "PipeLineManager.h"
 
 using namespace std;
 
-class GameObject;								//GameObjectクラスの宣言は後だけども、GameComponentクラスで宣言に使いたいので前方宣言
-class HitQuad;								//GameObject.hと相互読み込みになっているHitManager.hのクラス。前方宣言しないとヘッダが読み込めない。
-												//ただし、他hファイルのクラスを前方宣言で使う場合、このh内では前方宣言クラスの実体型は使えない。
+class GameObject;							
 
 //======Change Scene
 // 削除用追加処理ステートオブジェクト
@@ -51,11 +47,6 @@ public:
 	//純粋仮想関数（メソッド）。このクラスでは実装出来ない　継承した別クラスで実装する必要がある
 	virtual bool FrameAction() = 0;		//毎フレーム呼ばれる処理　falseを返すとこのコンポーネントは終了し削除される
 	virtual void FinishAction() = 0;	//終了時に呼ばれる処理
-
-	//==========HitSystem========
-	//ヒット時リアクション処理
-	virtual void hitReaction(GameObject* targetGo, HitAreaBase * hit) {};
-	//==========HitSystem========
 
 	bool IsActive = true;	//コンポーネントの有効無効
 

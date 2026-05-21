@@ -1,5 +1,4 @@
 ﻿#include <MyAccessHub.h>
-#include <HitManager.h>
 #include "TerrainComponent.h"
 
 #include "FBXCharacterData.h"

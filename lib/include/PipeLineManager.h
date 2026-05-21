@@ -4,11 +4,16 @@
 #include "GameObject.h"
 #include <dxcapi.h>
 
+#include <d3d12.h>
+#include <wrl/client.h>
 #include <vector>
 #include <list>
 #include <unordered_map>
+#include <memory>
+#include <string>
 
 using Microsoft::WRL::ComPtr;
+using namespace std;
 
 class GameObject;
 class CharacterData;
@@ -24,9 +29,7 @@ protected:
 	ComPtr<ID3D12RootSignature> m_rootSignature;
 	ComPtr<ID3D12PipelineState> m_pipeLineState;
 
-	//std::list<GameObject*>	m_renderList;
 	std::list<CharacterData*> m_renderList;
-
 
 	//texturelist
 	std::unordered_map<std::wstring, int> m_srvTexList;
@@ -86,8 +89,6 @@ private:
 	vector<ID3D12CommandList*> m_renderCommandList;
 
 public:
-	//Dxcompiler.dllのDebug用はGitから任意でダウンロードする必要があってちょっと授業で使いづらい
-	//static HRESULT CompileHLSL(LPCWSTR* fileName, LPCWSTR* entryPoint, LPCWSTR* targetProfile, IDxcBlobEncoding** blobEncode, bool debug);
 	GraphicsPipeLineObjectBase* GetPipeLineObject(const std::wstring labelName)
 	{
 		if (m_pipeLineDB[labelName] != nullptr)

@@ -1,6 +1,5 @@
 ﻿#include "GameObject.h"
 #include <MyAccessHub.h>
-//#include <algorithm>
 
 void GameObject::init()
 {
