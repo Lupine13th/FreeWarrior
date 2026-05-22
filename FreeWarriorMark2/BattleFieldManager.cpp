@@ -64,6 +64,7 @@ bool BattleFieldManager::FrameAction()
 	{
 		if (!m_Firsttime)	//初回のみ
 		{
+			FlyingCameraController* Fcam = MyAccessHub::GetFlyingCameraController();
 			m_Lifecount = 0;
 			for (int i = 0; i < m_AlliesCharacterList.size(); i++)	//現在生き残っているユニットの数を算出
 			{
@@ -76,6 +77,7 @@ bool BattleFieldManager::FrameAction()
 			UpdateBattleField();					//マスの色を調整
 			ResetPlayerActionLogs();				//プレイヤー行動傾向の記録をリセット
 			m_CursorState = CursorState::Select;	//カーソルを「選択中」にする
+			SetFirstAlliesCharacterCamera();
 		}
 
 		switch (keycomp->getCurrentInputType())
@@ -255,7 +257,6 @@ bool BattleFieldManager::FrameAction()
 					m_HUDManager->GetHUDObject("MainMenuHUD")->SetAnimationState(AnimationState::Init);
 					p_engine->GetSoundManager()->play(2);
 				}
-
 				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_FORWARD))	//十字キーの下を入力
 				{
 					m_MenuSelectIndex--;
@@ -281,7 +282,6 @@ bool BattleFieldManager::FrameAction()
 					m_HUDManager->GetHUDObject("MainMenuHUD")->SetAnimationState(AnimationState::Init);
 					p_engine->GetSoundManager()->play(2);
 				}
-
 				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK))			//スペースキーを入力
 				{
 					if (m_FieldSquaresList[m_SelectID]->ThereCharaID != -1)
@@ -690,13 +690,13 @@ bool BattleFieldManager::FrameAction()
 							{
 							case AbilityType::Scout:
 								m_FieldSquaresList[m_SelectID]->SetAnimation(Animations::Scout, m_FieldSquaresList[m_SelectID]->chara->CharaAdmin, m_FieldSquaresList[m_SelectID], m_FieldSquaresList[m_TargetID]);
-								//p_engine->GetSoundManager()->play(9);
 								ResetHUDs(9);
 								break;
 							case AbilityType::ConcentratedFire:
+								m_FieldSquaresList[m_SelectID]->SetAnimation(Animations::ConcentratedFire, m_FieldSquaresList[m_SelectID]->chara->CharaAdmin, m_FieldSquaresList[m_SelectID], m_FieldSquaresList[m_TargetID]);
+								break;
 							case AbilityType::BayonetCharge:
-								m_FieldSquaresList[m_SelectID]->SetAnimation(Animations::Attack, m_FieldSquaresList[m_SelectID]->chara->CharaAdmin, m_FieldSquaresList[m_SelectID], m_FieldSquaresList[m_TargetID]);
-								//p_engine->GetSoundManager()->play(3);
+								m_FieldSquaresList[m_SelectID]->SetAnimation(Animations::BayonetCharge, m_FieldSquaresList[m_SelectID]->chara->CharaAdmin, m_FieldSquaresList[m_SelectID], m_FieldSquaresList[m_TargetID]);
 								ResetHUDs(3);
 								break;
 							}
@@ -729,6 +729,9 @@ bool BattleFieldManager::FrameAction()
 			//==================================TurnEndモード=====================================
 
 			case Mode::TurnEndMode:
+				if (m_HUDManager->GetHUDObject("TurnEndHUD")->GetAnimationState() == AnimationState::OnInit)	//ディレイ中は操作を受け付けない
+					break;
+
 				if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_RIGHT))			//十字キー右を押したとき
 				{
 					m_TurnEndMenuSelectIndex = 1;																									//一旦戻る(現状、意味は無い)
@@ -890,7 +893,7 @@ void BattleFieldManager::UpdateBattleField()
 	if (m_MovedCount == m_Lifecount)
 	{
 		m_Mode = Mode::TurnEndMode;
-		m_HUDManager->GetHUDObject("TurnEndHUD")->SetAnimationState(AnimationState::Init);
+		m_HUDManager->GetHUDObject("TurnEndHUD")->SetAnimationState(AnimationState::OnInit);
 		return;
 	}
 
@@ -1170,26 +1173,24 @@ void BattleFieldManager::ChangeTurn()
 	{
 	case Turn::Allies:
 		m_Firsttime = false;
-		//m_CurrentTurn = Turn::TurnChanging;
 		for (int i = 0; i < m_AlliesCharacterList.size(); i++)
 		{
 			m_AlliesCharacterList[i]->Moved = false;
 		}
 		CheckMoved();
 		m_HUDManager->GetHUDObject("TurnHUD")->SetAnimationState(AnimationState::Init);
-		//m_TurnUI->ChangeHUDState();
 		p_scene->SetActiveCameraCompornent(L"ScoutingCamera", false);
+		ChangeTurnEnemy();
 		break;
 	case Turn::EnemyMove:
 		AIMng->OnChangeTurn();
-		//m_CurrentTurn = Turn::TurnChanging;
 		for (int i = 0; i < m_EnemyCharacterList.size(); i++)
 		{
 			m_EnemyCharacterList[i]->Moved = false;
 		}
 		CheckMoved();
 		m_HUDManager->GetHUDObject("TurnHUD")->SetAnimationState(AnimationState::Init);
-		//m_TurnUI->ChangeHUDState();
+		ChangeTurnAllies();
 		break;
 	default:
 		break;
@@ -1295,6 +1296,15 @@ void BattleFieldManager::CreateWaitLog(FieldCharacter* currentCharacter)
 	playerActionLog.m_HPparcentage = currentCharacter->CharaSoldiers / currentCharacter->CharaMaxSoldiers;
 
 	m_PlayerActionLogs.push_back(playerActionLog);
+}
+
+void BattleFieldManager::SetFirstAlliesCharacterCamera()
+{
+	FlyingCameraController* Fcam = MyAccessHub::GetFlyingCameraController();
+
+	Fcam->FocusFirstAlliesCharacter();	//最初の味方キャラにカメラをフォーカス
+	m_SelectPos[(int)Vector::X] = m_AlliesCharacterList[0]->CharaPos % 10;
+	m_SelectPos[(int)Vector::Y] = m_AlliesCharacterList[0]->CharaPos / 10;
 }
 
 
@@ -1409,6 +1419,18 @@ void BattleFieldManager::SetEnemyCharacterList(vector<FieldCharacter*> list)
 void BattleFieldManager::SetAbiliteis(Abilities* abilities)
 {
 	m_Abilities = abilities;
+}
+
+XMFLOAT3 BattleFieldManager::GetFirstAlliesCharacterPos()
+{
+	if (m_AlliesCharacterList.size() > 0)
+	{
+		return m_FieldSquaresList[m_AlliesCharacterList[0]->CharaPos]->SqPos;
+	}
+	else
+	{
+		return XMFLOAT3(0.0f, 0.0f, 0.0f);
+	}
 }
 
 void BattleFieldManager::ChangeTurnAllies()

@@ -7,6 +7,7 @@
 #include <DirectXMath.h>
 #include <chrono>
 #include <cmath> 
+#include <map> 
 
 #include "GameObject.h"
 #include "SpriteCharacter.h"
@@ -70,6 +71,13 @@ private:
 	XMFLOAT3 NextCharaPos = {};
 	XMFLOAT3 NowCharaRot = {};
 	XMFLOAT3 NextCharaRot = {};
+
+	const map<Animations, wstring> kAttackerMoveTexts =
+	{
+		{ Animations::Attack, L"攻撃" },
+		{ Animations::ConcentratedFire, L"集中射撃" },
+		{ Animations::BayonetCharge, L"銃剣突撃" }
+	};
 public:
 	
 	int ThereCharaID = -1;	//そのマスにいるキャラクター
@@ -127,6 +135,17 @@ public:
 	Squares* GetNowChara()
 	{
 		return NowChara;
+	}
+	wstring GetAttackerMoveText()
+	{
+		if (kAttackerMoveTexts.count(NowAnimation) > 0)
+		{
+			return kAttackerMoveTexts.at(NowAnimation);
+		}
+		else
+		{
+			return L"";
+		}
 	}
 };
 

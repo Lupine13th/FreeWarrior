@@ -40,50 +40,51 @@ bool Squares::FrameAction()
 			m_IsFirstAnimation = true;
 		}
 
-		if (NowAnimation == Animations::Move)
+		switch (NowAnimation)
 		{
-			if (m_CharacterAnimationCount < 2.0f)
+		case Animations::Move:
+			if (m_CharacterAnimationCount < 2.0f)	//0～2秒は移動アニメーション
 			{
 				m_CharacterAnimationCount += m_TimeManager->GetDeltaTime();
 				float t = m_CharacterAnimationCount / 2.0f;
 				NowChara->fbxD->setPosition(NowCharaPos.x + m_DistanceX * t, NowCharaPos.y, NowCharaPos.z + m_DistanceY * t);
 			}
-
-			else if (m_CharacterAnimationCount > 2.0f)
+			else if (m_CharacterAnimationCount > 2.0f)	//2秒経過後は移動アニメーションを終了させる
 			{
-				NowChara->fbxD->SetAnimeInit(L"WAIT", NowChara->chara);
+				NowChara->fbxD->SetAnimeInit(L"WAIT", NowChara->chara);	//待機アニメーション
 
-				Fcam->ChangeCameraPosition();
+				Fcam->ChangeCameraPosition();	//カメラ位置をカーソルの位置へ(敵AI側が主に使う処理)	
 
 				m_CharacterAnimationCount = 0.0f;
 
-				NowChara->fbxD->setPosition(NextChara->SqPos.x, NextChara->SqPos.y, NextChara->SqPos.z);
-				NextChara->fbxD = NowChara->fbxD;
-				NowChara->fbxD = nullptr;
-				NowChara->chara = nullptr;
+				NowChara->fbxD->setPosition(NextChara->SqPos.x, NextChara->SqPos.y, NextChara->SqPos.z);	//モデルを移動
+				NextChara->fbxD = NowChara->fbxD;															//モデルのデータも移動
+				NowChara->fbxD = nullptr;																	//前のマスのデータを削除
+				NowChara->chara = nullptr;																	//前のマスのデータを削除
 
-				BFMng->CheckMoved();
+				BFMng->CheckMoved();									//「行動済み」フラグの確認
 
-				m_IsFirstAnimation = false;
-				m_IsAnimating = false;
+				m_IsFirstAnimation = false;								//↑
+				m_IsAnimating = false;									//↓初期化
 			}
-		}
-		else if (NowAnimation == Animations::Attack)
-		{
-			if (p_scene->getCameraComponent(L"AttackerCamera") == nullptr)
+			break;
+		case Animations::Attack:
+		case Animations::ConcentratedFire:
+		case Animations::BayonetCharge:
+			if (p_scene->getCameraComponent(L"AttackerCamera") == nullptr)	//カメラ切り替え
 			{
-				BFMng->GetCameraChangerCompornent()->SetBattleCamera();
-				MyAccessHub::GetHUDManager()->GetHUDObject("DamageEffectHUD")->SetAnimationState(AnimationState::Init);
-				SetBattlePosition();
-				AttackReaction();
+				BFMng->GetCameraChangerCompornent()->SetBattleCamera();		//戦闘カメラ起動
+				MyAccessHub::GetHUDManager()->GetHUDObject("DamageEffectHUD")->SetAnimationState(AnimationState::Init);	//HPバー準備段階
+				SetBattlePosition();	//モデルを戦闘アニメーションの位置へ
+				AttackReaction();		//攻撃側のアニメーションを設定
 			}
-			else
+			else	//カメラ切り替え後
 			{
-				if (m_CharacterAnimationCount < 1.0f)
+				if (m_CharacterAnimationCount < 1.0f)	//1秒ディレイ
 				{
 					m_CharacterAnimationCount += m_TimeManager->GetDeltaTime();
 				}
-				else if (m_CharacterAnimationCount < 3.0f && !m_IsDamaged)
+				else if (m_CharacterAnimationCount < 3.0f && !m_IsDamaged)	//1～3秒は防御側のアニメーションを設定
 				{
 					m_CharacterAnimationCount += m_TimeManager->GetDeltaTime();
 					HitReaction();
@@ -94,41 +95,40 @@ bool Squares::FrameAction()
 				}
 				else
 				{
-					SetPreviousPosition();
-					BFMng->GetCameraChangerCompornent()->SetMainCamera();
-					BFMng->CheckMoved();
-					m_CharacterAnimationCount = 0.0f;
-					m_IsFirstAnimation = false;
-					m_IsAnimating = false;
-					m_IsDamaged = false;
+					SetPreviousPosition();									//元のマスの位置へ戻す
+					BFMng->GetCameraChangerCompornent()->SetMainCamera();	//バトルカメラOff＆メインカメラ起動
+					BFMng->CheckMoved();									//「行動済み」フラグの確認
+					m_CharacterAnimationCount = 0.0f;						//==========
+					m_IsFirstAnimation = false;								//↑
+					m_IsAnimating = false;									//↓初期化
+					m_IsDamaged = false;									//==========
 					if (NowChara->fbxD != nullptr)
 					{
-						NowChara->fbxD->SetAnimeInit(L"WAIT", NowChara->chara);
+						NowChara->fbxD->SetAnimeInit(L"WAIT", NowChara->chara);	//攻撃側のアニメーションを待機モーションへ
 					}
 
 					if (NextChara->fbxD != nullptr)
 					{
-						NextChara->fbxD->SetAnimeInit(L"WAIT", NextChara->chara);
+						NextChara->fbxD->SetAnimeInit(L"WAIT", NextChara->chara);	//防御側のアニメーションを待機モーションへ
 					}
-					Fcam->ChangeCameraPosition();
+					Fcam->ChangeCameraPosition();	//カメラ位置をカーソルの位置へ		
 				}
 			}
-		}
-		else if (NowAnimation == Animations::Scout)
-		{
-			if (p_scene->getCameraComponent(L"AttackerCamera") == nullptr)
+			break;
+		case Animations::Scout:
+			if (p_scene->getCameraComponent(L"AttackerCamera") == nullptr)	//カメラ切り替え
 			{
-				BFMng->GetCameraChangerCompornent()->SetBattleCamera();
-				SetBattlePosition();
-				AttackReaction();
-				MyAccessHub::GetEffectGenerator()->GetEffectObject(L"Scout")->PlayEffect(XMFLOAT3(25.0f, 9.7f, kOriginScoutEffectPosZ), XMFLOAT3(0.0f, 90.0f, 0.0f), 0.5f);
-				m_ScoutEffectPosZ = kOriginScoutEffectPosZ;
+				BFMng->GetCameraChangerCompornent()->SetBattleCamera();		//戦闘カメラ起動
+				SetBattlePosition();										//モデルを戦闘アニメーションの位置へ
+				AttackReaction();											//攻撃アニメーション
+				MyAccessHub::GetEffectGenerator()->GetEffectObject(L"Scout")->PlayEffect(XMFLOAT3(25.0f, 9.7f, kOriginScoutEffectPosZ), XMFLOAT3(0.0f, 90.0f, 0.0f), 0.5f);	//偵察エフェクトを起動
+				m_ScoutEffectPosZ = kOriginScoutEffectPosZ;	//偵察エフェクトを初期値へ
 			}
 			else
 			{
-				m_ScoutEffectPosZ += kScoutEffectPosZInterval;
-				MyAccessHub::GetEffectGenerator()->GetEffectObject(L"Scout")->SetEffectPosition(25.0f, 9.7f, m_ScoutEffectPosZ);
-				if (m_CharacterAnimationCount < 1.0f)
+				m_ScoutEffectPosZ += kScoutEffectPosZInterval;	//Z値を更新
+				MyAccessHub::GetEffectGenerator()->GetEffectObject(L"Scout")->SetEffectPosition(25.0f, 9.7f, m_ScoutEffectPosZ);	//行進した値を適応
+				if (m_CharacterAnimationCount < 1.0f)																												//==========ここから下まで攻撃アニメーションと同じ==========
 				{
 					m_CharacterAnimationCount += m_TimeManager->GetDeltaTime();
 				}
@@ -165,8 +165,9 @@ bool Squares::FrameAction()
 						NextChara->fbxD->SetAnimeInit(L"WAIT", NextChara->chara);
 					}
 					Fcam->ChangeCameraPosition();
-				}
+				}																																						//==========ここから上まで攻撃アニメーションと同じ==========							
 			}
+			break;
 		}
 	}
 
@@ -305,11 +306,16 @@ void Squares::SetAnimation(Animations anim, Admin admin, Squares* chara, Squares
 	NowCharaPos = NowChara->SqPos;
 	NextCharaPos = NextChara->SqPos;
 	NowCharaRot = NowChara->fbxD->GetRotation();
-
-	if (anim == Animations::Attack || anim == Animations::Scout)	//攻撃か偵察の場合、被害を受けたユニットの情報と回転を入手　(後で元の位置に戻すため)
+	
+	switch (anim)	//攻撃系か偵察の場合、被害を受けたユニットの情報と回転を入手　(後で元の位置に戻すため)
 	{
+	case Animations::Attack:
+	case Animations::ConcentratedFire:
+	case Animations::BayonetCharge:
+	case Animations::Scout:
 		BFMng->SetAttackingCharacterSquares(NowChara);
 		NextCharaRot = NextChara->fbxD->GetRotation();
+		break;
 	}
 
 	//移動アニメーション用に平面の距離を入手

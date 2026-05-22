@@ -39,6 +39,7 @@ public:
 	void MoveCamera();
 	void SetBattleCam(Squares* attaking, Squares* attacked);
 	void SetCameraFocus(XMFLOAT3 focusPos);
+	void FocusFirstAlliesCharacter();
 
 	bool Opening = true;
 

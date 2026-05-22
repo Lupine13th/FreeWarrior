@@ -24,7 +24,7 @@ bool SkyDomeComponent::FrameAction()
 
 	if (centerCharacter != nullptr)
 	{
-		XMFLOAT3 charaPos = centerCharacter->getPosition();
+		XMFLOAT3 charaPos = centerCharacter->GetPosition();
 
 		myData->setPosition(charaPos.x, charaPos.y, charaPos.z);
 	}

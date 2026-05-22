@@ -295,9 +295,12 @@ class BattleCameraHUD : public HUDTextObject	//戦闘カメラHUD
 {
 private:
 	const XMFLOAT2 kAttackerTextPos = { -400.0f, 220.0f };
+	const XMFLOAT2 kAttackerMoveTextPos = { -50.0f, 200.0f };
 	const XMFLOAT2 kDefenderTextPos = { 200.0f, -220.0f };
 
 	const XMFLOAT2 kBackGroundPos = { 0.0f, 0.0f };
+	const XMFLOAT2 kAttackerTextBackGroundPos = { 0.0f, 200.0f };
+	const XMFLOAT2 kDefenderTextBackGroundPos = { 0.0f, -200.0f };
 public:
 	void InitAction() override;
 	bool FrameAction() override;
@@ -464,6 +467,12 @@ private:
 	//テキストの座標
 	XMFLOAT2 pos = { -200.0f, 200.0f };
 
+	//HUD表示までの遅延時間
+	float m_DelayCount = 0.0f;		
+
+	//HUD表示までの遅延時間
+	const float kDelayCount = 3.0f;		
+
 	//現在のアニメーション時間
 	float m_AnimationCount = 0.0f;
 
@@ -505,6 +514,7 @@ public:
 class TurnHUD : public HUDTextObject			//ターンエンド画面
 {
 private:
+	float m_AnimationCount = 0.0f;
 public:
 	void InitAction() override;
 	bool FrameAction() override;

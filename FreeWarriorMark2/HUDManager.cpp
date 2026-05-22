@@ -330,13 +330,13 @@ void HUDObject::SetEasingAnimation(SpriteCharacter* sprite, EasingVector vector,
     {
     case EasingVector::Horizontal:
         setter = [sprite](float x) {
-            XMFLOAT3 currentPos = sprite->getPosition();
+            XMFLOAT3 currentPos = sprite->GetPosition();
             sprite->setPosition(x, currentPos.y, currentPos.z);
             };
         break;
     case EasingVector::Verticle:
         setter = [sprite](float y) {
-            XMFLOAT3 currentPos = sprite->getPosition();
+            XMFLOAT3 currentPos = sprite->GetPosition();
             sprite->setPosition(currentPos.x, y, currentPos.z);
             };
         break;
@@ -615,31 +615,31 @@ bool StatusText::FrameAction()
 
         int count = 0;
 
-        if (BFMng->GetCursorState() == CursorState::Select)
+        if (BFMng->GetCursorState() == CursorState::Select) //===========================================選択前カーソル=================================================
         {
-            if (BFMng->GetFieldSquaresList()[BFMng->GetSelectID()]->chara == nullptr)
+            if (BFMng->GetFieldSquaresList()[BFMng->GetSelectID()]->chara == nullptr)   //キャラが居なければ返す
             {
 				return true;
             }
 
-            if (selectSquare->SqAdmin == Admin::Rebel)
+            if (selectSquare->SqAdmin == Admin::Rebel)                                          //反乱軍(味方)ならば部隊名を表示
             {
                 cstr = BFMng->GetAlliesCharacterList()[selectSquare->ThereCharaID]->CharaName;
             }
-            else if (selectSquare->SqAdmin == Admin::Imperial)
+            else if (selectSquare->SqAdmin == Admin::Imperial)                                  //帝国軍(敵)ならば・・・
             {
-                if (BFMng->GetEnemyCharacterList()[selectSquare->ThereCharaID]->Detected)
+                if (BFMng->GetEnemyCharacterList()[selectSquare->ThereCharaID]->Detected)       //索敵済みならば表示
                 {
                     cstr = BFMng->GetEnemyCharacterList()[selectSquare->ThereCharaID]->CharaName;
                 }
-                else
+                else                                                                            //索敵出来ていなければ「信号無し」
                 {
                     cstr = L"信号無し";
                 }
             }
         }
-        else if (BFMng->GetCursorState() == CursorState::Target)
-        {
+        else if (BFMng->GetCursorState() == CursorState::Target)    //===========================================選択後カーソル=================================================
+        {                                                           //検索するカーソルが選択後のインデックスになっただけで上と同じ
             if (targetSquare->chara == nullptr)
             {
                 return true;
@@ -673,9 +673,16 @@ bool StatusText::FrameAction()
             count = MakeSpriteString(count, kCharacterNameTextPos.x, kCharacterNameTextPos.y, 15, 30, cstr.c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
         }
 
-        for (int i = 0; i < count; i++)
+        if (BFMng->GetHUDEnableCondition() && MyAccessHub::GetHUDManager()->GetHUDObject("StatusHUD")->GetAnimationState() == AnimationState::Finish)
         {
-            if (BFMng->GetHUDEnableCondition() && MyAccessHub::GetHUDManager()->GetHUDObject("StatusHUD")->GetAnimationState() == AnimationState::Finish)    
+            for (int i = 0; i < count; i++)
+            {
+                pipeLine->AddRenderObject(m_WordSpriteList[i].get());
+            }
+        }
+        else if ((selectSquare->SqAdmin == Admin::Imperial || targetSquare->SqAdmin == Admin::Imperial) && !BFMng->GetEnemyCharacterList()[selectSquare->ThereCharaID]->Detected)   //索敵出来ていない敵ならば「信号無し」を確実に映す
+        {
+            for (int i = 0; i < count; i++)
             {
                 pipeLine->AddRenderObject(m_WordSpriteList[i].get());
             }
@@ -1339,28 +1346,19 @@ void BattleCameraHUD::InitAction()
     m_SpriteCount = 50;
     SetFont(m_FontTextureId, m_FontWordList);
 
-    for (int i = 0; i < 1; i++)
-    {
-        m_SpriteList.push_back(std::make_unique<SpriteCharacter>());
-        m_SpriteList[i] = std::make_unique<SpriteCharacter>();
-        m_SpriteList[i]->SetCameraLabel(L"HUDCamera", 0);
-        m_SpriteList[i]->SetColor(1.0f, 1.0f, 1.0f, 1);
-        m_SpriteList[i]->SetGraphicsPipeLine(L"AlphaSprite");
-        m_SpriteList[i]->SetSpritePattern(0, 1, 1, m_PatternRect);
-        m_SpriteList[i]->setSpriteIndex(0);
-
-        switch (i)
-        {
-        case 0:
-            m_SpriteList[i]->setPosition(kBackGroundPos.x, kBackGroundPos.y, OrderInLayer::BackGround);
-            m_SpriteList[i]->SetScale(960.0f, 950.0f, 0.1f);
-            m_SpriteList[i]->SetTextureId(L"BattleCameraHUDTexture");
-            break;
-        }
-    }
-
     m_TextList["攻撃側"] = (L"");
     m_TextList["防御側"] = (L"");
+    m_TextList["攻撃側行動"] = (L"");
+
+    MakeSpriteObject(L"BattleCameraHUDTexture", L"HUDCamera", L"AlphaSprite", m_PatternRect, XMFLOAT4(1.0f, 1.0f, 1.0f, 1));    //HUD外枠
+    MakeSpriteObject(L"DogtagBaseTexture", L"HUDCamera", L"AlphaSprite", m_PatternRect, XMFLOAT4(1.0f, 1.0f, 1.0f, 1));    //攻撃側行動テキスト背景
+
+    m_SpriteList[0]->setPosition(kBackGroundPos.x, kBackGroundPos.y, OrderInLayer::BackGround);
+    m_SpriteList[0]->SetScale(960.0f, 950.0f, 0.1f);
+
+    m_SpriteList[1]->setPosition(kAttackerTextBackGroundPos.x, kAttackerTextBackGroundPos.y, OrderInLayer::MoveObject);
+    m_SpriteList[1]->SetScale(200.0f, 150.0f, 0.1f);
+
 
     SetAnimationState(AnimationState::Init);
 }
@@ -1374,6 +1372,7 @@ bool BattleCameraHUD::FrameAction()
 
 		int count = 0;
 
+		Squares* attackerSquare = BFMng->GetAttackingCharacterSquares()->GetNowChara();
         FieldCharacter* attackerCharacterSquare = BFMng->GetAttackingCharacterSquares()->GetNowChara()->chara;
         FieldCharacter* defenderCharacterSquare = BFMng->GetAttackingCharacterSquares()->GetNextChara()->chara;
 
@@ -1381,12 +1380,16 @@ bool BattleCameraHUD::FrameAction()
         {
             m_TextList["攻撃側"] = (attackerCharacterSquare->CharaName.c_str());
             m_TextList["防御側"] = (defenderCharacterSquare->CharaName.c_str());
+            m_TextList["攻撃側行動"] = attackerSquare->GetAttackerMoveText();
 
             count = MakeSpriteString(count, kAttackerTextPos.x, kAttackerTextPos.y, 30, 45, m_TextList["攻撃側"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
             count = MakeSpriteString(count, kDefenderTextPos.x, kDefenderTextPos.y, 30, 45, m_TextList["防御側"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
+            count = MakeSpriteString(count, kAttackerMoveTextPos.x, kAttackerMoveTextPos.y, 20, 30, m_TextList["攻撃側行動"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
         }
 
 		pipeline->AddRenderObject(m_SpriteList[0].get());    //外枠を描画
+		pipeline->AddRenderObject(m_SpriteList[1].get());    //外枠を描画
+
         for (int i = 0; i < count; i++)
         {
             pipeline->AddRenderObject(m_WordSpriteList[i].get());
@@ -2023,6 +2026,17 @@ bool TurnEndHUD::FrameAction()
     {
     default:
 		break;
+    case AnimationState::OnInit:  //出現アニメーション
+		m_DelayCount += m_TimeManager->GetDeltaTime();
+        if (m_DelayCount > kDelayCount)
+        {
+			m_DelayCount = 0.0f;
+			SetAnimationState(AnimationState::Init);
+
+            m_SpriteList[0]->setPosition(0.0f, kBackGroundPosY[0], OrderInLayer::BackGround);
+            m_SpriteList[1]->setPosition(0.0f, kArrowPosY[0], OrderInLayer::MoveObject);
+        }
+        break;
     case AnimationState::Init:  //出現アニメーション
         if (m_InitAnimationCount == 0.0f)
         {
@@ -2109,7 +2123,7 @@ bool TurnEndHUD::FrameAction()
 
     m_SpriteList[1]->SetRotation(0.0f, 0.0f, m_ArrowRotation);
 
-    if (BFMng->GetMode() == Mode::TurnEndMode)
+    if (BFMng->GetMode() == Mode::TurnEndMode && m_AnimationState != AnimationState::OnInit)
     {
         for (int i = 0; i < m_SpriteList.size(); i++)
         {
@@ -2166,17 +2180,27 @@ bool TurnHUD::FrameAction()
         }
         break;
     case AnimationState::Finish:
-        switch (BFMng->GetCurrentTurn())
-        {
-        case Turn::Allies:
-            BFMng->ChangeTurnEnemy();
-            break;
-        case Turn::EnemyMove:
-            BFMng->ChangeTurnAllies();
-            break;
-        }
 
         SetAnimationState(AnimationState::None);
+
+		/*m_AnimationCount += m_TimeManager->GetDeltaTime();
+
+        if (m_AnimationCount > 0.5f)
+        {
+            switch (BFMng->GetCurrentTurn())
+            {
+            case Turn::Allies:
+                BFMng->ChangeTurnEnemy();
+                break;
+            case Turn::EnemyMove:
+                BFMng->ChangeTurnAllies();
+                break;
+            }
+
+            SetAnimationState(AnimationState::None);
+            m_AnimationCount = 0.0f;
+        }
+        */
         break;
     }
 

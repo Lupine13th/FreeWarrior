@@ -16,8 +16,6 @@
 #include <queue>
 #include <map>
 
-#define DEBUG_FLOAT(val) { char buf[128]; sprintf_s(buf, "%f\n", val); OutputDebugStringA(buf); }
-
 void EnemyAIManager::InitAction()
 {
 	m_TimeManager = MyAccessHub::GetTimeManager();

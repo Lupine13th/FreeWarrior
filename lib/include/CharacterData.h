@@ -94,7 +94,7 @@ public:
 		m_mtxChange = true;
 	}
 
-	const XMFLOAT3 getPosition()
+	const XMFLOAT3 GetPosition()
 	{
 		return position;
 	}

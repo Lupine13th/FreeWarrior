@@ -221,6 +221,7 @@ public:
 	void CreateAttackLog(FieldCharacter* currentCharacter, float damage);
 	void CreateAbilityLog(FieldCharacter* currentCharacter, ActionName ability, float damage);
 	void CreateWaitLog(FieldCharacter* currentCharacter);
+	void SetFirstAlliesCharacterCamera();
 
 	//==========Getter==========
 	int GetTurnCount();
@@ -397,6 +398,7 @@ public:
 	{
 		return m_Abilities;
 	}
+	XMFLOAT3 GetFirstAlliesCharacterPos();
 
 	//==========Method==========
 	void ChangeTurnAllies();

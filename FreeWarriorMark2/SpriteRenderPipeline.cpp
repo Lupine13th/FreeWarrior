@@ -223,7 +223,7 @@ ID3D12GraphicsCommandList* SpriteRenderPipeline::ExecuteRender()
     //描画対象が無いのでここで終了
     if (m_renderList.size() < 1) return nullptr;
 
-    m_renderList.sort([](CharacterData* a, CharacterData* b) { return a->getPosition().z > b->getPosition().z; });  //z値でソート 奥から順番に描画するようにする
+    m_renderList.sort([](CharacterData* a, CharacterData* b) { return a->GetPosition().z > b->GetPosition().z; });  //z値でソート 奥から順番に描画するようにする
 
     ID3D12GraphicsCommandList* cmdList = m_cmdLists[frameIndex].Get();
 

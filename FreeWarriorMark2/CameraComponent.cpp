@@ -40,7 +40,7 @@ bool CameraComponent::FrameAction()
 		MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
 		CharacterData* chData = GetGameObject()->GetCharacterData();
 
-		XMFLOAT3 pos = chData->getPosition();
+		XMFLOAT3 pos = chData->GetPosition();
 
 		XMVECTOR Eye = XMVectorSet(pos.x, pos.y, pos.z, 0.0f);					//カメラ座標
 		XMVECTOR At = XMVectorSet(m_Focus.x, m_Focus.y, m_Focus.z, 0.0f);		//フォーカスする座標

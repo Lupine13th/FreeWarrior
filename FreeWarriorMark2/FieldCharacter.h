@@ -120,6 +120,11 @@ public:
 		return Detected;
 	}
 
+	int GetCharacterPos()
+	{
+		return CharaPos;
+	}
+
 private:
 	BattleFieldManager* BFMng = MyAccessHub::GetBFManager();
 

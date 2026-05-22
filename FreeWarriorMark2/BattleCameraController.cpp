@@ -108,14 +108,14 @@ bool BattleCameraController::FrameAction()
 		{
 		case SoldiersType::infantry:
 		case SoldiersType::machinegunner:
-			UpdateCameraPositionFromobject(selectSquare->fbxD->GetRotation().y, selectSquare->fbxD->getPosition(), 1.0f, 4.5f);
+			UpdateCameraPositionFromobject(selectSquare->fbxD->GetRotation().y, selectSquare->fbxD->GetPosition(), 1.0f, 4.5f);
 			break;
 		case SoldiersType::scout:
-			UpdateCameraPositionFromobject(selectSquare->fbxD->GetRotation().y, selectSquare->fbxD->getPosition(), 2.0f, 2.5f);
+			UpdateCameraPositionFromobject(selectSquare->fbxD->GetRotation().y, selectSquare->fbxD->GetPosition(), 2.0f, 2.5f);
 			break;
 		case SoldiersType::artillery:
 		case SoldiersType::armored:
-			UpdateCameraPositionFromobject(selectSquare->fbxD->GetRotation().y, selectSquare->fbxD->getPosition(), 4.0f, 2.0f);
+			UpdateCameraPositionFromobject(selectSquare->fbxD->GetRotation().y, selectSquare->fbxD->GetPosition(), 4.0f, 2.0f);
 			break;
 		}
 	}

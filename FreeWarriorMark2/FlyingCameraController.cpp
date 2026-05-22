@@ -190,13 +190,13 @@ void FlyingCameraController::ChangeCameraPosition()
 		}
 		int index = x + y * 10;
 
-		XMFLOAT3 squarePos = BFMng->GetFieldSquaresList()[index]->GetGameObject()->GetCharacterData()->getPosition();
+		XMFLOAT3 squarePos = BFMng->GetFieldSquaresList()[index]->GetGameObject()->GetCharacterData()->GetPosition();
 
 		// カメラをマスの上に追従
 		m_ZoomPercent = kMinZoom;
-		m_camera->ChangeCameraPosition(squarePos.x, squarePos.y + 15.0f * m_ZoomPercent, squarePos.z - 10.0f * m_ZoomPercent);
-		m_camera->ChangeCameraFocus(squarePos.x, squarePos.y, squarePos.z);
-		XMStoreFloat3(&m_MovingValue, XMVectorZero());
+		m_camera->ChangeCameraPosition(squarePos.x, squarePos.y + 15.0f * m_ZoomPercent, squarePos.z - 10.0f * m_ZoomPercent);	//カメラの位置をカーソルの斜め後ろに配置
+		m_camera->ChangeCameraFocus(squarePos.x, squarePos.y, squarePos.z);	//フォーカスをカーソルの位置に
+		XMStoreFloat3(&m_MovingValue, XMVectorZero());	//WASDでの移動値をリセット
 	}
 	else if (BFMng->GetCurrentTurn() == Turn::EnemyMove)	//敵が行動中
 	{
@@ -211,7 +211,7 @@ void FlyingCameraController::ChangeCameraPosition()
 
 		int index = x + y * 10;
 
-		XMFLOAT3 squarePos = BFMng->GetFieldSquaresList()[index]->GetGameObject()->GetCharacterData()->getPosition();
+		XMFLOAT3 squarePos = BFMng->GetFieldSquaresList()[index]->GetGameObject()->GetCharacterData()->GetPosition();
 
 		// カメラをマスの上に追従
 		m_ZoomPercent = kMinZoom;
@@ -286,4 +286,12 @@ void FlyingCameraController::SetBattleCam(Squares* attaking, Squares* attacked)	
 void FlyingCameraController::SetCameraFocus(XMFLOAT3 focusPos)
 {
 	m_camera->ChangeCameraFocus(focusPos.x, focusPos.y, focusPos.z);
+}
+
+void FlyingCameraController::FocusFirstAlliesCharacter()
+{
+	XMFLOAT3 firstAlliesPos = MyAccessHub::GetBFManager()->GetFirstAlliesCharacterPos();
+
+	m_camera->ChangeCameraPosition(firstAlliesPos.x, firstAlliesPos.y + 15.0f, firstAlliesPos.z - 10.0f);	//カメラの位置をカーソルの斜め後ろに配置
+	m_camera->ChangeCameraFocus(firstAlliesPos.x, firstAlliesPos.y, firstAlliesPos.z);	//フォーカスをカーソルの位置に
 }
