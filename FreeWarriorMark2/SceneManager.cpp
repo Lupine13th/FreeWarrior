@@ -89,11 +89,11 @@ void SceneManager::ClearSceneObjects()
 	m_terrains.clear();
 }
 
-void SceneManager::SetCharaToSquares(FieldCharacter* chara, Squares* square)
+void SceneManager::SetCharaToSquares(Platoon* chara, Squares* square)
 {
 	square->chara = chara;
-	square->ThereCharaID = square->chara->CharaID;
-	square->SqAdmin = chara->CharaAdmin;
+	square->ThereCharaID = square->chara->GetPlatoonID();
+	square->SqAdmin = chara->GetAdmin();
 }
 
 HRESULT SceneManager::initSceneController()
@@ -677,7 +677,7 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 					GameObject* rebelInfObj;
 					FBXCharacterData* rebelInfFbx = new FBXCharacterData(); //FBX用CharacterData
 					PlayerBase* rebelPlayer = nullptr;
-					switch (BFMng->GetAlliesCharacterList()[i]->CharaKind)
+					switch (BFMng->GetAlliesCharacterList()[i]->GetSoldiersType())
 					{
 					default:
 						//rebelPlayer = new UnityChanPlayer();
@@ -704,18 +704,15 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 
 					rebelInfObj = new GameObject(rebelInfFbx); //FBXCharacterDataを持たせて初期化
 
-					XMFLOAT3 pos = BFMng->GetCharaPos(BFMng->GetFieldSquaresList()[BFMng->GetAlliesCharacterList()[i]->CharaPos]);
+					XMFLOAT3 pos = BFMng->GetCharaPos(BFMng->GetFieldSquaresList()[BFMng->GetAlliesCharacterList()[i]->GetCharacterPosOnSquares()]);
 					rebelInfFbx->setPosition(pos.x, pos.y ,pos.z);
 					rebelInfFbx->SetRotation(0.0f, 0.0f, 0.0f);
-					BFMng->GetFieldSquaresList()[BFMng->GetAlliesCharacterList()[i]->CharaPos]->fbxD = rebelInfFbx;
-					BFMng->GetFieldSquaresList()[BFMng->GetAlliesCharacterList()[i]->CharaPos]->fbxD->playerData = rebelPlayer;
-
-					BFMng->GetAlliesCharacterList()[i]->CharaObj = rebelInfObj; //GameObjectポインタをキャラクターに登録
-
+					BFMng->GetFieldSquaresList()[BFMng->GetAlliesCharacterList()[i]->GetCharacterPosOnSquares()]->fbxD = rebelInfFbx;
+					BFMng->GetFieldSquaresList()[BFMng->GetAlliesCharacterList()[i]->GetCharacterPosOnSquares()]->fbxD->playerData = rebelPlayer;
 					rebelInfObj->addComponent(rebelPlayer); //Unityちゃん本体コンポーネントをセット
 					engine->AddGameObject(rebelInfObj); //GameObjectをエンジンに登録
 
-					GenerateEquipment(characterData->CharaKind, rebelPlayer, Admin::Rebel);
+					GenerateEquipment(characterData->GetSoldiersType(), rebelPlayer, Admin::Rebel);
 
 					engine->ManualRender();
 				}
@@ -728,7 +725,7 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 					FBXCharacterData* imperialInfFbx = new FBXCharacterData(); //FBX用CharacterData
 					PlayerBase* imperialPlayer = nullptr;
 
-					switch (BFMng->GetEnemyCharacterList()[i]->CharaKind)
+					switch (BFMng->GetEnemyCharacterList()[i]->GetSoldiersType())
 					{
 					default:
 						//imperialPlayer = new UnityChanPlayer();
@@ -755,18 +752,15 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 
 					imperialInfObj = new GameObject(imperialInfFbx); //FBXCharacterDataを持たせて初期化
 
-					XMFLOAT3 pos = BFMng->GetCharaPos(BFMng->GetFieldSquaresList()[BFMng->GetEnemyCharacterList()[i]->CharaPos]);
+					XMFLOAT3 pos = BFMng->GetCharaPos(BFMng->GetFieldSquaresList()[BFMng->GetEnemyCharacterList()[i]->GetCharacterPosOnSquares()]);
 					imperialInfFbx->setPosition(pos.x, pos.y, pos.z);
 					imperialInfFbx->SetRotation(0.0f, 180.0f, 0.0f);
-					BFMng->GetFieldSquaresList()[BFMng->GetEnemyCharacterList()[i]->CharaPos]->fbxD = imperialInfFbx;
-					BFMng->GetFieldSquaresList()[BFMng->GetEnemyCharacterList()[i]->CharaPos]->fbxD->playerData = imperialPlayer;
-
-					BFMng->GetEnemyCharacterList()[i]->CharaObj = imperialInfObj; //GameObjectポインタをキャラクターに登録
-
+					BFMng->GetFieldSquaresList()[BFMng->GetEnemyCharacterList()[i]->GetCharacterPosOnSquares()]->fbxD = imperialInfFbx;
+					BFMng->GetFieldSquaresList()[BFMng->GetEnemyCharacterList()[i]->GetCharacterPosOnSquares()]->fbxD->playerData = imperialPlayer;
 					imperialInfObj->addComponent(imperialPlayer); //Unityちゃん本体コンポーネントをセット
 					engine->AddGameObject(imperialInfObj); //GameObjectをエンジンに登録
 
-					GenerateEquipment(characterData->CharaKind, imperialPlayer, Admin::Imperial);
+					GenerateEquipment(characterData->GetSoldiersType(), imperialPlayer, Admin::Imperial);
 
 					engine->ManualRender();
 				}

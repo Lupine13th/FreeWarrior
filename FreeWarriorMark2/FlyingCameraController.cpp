@@ -198,15 +198,15 @@ void FlyingCameraController::ChangeCameraPosition()
 		m_camera->ChangeCameraFocus(squarePos.x, squarePos.y, squarePos.z);	//フォーカスをカーソルの位置に
 		XMStoreFloat3(&m_MovingValue, XMVectorZero());	//WASDでの移動値をリセット
 	}
-	else if (BFMng->GetCurrentTurn() == Turn::EnemyMove)	//敵が行動中
+	else if (BFMng->GetCurrentTurn() == Turn::EnemyAction)	//敵が行動中
 	{
-		int x = BFMng->GetFieldSquaresList()[BFMng->GetEnemyCharacterList()[AIMng->GetMoveAiCount()]->CharaPos]->charaPosX;
-		int y = BFMng->GetFieldSquaresList()[BFMng->GetEnemyCharacterList()[AIMng->GetMoveAiCount()]->CharaPos]->charaPosY;
+		int x = BFMng->GetFieldSquaresList()[BFMng->GetEnemyCharacterList()[AIMng->GetMoveAiCount()]->GetCharacterPosOnSquares()]->charaPosX;
+		int y = BFMng->GetFieldSquaresList()[BFMng->GetEnemyCharacterList()[AIMng->GetMoveAiCount()]->GetCharacterPosOnSquares()]->charaPosY;
 		
-		if (BFMng->GetEnemyCharacterList()[AIMng->GetMoveAiCount()]->AIMove == EnemyMove::Attack && AIMng->GetDelayCount() > 1.5f)	//敵の行動が攻撃、かつDelayCount()が1.5秒以上
+		if (BFMng->GetEnemyCharacterList()[AIMng->GetMoveAiCount()]->GetEnemyActionType() == EnemyActionType::Attack && AIMng->GetDelayCount() > 1.5f)	//敵の行動が攻撃、かつDelayCount()が1.5秒以上
 		{
-			x = BFMng->GetEnemyCharacterList()[AIMng->GetMoveAiCount()]->targetAISquare->charaPosX;
-			y = BFMng->GetEnemyCharacterList()[AIMng->GetMoveAiCount()]->targetAISquare->charaPosY;
+			x = BFMng->GetEnemyCharacterList()[AIMng->GetMoveAiCount()]->GetTargetAISquare()->charaPosX;
+			y = BFMng->GetEnemyCharacterList()[AIMng->GetMoveAiCount()]->GetTargetAISquare()->charaPosY;
 		}
 
 		int index = x + y * 10;

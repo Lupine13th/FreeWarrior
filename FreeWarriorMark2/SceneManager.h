@@ -12,7 +12,7 @@
 
 //=========Scene Change
 class SceneManager;
-class FieldCharacter;
+class Platoon;
 class Squares;
 class CharacterEquipment;
 class PlayerBase;
@@ -49,7 +49,7 @@ private:
 	std::list<std::unique_ptr<GameObject>> m_SceneObjects;
 	std::unique_ptr<SceneObjectDeleter> m_pObjDeleter;
 	void ClearSceneObjects();
-	void SetCharaToSquares(FieldCharacter* chara, Squares* square);
+	void SetCharaToSquares(Platoon* chara, Squares* square);
 	bool IsFirstTime = true;
 	
 public:
@@ -116,8 +116,8 @@ public:
 
 	int SquareCount = 0;
 
-	vector<FieldCharacter*> ally = { nullptr ,nullptr, nullptr, nullptr, nullptr };
-	vector<FieldCharacter*> enemy = { nullptr ,nullptr, nullptr, nullptr, nullptr };
+	vector<Platoon*> ally = { nullptr ,nullptr, nullptr, nullptr, nullptr };
+	vector<Platoon*> enemy = { nullptr ,nullptr, nullptr, nullptr, nullptr };
 
 	void GenerateEquipment(SoldiersType type, PlayerBase* playerBase, Admin admin);
 

@@ -20,7 +20,7 @@ namespace fs = std::experimental::filesystem;
 
 class FBXDataContainer;
 
-class FieldCharacter;
+class Platoon;
 
 struct FbxVertex
 {
@@ -456,7 +456,7 @@ public:
 
 	XMMATRIX GetBornMatrix(const char* bornName);
 
-	void SetAnimeInit(std::wstring initAnimeLabel, FieldCharacter* chara);
+	void SetAnimeInit(std::wstring initAnimeLabel, Platoon* chara);
 };
 
 //バイナリー書き込み

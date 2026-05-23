@@ -158,7 +158,7 @@ bool MeterHUD::FrameAction()
     {
     case AnimationState::Init:
     {
-        FieldCharacter* character = nullptr;
+        Platoon* character = nullptr;
         int currentId = -1;
 
         m_DelayCount = 0.0f;
@@ -217,14 +217,14 @@ bool MeterHUD::FrameAction()
                     SelectId = BFMng->GetSelectID();
                     if (BFMng->GetFieldSquaresList()[SelectId]->chara != nullptr)
                     {
-                        if (BFMng->GetFieldSquaresList()[SelectId]->chara->CharaAdmin == Admin::Imperial && !BFMng->GetFieldSquaresList()[SelectId]->chara->Detected)
+                        if (BFMng->GetFieldSquaresList()[SelectId]->chara->GetAdmin() == Admin::Imperial && !BFMng->GetFieldSquaresList()[SelectId]->chara->GetIsDetected())
                         {
                             soldiers = L"ERR";
                             morale = L"ERR";
                             break;
                         }
-                        soldiers = std::to_wstring(static_cast<int>(BFMng->GetFieldSquaresList()[SelectId]->chara->CharaSoldiers));
-                        morale = std::to_wstring(static_cast<int>(BFMng->GetFieldSquaresList()[SelectId]->chara->CharaMorales));
+                        soldiers = std::to_wstring(static_cast<int>(BFMng->GetFieldSquaresList()[SelectId]->chara->GetSoldiers()));
+                        morale = std::to_wstring(static_cast<int>(BFMng->GetFieldSquaresList()[SelectId]->chara->GetMorale()));
                     }
                     break;
                 case Mode::AttackMode:
@@ -233,14 +233,14 @@ bool MeterHUD::FrameAction()
                     SelectId = BFMng->GetTargetID();
                     if (BFMng->GetFieldSquaresList()[SelectId]->chara != nullptr)
                     {
-                        if (BFMng->GetFieldSquaresList()[SelectId]->chara->CharaAdmin == Admin::Imperial && !BFMng->GetFieldSquaresList()[SelectId]->chara->Detected)
+                        if (BFMng->GetFieldSquaresList()[SelectId]->chara->GetAdmin() == Admin::Imperial && !BFMng->GetFieldSquaresList()[SelectId]->chara->GetIsDetected())
                         {
                             soldiers = L"ERR";
                             morale = L"ERR";
                             break;
                         }
-                        soldiers = std::to_wstring(static_cast<int>(BFMng->GetFieldSquaresList()[SelectId]->chara->CharaSoldiers));
-                        morale = std::to_wstring(static_cast<int>(BFMng->GetFieldSquaresList()[SelectId]->chara->CharaMorales));
+                        soldiers = std::to_wstring(static_cast<int>(BFMng->GetFieldSquaresList()[SelectId]->chara->GetSoldiers()));
+                        morale = std::to_wstring(static_cast<int>(BFMng->GetFieldSquaresList()[SelectId]->chara->GetMorale()));
                     }
                     break;
                 }
@@ -275,7 +275,7 @@ void MeterHUD::FinishAction()
 {
 }
 
-void MeterHUD::AnimateBarsTo(FieldCharacter* targetChara)
+void MeterHUD::AnimateBarsTo(Platoon* targetChara)
 {
     // 既存のアニメーションを全て停止・削除
     m_ActiveTweenList.clear();
@@ -291,20 +291,20 @@ void MeterHUD::AnimateBarsTo(FieldCharacter* targetChara)
     SetAnimationState(AnimationState::Run);
 }
 
-void MeterHUD::SetSoldiersPersent(FieldCharacter* targetChara)
+void MeterHUD::SetSoldiersPersent(Platoon* targetChara)
 {
-    float soldierPercent = targetChara->CharaSoldiers / targetChara->CharaMaxSoldiers;
-    if (!targetChara->Detected && targetChara->CharaAdmin == Admin::Imperial)
+    float soldierPercent = targetChara->GetSoldiersPercent();
+    if (!targetChara->GetIsDetected() && targetChara->GetAdmin() == Admin::Imperial)
     {
         soldierPercent = 1.15f;
     }
 	m_SoldierArrowEndPosX = kArrowLeftPosX + kArrowsRenge * soldierPercent;
 }
 
-void MeterHUD::SetMoralePersent(FieldCharacter* targetChara)
+void MeterHUD::SetMoralePersent(Platoon* targetChara)
 {
-    float moralePercent = targetChara->CharaMorales / targetChara->CharaMaxMorales;
-    if (!targetChara->Detected && targetChara->CharaAdmin == Admin::Imperial)
+    float moralePercent = targetChara->GetMorale() / targetChara->GetMaxMorale();
+    if (!targetChara->GetIsDetected() && targetChara->GetAdmin() == Admin::Imperial)
     {
         moralePercent = 1.15f;
     }
@@ -483,7 +483,7 @@ bool StatusHUD::FrameAction()
                 if (selectSquare->chara == nullptr)
 					return true;
 
-				if (!selectSquare->chara->Detected && selectSquare->chara->CharaAdmin == Admin::Imperial)   //未発見の帝国軍キャラクターを選択した場合はエラー表示
+				if (BFMng->IsNotDetectedAndEnemyAdmin(selectSquare))   //未発見の帝国軍キャラクターを選択した場合はエラー表示
                 {
                     SetAnimationState(AnimationState::Init);
                     index = 2;
@@ -493,7 +493,7 @@ bool StatusHUD::FrameAction()
                 if (targetSquare->chara == nullptr)
                     return true;
 
-                if (!targetSquare->chara->Detected && targetSquare->chara->CharaAdmin == Admin::Imperial)   //未発見の帝国軍キャラクターを選択した場合はエラー表示
+                if (BFMng->IsNotDetectedAndEnemyAdmin(targetSquare))   //未発見の帝国軍キャラクターを選択した場合はエラー表示
                 {
                     SetAnimationState(AnimationState::Init);
                     index = 2;
@@ -544,7 +544,7 @@ void StatusHUD::SetLabelColor()
         {
             return;
 		}
-        switch (BFMng->GetFieldSquaresList()[BFMng->GetSelectID()]->chara->CharaAdmin)
+        switch (BFMng->GetFieldSquaresList()[BFMng->GetSelectID()]->chara->GetAdmin())
         {
         case Admin::Rebel:
             m_SpriteList[2]->SetColor(0.0f, 0.0f, 1.0f, 1.0f);
@@ -559,7 +559,7 @@ void StatusHUD::SetLabelColor()
         {
             return;
 		}
-        switch (BFMng->GetFieldSquaresList()[BFMng->GetTargetID()]->chara->CharaAdmin)
+        switch (BFMng->GetFieldSquaresList()[BFMng->GetTargetID()]->chara->GetAdmin())
         {
         case Admin::Rebel:
             m_SpriteList[2]->SetColor(0.0f, 0.0f, 1.0f, 1.0f);
@@ -624,13 +624,13 @@ bool StatusText::FrameAction()
 
             if (selectSquare->SqAdmin == Admin::Rebel)                                          //反乱軍(味方)ならば部隊名を表示
             {
-                cstr = BFMng->GetAlliesCharacterList()[selectSquare->ThereCharaID]->CharaName;
+                cstr = BFMng->GetAlliesCharacterList()[selectSquare->ThereCharaID]->GetPlatoonName();
             }
             else if (selectSquare->SqAdmin == Admin::Imperial)                                  //帝国軍(敵)ならば・・・
             {
-                if (BFMng->GetEnemyCharacterList()[selectSquare->ThereCharaID]->Detected)       //索敵済みならば表示
+                if (BFMng->GetEnemyCharacterList()[selectSquare->ThereCharaID]->GetIsDetected())       //索敵済みならば表示
                 {
-                    cstr = BFMng->GetEnemyCharacterList()[selectSquare->ThereCharaID]->CharaName;
+                    cstr = BFMng->GetEnemyCharacterList()[selectSquare->ThereCharaID]->GetPlatoonName();
                 }
                 else                                                                            //索敵出来ていなければ「信号無し」
                 {
@@ -647,13 +647,13 @@ bool StatusText::FrameAction()
 
             if (targetSquare->SqAdmin == Admin::Rebel)
             {
-                cstr = BFMng->GetAlliesCharacterList()[selectSquare->ThereCharaID]->CharaName;
+                cstr = BFMng->GetAlliesCharacterList()[selectSquare->ThereCharaID]->GetPlatoonName();
             }
             else if (targetSquare->SqAdmin == Admin::Imperial)
             {
-                if (targetSquare->chara->Detected)
+                if (targetSquare->chara->GetIsDetected())
                 {
-                    cstr = BFMng->GetEnemyCharacterList()[selectSquare->ThereCharaID]->CharaName;
+                    cstr = BFMng->GetEnemyCharacterList()[selectSquare->ThereCharaID]->GetPlatoonName();
                 }
                 else
                 {
@@ -680,7 +680,7 @@ bool StatusText::FrameAction()
                 pipeLine->AddRenderObject(m_WordSpriteList[i].get());
             }
         }
-        else if ((selectSquare->SqAdmin == Admin::Imperial || targetSquare->SqAdmin == Admin::Imperial) && !BFMng->GetEnemyCharacterList()[selectSquare->ThereCharaID]->Detected)   //索敵出来ていない敵ならば「信号無し」を確実に映す
+        else if ((selectSquare->SqAdmin == Admin::Imperial || targetSquare->SqAdmin == Admin::Imperial) && !BFMng->GetEnemyCharacterList()[selectSquare->ThereCharaID]->GetIsDetected())   //索敵出来ていない敵ならば「信号無し」を確実に映す
         {
             for (int i = 0; i < count; i++)
             {
@@ -882,9 +882,9 @@ bool AbilityHUD::FrameAction()
         {
             if (BFMng->GetAlliesCharacterList()[BFMng->GetFieldSquaresList()[BFMng->GetSelectID()]->ThereCharaID] != nullptr)
 
-                if (BFMng->GetAlliesCharacterList()[BFMng->GetFieldSquaresList()[BFMng->GetSelectID()]->ThereCharaID]->Abilities[i] != AbilityType::None)
+                if (BFMng->GetAlliesCharacterList()[BFMng->GetFieldSquaresList()[BFMng->GetSelectID()]->ThereCharaID]->GetAbilityList()[i] != AbilityType::None)
                 {
-                    switch (BFMng->GetAlliesCharacterList()[BFMng->GetFieldSquaresList()[BFMng->GetSelectID()]->ThereCharaID]->Abilities[i])
+                    switch (BFMng->GetAlliesCharacterList()[BFMng->GetFieldSquaresList()[BFMng->GetSelectID()]->ThereCharaID]->GetAbilityList()[i])
                     {
                     case AbilityType::ConcentratedFire:
                         m_SpriteList[i + 1]->SetTextureId(L"AbillityConcentratedFireTexture");
@@ -1373,13 +1373,13 @@ bool BattleCameraHUD::FrameAction()
 		int count = 0;
 
 		Squares* attackerSquare = BFMng->GetAttackingCharacterSquares()->GetNowChara();
-        FieldCharacter* attackerCharacterSquare = BFMng->GetAttackingCharacterSquares()->GetNowChara()->chara;
-        FieldCharacter* defenderCharacterSquare = BFMng->GetAttackingCharacterSquares()->GetNextChara()->chara;
+        Platoon* attackerCharacterSquare = BFMng->GetAttackingCharacterSquares()->GetNowChara()->chara;
+        Platoon* defenderCharacterSquare = BFMng->GetAttackingCharacterSquares()->GetNextChara()->chara;
 
         if (attackerCharacterSquare != nullptr && defenderCharacterSquare != nullptr)
         {
-            m_TextList["攻撃側"] = (attackerCharacterSquare->CharaName.c_str());
-            m_TextList["防御側"] = (defenderCharacterSquare->CharaName.c_str());
+            m_TextList["攻撃側"] = (attackerCharacterSquare->GetPlatoonName().c_str());
+            m_TextList["防御側"] = (defenderCharacterSquare->GetPlatoonName().c_str());
             m_TextList["攻撃側行動"] = attackerSquare->GetAttackerMoveText();
 
             count = MakeSpriteString(count, kAttackerTextPos.x, kAttackerTextPos.y, 30, 45, m_TextList["攻撃側"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
@@ -1736,7 +1736,7 @@ bool DamageEffectHUD::FrameAction()
     switch (m_AnimationState)
     {
     case AnimationState::Init:
-        SetDamageEffect(BFMng->GetAttackedCharacter()->CharaSoldiers / BFMng->GetAttackedCharacter()->CharaMaxSoldiers);
+        SetDamageEffect(BFMng->GetAttackedCharacter()->GetSoldiersPercent());
         break;
     case AnimationState::Run:
 		m_DelayCount += m_TimeManager->GetDeltaTime();
@@ -2164,7 +2164,7 @@ bool TurnHUD::FrameAction()
         case Turn::Allies:
 			m_SpriteList[0]->SetTextureId(L"EnemyTurnHUD");
             break;
-        case Turn::EnemyMove:
+        case Turn::EnemyAction:
             m_SpriteList[0]->SetTextureId(L"AliesTurnHUD");
             break;
         }
@@ -2192,7 +2192,7 @@ bool TurnHUD::FrameAction()
             case Turn::Allies:
                 BFMng->ChangeTurnEnemy();
                 break;
-            case Turn::EnemyMove:
+            case Turn::EnemyAction:
                 BFMng->ChangeTurnAllies();
                 break;
             }

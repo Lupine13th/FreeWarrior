@@ -60,7 +60,7 @@ enum class Turn
 {
 	Allies,
 	Enemy,
-	EnemyMove,
+	EnemyAction,
 	TurnChanging,
 	First,
 	Result
@@ -147,8 +147,8 @@ private:
 	Squares* m_SelectingSquare;							//選択中のマス
 	vector<Squares*> m_PassedSquaresList;				//通過したマスのリスト
 	vector<Squares*> m_ChangedSquaresList;				//移動可能範囲に変化したマスのリスト
-	vector<FieldCharacter*> m_AlliesCharacterList;		//味方(プレイヤー)の部隊リスト
-	vector<FieldCharacter*> m_EnemyCharacterList;		//敵(AI)の部隊リスト
+	vector<Platoon*> m_AlliesCharacterList;		//味方(プレイヤー)の部隊リスト
+	vector<Platoon*> m_EnemyCharacterList;		//敵(AI)の部隊リスト
 	Squares* m_AttackigCharacterSquare;					//攻撃している部隊のマス
 	AbillityMenuState m_AbillityMenuState = AbillityMenuState::None;	//アビリティメニューの状態
 
@@ -172,7 +172,7 @@ private:
 
 	TimeManager* m_TimeManager = nullptr;
 
-	FieldCharacter* m_AttackedCharacter = nullptr;
+	Platoon* m_AttackedCharacter = nullptr;
 
 	wstring logs;
 
@@ -197,8 +197,8 @@ public:
 	void SetTurnUI(TurnUI* TurnUI);
 	void SetCurrentTurn(Turn turn);
 	void AddFieldSquare(Squares* square);
-	void SetAlliesCharacterList(vector<FieldCharacter*> list);
-	void SetEnemyCharacterList(vector<FieldCharacter*> list);
+	void SetAlliesCharacterList(vector<Platoon*> list);
+	void SetEnemyCharacterList(vector<Platoon*> list);
 	void SetAbiliteis(Abilities* abilities);
 	XMFLOAT3 GetCharaPos(Squares* squ);
 	void SetTerrainData();  
@@ -217,10 +217,10 @@ public:
 	{
 		m_AttackigCharacterSquare = squares;
 	};
-	void CreateMoveLog(FieldCharacter* currentCharacter, int currentPos, int nextPos);
-	void CreateAttackLog(FieldCharacter* currentCharacter, float damage);
-	void CreateAbilityLog(FieldCharacter* currentCharacter, ActionName ability, float damage);
-	void CreateWaitLog(FieldCharacter* currentCharacter);
+	void CreateMoveLog(Platoon* currentCharacter, int currentPos, int nextPos);
+	void CreateAttackLog(Platoon* currentCharacter, float damage);
+	void CreateAbilityLog(Platoon* currentCharacter, ActionName ability, float damage);
+	void CreateWaitLog(Platoon* currentCharacter);
 	void SetFirstAlliesCharacterCamera();
 
 	//==========Getter==========
@@ -323,11 +323,11 @@ public:
 	{
 		return m_Mode;
 	}
-	vector<FieldCharacter*> GetAlliesCharacterList()
+	vector<Platoon*> GetAlliesCharacterList()
 	{
 		return m_AlliesCharacterList;
 	}
-	vector<FieldCharacter*> GetEnemyCharacterList()
+	vector<Platoon*> GetEnemyCharacterList()
 	{
 		return m_EnemyCharacterList;
 	}
@@ -382,7 +382,7 @@ public:
 	{
 		return m_IsSucceedScout;
 	}
-	FieldCharacter* GetAttackedCharacter()
+	Platoon* GetAttackedCharacter()
 	{
 		return m_AttackedCharacter;
 	}
@@ -404,15 +404,15 @@ public:
 	void ChangeTurnAllies();
 	void ChangeTurnEnemy();
 	void UpdateBattleField();
-	void Attack(FieldCharacter* attackingchara, FieldCharacter* attackedchara);
+	void Attack(Platoon* attackingchara, Platoon* attackedchara);
 	void Move(int nowPos, int nextPos, float charaID);
 	void Wait(int nowPos);
 	void ResetFieldFromMove();
 	void ChangeTurn();
 	void ResetHUDs(int SEindex);
-	void Abiliting(FieldCharacter* attackingchara, FieldCharacter* attackedchara);
+	void Abiliting(Platoon* attackingchara, Platoon* attackedchara);
 	void DeleteChara(int deadCharaPos);
-	void CheckDead(FieldCharacter* chara);
+	void CheckDead(Platoon* chara);
 	void CheckMoved();
 	void SetResult(bool win);
 	void SearchInRengeSquare(int charaPosition, float renge, vector<int>& idList);
@@ -423,6 +423,10 @@ public:
 	{
 		m_PlayerActionLogs.clear();
 	}
+
+	bool AttackingPlatoonIsAttackingTerrain(Platoon* attackingchara);
+	bool AttackedPlatoonIsDefenciveTerrain(Platoon* attackingchara);
+	bool IsNotDetectedAndEnemyAdmin(Squares* charaSquare);
 };
 
 

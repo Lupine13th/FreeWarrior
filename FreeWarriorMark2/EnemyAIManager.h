@@ -68,7 +68,7 @@ private:
 
 	TimeManager* m_TimeManager;
 
-	EnemyMove Emove = EnemyMove::None;
+	EnemyActionType m_EnemyActionType = EnemyActionType::None;
 	AIMode Mode = AIMode::decide;
 
 	LearningAIData m_CurrentAIData;	//現在のAIデータ
@@ -85,7 +85,7 @@ public:
 
 	bool CheckEnemyData();
 
-	void ResetAI(FieldCharacter* chara);
+	void ResetAI(Platoon* chara);
 
 	void OnChangeTurn();
 
@@ -94,13 +94,13 @@ public:
 	float GetDelayCount() { return m_DelayCount; }
 
 	//現在のキャラクターが出来る行動を生成
-	vector<EnemyAction> GeneratePossibleActions(FieldCharacter* currentCharacter);
+	vector<EnemyAction> GeneratePossibleActions(Platoon* currentCharacter);
 
 	//生成した行動を評価
-	float EvaluateAction(FieldCharacter* currentCharacter, const EnemyAction& action);
+	float EvaluateAction(Platoon* currentCharacter, const EnemyAction& action);
 
 	//生成された行動から最も評価の高い行動を選択
-	EnemyAction SelectBestAction(FieldCharacter* currentEnemy, const std::vector<EnemyAction>& possibleActions);
+	EnemyAction SelectBestAction(Platoon* currentEnemy, const std::vector<EnemyAction>& possibleActions);
 
 	//二点からマンハッタン距離を計算
 	float CalculateDistance(int currentID, int nextID);
@@ -265,6 +265,6 @@ public:
 		}
 	}
 
-	AbilityType SelectAttackAction(FieldCharacter* attackingCharacter, FieldCharacter* attackedCharacter);
+	AbilityType SelectAttackAction(Platoon* attackingCharacter, Platoon* attackedCharacter);
 };
 

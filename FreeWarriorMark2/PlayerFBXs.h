@@ -24,7 +24,7 @@ public:
     {
 		m_admin = admin;
     }
-    void Dead()
+    void m_IsDead()
     {
         IsAlive = false;
     }

@@ -161,7 +161,7 @@ bool ReadyCharacterHUDW::FrameAction()
 
 			if (BRScene->RDAlliesCharacterList[i] != nullptr)
 			{
-				ally[i] = BRScene->RDAlliesCharacterList[i]->CharaName;
+				ally[i] = BRScene->RDAlliesCharacterList[i]->GetPlatoonName();
 				strs[i + 2] = ally[i].c_str();
 			}
 			else if (BRScene->RDAlliesCharacterList[i] == nullptr)
@@ -171,7 +171,7 @@ bool ReadyCharacterHUDW::FrameAction()
 			}
 			if (BRScene->RDEnemyCharacterList[i] != nullptr)
 			{
-				enemy[i] = BRScene->RDEnemyCharacterList[i]->CharaName;
+				enemy[i] = BRScene->RDEnemyCharacterList[i]->GetPlatoonName();
 				strs[i + 7] = enemy[i].c_str();
 			}
 			else if (BRScene->RDEnemyCharacterList[i] == nullptr)

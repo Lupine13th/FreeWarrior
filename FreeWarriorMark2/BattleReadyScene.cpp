@@ -17,13 +17,13 @@ void BattleReadyScene::SetNextScene(GAME_SCENES nextSc)
     m_nextScene = nextSc;
 }
 
-void BattleReadyScene::SetCharacterData(FieldCharacter* readyChara, FieldCharacter* nextChara, Squares* square, int index, int squareIndex)
+void BattleReadyScene::SetCharacterData(Platoon* readyChara, Platoon* nextChara, Squares* square, int index, int squareIndex)
 {
     nextChara = readyChara;
 	square->ThereCharaID = squareIndex;
-	square->SqAdmin = nextChara->CharaAdmin;
+	square->SqAdmin = nextChara->GetAdmin();
 	square->chara = nextChara;
-	square->chara->CharaPos = squareIndex;
+	square->chara->SetCharacterPosOnSquares(squareIndex);
 }
 
 void BattleReadyScene::ResetCount()
@@ -64,50 +64,50 @@ void BattleReadyScene::InitAction()
 
     //味方待機部隊設定
 	InFieldAlliesCharacterList[0] = new Infantry;
-    InFieldAlliesCharacterList[0]->CharaAdmin = Admin::Rebel;
-    InFieldAlliesCharacterList[0]->CharaName = L"反乱軍歩兵隊";
+    InFieldAlliesCharacterList[0]->SetAdmin(Admin::Rebel);
+    InFieldAlliesCharacterList[0]->SetPlatoonName(L"反乱軍歩兵隊");
 
 	InFieldAlliesCharacterList[1] = new Artillery;
-    InFieldAlliesCharacterList[1]->CharaAdmin = Admin::Rebel;
-    InFieldAlliesCharacterList[1]->CharaName = L"反乱軍砲兵隊";
+    InFieldAlliesCharacterList[1]->SetAdmin(Admin::Rebel);
+    InFieldAlliesCharacterList[1]->SetPlatoonName(L"反乱軍砲兵隊");
 
 	InFieldAlliesCharacterList[2] = new MachineGunner;
-    InFieldAlliesCharacterList[2]->CharaAdmin = Admin::Rebel;
-    InFieldAlliesCharacterList[2]->CharaName = L"反乱軍機関銃兵隊";
+    InFieldAlliesCharacterList[2]->SetAdmin(Admin::Rebel);
+    InFieldAlliesCharacterList[2]->SetPlatoonName(L"反乱軍機関銃兵隊");
 
 	InFieldAlliesCharacterList[3] = new Scout;
-    InFieldAlliesCharacterList[3]->CharaAdmin = Admin::Rebel;
-    InFieldAlliesCharacterList[3]->CharaName = L"反乱軍偵察兵隊";
+    InFieldAlliesCharacterList[3]->SetAdmin(Admin::Rebel);
+    InFieldAlliesCharacterList[3]->SetPlatoonName(L"反乱軍偵察兵隊");
 
 	InFieldAlliesCharacterList[4] = new Armored;
-    InFieldAlliesCharacterList[4]->CharaAdmin = Admin::Rebel;
-    InFieldAlliesCharacterList[4]->CharaName = L"反乱軍機械化歩兵隊";
+    InFieldAlliesCharacterList[4]->SetAdmin(Admin::Rebel);
+    InFieldAlliesCharacterList[4]->SetPlatoonName(L"反乱軍機械化歩兵隊");
 
     //敵部隊設定
     RDEnemyCharacterList[0] = new Artillery;
-    RDEnemyCharacterList[0]->CharaAdmin = Admin::Imperial;
-    RDEnemyCharacterList[0]->CharaAI = AIroutine::Defence;
-    RDEnemyCharacterList[0]->CharaName = L"第1帝国軍砲兵隊";
+    RDEnemyCharacterList[0]->SetAdmin(Admin::Imperial);
+    RDEnemyCharacterList[0]->SetAIRoutine(AIroutine::Defence);
+    RDEnemyCharacterList[0]->SetPlatoonName(L"第1帝国軍砲兵隊");
 
     RDEnemyCharacterList[1] = new Infantry;
-    RDEnemyCharacterList[1]->CharaAdmin = Admin::Imperial;
-    RDEnemyCharacterList[1]->CharaAI = AIroutine::Attack;
-    RDEnemyCharacterList[1]->CharaName = L"第1帝国軍歩兵隊";
+    RDEnemyCharacterList[1]->SetAdmin(Admin::Imperial);
+    RDEnemyCharacterList[1]->SetAIRoutine(AIroutine::Attack);
+    RDEnemyCharacterList[1]->SetPlatoonName(L"第1帝国軍歩兵隊");
 
     RDEnemyCharacterList[2] = new Scout;
-    RDEnemyCharacterList[2]->CharaAdmin = Admin::Imperial;
-	RDEnemyCharacterList[2]->CharaAI = AIroutine::Attack;
-    RDEnemyCharacterList[2]->CharaName = L"帝国軍斥候隊";
+    RDEnemyCharacterList[2]->SetAdmin(Admin::Imperial);
+	RDEnemyCharacterList[2]->SetAIRoutine(AIroutine::Attack);
+    RDEnemyCharacterList[2]->SetPlatoonName(L"帝国軍斥候隊");
 
     RDEnemyCharacterList[3] = new Infantry;
-    RDEnemyCharacterList[3]->CharaAdmin = Admin::Imperial;
-    RDEnemyCharacterList[3]->CharaAI = AIroutine::Attack;
-    RDEnemyCharacterList[3]->CharaName = L"第2帝国軍歩兵隊";
+    RDEnemyCharacterList[3]->SetAdmin(Admin::Imperial);
+    RDEnemyCharacterList[3]->SetAIRoutine(AIroutine::Attack);
+    RDEnemyCharacterList[3]->SetPlatoonName(L"第2帝国軍歩兵隊");
 
     RDEnemyCharacterList[4] = new Artillery;
-    RDEnemyCharacterList[4]->CharaAdmin = Admin::Imperial;
-    RDEnemyCharacterList[4]->CharaAI = AIroutine::Defence;
-    RDEnemyCharacterList[4]->CharaName = L"第2帝国軍砲兵隊";
+    RDEnemyCharacterList[4]->SetAdmin(Admin::Imperial);
+    RDEnemyCharacterList[4]->SetAIRoutine(AIroutine::Defence);
+    RDEnemyCharacterList[4]->SetPlatoonName(L"第2帝国軍砲兵隊");
 
 	engine->GetSoundManager()->playBGM(10);
 	engine->GetSoundManager()->play(9);
@@ -192,8 +192,8 @@ bool BattleReadyScene::FrameAction()
                 {
                     if (RDAlliesCharacterList[i] != nullptr)
                     {
-                        RDAlliesCharacterList[i]->CharaPos = i * 2;
-                        RDAlliesCharacterList[i]->CharaID = i;
+                        RDAlliesCharacterList[i]->SetCharacterPosOnSquares(i * 2);
+                        RDAlliesCharacterList[i]->SetPlatoonId(i);
                         scene->ally[i] = RDAlliesCharacterList[i];
                     }
                 }
@@ -204,13 +204,13 @@ bool BattleReadyScene::FrameAction()
                         switch (scene->kPlayStates)
                         {
                         case PlayStates::Debug:                             //デバッグ時、敵が近くなる
-                            RDEnemyCharacterList[i]->CharaPos = i * 2 + 50;
+                            RDEnemyCharacterList[i]->SetCharacterPosOnSquares(i * 2 + 50);
                             break;
                         case PlayStates::Release:
-                            RDEnemyCharacterList[i]->CharaPos = i * 2 + 140;
+                            RDEnemyCharacterList[i]->SetCharacterPosOnSquares(i * 2 + 140);
                             break;
                         }
-                        RDEnemyCharacterList[i]->CharaID = i;
+                        RDEnemyCharacterList[i]->SetPlatoonId(i);
                         scene->enemy[i] = RDEnemyCharacterList[i];
                     }
                 }
@@ -221,9 +221,9 @@ bool BattleReadyScene::FrameAction()
             {
                 for (int i = 0; i < 5; i++)
                 {
-                    if (InFieldAlliesCharacterList[i] != nullptr && !InFieldAlliesCharacterList[i]->Selected)
+                    if (InFieldAlliesCharacterList[i] != nullptr && !InFieldAlliesCharacterList[i]->GetIsSelected())
                     {
-                        InFieldAlliesCharacterList[i]->Selected = true;
+                        InFieldAlliesCharacterList[i]->SetIsSelected(true);
                         RDAlliesCharacterList[i] = InFieldAlliesCharacterList[i];
                     }
                 }
@@ -232,9 +232,9 @@ bool BattleReadyScene::FrameAction()
         case ReadySceneState::InField:  //出撃する部隊を選択する画面
             if (keyBind->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK))                       //スペースキー入力時         
             {
-                if (InFieldAlliesCharacterList[m_InFieldCharacterMenuIndex] != nullptr && !InFieldAlliesCharacterList[m_InFieldCharacterMenuIndex]->Selected)   //その部隊が選択済みでは無い
+                if (InFieldAlliesCharacterList[m_InFieldCharacterMenuIndex] != nullptr && !InFieldAlliesCharacterList[m_InFieldCharacterMenuIndex]->GetIsSelected())   //その部隊が選択済みでは無い
                 {
-                    InFieldAlliesCharacterList[m_InFieldCharacterMenuIndex]->Selected = true;
+                    InFieldAlliesCharacterList[m_InFieldCharacterMenuIndex]->SetIsSelected(true);
                     RDAlliesCharacterList[menuIndex] = InFieldAlliesCharacterList[m_InFieldCharacterMenuIndex];
                     rdcharacterHUDW->ResetAnimation();
                     engine->GetSoundManager()->play(12);

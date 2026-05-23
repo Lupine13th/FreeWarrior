@@ -2,7 +2,7 @@
 
 #include "Squares.h"
 
-enum class EnemyMove {
+enum class EnemyActionType {
     Move,
     Attack,
     Wait,

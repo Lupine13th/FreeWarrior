@@ -96,7 +96,7 @@ public:
 
 	Admin SqAdmin = Admin::None;	//所有勢力
 
-	FieldCharacter* chara = nullptr;	//そのマスにいるキャラ
+	Platoon* chara = nullptr;	//そのマスにいるキャラ
 
 	FBXCharacterData* fbxD = nullptr;
 

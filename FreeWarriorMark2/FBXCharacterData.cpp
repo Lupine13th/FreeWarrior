@@ -1100,12 +1100,12 @@ void FBXCharacterData::UpdateAnimation(int frameCount)
 }
 
 //アニメーションを呼ぶwstringを統一するためにSetAnimeを呼ぶ前段階
-void FBXCharacterData::SetAnimeInit(std::wstring initAnimeLabel, FieldCharacter* chara)
+void FBXCharacterData::SetAnimeInit(std::wstring initAnimeLabel, Platoon* chara)
 {
-	std::wstring adminString = (chara->CharaAdmin == Admin::Rebel) ? L"_REBEL" : L"_IMPER";
+	std::wstring adminString = (chara->GetAdmin() == Admin::Rebel) ? L"_REBEL" : L"_IMPER";
 	std::wstring typeString = L"";
 
-	switch (chara->CharaKind)
+	switch (chara->GetSoldiersType())
 	{
 	default:
 		break;

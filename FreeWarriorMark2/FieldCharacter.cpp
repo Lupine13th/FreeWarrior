@@ -4,16 +4,16 @@
 
 using namespace std::chrono;
 
-void FieldCharacter::InitAction()
+void Platoon::InitAction()
 {
 }
 
-bool FieldCharacter::FrameAction()
+bool Platoon::FrameAction()
 {
 	return false;
 }
 
-void FieldCharacter::FinishAction()
+void Platoon::FinishAction()
 {
 }
 

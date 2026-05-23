@@ -135,10 +135,10 @@ bool InFieldCharacterMenuWord::FrameAction()
 	{
 		if (BRScene->InFieldAlliesCharacterList[i] != nullptr)
 		{
-			m_InFieldMenuTextList[i] = BRScene->InFieldAlliesCharacterList[i]->CharaName;
-			if (BRScene->InFieldAlliesCharacterList[i]->Selected)
+			m_InFieldMenuTextList[i] = BRScene->InFieldAlliesCharacterList[i]->GetPlatoonName();
+			if (BRScene->InFieldAlliesCharacterList[i]->GetIsSelected())
 			{
-				m_InFieldMenuTextList[i] = BRScene->InFieldAlliesCharacterList[i]->CharaName + L"(選択済み)";
+				m_InFieldMenuTextList[i] = BRScene->InFieldAlliesCharacterList[i]->GetPlatoonName() + L"(選択済み)";
 			}
 			strs[i] = m_InFieldMenuTextList[i].c_str();
 		}
@@ -153,22 +153,22 @@ bool InFieldCharacterMenuWord::FrameAction()
 	if (BRScene->InFieldAlliesCharacterList[BRScene->m_InFieldCharacterMenuIndex] != nullptr)
 	{
 		//兵数
-		m_InFieldMenuTextList[10] = L"兵数:" + to_wstring((int)BRScene->InFieldAlliesCharacterList[BRScene->m_InFieldCharacterMenuIndex]->CharaSoldiers);
+		m_InFieldMenuTextList[10] = L"兵数:" + to_wstring((int)BRScene->InFieldAlliesCharacterList[BRScene->m_InFieldCharacterMenuIndex]->GetSoldiers());
 		strs[10] = m_InFieldMenuTextList[10].c_str();
 		count = MakeSpriteString(count, xpos[1], ypos[8], 20, 40, strs[10], 10);
 
 		//士気
-		m_InFieldMenuTextList[11] = L"士気:" + to_wstring((int)BRScene->InFieldAlliesCharacterList[BRScene->m_InFieldCharacterMenuIndex]->CharaMorales);
+		m_InFieldMenuTextList[11] = L"士気:" + to_wstring((int)BRScene->InFieldAlliesCharacterList[BRScene->m_InFieldCharacterMenuIndex]->GetMorale());
 		strs[11] = m_InFieldMenuTextList[11].c_str();
 		count = MakeSpriteString(count, xpos[2], ypos[8], 20, 40, strs[11], 11);
 
 		//攻撃力
-		m_InFieldMenuTextList[12] = L"攻撃力:" + to_wstring((int)BRScene->InFieldAlliesCharacterList[BRScene->m_InFieldCharacterMenuIndex]->CharaPower);
+		m_InFieldMenuTextList[12] = L"攻撃力:" + to_wstring((int)BRScene->InFieldAlliesCharacterList[BRScene->m_InFieldCharacterMenuIndex]->GetAttackPower());
 		strs[12] = m_InFieldMenuTextList[12].c_str();
 		count = MakeSpriteString(count, xpos[1], ypos[9], 20, 40, strs[12], 12);
 
 		//防御力
-		m_InFieldMenuTextList[13] = L"防御力:" + to_wstring((int)BRScene->InFieldAlliesCharacterList[BRScene->m_InFieldCharacterMenuIndex]->CharaDiffence);
+		m_InFieldMenuTextList[13] = L"防御力:" + to_wstring((int)BRScene->InFieldAlliesCharacterList[BRScene->m_InFieldCharacterMenuIndex]->GetArmor());
 		strs[13] = m_InFieldMenuTextList[13].c_str();
 		count = MakeSpriteString(count, xpos[2], ypos[9], 20, 40, strs[13], 13);
 	}

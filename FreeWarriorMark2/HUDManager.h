@@ -178,9 +178,9 @@ public:
 	bool FrameAction() override;
 	void FinishAction() override;
 
-	void AnimateBarsTo(FieldCharacter* targetChara);
-	void SetSoldiersPersent(FieldCharacter* targetChara);
-	void SetMoralePersent(FieldCharacter* targetChara);
+	void AnimateBarsTo(Platoon* targetChara);
+	void SetSoldiersPersent(Platoon* targetChara);
+	void SetMoralePersent(Platoon* targetChara);
 };
 
 //「偵察カメラ」HUD

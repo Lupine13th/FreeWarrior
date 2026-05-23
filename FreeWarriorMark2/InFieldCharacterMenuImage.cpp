@@ -39,7 +39,7 @@ bool InFieldCharacterMenuImage::FrameAction()
 {
     if (BRScene->InFieldAlliesCharacterList[BRScene->m_InFieldCharacterMenuIndex] != nullptr)
     {
-        switch (BRScene->InFieldAlliesCharacterList[BRScene->m_InFieldCharacterMenuIndex]->CharaKind)
+        switch (BRScene->InFieldAlliesCharacterList[BRScene->m_InFieldCharacterMenuIndex]->GetSoldiersType())
         {
         default:
             break;

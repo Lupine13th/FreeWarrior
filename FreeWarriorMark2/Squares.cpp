@@ -185,7 +185,7 @@ void Squares::HitReaction()
 {
 	NextChara->fbxD->SetAnimeInit(L"DAMAGE", NextChara->chara);
 
-	switch (chara->CharaKind)
+	switch (chara->GetSoldiersType())
 	{
 	default:
 		break;
@@ -195,7 +195,7 @@ void Squares::HitReaction()
 		break;
 	}
 
-	switch (NextChara->chara->CharaKind)
+	switch (NextChara->chara->GetSoldiersType())
 	{
 	default:
 		break;
@@ -206,7 +206,7 @@ void Squares::HitReaction()
 	case SoldiersType::infantry:
 	case SoldiersType::machinegunner:
 	case SoldiersType::scout:
-		if (chara->CharaKind == SoldiersType::artillery)
+		if (chara->GetSoldiersType() == SoldiersType::artillery)
 		{
 			MyAccessHub::GetEffectGenerator()->GetEffectObject(L"Explosive")->PlayEffect(XMFLOAT3(25.0f, 7.5f, 40.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), 1.0f);
 		}
@@ -220,7 +220,7 @@ void Squares::HitReaction()
 void Squares::AttackReaction()
 {
 	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
-	switch (chara->CharaKind)
+	switch (chara->GetSoldiersType())
 	{
 	default:
 		break;
@@ -234,11 +234,11 @@ void Squares::AttackReaction()
 		engine->GetSoundManager()->play(16);
 		break;
 	case SoldiersType::scout:
-		if (chara->CharaAdmin == Admin::Rebel)
+		if (chara->GetAdmin() == Admin::Rebel)
 		{
 			MyAccessHub::GetEffectGenerator()->GetEffectObject(L"MuzzleFlash")->PlayEffect(XMFLOAT3(25.0f, 7.5f, -44.0f), XMFLOAT3(0.0f, 90.0f, 0.0f), 0.1f);
 		}
-		else if (chara->CharaAdmin == Admin::Imperial)
+		else if (chara->GetAdmin() == Admin::Imperial)
 		{
 			MyAccessHub::GetEffectGenerator()->GetEffectObject(L"MuzzleFlash")->PlayEffect(XMFLOAT3(25.0f, 6.0f, -45.0f), XMFLOAT3(0.0f, 90.0f, 0.0f), 0.1f);
 		}

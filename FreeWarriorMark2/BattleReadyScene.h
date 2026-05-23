@@ -42,10 +42,10 @@ private:
 
     TimeManager* m_TimeManager = MyAccessHub::GetTimeManager();
 public:
-    vector<FieldCharacter*> InFieldAlliesCharacterList = { nullptr ,nullptr ,nullptr ,nullptr ,nullptr ,nullptr ,nullptr ,nullptr ,nullptr ,nullptr };
+    vector<Platoon*> InFieldAlliesCharacterList = { nullptr ,nullptr ,nullptr ,nullptr ,nullptr ,nullptr ,nullptr ,nullptr ,nullptr ,nullptr };
 
-    vector<FieldCharacter*> RDAlliesCharacterList = { nullptr ,nullptr ,nullptr ,nullptr ,nullptr };
-    vector<FieldCharacter*> RDEnemyCharacterList = { nullptr ,nullptr ,nullptr ,nullptr ,nullptr };
+    vector<Platoon*> RDAlliesCharacterList = { nullptr ,nullptr ,nullptr ,nullptr ,nullptr };
+    vector<Platoon*> RDEnemyCharacterList = { nullptr ,nullptr ,nullptr ,nullptr ,nullptr };
 
     virtual void InitAction() override;
     virtual bool FrameAction() override;
@@ -58,7 +58,7 @@ public:
 
     void SetNextScene(GAME_SCENES nextSc);
 
-    void SetCharacterData(FieldCharacter* readyChara, FieldCharacter* nextChara, Squares* square, int index, int squareIndex);
+    void SetCharacterData(Platoon* readyChara, Platoon* nextChara, Squares* square, int index, int squareIndex);
 
     void ResetCount();
     int menuIndex = 0;

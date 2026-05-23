@@ -15,7 +15,7 @@
 
 class BattleFieldManager;
 class Squares;
-enum class EnemyMove;
+enum class EnemyActionType;
 
 enum class SoldiersType 
 {
@@ -35,43 +35,45 @@ enum class AIroutine
 };
 
 
-class FieldCharacter : public GameComponent
+class Platoon : public GameComponent
 {
-public:
-	float CharaID = -1;
-	float CharaSoldiers = -1;	//部隊の兵数
-	float CharaMaxSoldiers = -1;//部隊の最大兵数
-	float CharaMorales = -1;	//部隊の士気
-	float CharaMaxMorales = -1;	//部隊の最大士気
-	int CharaPos = -1;			//部隊の座標
-	float CharaRenge = -1;		//攻撃可能範囲
-	float CharaMoveRenge = -1;		//移動可能範囲
-	float CharaPower = -1;		//攻撃力
-	float CharaDiffence = -1;	//防御力
+protected:
+	BattleFieldManager* BFMng = MyAccessHub::GetBFManager();
 
-	GameObject* CharaObj = nullptr;	//キャラクターそのもの
+	PlayerBase* m_PlayerBase = nullptr;
 
-	SoldiersType CharaKind = SoldiersType::infantry;	//兵種
+	int m_PlatoonID = -1;
+	int m_Soldiers = -1;	//部隊の兵数
+	int m_MaxSoldiers = -1;//部隊の最大兵数
+	int m_Morales = -1;	//部隊の士気
+	int m_MaxMorales = -1;	//部隊の最大士気
+	int m_SquaresPosition = -1;			//部隊の座標
+	int m_AttackRenge = -1;		//攻撃可能範囲
+	int m_MoveRenge = -1;		//移動可能範囲
+	int m_AttackPower = -1;		//攻撃力
+	int m_Armor = -1;	//防御力
 
-	Admin CharaAdmin = Admin::None;	//部隊の派閥
+	SoldiersType m_SoldierType = SoldiersType::infantry;	//兵種
 
-	AIroutine CharaAI = AIroutine::None;	//敵部隊のAI行動パターン
+	Admin m_Admin = Admin::None;	//部隊の派閥
 
-	std::wstring CharaName = L"";	//部隊の名前
+	AIroutine m_AIRoutine = AIroutine::None;	//敵部隊のAI行動パターン
 
-	bool Moved = false;	//部隊が行動済みかどうか
+	std::wstring m_PlatoonName = L"";	//部隊の名前
 
-	bool Detected = false;	//敵に発覚されたかどうか
+	bool m_IsActioned = false;	//部隊が行動済みかどうか
 
-	bool Dead = false;	//部隊が全滅したかどうか
+	bool m_IsDetected = false;	//敵に発覚されたかどうか
 
-	bool Selected = false;	//部隊が選択されているかどうか
+	bool m_IsDead = false;	//部隊が全滅したかどうか
 
-	EnemyMove AIMove = EnemyMove::None;	//敵部隊のAI行動
+	bool m_IsSelected = false;	//部隊が選択されているかどうか
 
-	int moveAISquareID = -1;	//敵部隊の移動先マスID
-	int targetAICharacterID = -1;	//攻撃する敵部隊のID
-	Squares* targetAISquare = nullptr;	//攻撃する敵部隊のマス
+	EnemyActionType m_EnemyAction = EnemyActionType::None;	//敵部隊のAI行動
+
+	int m_AIMoveSquareID = -1;	//敵部隊の移動先マスID
+	int m_AITargetCharacterID = -1;	//攻撃する敵部隊のID
+	Squares* m_TargetAISquare = nullptr;	//攻撃する敵部隊のマス
 	Squares* m_NearestEnemySquare = nullptr;	//最も近い敵部隊のマス
 
 	vector<AbilityType> Abilities
@@ -81,13 +83,99 @@ public:
 		AbilityType::None
 	};//アビリティのリスト
 
+public:
 	virtual void InitAction() override;
 	virtual bool FrameAction() override;
 	virtual void FinishAction() override;
 
+	void SetPlatoonName(wstring name)
+	{
+		m_PlatoonName = name;
+	};
+
 	void SetPlayerBase(PlayerBase* playerBase)
 	{
 		m_PlayerBase = playerBase;
+	};
+
+	void SetPlatoonId(int platoonID)
+	{
+		m_PlatoonID = platoonID;
+	};
+
+	void SetAdmin(Admin admin)
+	{
+		m_Admin = admin;
+	};
+
+	void SetSoldier(int soldier)
+	{
+		m_Soldiers = soldier;
+	};
+
+	void SetMorale(int morale)
+	{
+		m_Morales = morale;
+	};
+
+	void SetIsActioned(bool isActioned)
+	{
+		m_IsActioned = isActioned;
+	};
+
+	void SetIsDead(bool isDead)
+	{
+		m_IsDead = isDead;
+	};
+
+	void SetCharacterPosOnSquares(int pos)
+	{
+		m_SquaresPosition = pos;
+	};
+
+	void SetAIRoutine(AIroutine routine)
+	{
+		m_AIRoutine = routine;
+	};
+
+	void SetIsSelected(bool isSelected)
+	{
+		m_IsSelected = isSelected;
+	};
+
+	void SetIsDetected(bool isDetected)
+	{
+		m_IsDetected = isDetected;
+	};
+
+	void SetEnemyActionType(EnemyActionType action)
+	{
+		m_EnemyAction = action;
+	};
+
+	void SetTargetAISquare(Squares* square)
+	{
+		m_TargetAISquare = square;
+	};
+	
+	void SetTargetAISquare(int targetSquareId)
+	{
+		m_AITargetCharacterID = targetSquareId;
+	};
+
+	void SetTargetAICharacterID(int targetAICharacterID)
+	{
+		m_AITargetCharacterID = targetAICharacterID;
+	};
+
+	void SetMoveAISquareID(int moveAISquareID)
+	{
+		m_AIMoveSquareID = moveAISquareID;
+	};
+
+	void SetNearestEnemySquare(Squares* square)
+	{
+		m_NearestEnemySquare = square;
 	};
 
 	PlayerBase* GetPlayerBase()
@@ -100,127 +188,210 @@ public:
 		return Abilities;
 	};
 
-	float GetSoldiers()
+	std::wstring GetPlatoonName()
 	{
-		return CharaSoldiers;
+		return m_PlatoonName;
 	}
 
-	float GetMorale()
+	int GetPlatoonID()
 	{
-		return CharaMorales;
+		return m_PlatoonID;
+	}
+
+	int GetSoldiers()
+	{
+		return m_Soldiers;
+	}
+
+	int GetMaxSoldiers()
+	{
+		return m_MaxSoldiers;
+	}
+
+	int GetMorale()
+	{
+		return m_Morales;
+	}
+
+	int GetMaxMorale()
+	{
+		return m_MaxMorales;
 	}
 
 	float GetSoldiersPercent()
 	{
-		return CharaSoldiers / CharaMaxSoldiers;
+		return m_Soldiers / m_MaxSoldiers;
 	}
 
-	bool GetDetected()
+	bool GetIsDetected()
 	{
-		return Detected;
+		return m_IsDetected;
 	}
 
-	int GetCharacterPos()
+	bool GetIsDead()
 	{
-		return CharaPos;
+		return m_IsDead;
 	}
 
-private:
-	BattleFieldManager* BFMng = MyAccessHub::GetBFManager();
+	bool GetIsActioned()
+	{
+		return m_IsActioned;
+	}
 
-	PlayerBase* m_PlayerBase = nullptr;
+	bool GetIsSelected()
+	{
+		return m_IsSelected;
+	}
 
-	
+	int GetCharacterPosOnSquares()
+	{
+		return m_SquaresPosition;
+	}
+
+	int GetAttackRenge()
+	{
+		return m_AttackRenge;
+	}
+
+	int GetAttackPower()
+	{
+		return m_AttackPower;
+	}
+
+	int GetMoveRenge()
+	{
+		return m_MoveRenge;
+	}
+
+	int GetArmor()
+	{
+		return m_Armor;
+	}
+
+	int GetAITargetCharacterID()
+	{
+		return m_AITargetCharacterID;
+	}
+
+	int GetAIMoveSquareID()
+	{
+		return m_AIMoveSquareID;
+	}
+
+	Admin GetAdmin()
+	{
+		return m_Admin;
+	}
+
+	SoldiersType GetSoldiersType()
+	{
+		return m_SoldierType;
+	}
+
+	EnemyActionType GetEnemyActionType()
+	{
+		return m_EnemyAction;
+	}
+
+	Squares* GetTargetAISquare()
+	{
+		return m_TargetAISquare;
+	}
+
+	Squares* GetNearestEnemySquare()
+	{
+		return m_NearestEnemySquare;
+	}
 };
 
-class Infantry : public FieldCharacter
+class Infantry : public Platoon
 {
 public:
 	Infantry()
 	{
-		CharaKind = SoldiersType::infantry;
-		CharaRenge = 2.0f;
-		CharaMoveRenge = 5.0f;
-		CharaPower = 30.0f;
-		CharaDiffence = 0.0f;
-		CharaSoldiers = 100.0f;
-		CharaMaxSoldiers = 100.0f;
-		CharaMorales = 50.0f;
-		CharaMaxMorales = 100.0f;
+		m_SoldierType = SoldiersType::infantry;
+		m_AttackRenge = 2;
+		m_MoveRenge = 5;
+		m_AttackPower = 30;
+		m_Armor = 0;
+		m_Soldiers = 100;
+		m_MaxSoldiers = 100;
+		m_Morales = 50;
+		m_MaxMorales = 100;
 		Abilities[0] = AbilityType::BayonetCharge;
 		Abilities[1] = AbilityType::ConcentratedFire;
 	}
 };
 
-class MachineGunner : public FieldCharacter
+class MachineGunner : public Platoon
 {
 public:
 	MachineGunner()
 	{
-		CharaKind = SoldiersType::machinegunner;
-		CharaRenge = 3.0f;
-		CharaMoveRenge = 4.0f;
-		CharaPower = 45.0f;
-		CharaDiffence = 0.0f;
-		CharaSoldiers = 80.0f;
-		CharaMaxSoldiers = 80.0f;
-		CharaMorales = 60.0f;
-		CharaMaxMorales = 100.0f;
+		m_SoldierType = SoldiersType::machinegunner;
+		m_AttackRenge = 2;
+		m_MoveRenge = 4;
+		m_AttackPower = 45;
+		m_Armor = 0;
+		m_Soldiers = 80;
+		m_MaxSoldiers = 80;
+		m_Morales = 60;
+		m_MaxMorales = 100;
 		Abilities[0] = AbilityType::ConcentratedFire;
 		Abilities[1] = AbilityType::Scout;
 	}
 };
 
-class Artillery : public FieldCharacter
+class Artillery : public Platoon
 {
 public:
 	Artillery()
 	{
-		CharaKind = SoldiersType::artillery;
-		CharaRenge = 5.0f;
-		CharaMoveRenge = 3.0f;
-		CharaPower = 40.0f;
-		CharaDiffence = 0.0f;
-		CharaSoldiers = 30.0f;
-		CharaMaxSoldiers = 30.0f;
-		CharaMorales = 20.0f;
-		CharaMaxMorales = 100.0f;
+		m_SoldierType = SoldiersType::artillery;
+		m_AttackRenge = 5;
+		m_MoveRenge = 3;
+		m_AttackPower = 40;
+		m_Armor = 0;
+		m_Soldiers = 30;
+		m_MaxSoldiers = 30;
+		m_Morales = 20;
+		m_MaxMorales = 100;
 		Abilities[0] = AbilityType::ConcentratedFire;
 	}
 };
 
-class Scout : public FieldCharacter
+class Scout : public Platoon
 {
 public:
 	Scout()
 	{
-		CharaKind = SoldiersType::scout;
-		CharaRenge = 5.0f;
-		CharaMoveRenge = 6.0f;
-		CharaPower = 20.0f;
-		CharaDiffence = 0.0f;
-		CharaSoldiers = 50.0f;
-		CharaMaxSoldiers = 50.0f;
-		CharaMorales = 50.0f;
-		CharaMaxMorales = 100.0f;
+		m_SoldierType = SoldiersType::scout;
+		m_AttackRenge = 5;
+		m_MoveRenge = 6;
+		m_AttackPower = 20;
+		m_Armor = 0;
+		m_Soldiers = 50;
+		m_MaxSoldiers = 50;
+		m_Morales = 50;
+		m_MaxMorales = 100;
 		Abilities[0] = AbilityType::Scout;
 	}
 };
 
-class Armored : public FieldCharacter
+class Armored : public Platoon
 {
 public:
 	Armored()
 	{
-		CharaKind = SoldiersType::armored;
-		CharaRenge = 4.0f;
-		CharaMoveRenge = 6.0f;
-		CharaPower = 40.0f;
-		CharaDiffence = 75.0f;
-		CharaSoldiers = 25.0f;
-		CharaMaxSoldiers = 25.0f;
-		CharaMorales = 50.0f;
-		CharaMaxMorales = 100.0f;
+		m_SoldierType = SoldiersType::armored;
+		m_AttackRenge = 4;
+		m_MoveRenge = 6;
+		m_AttackPower = 40;
+		m_Armor = 75;
+		m_Soldiers = 25;
+		m_MaxSoldiers = 25;
+		m_Morales = 50;
+		m_MaxMorales = 100;
 		Abilities[0] = AbilityType::ConcentratedFire;
 		Abilities[1] = AbilityType::Scout;
 	}

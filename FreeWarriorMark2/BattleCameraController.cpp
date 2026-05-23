@@ -104,7 +104,7 @@ bool BattleCameraController::FrameAction()
 
 	if (m_BattleCameraState == BattleCameraType::ScoutingCamera && selectSquare->chara != nullptr && fbxD != nullptr)	//ヌルチェック
 	{
-		switch (selectSquare->chara->CharaKind)
+		switch (selectSquare->chara->GetSoldiersType())
 		{
 		case SoldiersType::infantry:
 		case SoldiersType::machinegunner:
