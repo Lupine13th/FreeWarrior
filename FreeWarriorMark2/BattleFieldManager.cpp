@@ -301,6 +301,8 @@ bool BattleFieldManager::FrameAction()
 
 							UpdateBattleField();
 
+							m_HUDManager->GetHUDObject("BattlePredictionHUD")->SetAnimationState(AnimationState::OnInit);
+
 							p_engine->GetSoundManager()->play(3);
 							break;
 						case 1:																													//移動コマンド
@@ -387,6 +389,7 @@ bool BattleFieldManager::FrameAction()
 					{
 						m_TargetPos[(int)Vector::X]++;
 					}
+					m_HUDManager->GetHUDObject("BattlePredictionHUD")->SetAnimationState(AnimationState::Init);		//攻撃HUDをリセット
 					ResetHUDs(2);
 				}
 				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_RIGHT))	//十字キーの右を入力
@@ -400,6 +403,7 @@ bool BattleFieldManager::FrameAction()
 					{
 						m_TargetPos[(int)Vector::X]--;
 					}
+					m_HUDManager->GetHUDObject("BattlePredictionHUD")->SetAnimationState(AnimationState::Init);		//攻撃HUDをリセット
 					ResetHUDs(2);
 				}
 				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_BACK))	//十字キーの下を入力
@@ -413,6 +417,7 @@ bool BattleFieldManager::FrameAction()
 					{
 						m_TargetPos[(int)Vector::Y]++;
 					}
+					m_HUDManager->GetHUDObject("BattlePredictionHUD")->SetAnimationState(AnimationState::Init);		//攻撃HUDをリセット
 					ResetHUDs(2);
 				}
 				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_FORWARD))	//十字キーの上を入力
@@ -426,12 +431,16 @@ bool BattleFieldManager::FrameAction()
 					{
 						m_TargetPos[(int)Vector::Y]--;
 					}
+					m_HUDManager->GetHUDObject("BattlePredictionHUD")->SetAnimationState(AnimationState::Init);		//攻撃HUDをリセット
 					ResetHUDs(2);
 				}
 				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK))			//スペースキーを入力
 				{
 					if (m_FieldSquaresList[m_TargetID]->chara != nullptr && m_FieldSquaresList[m_TargetID]->chara->GetAdmin() != m_FieldSquaresList[m_SelectID]->chara->GetAdmin())	//ターゲットカーソルが敵のいる位置にある
 					{
+						m_HUDManager->GetHUDObject("BattlePredictionHUD")->SetAnimationState(AnimationState::None);	//攻撃HUDを切る
+						ResetPredectCamera();																		//攻撃HUDを切る
+
 						SetAttackingCharacterSquares(m_FieldSquaresList[m_SelectID]);
 						m_FieldSquaresList[m_SelectID]->SetAnimation(Animations::Attack, m_FieldSquaresList[m_SelectID]->chara->GetAdmin(), m_FieldSquaresList[m_SelectID], m_FieldSquaresList[m_TargetID]);
 						Attack(m_AlliesCharacterList[m_FieldSquaresList[m_SelectID]->ThereCharaID], m_EnemyCharacterList[m_FieldSquaresList[m_TargetID]->ThereCharaID]);
@@ -444,6 +453,9 @@ bool BattleFieldManager::FrameAction()
 				}
 				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_CANCEL))		//エスケープキーを入力
 				{
+					m_HUDManager->GetHUDObject("BattlePredictionHUD")->SetAnimationState(AnimationState::None);		//攻撃HUDを切る
+					ResetPredectCamera();																			//攻撃HUDを切る
+
 					m_FieldSquaresList[m_TargetID]->SetSquaresColor(SquareColor::NotCursor);													//メニューを閉じる
 					m_Mode = Mode::FieldMode;
 					ResetFieldFromMove();
@@ -610,6 +622,8 @@ bool BattleFieldManager::FrameAction()
 								m_TargetMode = TargetMode::EnemyTarget;
 								break;
 							}
+
+							m_HUDManager->GetHUDObject("BattlePredictionHUD")->SetAnimationState(AnimationState::OnInit);
 							
 							m_AbillityMenuState = AbillityMenuState::Target;
 							p_engine->GetSoundManager()->play(3);
@@ -640,6 +654,9 @@ bool BattleFieldManager::FrameAction()
 						{
 							m_TargetPos[(int)Vector::X]++;
 						}
+
+						m_HUDManager->GetHUDObject("BattlePredictionHUD")->SetAnimationState(AnimationState::Init);		//攻撃HUDをリセット
+
 						ResetHUDs(2);
 					}
 					else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_RIGHT))	//十字キー右を押したとき
@@ -653,6 +670,9 @@ bool BattleFieldManager::FrameAction()
 						{
 							m_TargetPos[(int)Vector::X]--;
 						}
+
+						m_HUDManager->GetHUDObject("BattlePredictionHUD")->SetAnimationState(AnimationState::Init);		//攻撃HUDをリセット
+
 						ResetHUDs(2);
 					}
 					else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_BACK))	//十字キー下を押したとき
@@ -666,6 +686,9 @@ bool BattleFieldManager::FrameAction()
 						{
 							m_TargetPos[(int)Vector::Y]++;
 						}
+
+						m_HUDManager->GetHUDObject("BattlePredictionHUD")->SetAnimationState(AnimationState::Init);		//攻撃HUDをリセット
+
 						ResetHUDs(2);
 					}
 					else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::UI_MOVE_FORWARD))	//十字キー上を押したとき
@@ -679,6 +702,9 @@ bool BattleFieldManager::FrameAction()
 						{
 							m_TargetPos[(int)Vector::Y]--;
 						}
+
+						m_HUDManager->GetHUDObject("BattlePredictionHUD")->SetAnimationState(AnimationState::Init);		//攻撃HUDをリセット
+
 						ResetHUDs(2);
 					}
 					else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK))			//スペースキーを押したとき
@@ -700,6 +726,9 @@ bool BattleFieldManager::FrameAction()
 								ResetHUDs(3);
 								break;
 							}
+
+							m_HUDManager->GetHUDObject("BattlePredictionHUD")->SetAnimationState(AnimationState::None);		//攻撃HUDを切る
+							ResetPredectCamera();																			//攻撃HUDを切る
 							
 							Abiliting(m_AlliesCharacterList[m_FieldSquaresList[m_SelectID]->ThereCharaID], m_EnemyCharacterList[m_FieldSquaresList[m_TargetID]->ThereCharaID]);
 							m_FieldSquaresList[m_TargetID]->SetSquaresColor(SquareColor::NotCursor);
@@ -711,6 +740,9 @@ bool BattleFieldManager::FrameAction()
 					}
 					else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_CANCEL))		//エスケープキーを押したとき
 					{
+						m_HUDManager->GetHUDObject("BattlePredictionHUD")->SetAnimationState(AnimationState::None);		//攻撃HUDを切る
+						ResetPredectCamera();																			//攻撃HUDを切る
+
 						m_FieldSquaresList[m_TargetID]->SetSquaresColor(SquareColor::NotCursor);													//メニューを閉じる
 						ResetFieldFromMove();
 						m_Mode = Mode::FieldMode;
@@ -886,6 +918,7 @@ void BattleFieldManager::UpdateBattleField()
 			if (m_FieldSquaresList[m_AlliesCharacterList[i]->GetCharacterPosOnSquares()]->target)
 			{
 				SetResult(true);
+				return;
 			}
 		}
 	}
@@ -1067,7 +1100,63 @@ void BattleFieldManager::ResetAbillityMenu()
 	m_AbillityIndex = 0;
 }
 
-bool BattleFieldManager::AttackingPlatoonIsAttackingTerrain(Platoon* attackingChara)
+void BattleFieldManager::ResetPredectCamera()
+{
+	SceneManager* scene = static_cast<SceneManager*>(MyAccessHub::GetMyGameEngine()->GetSceneController());
+
+	scene->SetActiveCameraCompornent(L"AttackerCameraForHUD", false);
+	scene->SetActiveCameraCompornent(L"DefenderCameraForHUD", false);
+}
+
+int BattleFieldManager::CalculateDamage(ActionName action, Platoon* attackingCharacter, Platoon* attackedCharacter)
+{
+	float damage = 0;
+
+	if (AttackingPlatoonIsAttackingTerrain(attackingCharacter))
+	{
+		damage = attackingCharacter->GetAttackPower() * 1.2f;						//攻撃側が森林、監視塔の地形にいる場合、ダメージ増加
+	}
+	else
+	{
+		damage = attackingCharacter->GetAttackPower();								//そうじゃなければそのまま攻撃力を持ってくる
+	}
+
+	if (attackedCharacter->GetArmor() != 0.0f)
+	{
+		damage = damage * (1.0f - (float)attackedCharacter->GetArmor() / 100.0f);	//部隊の装甲値に応じてダメージ減衰
+	}
+
+	if (!attackedCharacter->GetIsDetected())
+	{
+		damage = damage * 0.75f;														//偵察出来ていない場合、ダメージ減衰
+	}
+
+	if (AttackedPlatoonIsDefenciveTerrain(attackedCharacter))
+	{
+		damage = damage * 0.75f;														//防御側が丘陵、河川地形にいる場合、ダメージ減衰
+	}
+
+	if (damage > attackedCharacter->GetSoldiers())
+	{
+		damage = attackedCharacter->GetSoldiers();									//オーバーフローを起こさないように
+	}
+
+	switch (action)
+	{
+	case ActionName::ConcentratedFire:
+		damage = damage * 1.5f;
+		break;
+	case ActionName::BayonetCharge:
+		damage = damage * 1.5f;
+		break;
+	}
+
+	int finalDamage = (int)damage;		//変な切り捨てが無駄に行われないように最後にfloat型をint型に変換する
+
+	return finalDamage;
+}
+
+bool BattleFieldManager::AttackingPlatoonIsAttackingTerrain(Platoon* attackingChara)	//攻撃側が攻撃向き地形にいるかどうか？
 {
 	if (GetFieldSquaresList()[attackingChara->GetCharacterPosOnSquares()]->terrainname == Terrain::Forest || GetFieldSquaresList()[attackingChara->GetCharacterPosOnSquares()]->terrainname == Terrain::Tower)
 	{
@@ -1076,7 +1165,7 @@ bool BattleFieldManager::AttackingPlatoonIsAttackingTerrain(Platoon* attackingCh
 	return false;
 }
 
-bool BattleFieldManager::AttackedPlatoonIsDefenciveTerrain(Platoon* attackedChara)
+bool BattleFieldManager::AttackedPlatoonIsDefenciveTerrain(Platoon* attackedChara)		//防御側が防御向き地形にいるかどうか？
 {
 	if (GetFieldSquaresList()[attackedChara->GetCharacterPosOnSquares()]->terrainname == Terrain::Hills || GetFieldSquaresList()[attackedChara->GetCharacterPosOnSquares()]->terrainname == Terrain::River)
 	{
@@ -1472,38 +1561,9 @@ void BattleFieldManager::ChangeTurnEnemy()
 
 void BattleFieldManager::Attack(Platoon* attackingchara, Platoon* attackedchara)
 {
-	int damage = 0;
+	m_AttackedCharacter = attackedchara;
 
-	m_AttackedCharacter = attackedchara;	//防御している部隊をメンバ変数に代入(後からCheckDeadを行うため)
-
-	if (m_FieldSquaresList[attackingchara->GetCharacterPosOnSquares()]->terrainname == Terrain::Forest || m_FieldSquaresList[attackingchara->GetCharacterPosOnSquares()]->terrainname == Terrain::Tower)
-	{
-		damage = attackingchara->GetAttackPower() * 1.2;	//攻撃側が森林、監視塔の地形にいる場合、ダメージ増加
-	}
-	else
-	{
-		damage = attackingchara->GetAttackPower();
-	}
-
-	if (attackedchara->GetArmor() != 0.0f)
-	{
-		damage = damage * (1.0f - attackedchara->GetArmor() / 100);	//部隊の装甲値に応じてダメージ減衰
-	}
-	
-
-	if (!attackedchara->GetIsDetected())
-	{
-		damage = damage * 0.75;	//偵察出来ていない場合、ダメージ減衰
-	}
-	if (m_FieldSquaresList[attackedchara->GetCharacterPosOnSquares()]->terrainname == Terrain::Hills || m_FieldSquaresList[attackedchara->GetCharacterPosOnSquares()]->terrainname == Terrain::River)
-	{
-		damage = damage * 0.75;	//防御側が丘陵、河川地形にいる場合、ダメージ減衰
-	}
-
-	if (damage > attackedchara->GetSoldiers())
-	{
-		damage = attackedchara->GetSoldiers();	//オーバーフローを起こさないように
-	}
+	int damage = CalculateDamage(ActionName::Attack, attackingchara, attackedchara);
 
 	m_DamageHUD->SetDamage(damage, attackedchara->GetMaxSoldiers(), attackedchara->GetSoldiers());	//ダメージUIを起動
 

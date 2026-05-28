@@ -66,6 +66,10 @@ void HUDManager::InitAction()
     EndingHUD* endingHUD = new EndingHUD();   //ターン終了HUD
     GetGameObject()->addComponent(endingHUD);
     AddHUDObject("EndingHUD", endingHUD);
+
+    BattlePredictionHUD* battlePredictionHUD = new BattlePredictionHUD();   //戦闘予想HUD
+    GetGameObject()->addComponent(battlePredictionHUD);
+    AddHUDObject("BattlePredictionHUD", battlePredictionHUD);
 }
 
 bool HUDManager::FrameAction()
@@ -250,10 +254,10 @@ bool MeterHUD::FrameAction()
         m_TextList["兵数"] = soldiers.c_str();
         m_TextList["士気"] = morale.c_str();
 
-        count = MakeSpriteStringRightAligned(count, kSoldierTextPos.x, kSoldierTextPos.y, 15, 23, m_TextList["兵数"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
-        count = MakeSpriteStringRightAligned(count, kMoraleTextPos.x, kMoraleTextPos.y, 15, 23, m_TextList["士気"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
+        count = MakeSpriteStringRightEdge(count, kSoldierTextPos.x, kSoldierTextPos.y, 15, 23, m_TextList["兵数"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
+        count = MakeSpriteStringRightEdge(count, kMoraleTextPos.x, kMoraleTextPos.y, 15, 23, m_TextList["士気"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
 
-        if (BFMng->GetHUDEnableCondition())
+        if (BFMng->GetHUDEnableCondition() && BFMng->GetMode() != Mode::AttackMode && BFMng->GetMode() != Mode::AbilityMode)
         {
             for (int i = 0; i < count; i++)
             {
@@ -303,7 +307,7 @@ void MeterHUD::SetSoldiersPersent(Platoon* targetChara)
 
 void MeterHUD::SetMoralePersent(Platoon* targetChara)
 {
-    float moralePercent = targetChara->GetMorale() / targetChara->GetMaxMorale();
+    float moralePercent = (float)targetChara->GetMorale() / (float)targetChara->GetMaxMorale();
     if (!targetChara->GetIsDetected() && targetChara->GetAdmin() == Admin::Imperial)
     {
         moralePercent = 1.15f;
@@ -402,6 +406,19 @@ void HUDObject::SetShaderResoruce()
 void HUDObject::ResetHUD()
 {
 	SetAnimationState(AnimationState::Init);
+}
+
+void HUDObject::RefreshEasingAnimation()
+{
+    for (int i = m_ActiveTweenList.size() - 1; i >= 0; --i)
+    {
+        m_ActiveTweenList[i]->Update(m_TimeManager->GetDeltaTime());
+        if (!m_ActiveTweenList[i]->IsActive())
+        {
+            // Tweenが終了したらリストから削除
+            m_ActiveTweenList.erase(m_ActiveTweenList.begin() + i);
+        }
+	}
 }
 
 void StatusHUD::InitAction()
@@ -509,12 +526,12 @@ bool StatusHUD::FrameAction()
         {
             p_scene->SetActiveCameraCompornent(L"ScoutingCamera", false);
         }
-
-        if (BFMng->GetMode() == Mode::TurnEndMode)
-        {
-            p_scene->SetActiveCameraCompornent(L"ScoutingCamera", false);
-        }
         break;
+    }
+
+    if (BFMng->GetMode() == Mode::TurnEndMode)
+    {
+        p_scene->SetActiveCameraCompornent(L"ScoutingCamera", false);
     }
 
     if (BFMng->GetHUDEnableCondition() && BFMng->GetFieldSquaresList()[BFMng->GetSelectID()]->chara != nullptr && BFMng->GetCursorState() == CursorState::Select && BFMng->GetMode() != Mode::TurnEndMode)
@@ -666,11 +683,11 @@ bool StatusText::FrameAction()
 
         if (selectSquare->SqAdmin == Admin::Rebel)
         {
-            count = MakeSpriteString(count, kCharacterNameTextPos.x, kCharacterNameTextPos.y, 15, 30, cstr.c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
+            count = MakeSpriteStringLeftEdge(count, kCharacterNameTextPos.x, kCharacterNameTextPos.y, 15, 30, cstr.c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
         }
         else if (selectSquare->SqAdmin == Admin::Imperial)
         {
-            count = MakeSpriteString(count, kCharacterNameTextPos.x, kCharacterNameTextPos.y, 15, 30, cstr.c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
+            count = MakeSpriteStringLeftEdge(count, kCharacterNameTextPos.x, kCharacterNameTextPos.y, 15, 30, cstr.c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
         }
 
         if (BFMng->GetHUDEnableCondition() && MyAccessHub::GetHUDManager()->GetHUDObject("StatusHUD")->GetAnimationState() == AnimationState::Finish)
@@ -680,7 +697,7 @@ bool StatusText::FrameAction()
                 pipeLine->AddRenderObject(m_WordSpriteList[i].get());
             }
         }
-        else if ((selectSquare->SqAdmin == Admin::Imperial || targetSquare->SqAdmin == Admin::Imperial) && !BFMng->GetEnemyCharacterList()[selectSquare->ThereCharaID]->GetIsDetected())   //索敵出来ていない敵ならば「信号無し」を確実に映す
+        else if (BFMng->GetHUDEnableCondition() && (selectSquare->SqAdmin == Admin::Imperial || targetSquare->SqAdmin == Admin::Imperial) && !BFMng->GetEnemyCharacterList()[selectSquare->ThereCharaID]->GetIsDetected())   //索敵出来ていない敵ならば「信号無し」を確実に映す
         {
             for (int i = 0; i < count; i++)
             {
@@ -695,19 +712,19 @@ void StatusText::FinishAction()
 {
 }
 
-int HUDTextObject::MakeSpriteString(int startIndex, float ltX, float ltY, float width, float height, const wchar_t* str, XMFLOAT3 color)
+int HUDTextObject::MakeSpriteStringLeftEdge(int startIndex, float ltX, float ltY, float width, float height, const wchar_t* str, XMFLOAT3 color)
 {
-    int count = startIndex;
+    int count = startIndex; //最初の文字数
 
     while (*str != '\0')
     {
-        if (std::find(m_FontWordList, kWordListEnd, *str) != kWordListEnd)
+        if (std::find(m_FontWordList, kWordListEnd, *str) != kWordListEnd)  //文字テクスチャが実装されているか確認
         {
-            m_WordSpriteList[count]->SetSpritePattern(0, width, height, m_FontMap[*str]);
-            m_WordSpriteList[count]->setSpriteIndex(0);
-            m_WordSpriteList[count]->SetColor(color.x, color.y, color.z, 1);
+            m_WordSpriteList[count]->SetSpritePattern(0, width, height, m_FontMap[*str]);   //m_FontMapはSetFontでUV座標割り当て済み
+            m_WordSpriteList[count]->setSpriteIndex(0);                                     //使用UVを初期化
+            m_WordSpriteList[count]->SetColor(color.x, color.y, color.z, 1);                //テキストの色を設定
 
-            m_WordSpriteList[count]->setPosition(ltX, ltY, 0.0f);
+            m_WordSpriteList[count]->setPosition(ltX, ltY, 0.0f);                           //位置を設定(左端から)
             count++;
         }
 
@@ -719,7 +736,7 @@ int HUDTextObject::MakeSpriteString(int startIndex, float ltX, float ltY, float 
     return count;
 }
 
-int HUDTextObject::MakeSpriteStringRightAligned(int startIndex, float ltX, float ltY, float width, float height, const wchar_t* str, XMFLOAT3 color)
+int HUDTextObject::MakeSpriteStringRightEdge(int startIndex, float ltX, float ltY, float width, float height, const wchar_t* str, XMFLOAT3 color)
 {
     int count = startIndex;
 
@@ -730,11 +747,46 @@ int HUDTextObject::MakeSpriteStringRightAligned(int startIndex, float ltX, float
         if (std::find(m_FontWordList, kWordListEnd, *tmp) != kWordListEnd)
             len++;
         tmp++;
-    }
+    }                                                                       //テキストの数から横幅を計算
 
-    float totalWidth = len * (width + 2.0f) - 2.0f;
+    float totalWidth = len * (width + 2.0f) - 2.0f;                         //テキストの数から横幅を計算
 
     float startX = ltX - totalWidth;
+
+    while (*str != L'\0')
+    {
+        if (std::find(m_FontWordList, kWordListEnd, *str) != kWordListEnd)
+        {
+            m_WordSpriteList[count]->SetSpritePattern(0, width, height, m_FontMap[*str]);
+            m_WordSpriteList[count]->setSpriteIndex(0);
+            m_WordSpriteList[count]->setPosition(startX, ltY, 0.0f);
+            m_WordSpriteList[count]->SetColor(color.x, color.y, color.z, 1);
+            count++;
+            startX += width + 2.0f;
+        }
+
+        str++;
+    }
+
+    return count;
+}
+
+int HUDTextObject::MakeSpriteStringMid(int startIndex, float ltX, float ltY, float width, float height, const wchar_t* str, XMFLOAT3 color)
+{
+    int count = startIndex;
+
+    int len = 0;
+    const wchar_t* tmp = str;
+    while (*tmp != L'\0')
+    {
+        if (std::find(m_FontWordList, kWordListEnd, *tmp) != kWordListEnd)
+            len++;
+        tmp++;
+    }                                                                       //テキストの数から横幅を計算
+
+    float totalWidth = len * (width + 2.0f) - 2.0f;                         //テキストの数から横幅を計算
+
+    float startX = ltX - (totalWidth * 0.5f) + (width * 0.5f);                               //中央ぞろえ
 
     while (*str != L'\0')
     {
@@ -865,15 +917,7 @@ bool AbilityHUD::FrameAction()
         MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
         GraphicsPipeLineObjectBase* pipeline = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
 
-        for (int i = m_ActiveTweenList.size() - 1; i >= 0; --i)
-        {
-            m_ActiveTweenList[i]->Update(m_TimeManager->GetDeltaTime());
-            if (!m_ActiveTweenList[i]->IsActive())
-            {
-                // Tweenが終了したらリストから削除
-                m_ActiveTweenList.erase(m_ActiveTweenList.begin() + i);
-            }
-        }
+        RefreshEasingAnimation();
 
         int count = 0;
         int abillityCount = 0;
@@ -1087,28 +1131,28 @@ bool GuideHUD::FrameAction()
         default:
 			break;
         case Mode::FieldMode:
-            count = MakeSpriteString(count, kGuideTextPos.x, kGuideTextPos.y, 20, 30, m_TextList["フィールド"].c_str(), XMFLOAT3(0.0f, 0.0f, 0.0f));
-            count = MakeSpriteString(count, kGuideTextPos2.x, kGuideTextPos2.y, 20, 30, m_TextList["フィールド2"].c_str(), XMFLOAT3(0.0f, 0.0f, 0.0f));
+            count = MakeSpriteStringLeftEdge(count, kGuideTextPos.x, kGuideTextPos.y, 20, 30, m_TextList["フィールド"].c_str(), XMFLOAT3(0.0f, 0.0f, 0.0f));
+            count = MakeSpriteStringLeftEdge(count, kGuideTextPos2.x, kGuideTextPos2.y, 20, 30, m_TextList["フィールド2"].c_str(), XMFLOAT3(0.0f, 0.0f, 0.0f));
             break;
         case Mode::MenuMode:
-            count = MakeSpriteString(count, kGuideTextPos.x, kGuideTextPos.y, 20, 30, m_TextList["メニュー"].c_str(), XMFLOAT3(0.0f, 0.0f, 0.0f));
+            count = MakeSpriteStringLeftEdge(count, kGuideTextPos.x, kGuideTextPos.y, 20, 30, m_TextList["メニュー"].c_str(), XMFLOAT3(0.0f, 0.0f, 0.0f));
 			break;
         case Mode::AbilityMode:
             switch (BFMng->GetAbillityMenuState())
             {
                 case AbillityMenuState::Menu:
-                    count = MakeSpriteString(count, kGuideTextPos.x, kGuideTextPos.y, 20, 30, m_TextList["アビリティ"].c_str(), XMFLOAT3(0.0f, 0.0f, 0.0f));
+                    count = MakeSpriteStringLeftEdge(count, kGuideTextPos.x, kGuideTextPos.y, 20, 30, m_TextList["アビリティ"].c_str(), XMFLOAT3(0.0f, 0.0f, 0.0f));
 					break;
                 case AbillityMenuState::Target:
-                    count = MakeSpriteString(count, kGuideTextPos.x, kGuideTextPos.y, 20, 30, m_TextList["攻撃"].c_str(), XMFLOAT3(0.0f, 0.0f, 0.0f));
+                    count = MakeSpriteStringLeftEdge(count, kGuideTextPos.x, kGuideTextPos.y, 20, 30, m_TextList["攻撃"].c_str(), XMFLOAT3(0.0f, 0.0f, 0.0f));
 					break;
             }
 			break;
         case Mode::AttackMode:
-            count = MakeSpriteString(count, kGuideTextPos.x, kGuideTextPos.y, 20, 30, m_TextList["攻撃"].c_str(), XMFLOAT3(0.0f, 0.0f, 0.0f));
+            count = MakeSpriteStringLeftEdge(count, kGuideTextPos.x, kGuideTextPos.y, 20, 30, m_TextList["攻撃"].c_str(), XMFLOAT3(0.0f, 0.0f, 0.0f));
 			break;
         case Mode::MoveMode:
-            count = MakeSpriteString(count, kGuideTextPos.x, kGuideTextPos.y, 20, 30, m_TextList["移動"].c_str(), XMFLOAT3(0.0f, 0.0f, 0.0f));
+            count = MakeSpriteStringLeftEdge(count, kGuideTextPos.x, kGuideTextPos.y, 20, 30, m_TextList["移動"].c_str(), XMFLOAT3(0.0f, 0.0f, 0.0f));
 			break;
     }
 
@@ -1183,21 +1227,21 @@ bool SideMenuHUD::FrameAction()
             break;
         case 0:
             pipeline->AddRenderObject(m_SpriteList[0].get());
-            count = MakeSpriteString(count, kTextPositionX, kTextPositionY[0], 35, 50, m_TextList["ターン終了"].c_str(), XMFLOAT3(0.0f, 0.0f, 0.0f));
-            count = MakeSpriteString(count, kTextPositionX, kTextPositionY[1], 35, 50, m_TextList["ゲーム終了"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
-            count = MakeSpriteString(count, kTextPositionX, kTextPositionY[2], 35, 50, m_TextList["キャンセル"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
+            count = MakeSpriteStringLeftEdge(count, kTextPositionX, kTextPositionY[0], 35, 50, m_TextList["ターン終了"].c_str(), XMFLOAT3(0.0f, 0.0f, 0.0f));
+            count = MakeSpriteStringLeftEdge(count, kTextPositionX, kTextPositionY[1], 35, 50, m_TextList["ゲーム終了"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
+            count = MakeSpriteStringLeftEdge(count, kTextPositionX, kTextPositionY[2], 35, 50, m_TextList["キャンセル"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
             break;
         case 1:
             pipeline->AddRenderObject(m_SpriteList[1].get());
-            count = MakeSpriteString(count, kTextPositionX, kTextPositionY[0], 35, 50, m_TextList["ターン終了"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
-            count = MakeSpriteString(count, kTextPositionX, kTextPositionY[1], 35, 50, m_TextList["ゲーム終了"].c_str(), XMFLOAT3(0.0f, 0.0f, 0.0f));
-            count = MakeSpriteString(count, kTextPositionX, kTextPositionY[2], 35, 50, m_TextList["キャンセル"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
+            count = MakeSpriteStringLeftEdge(count, kTextPositionX, kTextPositionY[0], 35, 50, m_TextList["ターン終了"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
+            count = MakeSpriteStringLeftEdge(count, kTextPositionX, kTextPositionY[1], 35, 50, m_TextList["ゲーム終了"].c_str(), XMFLOAT3(0.0f, 0.0f, 0.0f));
+            count = MakeSpriteStringLeftEdge(count, kTextPositionX, kTextPositionY[2], 35, 50, m_TextList["キャンセル"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
             break;
         case 2:
             pipeline->AddRenderObject(m_SpriteList[2].get());
-            count = MakeSpriteString(count, kTextPositionX, kTextPositionY[0], 35, 50, m_TextList["ターン終了"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
-            count = MakeSpriteString(count, kTextPositionX, kTextPositionY[1], 35, 50, m_TextList["ゲーム終了"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
-            count = MakeSpriteString(count, kTextPositionX, kTextPositionY[2], 35, 50, m_TextList["キャンセル"].c_str(), XMFLOAT3(0.0f, 0.0f, 0.0f));
+            count = MakeSpriteStringLeftEdge(count, kTextPositionX, kTextPositionY[0], 35, 50, m_TextList["ターン終了"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
+            count = MakeSpriteStringLeftEdge(count, kTextPositionX, kTextPositionY[1], 35, 50, m_TextList["ゲーム終了"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
+            count = MakeSpriteStringLeftEdge(count, kTextPositionX, kTextPositionY[2], 35, 50, m_TextList["キャンセル"].c_str(), XMFLOAT3(0.0f, 0.0f, 0.0f));
             break;
         }
 
@@ -1320,10 +1364,10 @@ bool CurrentTerrainHUD::FrameAction()
 
     m_TextList["座標"] = squarePosition.c_str();
 
-    count = MakeSpriteString(count, kTextPositionX, kTextPositionY[0], 30, 45, m_TextList["地形名称"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
-    count = MakeSpriteString(count, kTextPositionX, kTextPositionY[1], 20, 30, m_TextList["地形効果"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
-    count = MakeSpriteString(count, kTextPositionX, kTextPositionY[2], 18, 27, m_TextList["地形効果詳細"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
-    count = MakeSpriteString(count, kTextPositionX, kTextPositionY[3], 20, 30, m_TextList["座標"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
+    count = MakeSpriteStringLeftEdge(count, kTextPositionX, kTextPositionY[0], 30, 45, m_TextList["地形名称"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
+    count = MakeSpriteStringLeftEdge(count, kTextPositionX, kTextPositionY[1], 20, 30, m_TextList["地形効果"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
+    count = MakeSpriteStringLeftEdge(count, kTextPositionX, kTextPositionY[2], 18, 27, m_TextList["地形効果詳細"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
+    count = MakeSpriteStringLeftEdge(count, kTextPositionX, kTextPositionY[3], 20, 30, m_TextList["座標"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
 
     pipeline->AddRenderObject(m_SpriteList[0].get());
 
@@ -1357,7 +1401,7 @@ void BattleCameraHUD::InitAction()
     m_SpriteList[0]->SetScale(960.0f, 950.0f, 0.1f);
 
     m_SpriteList[1]->setPosition(kAttackerTextBackGroundPos.x, kAttackerTextBackGroundPos.y, OrderInLayer::MoveObject);
-    m_SpriteList[1]->SetScale(200.0f, 150.0f, 0.1f);
+    m_SpriteList[1]->SetScale(200.0f, 100.0f, 0.1f);
 
 
     SetAnimationState(AnimationState::Init);
@@ -1382,9 +1426,9 @@ bool BattleCameraHUD::FrameAction()
             m_TextList["防御側"] = (defenderCharacterSquare->GetPlatoonName().c_str());
             m_TextList["攻撃側行動"] = attackerSquare->GetAttackerMoveText();
 
-            count = MakeSpriteString(count, kAttackerTextPos.x, kAttackerTextPos.y, 30, 45, m_TextList["攻撃側"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
-            count = MakeSpriteString(count, kDefenderTextPos.x, kDefenderTextPos.y, 30, 45, m_TextList["防御側"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
-            count = MakeSpriteString(count, kAttackerMoveTextPos.x, kAttackerMoveTextPos.y, 20, 30, m_TextList["攻撃側行動"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
+            count = MakeSpriteStringLeftEdge(count, kAttackerTextPos.x, kAttackerTextPos.y, 30, 45, m_TextList["攻撃側"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
+            count = MakeSpriteStringLeftEdge(count, kDefenderTextPos.x, kDefenderTextPos.y, 30, 45, m_TextList["防御側"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
+            count = MakeSpriteStringLeftEdge(count, kAttackerMoveTextPos.x, kAttackerMoveTextPos.y, 20, 30, m_TextList["攻撃側行動"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
         }
 
 		pipeline->AddRenderObject(m_SpriteList[0].get());    //外枠を描画
@@ -1501,15 +1545,7 @@ bool MainMenuHUD::FrameAction()
 
     int count = 0;
 
-    for (int i = m_ActiveTweenList.size() - 1; i >= 0; --i)
-    {
-        m_ActiveTweenList[i]->Update(m_TimeManager->GetDeltaTime());
-        if (!m_ActiveTweenList[i]->IsActive())
-        {
-            // Tweenが終了したらリストから削除
-            m_ActiveTweenList.erase(m_ActiveTweenList.begin() + i);
-        }
-    }
+    RefreshEasingAnimation();
 
     switch (m_AnimationState)
     {
@@ -1631,23 +1667,23 @@ bool MainMenuHUD::FrameAction()
     //攻撃表示
     if (BFMng->GetInLengeEnemyCount() > 0)
     {
-        count = MakeSpriteString(count, kMenuTextPositionX, kMenuTextPositionY[0], 32, 54, m_TextList["攻撃"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
+        count = MakeSpriteStringLeftEdge(count, kMenuTextPositionX, kMenuTextPositionY[0], 32, 54, m_TextList["攻撃"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
     }
 
     //移動表示
-    count = MakeSpriteString(count, kMenuTextPositionX, kMenuTextPositionY[1], 32, 54, m_TextList["移動"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
+    count = MakeSpriteStringLeftEdge(count, kMenuTextPositionX, kMenuTextPositionY[1], 32, 54, m_TextList["移動"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
 
     //アビリティ表示
     if (BFMng->GetInLengeEnemyCount() > 0)
     {
-        count = MakeSpriteString(count, kMenuTextPositionX, kMenuTextPositionY[2], 32, 54, m_TextList["行動"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
+        count = MakeSpriteStringLeftEdge(count, kMenuTextPositionX, kMenuTextPositionY[2], 32, 54, m_TextList["行動"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
     }
 
     //待機表示
-    count = MakeSpriteString(count, kMenuTextPositionX, kMenuTextPositionY[3], 32, 54, m_TextList["待機"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
+    count = MakeSpriteStringLeftEdge(count, kMenuTextPositionX, kMenuTextPositionY[3], 32, 54, m_TextList["待機"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
 
     //キャンセル表示
-    count = MakeSpriteString(count, kMenuTextPositionX, kMenuTextPositionY[4], 32, 54, m_TextList["キャンセル"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
+    count = MakeSpriteStringLeftEdge(count, kMenuTextPositionX, kMenuTextPositionY[4], 32, 54, m_TextList["キャンセル"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
 
     //矢印表示
     float arrowPositionY = 0.0f;
@@ -1674,7 +1710,7 @@ bool MainMenuHUD::FrameAction()
         break;
     }
 
-    count = MakeSpriteString(count, kMenuArrowPositionX, arrowPositionY, 32, 54, m_TextList[">"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
+    count = MakeSpriteStringLeftEdge(count, kMenuArrowPositionX, arrowPositionY, 32, 54, m_TextList[">"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
 
     for (int i = 0; i < renderCount; i++)
     {
@@ -1964,7 +2000,7 @@ bool LoadAnimationHUD::FrameAction()
 		m_AnimationCount = 0.0f;
     }
 
-    count = MakeSpriteString(count, pos.x, pos.y, 40, 60, m_TextList["ロードテキスト"].c_str(), XMFLOAT3( 1.0f, 1.0f, 0.7f ));
+    count = MakeSpriteStringLeftEdge(count, pos.x, pos.y, 40, 60, m_TextList["ロードテキスト"].c_str(), XMFLOAT3( 1.0f, 1.0f, 0.7f ));
 
     for (int i = 0; i < m_SpriteList.size(); i++)
     {
@@ -2020,7 +2056,7 @@ bool TurnEndHUD::FrameAction()
 
     int count = 0;
 
-    count = MakeSpriteString(count, pos.x, pos.y, 40, 60, m_TextList["ターン終了テキスト"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
+    count = MakeSpriteStringLeftEdge(count, pos.x, pos.y, 40, 60, m_TextList["ターン終了テキスト"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
 
     switch (m_AnimationState)
     {
@@ -2047,15 +2083,7 @@ bool TurnEndHUD::FrameAction()
 
         m_InitAnimationCount += m_TimeManager->GetDeltaTime();
 
-        for (int i = m_ActiveTweenList.size() - 1; i >= 0; --i)
-        {
-            m_ActiveTweenList[i]->Update(m_TimeManager->GetDeltaTime());
-            if (!m_ActiveTweenList[i]->IsActive())
-            {
-                // Tweenが終了したらリストから削除
-                m_ActiveTweenList.erase(m_ActiveTweenList.begin() + i);
-            }
-        }
+        RefreshEasingAnimation();
 
         if (m_InitAnimationCount > kAnimationTime)
         {
@@ -2162,10 +2190,10 @@ bool TurnHUD::FrameAction()
         switch (BFMng->GetCurrentTurn())
         {
         case Turn::Allies:
-			m_SpriteList[0]->SetTextureId(L"EnemyTurnHUD");
+			m_SpriteList[0]->SetTextureId(L"AlliesTurnHUD");
             break;
         case Turn::EnemyAction:
-            m_SpriteList[0]->SetTextureId(L"AliesTurnHUD");
+            m_SpriteList[0]->SetTextureId(L"EnemyTurnHUD");
             break;
         }
         m_FlipAnimationCount = 0.0f;
@@ -2182,25 +2210,6 @@ bool TurnHUD::FrameAction()
     case AnimationState::Finish:
 
         SetAnimationState(AnimationState::None);
-
-		/*m_AnimationCount += m_TimeManager->GetDeltaTime();
-
-        if (m_AnimationCount > 0.5f)
-        {
-            switch (BFMng->GetCurrentTurn())
-            {
-            case Turn::Allies:
-                BFMng->ChangeTurnEnemy();
-                break;
-            case Turn::EnemyAction:
-                BFMng->ChangeTurnAllies();
-                break;
-            }
-
-            SetAnimationState(AnimationState::None);
-            m_AnimationCount = 0.0f;
-        }
-        */
         break;
     }
 
@@ -2303,15 +2312,7 @@ bool EndingHUD::FrameAction()
             else if (m_AnimationCount < kNewsPaperDropDuration)
             {
                 m_AnimationCount += m_TimeManager->GetDeltaTime();
-                for (int i = m_ActiveTweenList.size() - 1; i >= 0; --i)
-                {
-                    m_ActiveTweenList[i]->Update(m_TimeManager->GetDeltaTime());
-                    if (!m_ActiveTweenList[i]->IsActive())
-                    {
-                        // Tweenが終了したらリストから削除
-                        m_ActiveTweenList.erase(m_ActiveTweenList.begin() + i);
-                    }
-                }
+                RefreshEasingAnimation();
             }
             else
             {
@@ -2348,6 +2349,7 @@ bool EndingHUD::FrameAction()
 				SetAnimationState(AnimationState::Run);
                 m_EndingState = EndingState::NewsPaperClose;
 				m_AnimationCount = 0.0f;
+                m_FlipAnimationCount = 0.0f;
             }
             pipeline->AddRenderObject(m_SpriteList[0].get());   //フェードインの背景を描画
             pipeline->AddRenderObject(m_SpriteList[2].get());   //新聞のページを描画
@@ -2398,44 +2400,44 @@ bool EndingHUD::FrameAction()
             {
             case ResultState::Turns:
                 m_TextList["ターン"] = kResultTextList[0];
-                count = MakeSpriteString(count, kResultTextPosX, kTurnTextPosY, 30, 45, m_TextList["ターン"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteStringLeftEdge(count, kResultTextPosX, kTurnTextPosY, 30, 45, m_TextList["ターン"].c_str(), kNewsPaperTextColor);
                 if (m_AnimationCount > 1.0f) m_ResultState = ResultState::TurnsPlus;
                 break;
             case ResultState::TurnsPlus:
                 m_TextList["ターン"] = kResultTextList[0] + std::to_wstring(BFMng->GetTurnCount());
-                count = MakeSpriteString(count, kResultTextPosX, kTurnTextPosY, 30, 45, m_TextList["ターン"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteStringLeftEdge(count, kResultTextPosX, kTurnTextPosY, 30, 45, m_TextList["ターン"].c_str(), kNewsPaperTextColor);
                 if (m_AnimationCount > 2.0f) m_ResultState = ResultState::KillCount;
                 break;
             case ResultState::KillCount:
                 m_TextList["ターン"] = kResultTextList[0] + std::to_wstring(BFMng->GetTurnCount());
                 m_TextList["撃退した数"] = kResultTextList[1];
-                count = MakeSpriteString(count, kResultTextPosX, kTurnTextPosY, 30, 45, m_TextList["ターン"].c_str(), kNewsPaperTextColor);
-                count = MakeSpriteString(count, kResultTextPosX, kKillTextPosY, 30, 45, m_TextList["撃退した数"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteStringLeftEdge(count, kResultTextPosX, kTurnTextPosY, 30, 45, m_TextList["ターン"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteStringLeftEdge(count, kResultTextPosX, kKillTextPosY, 30, 45, m_TextList["撃退した数"].c_str(), kNewsPaperTextColor);
                 if (m_AnimationCount > 3.0f) m_ResultState = ResultState::KillCountPlus;
                 break;
             case ResultState::KillCountPlus:
                 m_TextList["ターン"] = kResultTextList[0] + std::to_wstring(BFMng->GetTurnCount());
                 m_TextList["撃退した数"] = kResultTextList[1] + std::to_wstring(BFMng->GetPlayerKillCount());
-                count = MakeSpriteString(count, kResultTextPosX, kTurnTextPosY, 30, 45, m_TextList["ターン"].c_str(), kNewsPaperTextColor);
-                count = MakeSpriteString(count, kResultTextPosX, kKillTextPosY, 30, 45, m_TextList["撃退した数"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteStringLeftEdge(count, kResultTextPosX, kTurnTextPosY, 30, 45, m_TextList["ターン"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteStringLeftEdge(count, kResultTextPosX, kKillTextPosY, 30, 45, m_TextList["撃退した数"].c_str(), kNewsPaperTextColor);
                 if (m_AnimationCount > 4.0f) m_ResultState = ResultState::KilledCount;
                 break;
             case ResultState::KilledCount:
                 m_TextList["ターン"] = kResultTextList[0] + std::to_wstring(BFMng->GetTurnCount());
                 m_TextList["撃退した数"] = kResultTextList[1] + std::to_wstring(BFMng->GetPlayerKillCount());
                 m_TextList["撃退された数"] = kResultTextList[2];
-                count = MakeSpriteString(count, kResultTextPosX, kTurnTextPosY, 30, 45, m_TextList["ターン"].c_str(), kNewsPaperTextColor);
-                count = MakeSpriteString(count, kResultTextPosX, kKillTextPosY, 30, 45, m_TextList["撃退した数"].c_str(), kNewsPaperTextColor);
-                count = MakeSpriteString(count, kResultTextPosX, kKilledTextPosY, 30, 45, m_TextList["撃退された数"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteStringLeftEdge(count, kResultTextPosX, kTurnTextPosY, 30, 45, m_TextList["ターン"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteStringLeftEdge(count, kResultTextPosX, kKillTextPosY, 30, 45, m_TextList["撃退した数"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteStringLeftEdge(count, kResultTextPosX, kKilledTextPosY, 30, 45, m_TextList["撃退された数"].c_str(), kNewsPaperTextColor);
                 if (m_AnimationCount > 5.0f) m_ResultState = ResultState::KilledCountPlus;
                 break;
             case ResultState::KilledCountPlus:
                 m_TextList["ターン"] = kResultTextList[0] + std::to_wstring(BFMng->GetTurnCount());
                 m_TextList["撃退した数"] = kResultTextList[1] + std::to_wstring(BFMng->GetPlayerKillCount());
                 m_TextList["撃退された数"] = kResultTextList[2] + std::to_wstring(BFMng->GetEnemyKillCount());
-                count = MakeSpriteString(count, kResultTextPosX, kTurnTextPosY, 30, 45, m_TextList["ターン"].c_str(), kNewsPaperTextColor);
-                count = MakeSpriteString(count, kResultTextPosX, kKillTextPosY, 30, 45, m_TextList["撃退した数"].c_str(), kNewsPaperTextColor);
-                count = MakeSpriteString(count, kResultTextPosX, kKilledTextPosY, 30, 45, m_TextList["撃退された数"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteStringLeftEdge(count, kResultTextPosX, kTurnTextPosY, 30, 45, m_TextList["ターン"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteStringLeftEdge(count, kResultTextPosX, kKillTextPosY, 30, 45, m_TextList["撃退した数"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteStringLeftEdge(count, kResultTextPosX, kKilledTextPosY, 30, 45, m_TextList["撃退された数"].c_str(), kNewsPaperTextColor);
                 if (m_AnimationCount > 6.0f) m_ResultState = ResultState::Score;
                 break;
             case ResultState::Score:
@@ -2443,10 +2445,10 @@ bool EndingHUD::FrameAction()
                 m_TextList["撃退した数"] = kResultTextList[1] + std::to_wstring(BFMng->GetPlayerKillCount());
                 m_TextList["撃退された数"] = kResultTextList[2] + std::to_wstring(BFMng->GetEnemyKillCount());
                 m_TextList["スコア"] = kResultTextList[3];
-                count = MakeSpriteString(count, kResultTextPosX, kTurnTextPosY, 30, 45, m_TextList["ターン"].c_str(), kNewsPaperTextColor);
-                count = MakeSpriteString(count, kResultTextPosX, kKillTextPosY, 30, 45, m_TextList["撃退した数"].c_str(), kNewsPaperTextColor);
-                count = MakeSpriteString(count, kResultTextPosX, kKilledTextPosY, 30, 45, m_TextList["撃退された数"].c_str(), kNewsPaperTextColor);
-                count = MakeSpriteString(count, kResultTextPosX, kLastScoreTextPosY, 40, 60, m_TextList["スコア"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteStringLeftEdge(count, kResultTextPosX, kTurnTextPosY, 30, 45, m_TextList["ターン"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteStringLeftEdge(count, kResultTextPosX, kKillTextPosY, 30, 45, m_TextList["撃退した数"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteStringLeftEdge(count, kResultTextPosX, kKilledTextPosY, 30, 45, m_TextList["撃退された数"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteStringLeftEdge(count, kResultTextPosX, kLastScoreTextPosY, 40, 60, m_TextList["スコア"].c_str(), kNewsPaperTextColor);
                 if (m_AnimationCount > 8.0f) m_ResultState = ResultState::ScorePlus;
                 break;
             case ResultState::ScorePlus:
@@ -2454,10 +2456,10 @@ bool EndingHUD::FrameAction()
                 m_TextList["撃退した数"] = kResultTextList[1] + std::to_wstring(BFMng->GetPlayerKillCount());
                 m_TextList["撃退された数"] = kResultTextList[2] + std::to_wstring(BFMng->GetEnemyKillCount());
                 m_TextList["スコア"] = kResultTextList[3] + std::to_wstring(GetLastScoreValue());
-                count = MakeSpriteString(count, kResultTextPosX, kTurnTextPosY, 30, 45, m_TextList["ターン"].c_str(), kNewsPaperTextColor);
-                count = MakeSpriteString(count, kResultTextPosX, kKillTextPosY, 30, 45, m_TextList["撃退した数"].c_str(), kNewsPaperTextColor);
-                count = MakeSpriteString(count, kResultTextPosX, kKilledTextPosY, 30, 45, m_TextList["撃退された数"].c_str(), kNewsPaperTextColor);
-                count = MakeSpriteString(count, kResultTextPosX, kLastScoreTextPosY, 40, 60, m_TextList["スコア"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteStringLeftEdge(count, kResultTextPosX, kTurnTextPosY, 30, 45, m_TextList["ターン"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteStringLeftEdge(count, kResultTextPosX, kKillTextPosY, 30, 45, m_TextList["撃退した数"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteStringLeftEdge(count, kResultTextPosX, kKilledTextPosY, 30, 45, m_TextList["撃退された数"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteStringLeftEdge(count, kResultTextPosX, kLastScoreTextPosY, 40, 60, m_TextList["スコア"].c_str(), kNewsPaperTextColor);
                 if (m_AnimationCount > 9.0f) m_ResultState = ResultState::PressSpace;
                 break;
             case ResultState::PressSpace:
@@ -2466,11 +2468,11 @@ bool EndingHUD::FrameAction()
                 m_TextList["撃退された数"] = kResultTextList[2] + std::to_wstring(BFMng->GetEnemyKillCount());
                 m_TextList["スコア"] = kResultTextList[3] + std::to_wstring(GetLastScoreValue());
                 m_TextList["スペース"] = kResultTextList[4];
-                count = MakeSpriteString(count, kResultTextPosX, kTurnTextPosY, 30, 45, m_TextList["ターン"].c_str(), kNewsPaperTextColor);
-                count = MakeSpriteString(count, kResultTextPosX, kKillTextPosY, 30, 45, m_TextList["撃退した数"].c_str(), kNewsPaperTextColor);
-                count = MakeSpriteString(count, kResultTextPosX, kKilledTextPosY, 30, 45, m_TextList["撃退された数"].c_str(), kNewsPaperTextColor);
-                count = MakeSpriteString(count, kResultTextPosX, kLastScoreTextPosY, 40, 60, m_TextList["スコア"].c_str(), kNewsPaperTextColor);
-                count = MakeSpriteString(count, kPressSpaceTextPosX, kPressSpaceTextPosY, 30, 45, m_TextList["スペース"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteStringLeftEdge(count, kResultTextPosX, kTurnTextPosY, 30, 45, m_TextList["ターン"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteStringLeftEdge(count, kResultTextPosX, kKillTextPosY, 30, 45, m_TextList["撃退した数"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteStringLeftEdge(count, kResultTextPosX, kKilledTextPosY, 30, 45, m_TextList["撃退された数"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteStringLeftEdge(count, kResultTextPosX, kLastScoreTextPosY, 40, 60, m_TextList["スコア"].c_str(), kNewsPaperTextColor);
+                count = MakeSpriteStringLeftEdge(count, kPressSpaceTextPosX, kPressSpaceTextPosY, 30, 45, m_TextList["スペース"].c_str(), kNewsPaperTextColor);
                 break;
             }
 
@@ -2496,4 +2498,263 @@ void EndingHUD::FinishAction()
 int EndingHUD::GetLastScoreValue()
 {
     return 10000 - (BFMng->GetTurnCount() * 1000) + (BFMng->GetEnemyKillCount() * 1500) + (BFMng->GetPlayerKillCount() * 1000);
+}
+
+void BattlePredictionHUD::InitAction()
+{
+    XMFLOAT4 pattern(0.0f, 0.0f, 1.0f, 1.0f);
+
+    m_FontTextureId = L"JPNHUDTexture";
+    m_FontWordList = m_WordList.m_chListJ;
+    m_SpriteCount = 50;
+    SetFont(m_FontTextureId, m_FontWordList);
+
+    m_TextList["攻撃司令官"] = L"司令官:";
+    m_TextList["攻撃部隊名"] = L"部隊名:";
+    m_TextList["防御司令官"] = L"司令官:";
+    m_TextList["防御部隊名"] = L"部隊名:";
+    m_TextList["ダメージ"] = L"";
+    m_TextList["未索敵"] = L"未索敵";
+    m_TextList["索敵済み"] = L"索敵済み";
+
+    MakeSpriteObject(L"AlliesDogtagTexture", L"HUDCamera", L"AlphaSprite", pattern, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));      //味方側背景
+    MakeSpriteObject(L"EnemyDogtagTexture", L"HUDCamera", L"AlphaSprite", pattern, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));       //敵側背景
+
+    MakeSpriteObject(L"Sprite00", L"HUDCamera", L"AlphaSprite", pattern, XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f));       //敵側HPバー赤色
+    MakeSpriteObject(L"Sprite00", L"HUDCamera", L"AlphaSprite", pattern, XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f));       //敵側HPバー緑色
+    MakeSpriteObject(L"Sprite00", L"HUDCamera", L"AlphaSprite", pattern, XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));       //敵側HPバー背景
+
+    m_SpriteList[0]->SetScale(400.0f, 400.0f, 0.1f);
+    m_SpriteList[0]->setPosition(-250.0f, 0.0f, OrderInLayer::BackGround);
+
+    m_SpriteList[1]->SetScale(400.0f, 400.0f, 0.1f);
+    m_SpriteList[1]->setPosition(250.0f, 0.0f, OrderInLayer::BackGround);
+
+    m_SpriteList[2]->SetScale(300.0f, 20.0f, 0.1f);
+    m_SpriteList[2]->setPosition(250.0f, 0.0f, OrderInLayer::MoveObject);
+
+    m_SpriteList[3]->SetScale(300.0f, 20.0f, 0.1f);
+    m_SpriteList[3]->setPosition(250.0f, 0.0f, OrderInLayer::MoveObject + 0.5f);
+
+    m_SpriteList[4]->SetScale(305.0f, 25.0f, 0.1f);
+    m_SpriteList[4]->setPosition(250.0f, 0.0f, OrderInLayer::BackGround);
+
+    SetAnimationState(AnimationState::None);
+}
+
+bool BattlePredictionHUD::FrameAction()
+{
+    MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
+    GraphicsPipeLineObjectBase* pipeline = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
+    SceneManager* scene = static_cast<SceneManager*>(MyAccessHub::GetMyGameEngine()->GetSceneController());
+
+    Platoon* attackingCharacter = nullptr;   //攻撃側キャラクター設定
+    Platoon* attackedCharacter = nullptr;                                         
+
+    if (BFMng->GetSelectingSquare() == nullptr) return true;
+
+    if (BFMng->GetSelectingSquare()->chara != nullptr)
+    {
+        attackingCharacter = BFMng->GetSelectingSquare()->chara;
+    }
+
+    if (BFMng->GetFieldSquaresList()[BFMng->GetTargetID()]->chara != nullptr)   //防御側キャラクター設定
+    {
+        attackedCharacter = BFMng->GetTargetSquare()->chara;
+    }
+
+    switch (m_AnimationState)
+    {
+    case AnimationState::OnInit:
+        SetEasingAnimation(m_SpriteList[0].get(), EasingVector::Verticle, kDogtagPositionY.x, kDogtagPositionY.y, kDogtagAnimationDuration, Tween::EaseInQuad);
+
+        m_TextList["攻撃司令官"] = L"司令官:無し";
+        m_TextList["攻撃部隊名"] = L"部隊名:" + attackingCharacter->GetPlatoonName();
+
+        SetAnimationState(AnimationState::Init);
+        break;
+    case AnimationState::Init:
+        m_AnimationCount = 0.0f;
+
+        BFMng->ResetPredectCamera();                                        //顔カメラをリセット
+
+        scene->SetActiveCameraCompornent(L"AttackerCameraForHUD", true);    //攻撃カメラだけオン
+
+        for (int i = 0; i < 2; i++)
+        {
+            pipeline->AddRenderObject(m_SpriteList[i].get());
+        }
+
+		SetAnimationState(AnimationState::Run);
+        break;
+    case AnimationState::Run:
+        if (m_AnimationCount == 0.0f)
+        {
+            m_AnimationCount += m_TimeManager->GetDeltaTime();
+			m_SpriteList[1]->setPosition(250.0f, kDogtagPositionY.x, OrderInLayer::BackGround);
+            if (BFMng->GetFieldSquaresList()[BFMng->GetTargetID()]->chara != nullptr)
+            {
+                if (BFMng->GetFieldSquaresList()[BFMng->GetTargetID()]->chara->GetAdmin() == Admin::Imperial)
+                {
+                    SetEasingAnimation(m_SpriteList[1].get(), EasingVector::Verticle, kDogtagPositionY.x, kDogtagPositionY.y, kDogtagAnimationDuration, Tween::EaseInQuad);
+                }
+            }
+        }
+        else if (m_AnimationCount > 0.0f && !m_ActiveTweenList.empty())
+        {
+            RefreshEasingAnimation();
+            m_AnimationCount += m_TimeManager->GetDeltaTime();
+        }
+        else
+        {
+			SetAnimationState(AnimationState::Finish);
+            if (attackedCharacter != nullptr)
+            {
+                if (attackedCharacter->GetAdmin() == Admin::Imperial)
+                {
+                    if (attackedCharacter->GetIsDetected())
+                    {
+                        m_TextList["防御司令官"] = L"司令官:無し";
+                        m_TextList["防御部隊名"] = L"部隊名:" + attackedCharacter->GetPlatoonName();
+                    }
+                    else
+                    {
+                        m_TextList["防御司令官"] = L"司令官:無し";
+                        m_TextList["防御部隊名"] = L"部隊名:不明";
+                    }
+                }
+            }
+            m_AnimationCount = 0.0f;
+        }
+
+        for (int i = 0; i < 2; i++)
+        {
+            pipeline->AddRenderObject(m_SpriteList[i].get());
+        }
+        break;
+    case AnimationState::Finish:
+        int count = 0;          //テキストのカウント
+        int predectDamage = 0.0f;  //予想されるダメージ
+        float currentHP = 0.0f;      //最初のHP
+        float damageParcent = 0.0f;
+
+        if (attackedCharacter != nullptr)
+        {
+            if (attackedCharacter->GetAdmin() == Admin::Imperial)
+            {
+                if (BFMng->GetMode() == Mode::AttackMode)
+                {
+                    predectDamage = BFMng->CalculateDamage(ActionName::Attack, attackingCharacter, attackedCharacter);
+                    m_TextList["ダメージ"] = to_wstring(predectDamage);
+                }
+                else if (BFMng->GetMode() == Mode::AbilityMode)
+                {
+                    switch (attackingCharacter->GetAbilityList()[BFMng->GetAbillityIndex()])
+                    {
+                    case AbilityType::ConcentratedFire:
+                        predectDamage = BFMng->CalculateDamage(ActionName::ConcentratedFire, attackingCharacter, attackedCharacter);
+                        m_TextList["ダメージ"] = to_wstring(predectDamage);
+                        break;
+                    case AbilityType::BayonetCharge:
+                        predectDamage = BFMng->CalculateDamage(ActionName::BayonetCharge, attackingCharacter, attackedCharacter);
+                        m_TextList["ダメージ"] = to_wstring(predectDamage);
+                        break;
+                    case AbilityType::Scout:
+                        predectDamage = 0;
+                        m_TextList["ダメージ"] = L"";
+                        break;
+                    }
+                }
+
+                currentHP = attackedCharacter->GetSoldiers();   //攻撃対象の現在のHP
+                damageParcent = (float)predectDamage / (float)currentHP;      //予想されるダメージの割合
+                m_GreenBarSizeX = kOriginBarSizeX * ((float)currentHP / (float)attackedCharacter->GetMaxSoldiers());  //緑バーのサイズを現在HPに合わせて設定
+                m_GreenBarPositionX = kBarLeftEdgePositionX + m_GreenBarSizeX * 0.5f;                   //緑バーの位置を現在HPに合わせて設定
+
+                if (damageParcent > 1.0000f)    //もしHPよりもダメージが大きければ
+                {
+                    m_RedBarSizeX = m_GreenBarSizeX;
+                    m_RedBarPositionX = m_GreenBarPositionX;
+                }
+                else
+                {
+                    m_RedBarRightEdgePositionX = kBarLeftEdgePositionX + m_GreenBarSizeX;   	            //赤バーの右端の位置を現在HPに合わせて設定  
+                    m_RedBarSizeX = m_GreenBarSizeX * damageParcent;                                        //赤バーのサイズを予想されるダメージの割合に合わせて設定
+                    m_RedBarPositionX = m_RedBarRightEdgePositionX - m_RedBarSizeX * 0.5f;                  //赤バーの位置を予想されるダメージの割合に合わせて設定
+                }
+
+                m_SpriteList[2]->SetScale(m_RedBarSizeX, 20.0f, 0.1f);                                  //赤バーのサイズを設定
+                m_SpriteList[2]->setPosition(m_RedBarPositionX, 0.0f, OrderInLayer::MoveObject);        //赤バーの位置を設定
+
+                m_SpriteList[3]->SetScale(m_GreenBarSizeX, 20.0f, 0.1f);                                    //緑バーのサイズを設定
+                m_SpriteList[3]->setPosition(m_GreenBarPositionX, 0.0f, OrderInLayer::MoveObject + 0.5f);   //緑バーの位置を設定
+
+                if (m_AnimationCount == 0.0f)
+                {
+                    m_RedBarAlpha = 0.0f;
+                }
+                else if (m_AnimationCount < 0.5f)
+                {
+                    m_RedBarAlpha = m_AnimationCount / 0.5f;
+                }
+                else if (m_AnimationCount < 1.0f)
+                {
+                    m_RedBarAlpha = 1.0f - ((m_AnimationCount - 0.5f) / 0.5f);
+                }
+                else
+                {
+                    m_AnimationCount = 0.0f;
+                }
+
+                m_AnimationCount += m_TimeManager->GetDeltaTime();
+
+                m_SpriteList[2]->SetColor(1.0f, 0.0f, 0.0f, m_RedBarAlpha);
+
+                pipeline->AddRenderObject(m_SpriteList[2].get());
+                pipeline->AddRenderObject(m_SpriteList[3].get());
+                pipeline->AddRenderObject(m_SpriteList[4].get());
+
+                scene->SetActiveCameraCompornent(L"DefenderCameraForHUD", true);
+            }
+        }
+
+        count = MakeSpriteStringLeftEdge(count, kAlliesTextPositionX, kGeneralTextPositionY, 20, 30, m_TextList["攻撃司令官"].c_str(), XMFLOAT3(0.0f, 0.0f, 0.0f));      //攻撃側のテキストを設定
+        count = MakeSpriteStringLeftEdge(count, kAlliesTextPositionX, kPlatoonTextPositionY, 20, 30, m_TextList["攻撃部隊名"].c_str(), XMFLOAT3(0.0f, 0.0f, 0.0f));
+
+        if (attackedCharacter != nullptr)
+        {
+            if (attackedCharacter->GetAdmin() == Admin::Imperial)
+            {
+                count = MakeSpriteStringLeftEdge(count, kEnemyTextPositionX, kGeneralTextPositionY, 20, 30, m_TextList["防御司令官"].c_str(), XMFLOAT3(0.0f, 0.0f, 0.0f));   //ターゲットマスに敵が要れば防御側テキストを設定
+                count = MakeSpriteStringLeftEdge(count, kEnemyTextPositionX, kPlatoonTextPositionY, 20, 30, m_TextList["防御部隊名"].c_str(), XMFLOAT3(0.0f, 0.0f, 0.0f));
+                count = MakeSpriteStringMid(count, m_RedBarPositionX, 0.0f, 12, 24, m_TextList["ダメージ"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
+
+                if (attackedCharacter->GetIsDetected())
+                {
+                    count = MakeSpriteStringMid(count, 250.0f, 30.0f, 20, 30, m_TextList["索敵済み"].c_str(), XMFLOAT3(0.0f, 1.0f, 0.0f));
+                }
+                else
+                {
+                    count = MakeSpriteStringMid(count, 250.0f, 30.0f, 20, 30, m_TextList["未索敵"].c_str(), XMFLOAT3(1.0f, 0.0f, 0.0f));
+                }
+            }
+        }
+
+        for (int i = 0; i < count; i++) //テキスト表示
+        {
+            pipeline->AddRenderObject(m_WordSpriteList[i].get());
+        }
+
+        for (int i = 0; i < 2; i++) //ドッグタグ描画
+        {
+            pipeline->AddRenderObject(m_SpriteList[i].get());
+        }
+        break;
+    }
+
+    return true;
+}
+
+void BattlePredictionHUD::FinishAction()
+{
 }

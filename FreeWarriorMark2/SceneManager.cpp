@@ -213,6 +213,8 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"TitleFlashEffect", L"./Resources/textures/HUD/TitleFlashEffect.png");		//タイトルシーン遷移イメージ
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"TurnEndBackGroundTexture", L"./Resources/textures/HUD/TurnEndBackGroundTexture.png");		//ターンエンドHUD背景イメージ
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"TurnEndArrowTexture", L"./Resources/textures/HUD/TurnEndArrowTexture.png");				//ターンエンドHUD矢印イメージ
+				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"AlliesDogtagTexture", L"./Resources/textures/HUD/AlliesDogtagTexture.png");			//戦闘予想H背景イメージ
+				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"EnemyDogtagTexture", L"./Resources/textures/HUD/EnemyDogtagTexture.png");			//戦闘予想Hライティングイメージ
 
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"WinNewsPaperTexture", L"./Resources/textures/HUD/WinNewsPaperTexture.png");			//勝利新聞イメージ
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"LoseNewsPaperTexture", L"./Resources/textures/HUD/LoseNewsPaperTexture.png");			//敗北新聞イメージ
@@ -221,7 +223,7 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"NewsPaperTexture", L"./Resources/textures/HUD/NewsPaperImage.png");					//投函される新聞イメージ
 
 				//現在のターンを表すアニメーションテクスチャ
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"AliesTurnHUD", L"./Resources/textures/HUD/AliesTurnHUD.png");
+				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"AlliesTurnHUD", L"./Resources/textures/HUD/AlliesTurnHUD.png");
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"EnemyTurnHUD", L"./Resources/textures/HUD/EnemyTurnHUD.png");
 				
 				//テキストテクスチャ
@@ -414,28 +416,15 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 #pragma endregion
 
 #pragma region BattleCamera
-				GameObject* attackerCameraObject = new GameObject(new CharacterData());				//戦闘画面の攻撃側カメラ生成
-				BattleCameraController* attackerCameraContoroller = new BattleCameraController();
-				attackerCameraContoroller->SetCameraState(BattleCameraType::AttackerCamera);
-				m_CameraComponents[L"AttackerCamera"] = attackerCameraContoroller;
-				attackerCameraObject->addComponent(attackerCameraContoroller);
-				engine->AddGameObject(attackerCameraObject);
-
-				GameObject* defenderCameraObject = new GameObject(new CharacterData());				//戦闘画面の防御側カメラ生成
-				BattleCameraController* defenderCameraContoroller = new BattleCameraController();
-				defenderCameraContoroller->SetCameraState(BattleCameraType::DefenderCamera);
-				m_CameraComponents[L"DefenderCamera"] = defenderCameraContoroller;
-				defenderCameraObject->addComponent(defenderCameraContoroller);
-				engine->AddGameObject(defenderCameraObject);
-
-				GameObject* scoutingCameraObject = new GameObject(new CharacterData());
-				BattleCameraController* scoutingCameraContoroller = new BattleCameraController();	//左上部のキャラクターの顔を映すカメラ生成
-				scoutingCameraContoroller->SetCameraState(BattleCameraType::ScoutingCamera);
-				m_CameraComponents[L"ScoutingCamera"] = scoutingCameraContoroller;
-				scoutingCameraObject->addComponent(scoutingCameraContoroller);
-				engine->AddGameObject(scoutingCameraObject);
+				GenerateCamera(L"AttackerCamera", BattleCameraType::AttackerCamera);
+				GenerateCamera(L"DefenderCamera", BattleCameraType::DefenderCamera);
+				GenerateCamera(L"ScoutingCamera", BattleCameraType::ScoutingCamera);
+				GenerateCamera(L"AttackerCameraForHUD", BattleCameraType::AttackerCameraForHUD);
+				GenerateCamera(L"DefenderCameraForHUD", BattleCameraType::DefenderCameraForHUD);
 
 				SetActiveCameraCompornent(L"ScoutingCamera", false);
+				SetActiveCameraCompornent(L"AttackerCameraForHUD", false);
+				SetActiveCameraCompornent(L"DefenderCameraForHUD", false);
 
 				camChanger->ChangeCamera();
 
@@ -951,6 +940,18 @@ void SceneManager::GenerateEquipment(SoldiersType type, PlayerBase* playerBase, 
 		}
 		break;
 	}
+}
+
+void SceneManager::GenerateCamera(const wchar_t* cameraName, BattleCameraType cameraType)
+{
+	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
+
+	GameObject* cameraObject = new GameObject(new CharacterData());
+	BattleCameraController* cameraContoroller = new BattleCameraController();
+	cameraContoroller->SetCameraState(cameraType);
+	m_CameraComponents[cameraName] = cameraContoroller;
+	cameraObject->addComponent(cameraContoroller);
+	engine->AddGameObject(cameraObject);
 }
 
 void SceneObjectDeleter::ExecuteDeleter(GameObject* go)

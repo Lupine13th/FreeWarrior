@@ -6,56 +6,23 @@
 
 void Abilities::ConcentratedFire(Platoon* attackingchara, Platoon* attackedchara)	//集中射撃アビリティ
 {
-	int damage = 0;
+	int damage = BFMng->CalculateDamage(ActionName::ConcentratedFire, attackingchara, attackedchara);
 
-	if (BFMng->AttackingPlatoonIsAttackingTerrain(attackingchara))	//地形が森林、もしくは監視塔
-	{
-		damage = attackingchara->GetAttackPower() * 1.2;
-	}
-	else
-	{
-		damage = attackingchara->GetAttackPower();
-	}
-
-	if (BFMng->AttackedPlatoonIsDefenciveTerrain(attackedchara))		//地形が丘陵、もしくは河川
-	{
-		damage = damage * 0.75;
-	}
-
-	if (!attackedchara->GetIsDetected())	//攻撃対象の偵察が完了していない場合
-	{
-		damage = damage * 0.75;
-	}
-
-	BFMng->GetDamageHUD()->SetDamage(damage * 1.2f, attackedchara->GetMaxSoldiers(), attackedchara->GetSoldiers());	//ダメージHUD表示
+	BFMng->GetDamageHUD()->SetDamage(damage, attackedchara->GetMaxSoldiers(), attackedchara->GetSoldiers());	//ダメージHUD表示
 
 	attackingchara->SetMorale(attackingchara->GetMorale() - 20);				//攻撃側の士気を減少
-	attackedchara->SetSoldier(attackedchara->GetSoldiers() - damage * 1.2f);	//防御側の兵力を減少
+	attackedchara->SetSoldier(attackedchara->GetSoldiers() - damage);	//防御側の兵力を減少
 
 	attackingchara->SetIsActioned(true);	//攻撃側の行動済みフラグを立てる
 
-	BFMng->CreateAbilityLog(attackingchara, ActionName::ConcentratedFire, damage * 1.2f);	//行動ログ作成
+	BFMng->CreateAbilityLog(attackingchara, ActionName::ConcentratedFire, damage);	//行動ログ作成
 
 	BFMng->SetStrengthValues();	//優勢ゲージ更新
 }
 
 void Abilities::BayonetCharge(Platoon* attackingchara, Platoon* attackedchara)	//銃剣突撃アビリティ
 {
-	int damage = 0;
-
-	if (BFMng->AttackingPlatoonIsAttackingTerrain(attackingchara)) //地形が森林、もしくは監視塔
-	{
-		damage = attackingchara->GetAttackPower() * 1.2;
-	}
-	else
-	{
-		damage = attackingchara->GetAttackPower();
-	}
-
-	if (BFMng->AttackedPlatoonIsDefenciveTerrain(attackedchara))	//地形が丘陵、もしくは河川
-	{
-		damage = damage * 0.75;
-	}
+	int damage = BFMng->CalculateDamage(ActionName::ConcentratedFire, attackingchara, attackedchara);
 
 	BFMng->GetDamageHUD()->SetDamage(damage * 1.2f, attackedchara->GetMaxSoldiers(), attackedchara->GetSoldiers());	//ダメージHUD表示
 

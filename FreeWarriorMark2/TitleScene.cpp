@@ -8,7 +8,7 @@
 #include <DirectXMath.h>
 #include <chrono>
 
-int TitleScene::MakeSpriteString(int startIndex, float ltX, float ltY, float width, float height, const wchar_t* str)
+int TitleScene::MakeSpriteStringLeftEdge(int startIndex, float ltX, float ltY, float width, float height, const wchar_t* str)
 {
     int count = startIndex;
 
@@ -187,14 +187,14 @@ bool TitleScene::FrameAction()
             }
         }
 
-        count = MakeSpriteString(count, -400.0f, -100.0f, 50, 80, m_StartGame.c_str());
+        count = MakeSpriteStringLeftEdge(count, -400.0f, -100.0f, 50, 80, m_StartGame.c_str());
 
         if (m_MenuIndex == (int)TitleMenuState::GameStart)      //エフェクトの位置を修正
         {
 			m_Sprite[1]->setPosition(-270.0f, -50.0f, 1.0f);
         }
 
-        count = MakeSpriteString(count, -400.0f, -200.0f, 50, 80, m_ExitGame.c_str());
+        count = MakeSpriteStringLeftEdge(count, -400.0f, -200.0f, 50, 80, m_ExitGame.c_str());
 
         if (m_MenuIndex == (int)TitleMenuState::ExitGame)       //エフェクトの位置を修正
         {

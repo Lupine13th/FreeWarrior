@@ -7,7 +7,7 @@
 
 using namespace std::chrono;
 
-int InFieldCharacterMenuWord::MakeSpriteString(int startIndex, float ltX, float ltY, float width, float height, const wchar_t* str, int makingSpriteCount)
+int InFieldCharacterMenuWord::MakeSpriteStringLeftEdge(int startIndex, float ltX, float ltY, float width, float height, const wchar_t* str, int makingSpriteCount)
 {
 	int count = startIndex;
 
@@ -147,7 +147,7 @@ bool InFieldCharacterMenuWord::FrameAction()
 			m_InFieldMenuTextList[i] = L"ーーーーーーーーーー";
 			strs[i] = m_InFieldMenuTextList[i].c_str();
 		}
-		count = MakeSpriteString(count, xpos[0], ypos[i], 20, 40, strs[i], i);
+		count = MakeSpriteStringLeftEdge(count, xpos[0], ypos[i], 20, 40, strs[i], i);
 	}
 
 	if (BRScene->InFieldAlliesCharacterList[BRScene->m_InFieldCharacterMenuIndex] != nullptr)
@@ -155,44 +155,44 @@ bool InFieldCharacterMenuWord::FrameAction()
 		//兵数
 		m_InFieldMenuTextList[10] = L"兵数:" + to_wstring((int)BRScene->InFieldAlliesCharacterList[BRScene->m_InFieldCharacterMenuIndex]->GetSoldiers());
 		strs[10] = m_InFieldMenuTextList[10].c_str();
-		count = MakeSpriteString(count, xpos[1], ypos[8], 20, 40, strs[10], 10);
+		count = MakeSpriteStringLeftEdge(count, xpos[1], ypos[8], 20, 40, strs[10], 10);
 
 		//士気
 		m_InFieldMenuTextList[11] = L"士気:" + to_wstring((int)BRScene->InFieldAlliesCharacterList[BRScene->m_InFieldCharacterMenuIndex]->GetMorale());
 		strs[11] = m_InFieldMenuTextList[11].c_str();
-		count = MakeSpriteString(count, xpos[2], ypos[8], 20, 40, strs[11], 11);
+		count = MakeSpriteStringLeftEdge(count, xpos[2], ypos[8], 20, 40, strs[11], 11);
 
 		//攻撃力
 		m_InFieldMenuTextList[12] = L"攻撃力:" + to_wstring((int)BRScene->InFieldAlliesCharacterList[BRScene->m_InFieldCharacterMenuIndex]->GetAttackPower());
 		strs[12] = m_InFieldMenuTextList[12].c_str();
-		count = MakeSpriteString(count, xpos[1], ypos[9], 20, 40, strs[12], 12);
+		count = MakeSpriteStringLeftEdge(count, xpos[1], ypos[9], 20, 40, strs[12], 12);
 
 		//防御力
 		m_InFieldMenuTextList[13] = L"防御力:" + to_wstring((int)BRScene->InFieldAlliesCharacterList[BRScene->m_InFieldCharacterMenuIndex]->GetArmor());
 		strs[13] = m_InFieldMenuTextList[13].c_str();
-		count = MakeSpriteString(count, xpos[2], ypos[9], 20, 40, strs[13], 13);
+		count = MakeSpriteStringLeftEdge(count, xpos[2], ypos[9], 20, 40, strs[13], 13);
 	}
 	else
 	{
 		//兵数
 		m_InFieldMenuTextList[10] = L"兵数:ーーー";
 		strs[10] = m_InFieldMenuTextList[10].c_str();
-		count = MakeSpriteString(count, xpos[1], ypos[8], 20, 40, strs[10], 10);
+		count = MakeSpriteStringLeftEdge(count, xpos[1], ypos[8], 20, 40, strs[10], 10);
 
 		//士気
 		m_InFieldMenuTextList[11] = L"士気:ーーー";
 		strs[11] = m_InFieldMenuTextList[11].c_str();
-		count = MakeSpriteString(count, xpos[2], ypos[8], 20, 40, strs[11], 11);
+		count = MakeSpriteStringLeftEdge(count, xpos[2], ypos[8], 20, 40, strs[11], 11);
 
 		//攻撃力
 		m_InFieldMenuTextList[12] = L"攻撃力:ーーー";
 		strs[12] = m_InFieldMenuTextList[12].c_str();
-		count = MakeSpriteString(count, xpos[1], ypos[9], 20, 40, strs[12], 12);
+		count = MakeSpriteStringLeftEdge(count, xpos[1], ypos[9], 20, 40, strs[12], 12);
 
 		//防御力
 		m_InFieldMenuTextList[13] = L"防御力:ーーー";
 		strs[13] = m_InFieldMenuTextList[13].c_str();
-		count = MakeSpriteString(count, xpos[2], ypos[9], 20, 40, strs[13], 13);
+		count = MakeSpriteStringLeftEdge(count, xpos[2], ypos[9], 20, 40, strs[13], 13);
 	}
 
 	if (BRScene->m_ReadySceneState == ReadySceneState::InField && AnimationFlag)

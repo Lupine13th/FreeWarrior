@@ -9,6 +9,8 @@ enum class BattleCameraType
     AttackerCamera,
 	DefenderCamera,
 	ScoutingCamera,
+    AttackerCameraForHUD,
+	DefenderCameraForHUD
 };
 
 class BattleCameraController : public GameComponent {
@@ -24,7 +26,7 @@ public:
     void FinishAction() override;
 
     void UpdateCamera(XMVECTOR camera, XMVECTOR viewPoint);
-    void UpdateCameraPositionFromobject(float rotateY, XMFLOAT3 basedPosition, float distance, float height);
+    void UpdateCameraPositionFromObject(float rotateY, XMFLOAT3 basedPosition, float distance, float height);
 
 	void SetCameraState(BattleCameraType state) 
     {

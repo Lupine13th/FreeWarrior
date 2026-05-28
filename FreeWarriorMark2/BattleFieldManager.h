@@ -399,6 +399,19 @@ public:
 		return m_Abilities;
 	}
 	XMFLOAT3 GetFirstAlliesCharacterPos();
+	Squares* GetSelectingSquare()
+	{
+		return m_SelectingSquare;
+	}
+	Squares* GetTargetSquare()
+	{
+		if (m_FieldSquaresList[m_TargetID] != nullptr)
+		{
+			return m_FieldSquaresList[m_TargetID];
+		}
+
+		return nullptr;
+	}
 
 	//==========Method==========
 	void ChangeTurnAllies();
@@ -417,6 +430,9 @@ public:
 	void SetResult(bool win);
 	void SearchInRengeSquare(int charaPosition, float renge, vector<int>& idList);
 	void ResetAbillityMenu();
+	void ResetPredectCamera();
+
+	int CalculateDamage(ActionName action, Platoon* attackingCharacter, Platoon* attackedCharacter);
 
 	//プレイヤー行動傾向の記録をリセット
 	void ResetPlayerActionLogs()

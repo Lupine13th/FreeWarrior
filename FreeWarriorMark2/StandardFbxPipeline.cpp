@@ -304,6 +304,20 @@ ID3D12GraphicsCommandList* StandardFbxPipeline::ExecuteRender()
                 D3D12_RECT scissorRect = { 780.0f, 11.0f, 940.0f, 131.0f };
                 cmdList->RSSetScissorRects(1, &scissorRect);
             }
+            else if (currentLabel == L"AttackerCameraForHUD")
+            {
+				D3D12_VIEWPORT viewport = { 200.0f, 50.0f, 200.0f, 200.0f, 0.0f, 0.2f };    //FBXで手前に描画されてほしいのはこれだけなので、Z値の範囲を0.2fまでにしている。
+                cmdList->RSSetViewports(1, &viewport);
+                D3D12_RECT scissorRect = { 200.0f, 50.0f, 400.0f, 250.0f };
+                cmdList->RSSetScissorRects(1, &scissorRect);
+            }
+            else if (currentLabel == L"DefenderCameraForHUD")
+            {
+				D3D12_VIEWPORT viewport = { 560.0f, 50.0f, 200.0f, 200.0f, 0.0f, 0.2f };    //FBXで手前に描画されてほしいのはこれだけなので、Z値の範囲を0.2fまでにしている。
+                cmdList->RSSetViewports(1, &viewport);
+                D3D12_RECT scissorRect = { 560.0f, 50.0f, 760.0f, 250.0f };
+                cmdList->RSSetScissorRects(1, &scissorRect);
+            }
             else
             {
                 D3D12_VIEWPORT viewport = { 0.0f, 0.0f, (FLOAT)engine->GetWidth(), (FLOAT)engine->GetHeight(), 0.5f, 1.0f };

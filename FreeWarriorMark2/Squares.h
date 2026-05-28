@@ -76,7 +76,8 @@ private:
 	{
 		{ Animations::Attack, L"攻撃" },
 		{ Animations::ConcentratedFire, L"集中射撃" },
-		{ Animations::BayonetCharge, L"銃剣突撃" }
+		{ Animations::BayonetCharge, L"銃剣突撃" },
+		{ Animations::Scout, L"偵察" }
 	};
 public:
 	

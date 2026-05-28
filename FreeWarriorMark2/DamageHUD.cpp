@@ -40,11 +40,13 @@ void DamageHUD::InitAction()
         m_Sprite[i]->SetScale(OriginBarSizeX, 10.0f, 0.1f);
     }
 
-    m_Sprite[0]->SetColor(0.0f, 1.0f, 0.0f, 1);
+    m_Sprite[0]->SetColor(0.0f, 1.0f, 0.0f, 1);                 //バーの緑部分
     m_Sprite[0]->setPosition(OrigenBarPosX, kBarPosY, 1.0f);
-    m_Sprite[1]->SetColor(1.0f, 0.0f, 0.0f, 1);
+
+    m_Sprite[1]->SetColor(1.0f, 0.0f, 0.0f, 1);                 //バーの赤部分
     m_Sprite[1]->setPosition(OrigenBarPosX, kBarPosY, 2.0f);
-    m_Sprite[2]->SetColor(0.0f, 0.0f, 0.0f, 1);
+
+    m_Sprite[2]->SetColor(0.0f, 0.0f, 0.0f, 1);                 //バーの背景部分
     m_Sprite[2]->setPosition(OrigenBarPosX, kBarPosY, 2.5f);
     m_Sprite[2]->SetScale(OriginBarSizeX + 5.0f, 15.0f, 0.1f);
 }
@@ -114,10 +116,11 @@ void DamageHUD::SetDamage(float damage, float maxSoldiers, float soldiers)
     float solPercentAfter = (soldiers - damage) / maxSoldiers;
     Damage = damage;
 
-    // 開始と終了のサイズを記録
+    //緑バーの開始と終了のサイズを記録
     startGreenSizeX = OriginBarSizeX * solPercentNow;
     endGreenSizeX = OriginBarSizeX * solPercentAfter;
 
+    //赤バーの開始と終了のサイズを記録
     startRedSizeX = startGreenSizeX;
     endRedSizeX = endGreenSizeX;
 

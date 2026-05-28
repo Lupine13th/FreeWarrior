@@ -48,7 +48,7 @@ private:
 
 	int m_WordCount;
 
-	int MakeSpriteString(int startIndex, float ltX, float ltY, float width, float height, const wchar_t* str);
+	int MakeSpriteStringLeftEdge(int startIndex, float ltX, float ltY, float width, float height, const wchar_t* str);
 
 	XMFLOAT4 m_PatternRect = { 0.0f, 0.0f, 0.0f, 0.0f };
 

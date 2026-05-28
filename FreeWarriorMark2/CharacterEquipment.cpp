@@ -6,6 +6,8 @@ void CharacterEquipment::InitAction()
 	m_chData->SetGraphicsPipeLine(L"StaticFBX");
 	m_chData->AddCameraLabel(L"AttackerCamera");
 	m_chData->AddCameraLabel(L"DefenderCamera");
+	m_chData->AddCameraLabel(L"AttackerCameraForHUD");
+	m_chData->AddCameraLabel(L"DefenderCameraForHUD");
 
 	m_chData->GetMainFbx()->SetMeshUniqueFlag(true, true);
 	m_chData->GetMainFbx()->SetTextureUniqueFlag(true);

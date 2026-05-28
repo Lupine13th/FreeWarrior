@@ -6,10 +6,8 @@ void InfantryPlayer::InitAction()
 
 	float scaleValue = 0.03f;
 
-	chdata->SetGraphicsPipeLine(L"AnimationFBX");
-	chdata->AddCameraLabel(L"AttackerCamera");
-	chdata->AddCameraLabel(L"DefenderCamera");
-	chdata->AddCameraLabel(L"ScoutingCamera");
+	SetCharacterCameraLabel(chdata, true);
+
 	chdata->SetScaleValue(scaleValue);
 
 	if (m_admin == Admin::Rebel)	//歩兵Fbxの登録　勢力ごとに違うからif分で分岐
@@ -144,12 +142,9 @@ void InfantryPlayer::FinishAction()
 void ArtilleryPlayer::InitAction()
 {
 	FBXCharacterData* chdata = static_cast<FBXCharacterData*>(GetGameObject()->GetCharacterData());
-	chdata->SetGraphicsPipeLine(L"StaticFBX");
-	chdata->AddCameraLabel(L"AttackerCamera");
-	chdata->AddCameraLabel(L"DefenderCamera");
-	chdata->AddCameraLabel(L"ScoutingCamera");
-	
 
+	SetCharacterCameraLabel(chdata, false);
+	
 	if (m_admin == Admin::Rebel)
 	{
 		chdata->LoadMainFBX(L"./Resources/fbx/rebelCanon.fbx", L"RebelCanon");
@@ -192,10 +187,8 @@ void ArtilleryPlayer::FinishAction()
 void MachinegunnerPlayer::InitAction()
 {
 	FBXCharacterData* chdata = static_cast<FBXCharacterData*>(GetGameObject()->GetCharacterData());
-	chdata->SetGraphicsPipeLine(L"AnimationFBX");
-	chdata->AddCameraLabel(L"AttackerCamera");
-	chdata->AddCameraLabel(L"DefenderCamera");
-	chdata->AddCameraLabel(L"ScoutingCamera");
+
+	SetCharacterCameraLabel(chdata, true);
 
 	chdata->LoadMainFBX(L"./Resources/fbx/rebelInfantry.fbx", L"RebelInfantry");
 	float scaleValue = 0.03f;
@@ -313,10 +306,7 @@ void ScoutPlayer::InitAction()
 {
 	FBXCharacterData* chdata = static_cast<FBXCharacterData*>(GetGameObject()->GetCharacterData());
 
-	chdata->SetGraphicsPipeLine(L"AnimationFBX");
-	chdata->AddCameraLabel(L"AttackerCamera");
-	chdata->AddCameraLabel(L"DefenderCamera");
-	chdata->AddCameraLabel(L"ScoutingCamera");
+	SetCharacterCameraLabel(chdata, true);
 
 	float scaleValue = 0.03f;
 
@@ -457,10 +447,7 @@ void ScoutPlayer::FinishAction()
 void ArmoredPlayer::InitAction()
 {
 	FBXCharacterData* chdata = static_cast<FBXCharacterData*>(GetGameObject()->GetCharacterData());
-	chdata->SetGraphicsPipeLine(L"StaticFBX");
-	chdata->AddCameraLabel(L"AttackerCamera");
-	chdata->AddCameraLabel(L"DefenderCamera");
-	chdata->AddCameraLabel(L"ScoutingCamera");
+	SetCharacterCameraLabel(chdata, false);
 
 	if (m_admin == Admin::Rebel)
 	{
@@ -526,4 +513,21 @@ void PlayerBase::SetMatrixForEquipment(CharacterEquipment* equipment, XMMATRIX m
 
 	equipment->GetCharacterData()->SetMatrixAutoUpdate(false);
 	equipment->GetCharacterData()->SetWorldMatrix(finalWeaponMatrix);
+}
+
+void PlayerBase::SetCharacterCameraLabel(FBXCharacterData* characterData, bool hasAnime)
+{
+	if (hasAnime)
+	{
+		characterData->SetGraphicsPipeLine(L"AnimationFBX");
+	}
+	else
+	{
+		characterData->SetGraphicsPipeLine(L"StaticFBX");
+	}
+	characterData->AddCameraLabel(L"AttackerCamera");
+	characterData->AddCameraLabel(L"DefenderCamera");
+	characterData->AddCameraLabel(L"ScoutingCamera");
+	characterData->AddCameraLabel(L"AttackerCameraForHUD");
+	characterData->AddCameraLabel(L"DefenderCameraForHUD");
 }

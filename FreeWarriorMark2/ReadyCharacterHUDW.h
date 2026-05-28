@@ -23,7 +23,7 @@ private:
 
     int m_spriteCount;
 
-    int MakeSpriteString(int startIndex, float ltX, float ltY, float width, float height, const wchar_t* str, int makingSpriteCount);
+    int MakeSpriteStringLeftEdge(int startIndex, float ltX, float ltY, float width, float height, const wchar_t* str, int makingSpriteCount);
 
     BattleFieldManager* BFMng = MyAccessHub::GetBFManager();
 

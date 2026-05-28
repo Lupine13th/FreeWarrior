@@ -11,7 +11,7 @@ using namespace std::chrono;
 
 
 
-int ReadyCharacterHUDW::MakeSpriteString(int startIndex, float ltX, float ltY, float width, float height, const wchar_t* str, int makingSpriteCount)
+int ReadyCharacterHUDW::MakeSpriteStringLeftEdge(int startIndex, float ltX, float ltY, float width, float height, const wchar_t* str, int makingSpriteCount)
 {
 	int count = startIndex;
 
@@ -145,7 +145,7 @@ bool ReadyCharacterHUDW::FrameAction()
 			strs[13] = L">ログイン中";
 		}
 
-		count = MakeSpriteString(count, xpos[0], ypos[0], 40, 60, strs[13], 0);
+		count = MakeSpriteStringLeftEdge(count, xpos[0], ypos[0], 40, 60, strs[13], 0);
 
 		for (int i = 0; i < count; i++)
 		{
@@ -185,26 +185,26 @@ bool ReadyCharacterHUDW::FrameAction()
 		strs[13] = L"戦闘に参加する部隊を選択してください";
 		strs[14] = L"↑↓:カーソル移動 スペース:決定";
 
-		count = MakeSpriteString(count, xpos[0], ypos[0], 40, 60, strs[13], 0);
+		count = MakeSpriteStringLeftEdge(count, xpos[0], ypos[0], 40, 60, strs[13], 0);
 
-		count = MakeSpriteString(count, xpos[0], ypos[1], 20, 40, strs[0], 1);
-		count = MakeSpriteString(count, xpos[1], ypos[1], 20, 40, strs[1], 2);
+		count = MakeSpriteStringLeftEdge(count, xpos[0], ypos[1], 20, 40, strs[0], 1);
+		count = MakeSpriteStringLeftEdge(count, xpos[1], ypos[1], 20, 40, strs[1], 2);
 
-		count = MakeSpriteString(count, xpos[0], ypos[2], 20, 40, strs[2], 3);
-		count = MakeSpriteString(count, xpos[0], ypos[3], 20, 40, strs[3], 4);
-		count = MakeSpriteString(count, xpos[0], ypos[4], 20, 40, strs[4], 5);
-		count = MakeSpriteString(count, xpos[0], ypos[5], 20, 40, strs[5], 6);
-		count = MakeSpriteString(count, xpos[0], ypos[6], 20, 40, strs[6], 7);
+		count = MakeSpriteStringLeftEdge(count, xpos[0], ypos[2], 20, 40, strs[2], 3);
+		count = MakeSpriteStringLeftEdge(count, xpos[0], ypos[3], 20, 40, strs[3], 4);
+		count = MakeSpriteStringLeftEdge(count, xpos[0], ypos[4], 20, 40, strs[4], 5);
+		count = MakeSpriteStringLeftEdge(count, xpos[0], ypos[5], 20, 40, strs[5], 6);
+		count = MakeSpriteStringLeftEdge(count, xpos[0], ypos[6], 20, 40, strs[6], 7);
 
-		count = MakeSpriteString(count, xpos[0], ypos[7], 21, 60, strs[12], 8);
+		count = MakeSpriteStringLeftEdge(count, xpos[0], ypos[7], 21, 60, strs[12], 8);
 
-		count = MakeSpriteString(count, xpos[1], ypos[2], 20, 40, strs[7], 9);
-		count = MakeSpriteString(count, xpos[1], ypos[3], 20, 40, strs[8], 10);
-		count = MakeSpriteString(count, xpos[1], ypos[4], 20, 40, strs[9], 11);
-		count = MakeSpriteString(count, xpos[1], ypos[5], 20, 40, strs[10], 12);
-		count = MakeSpriteString(count, xpos[1], ypos[6], 20, 40, strs[11], 13);
+		count = MakeSpriteStringLeftEdge(count, xpos[1], ypos[2], 20, 40, strs[7], 9);
+		count = MakeSpriteStringLeftEdge(count, xpos[1], ypos[3], 20, 40, strs[8], 10);
+		count = MakeSpriteStringLeftEdge(count, xpos[1], ypos[4], 20, 40, strs[9], 11);
+		count = MakeSpriteStringLeftEdge(count, xpos[1], ypos[5], 20, 40, strs[10], 12);
+		count = MakeSpriteStringLeftEdge(count, xpos[1], ypos[6], 20, 40, strs[11], 13);
 
-		count = MakeSpriteString(count, xpos[1], ypos[7], 21, 60, strs[14], 14);
+		count = MakeSpriteStringLeftEdge(count, xpos[1], ypos[7], 21, 60, strs[14], 14);
 
 		if (AnimationFlag)
 		{
@@ -332,7 +332,7 @@ bool ReadyCharacterHUDW::FrameAction()
 			strs[13] = L">データを送信中";
 		}
 
-		count = MakeSpriteString(count, xpos[0], ypos[0], 40, 60, strs[13], 0);
+		count = MakeSpriteStringLeftEdge(count, xpos[0], ypos[0], 40, 60, strs[13], 0);
 
 		for (int i = 0; i < count; i++)
 		{
@@ -353,7 +353,7 @@ bool ReadyCharacterHUDW::FrameAction()
 			strs[13] = L">データを送信中***";
 		}
 
-		count = MakeSpriteString(count, xpos[0], ypos[0], 40, 60, strs[13], 0);
+		count = MakeSpriteStringLeftEdge(count, xpos[0], ypos[0], 40, 60, strs[13], 0);
 
 		for (int i = 0; i < count; i++)
 		{

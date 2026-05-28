@@ -28,6 +28,7 @@ namespace OrderInLayer
 	constexpr float BackGround = 2.0f;
 	constexpr float MoveObject = 1.0f;
 	constexpr float Text = 0.5f;
+	constexpr float OnTextObject = 0.1f;
 };
 
 class HUDObject : public GameComponent	//HUDの親クラス
@@ -103,6 +104,8 @@ public:
 
 	void SetShaderResoruce();
 	virtual void ResetHUD();
+
+	void RefreshEasingAnimation();
 };
 
 class HUDTextObject : public HUDObject	//HUD(テキストあり)の親クラス
@@ -124,8 +127,9 @@ protected:
 
 	WordList m_WordList;
 
-	int MakeSpriteString(int startIndex, float posX, float posY, float width, float height, const wchar_t* string, XMFLOAT3 color);
-	int MakeSpriteStringRightAligned(int startIndex, float posX, float posY, float width, float height, const wchar_t* string, XMFLOAT3 color);
+	int MakeSpriteStringLeftEdge(int startIndex, float posX, float posY, float width, float height, const wchar_t* string, XMFLOAT3 color);
+	int MakeSpriteStringRightEdge(int startIndex, float posX, float posY, float width, float height, const wchar_t* string, XMFLOAT3 color);
+	int MakeSpriteStringMid(int startIndex, float posX, float posY, float width, float height, const wchar_t* string, XMFLOAT3 color);
 
 	void SetFont(const wchar_t* fontTextureId, const wchar_t* fontWordList);
 };
@@ -295,11 +299,11 @@ class BattleCameraHUD : public HUDTextObject	//戦闘カメラHUD
 {
 private:
 	const XMFLOAT2 kAttackerTextPos = { -400.0f, 220.0f };
-	const XMFLOAT2 kAttackerMoveTextPos = { -50.0f, 200.0f };
+	const XMFLOAT2 kAttackerMoveTextPos = { -75.0f, 175.0f };
 	const XMFLOAT2 kDefenderTextPos = { 200.0f, -220.0f };
 
 	const XMFLOAT2 kBackGroundPos = { 0.0f, 0.0f };
-	const XMFLOAT2 kAttackerTextBackGroundPos = { 0.0f, 200.0f };
+	const XMFLOAT2 kAttackerTextBackGroundPos = { 0.0f, 175.0f };
 	const XMFLOAT2 kDefenderTextBackGroundPos = { 0.0f, -200.0f };
 public:
 	void InitAction() override;
@@ -576,8 +580,8 @@ private:
 	{
 		L"経過ターン:",
 		L"倒した部隊数:",
-		L"倒された部隊数:"
-		L"スコア:"
+		L"倒された部隊数:",
+		L"スコア:",
 		L"スペースキーで終了"
 	};
 
@@ -593,4 +597,37 @@ public:
 	{
 		m_EndingState = state;
 	}
+};
+
+class BattlePredictionHUD : public HUDTextObject			//ターンエンド画面
+{
+private:
+	float m_AnimationCount = 0.0f;
+	float m_GreenBarSizeX = 0.0f;
+	float m_RedBarSizeX = 0.0f;
+
+	float m_GreenBarPositionX = 0.0f;
+	float m_RedBarPositionX = 0.0f;
+
+	float m_RedBarRightEdgePositionX = 0.0f;
+
+	float m_RedBarAlpha = 0.0f;
+
+	const float kDogtagAnimationDuration = 0.5f;
+	const float kAlliesTextPositionX = -400.0f;
+	const float kEnemyTextPositionX = 100.0f;
+	const float kGeneralTextPositionY = -30.0f;
+	const float kPlatoonTextPositionY = -70.0f;
+	const float kOriginBarSizeX = 300.0f;
+
+	const float kBarLeftEdgePositionX = 100.0f;
+
+	const XMFLOAT2 kDogtagPositionY = { -300.0f, -50.0f };
+	const XMFLOAT2 kDogtagPositionX = { -150.0f, 150.0f };
+
+	const XMFLOAT2 kBarPositionY = { -250.0f, 0.0f };
+public:
+	void InitAction() override;
+	bool FrameAction() override;
+	void FinishAction() override;
 };

@@ -8,7 +8,7 @@
 #include "BattleFieldManager.h"
 #include "AbilityType.h"
 
-int DamageHUDW::MakeSpriteString(int startIndex, float ltX, float ltY, float width, float height, const wchar_t* str)
+int DamageHUDW::MakeSpriteStringLeftEdge(int startIndex, float ltX, float ltY, float width, float height, const wchar_t* str)
 {
 	int count = startIndex;
 
@@ -138,7 +138,7 @@ bool DamageHUDW::FrameAction()
 
 		const wchar_t* str = cstr.c_str();
 
-		count = MakeSpriteString(count, x, y, 30, 72, str);
+		count = MakeSpriteStringLeftEdge(count, x, y, 30, 72, str);
 
 		for (int i = 0; i < count; i++)
 		{

@@ -9,6 +9,7 @@
 #include "TerrainComponent.h"
 #include "CharacterEquipment.h"
 #include "PlayerFBXs.h"
+#include "BattleCameraController.h"
 
 //=========Scene Change
 class SceneManager;
@@ -18,6 +19,7 @@ class CharacterEquipment;
 class PlayerBase;
 enum class SoldiersType;
 enum class Admin;
+enum class BattleCameraType;
 
 class SceneObjectDeleter : public AbstractGameObjectDeleter
 {
@@ -121,4 +123,5 @@ public:
 
 	void GenerateEquipment(SoldiersType type, PlayerBase* playerBase, Admin admin);
 
+	void GenerateCamera(const wchar_t* cameraName, BattleCameraType cameraType);
 };

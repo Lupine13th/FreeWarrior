@@ -220,7 +220,7 @@ public:
 
 	float GetSoldiersPercent()
 	{
-		return m_Soldiers / m_MaxSoldiers;
+		return (float)m_Soldiers / (float)m_MaxSoldiers;
 	}
 
 	bool GetIsDetected()

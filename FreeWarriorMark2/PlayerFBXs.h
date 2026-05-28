@@ -32,6 +32,7 @@ public:
     void SetBackEquipment(CharacterEquipment* equipment);
 
     void SetMatrixForEquipment(CharacterEquipment* equipment, XMMATRIX matrix, XMFLOAT3 rotate, XMFLOAT3 position, XMFLOAT3 scale);
+    void SetCharacterCameraLabel(FBXCharacterData* characterData, bool hasAnime);
 };
 
 class InfantryPlayer : public PlayerBase
