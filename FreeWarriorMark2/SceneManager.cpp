@@ -213,8 +213,9 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"TitleFlashEffect", L"./Resources/textures/HUD/TitleFlashEffect.png");		//タイトルシーン遷移イメージ
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"TurnEndBackGroundTexture", L"./Resources/textures/HUD/TurnEndBackGroundTexture.png");		//ターンエンドHUD背景イメージ
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"TurnEndArrowTexture", L"./Resources/textures/HUD/TurnEndArrowTexture.png");				//ターンエンドHUD矢印イメージ
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"AlliesDogtagTexture", L"./Resources/textures/HUD/AlliesDogtagTexture.png");			//戦闘予想H背景イメージ
-				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"EnemyDogtagTexture", L"./Resources/textures/HUD/EnemyDogtagTexture.png");			//戦闘予想Hライティングイメージ
+				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"AlliesDogtagTexture", L"./Resources/textures/HUD/AlliesDogtagTexture.png");			//戦闘予想背景イメージ
+				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"BattlePredictBackGroundTexture", L"./Resources/textures/HUD/BattlePredictBackGroundTexture.png");			//戦闘予想カメラ背景イメージ
+				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"EnemyDogtagTexture", L"./Resources/textures/HUD/EnemyDogtagTexture.png");			//戦闘予想ライティングイメージ
 
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"WinNewsPaperTexture", L"./Resources/textures/HUD/WinNewsPaperTexture.png");			//勝利新聞イメージ
 				engine->GetTextureManager()->CreateTextureFromFile(engine->GetDirect3DDevice(), L"LoseNewsPaperTexture", L"./Resources/textures/HUD/LoseNewsPaperTexture.png");			//敗北新聞イメージ

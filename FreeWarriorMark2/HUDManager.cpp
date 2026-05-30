@@ -2524,6 +2524,9 @@ void BattlePredictionHUD::InitAction()
     MakeSpriteObject(L"Sprite00", L"HUDCamera", L"AlphaSprite", pattern, XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f));       //敵側HPバー緑色
     MakeSpriteObject(L"Sprite00", L"HUDCamera", L"AlphaSprite", pattern, XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));       //敵側HPバー背景
 
+    MakeSpriteObject(L"BattlePredictBackGroundTexture", L"BackGroundHUDCamera", L"AlphaSprite", pattern, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));       //味方側カメラ背景
+    MakeSpriteObject(L"BattlePredictBackGroundTexture", L"BackGroundHUDCamera", L"AlphaSprite", pattern, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));       //敵側カメラ背景
+
     m_SpriteList[0]->SetScale(400.0f, 400.0f, 0.1f);
     m_SpriteList[0]->setPosition(-250.0f, 0.0f, OrderInLayer::BackGround);
 
@@ -2538,6 +2541,12 @@ void BattlePredictionHUD::InitAction()
 
     m_SpriteList[4]->SetScale(305.0f, 25.0f, 0.1f);
     m_SpriteList[4]->setPosition(250.0f, 0.0f, OrderInLayer::BackGround);
+
+    m_SpriteList[5]->SetScale(230.0f, 230.0f, 0.1f);
+    m_SpriteList[5]->setPosition(-170.0f, 70.0f, OrderInLayer::BackGround);
+
+    m_SpriteList[6]->SetScale(230.0f, 230.0f, 0.1f);
+    m_SpriteList[6]->setPosition(170.0f, 70.0f, OrderInLayer::BackGround);
 
     SetAnimationState(AnimationState::None);
 }
@@ -2579,6 +2588,7 @@ bool BattlePredictionHUD::FrameAction()
         BFMng->ResetPredectCamera();                                        //顔カメラをリセット
 
         scene->SetActiveCameraCompornent(L"AttackerCameraForHUD", true);    //攻撃カメラだけオン
+        pipeline->AddRenderObject(m_SpriteList[5].get());                   //味方側のカメラ背景をオン
 
         for (int i = 0; i < 2; i++)
         {
@@ -2626,6 +2636,8 @@ bool BattlePredictionHUD::FrameAction()
             }
             m_AnimationCount = 0.0f;
         }
+
+        pipeline->AddRenderObject(m_SpriteList[5].get());                   //味方側のカメラ背景をオン
 
         for (int i = 0; i < 2; i++)
         {
@@ -2710,9 +2722,10 @@ bool BattlePredictionHUD::FrameAction()
 
                 m_SpriteList[2]->SetColor(1.0f, 0.0f, 0.0f, m_RedBarAlpha);
 
-                pipeline->AddRenderObject(m_SpriteList[2].get());
-                pipeline->AddRenderObject(m_SpriteList[3].get());
-                pipeline->AddRenderObject(m_SpriteList[4].get());
+                pipeline->AddRenderObject(m_SpriteList[2].get());                   //==========
+                pipeline->AddRenderObject(m_SpriteList[3].get());                   //HPバー描画
+                pipeline->AddRenderObject(m_SpriteList[4].get());                   //==========
+                pipeline->AddRenderObject(m_SpriteList[6].get());                   //敵側のカメラ背景をオン
 
                 scene->SetActiveCameraCompornent(L"DefenderCameraForHUD", true);
             }
@@ -2740,6 +2753,8 @@ bool BattlePredictionHUD::FrameAction()
             }
         }
 
+        pipeline->AddRenderObject(m_SpriteList[5].get());                   //味方側のカメラ背景をオン
+
         for (int i = 0; i < count; i++) //テキスト表示
         {
             pipeline->AddRenderObject(m_WordSpriteList[i].get());
@@ -2749,6 +2764,7 @@ bool BattlePredictionHUD::FrameAction()
         {
             pipeline->AddRenderObject(m_SpriteList[i].get());
         }
+
         break;
     }
 
