@@ -19,7 +19,7 @@ enum class AnimationState
 
 enum class EasingVector
 {
-	Verticle,
+	Vertical,
 	Horizontal
 };
 

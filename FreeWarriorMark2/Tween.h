@@ -36,23 +36,23 @@ public:
     }
 
     //線形補間
-    static float EaseLinear(float t, float b, float c, float d)
+    static float EaseLinear(float time, float beginValue, float changeInValue, float duration)
     {
-        return c * t / d + b;
+        return changeInValue * time / duration + beginValue;
     }
 
     //加速（Quad In）
-    static float EaseInQuad(float t, float b, float c, float d)
+    static float EaseInQuad(float time, float beginValue, float changeInValue, float duration)
     {
-        t /= d;
-        return c * t * t + b;
+        time /= duration;
+        return changeInValue * time * time + beginValue;
     }
 
     //減速（Quad Out）
-    static float EaseOutQuad(float t, float b, float c, float d)
+    static float EaseOutQuad(float time, float beginValue, float changeInValue, float duration)
     {
-        t /= d;
-        return -c * t * (t - 2) + b;
+        time /= duration;
+        return -changeInValue * time * (time - 2) + beginValue;
     }
 };
 

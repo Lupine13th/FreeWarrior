@@ -327,21 +327,22 @@ void HUDObject::MakeSpriteObject(const wchar_t* textureId, wstring cameraLabel, 
     sprite->SetColor(color.x, color.y, color.z, color.w);
 }
 
-void HUDObject::SetEasingAnimation(SpriteCharacter* sprite, EasingVector vector, float startPos, float endPos, float duration, const std::function<float(float, float, float, float)>& easing)
+void HUDObject::SetEasingAnimation(SpriteCharacter* sprite, EasingVector vector, float startPos, float endPos, float duration, const std::function<float(float, float, float, float)>& easing)  //イージングアニメーションを設定
 {
 	std::function<void(float)> setter = nullptr;
+
     switch (vector)
     {
-    case EasingVector::Horizontal:
+    case EasingVector::Horizontal:  //===================横方向のアニメーション=====================
         setter = [sprite](float x) {
-            XMFLOAT3 currentPos = sprite->GetPosition();
-            sprite->setPosition(x, currentPos.y, currentPos.z);
+            XMFLOAT3 currentPos = sprite->GetPosition();            //現在の座標を取得
+			sprite->setPosition(x, currentPos.y, currentPos.z);     //X座標のみ更新するラムダ関数を定義
             };
         break;
-    case EasingVector::Verticle:
+    case EasingVector::Vertical:    //===================縦方向のアニメーション=====================
         setter = [sprite](float y) {
-            XMFLOAT3 currentPos = sprite->GetPosition();
-            sprite->setPosition(currentPos.x, y, currentPos.z);
+            XMFLOAT3 currentPos = sprite->GetPosition();            //現在の座標を取得
+            sprite->setPosition(currentPos.x, y, currentPos.z);     //Y座標のみ更新するラムダ関数を定義
             };
         break;
     }
@@ -355,13 +356,13 @@ void HUDObject::SetEasingAnimation(SpriteCharacter* sprite, EasingVector vector,
     ));
 }
 
-void HUDObject::FlipAnimation(SpriteCharacter* sprite, int pages, float duration)
+void HUDObject::FlipAnimation(SpriteCharacter* sprite, int pages, float duration)   //ページ数と1ページあたりの時間を指定して、ページめくりアニメーションを実行
 {
     int activePage = 0;
 
     if (duration * pages < m_FlipAnimationCount)
     {
-        SetAnimationState(AnimationState::Finish);
+        //SetAnimationState(AnimationState::Finish);
         return;
     }
 
@@ -489,6 +490,11 @@ bool StatusHUD::FrameAction()
     case AnimationState::Run:
 		FlipAnimation(m_SpriteList[0].get(), m_AnimationPages, m_FlipDuration);   //テレビのノイズアニメーション
         index = 2;
+
+        if (m_FlipAnimationCount > m_AnimationPages * m_FlipDuration)
+        {
+			m_AnimationState = AnimationState::Finish;
+        }
         break;
     case AnimationState::Finish:
 
@@ -956,7 +962,7 @@ bool AbilityHUD::FrameAction()
                 case AbilityHUDState::FolderUp:
                     m_ActiveTweenList.clear();
                     m_AnimationCount = 0.0f;
-                    SetEasingAnimation(m_SpriteList[0].get(), EasingVector::Verticle, -600.0f, kAbillityBackGroundPosition.y, kBackGroundAnimationCount, Tween::EaseOutQuad);
+                    SetEasingAnimation(m_SpriteList[0].get(), EasingVector::Vertical, -600.0f, kAbillityBackGroundPosition.y, kBackGroundAnimationCount, Tween::EaseOutQuad);
                     m_AbilityHUDState = AbilityHUDState::FileUp;
                     break;
                 case AbilityHUDState::FileUp:
@@ -2076,9 +2082,9 @@ bool TurnEndHUD::FrameAction()
     case AnimationState::Init:  //出現アニメーション
         if (m_InitAnimationCount == 0.0f)
         {
-            SetEasingAnimation(m_SpriteList[0].get(), EasingVector::Verticle, kBackGroundPosY[0], kBackGroundPosY[1], kAnimationTime, Tween::EaseInQuad);
-            SetEasingAnimation(m_SpriteList[1].get(), EasingVector::Verticle, kArrowPosY[0], kArrowPosY[1], kAnimationTime, Tween::EaseInQuad);
-            SetEasingAnimation(m_SpriteList[2].get(), EasingVector::Verticle, kTextBackGroundPosY[0], kTextBackGroundPosY[1], kAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[0].get(), EasingVector::Vertical, kBackGroundPosY[0], kBackGroundPosY[1], kAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[1].get(), EasingVector::Vertical, kArrowPosY[0], kArrowPosY[1], kAnimationTime, Tween::EaseInQuad);
+            SetEasingAnimation(m_SpriteList[2].get(), EasingVector::Vertical, kTextBackGroundPosY[0], kTextBackGroundPosY[1], kAnimationTime, Tween::EaseInQuad);
         }
 
         m_InitAnimationCount += m_TimeManager->GetDeltaTime();
@@ -2307,7 +2313,7 @@ bool EndingHUD::FrameAction()
             if (m_AnimationCount == 0.0f)
             {
                 m_AnimationCount += m_TimeManager->GetDeltaTime();
-                SetEasingAnimation(m_SpriteList[1].get(), EasingVector::Verticle, kNewsPaperDropPositionY.x, kNewsPaperDropPositionY.y, kNewsPaperDropDuration, Tween::EaseInQuad);
+                SetEasingAnimation(m_SpriteList[1].get(), EasingVector::Vertical, kNewsPaperDropPositionY.x, kNewsPaperDropPositionY.y, kNewsPaperDropDuration, Tween::EaseInQuad);
             }
             else if (m_AnimationCount < kNewsPaperDropDuration)
             {
@@ -2575,7 +2581,7 @@ bool BattlePredictionHUD::FrameAction()
     switch (m_AnimationState)
     {
     case AnimationState::OnInit:
-        SetEasingAnimation(m_SpriteList[0].get(), EasingVector::Verticle, kDogtagPositionY.x, kDogtagPositionY.y, kDogtagAnimationDuration, Tween::EaseInQuad);
+        SetEasingAnimation(m_SpriteList[0].get(), EasingVector::Vertical, kDogtagPositionY.x, kDogtagPositionY.y, kDogtagAnimationDuration, Tween::EaseInQuad);
 
         m_TextList["攻撃司令官"] = L"司令官:無し";
         m_TextList["攻撃部隊名"] = L"部隊名:" + attackingCharacter->GetPlatoonName();
@@ -2606,7 +2612,7 @@ bool BattlePredictionHUD::FrameAction()
             {
                 if (BFMng->GetFieldSquaresList()[BFMng->GetTargetID()]->chara->GetAdmin() == Admin::Imperial)
                 {
-                    SetEasingAnimation(m_SpriteList[1].get(), EasingVector::Verticle, kDogtagPositionY.x, kDogtagPositionY.y, kDogtagAnimationDuration, Tween::EaseInQuad);
+                    SetEasingAnimation(m_SpriteList[1].get(), EasingVector::Vertical, kDogtagPositionY.x, kDogtagPositionY.y, kDogtagAnimationDuration, Tween::EaseInQuad);
                 }
             }
         }
