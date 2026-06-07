@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "SpriteCharacter.h"
 #include "BattleFieldManager.h"
+#include "BattleSceneManager.h"
 #include "TimeManager.h"
 #include "Tween.h"
 
@@ -39,6 +40,7 @@ protected:
 	vector<std::unique_ptr<Tween>> m_ActiveTweenList = {};
 	vector<std::unique_ptr<SpriteCharacter>> m_SpriteList = {};
 	BattleFieldManager* BFMng = MyAccessHub::GetBFManager();
+	BattleSceneManager* BSMng = MyAccessHub::GetBattleSceneManager();
 	TimeManager* m_TimeManager = MyAccessHub::GetTimeManager();
 
 	const float kFlipWidth = 512.0f;
@@ -305,10 +307,35 @@ private:
 	const XMFLOAT2 kBackGroundPos = { 0.0f, 0.0f };
 	const XMFLOAT2 kAttackerTextBackGroundPos = { 0.0f, 175.0f };
 	const XMFLOAT2 kDefenderTextBackGroundPos = { 0.0f, -200.0f };
+
+	const map<Animations, wstring> kAttackerMoveTexts =
+	{
+		{ Animations::Attack, L"攻撃" },
+		{ Animations::ConcentratedFire, L"集中射撃" },
+		{ Animations::BayonetCharge, L"銃剣突撃" },
+		{ Animations::Scout, L"偵察" }
+	};
 public:
 	void InitAction() override;
 	bool FrameAction() override;
 	void FinishAction() override;
+
+	void SetActionText(wstring text)
+	{
+		m_TextList["攻撃側行動"] = text;
+	}
+
+	wstring SetAttackerMoveText(Animations anim)
+	{
+		if (kAttackerMoveTexts.count(anim) > 0)
+		{
+			return kAttackerMoveTexts.at(anim);
+		}
+		else
+		{
+			return L"";
+		}
+	}
 };
 
 class MainMenuHUD : public HUDTextObject		//メインメニューHUD
@@ -409,7 +436,7 @@ public:
 	void FinishAction() override;
 };
 
-class DamageEffectHUD : public HUDObject	//ダメージエフェクトUI
+class DamageEffectHUD : public HUDTextObject	//ダメージエフェクトUI
 {
 private:
 	const XMFLOAT3 kLowDamageEffectPosition = { -200.0f, -75.0f, 0.0f };
@@ -630,4 +657,52 @@ public:
 	void InitAction() override;
 	bool FrameAction() override;
 	void FinishAction() override;
+};
+
+class DamageUI : public HUDTextObject			//ターンエンド画面
+{
+private:
+	enum class DamageUIState
+	{
+		None,
+		MovingGreen,
+		MovingRed,
+	};
+
+	DamageUIState m_DamageUIState = DamageUIState::None;
+
+	float m_AnimationCount = 0.0f;
+
+	float m_StartGreenBarSizeX = 0.0f;
+	float m_EndGreenBarSizeX = 0.0f;
+
+	float m_StartGreenBarPositionX = 0.0f;
+	float m_EndGreenBarPositionX = 0.0f;
+
+	float m_GreenBarPositionX = 0.0f;
+	float m_GreenBarSizeX = 0.0f;
+
+	float m_StartRedBarSizeX = 0.0f;
+	float m_EndRedBarSizeX = 0.0f;
+
+	float m_StartRedBarPositionX = 0.0f;
+	float m_EndRedBarPositionX = 0.0f;
+
+	float m_RedBarPositionX = 0.0f;
+	float m_RedBarSizeX = 0.0f;
+
+	float m_CurrentDamage = 0.0f;
+
+	XMFLOAT2 m_DamageTextPosition = { 0.0f, 0.0f };
+
+	const XMFLOAT2 kOriginBarPosition = { 50.0f, -80.0f };
+	const XMFLOAT2 kBarScale = { 100.0f, 10.0f };
+	const float kBarLeftEdgePositionX = 0.0f;
+	const XMFLOAT2 kOriginDamageTextPosition = { 50.0f, -50.0f };
+public:
+	void InitAction() override;
+	bool FrameAction() override;
+	void FinishAction() override;
+
+	void SetDamage(float damage, float maxSoldiers, float soldiers);
 };

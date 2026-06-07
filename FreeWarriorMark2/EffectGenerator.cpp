@@ -18,7 +18,7 @@ void MuzzleFlashEffect::InitAction()
 
 		SpriteCharacter* spriteCharacter = new SpriteCharacter;
 		spriteCharacter->SetRotation(m_EffectRotation.x, m_EffectRotation.y, m_EffectRotation.z);
-		spriteCharacter->setPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
+		spriteCharacter->SetPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
 		spriteCharacter->SetScale(m_SpriteScale, m_SpriteScale, m_SpriteScale);
 		spriteCharacter->SetColor(1, 1, 1, 1);
 		spriteCharacter->SetGraphicsPipeLine(L"AlphaSprite");
@@ -60,7 +60,7 @@ bool MuzzleFlashEffect::FrameAction()
 
 				// 行列をMatrixに書き込む
 				m_SpriteCharacterList[i]->SetRotationMatrix(mTotal);
-				m_SpriteCharacterList[i]->setPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
+				m_SpriteCharacterList[i]->SetPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
 				m_SpriteCharacterList[i]->SetScale(m_SpriteScale, m_SpriteScale, m_SpriteScale);
 			}
 			m_IsFirstTime = false;
@@ -251,7 +251,7 @@ void ExplosiveEffect::InitAction()
 
 		SpriteCharacter* spriteCharacter = new SpriteCharacter;
 		spriteCharacter->SetRotation(m_EffectRotation.x, m_EffectRotation.y, m_EffectRotation.z);
-		spriteCharacter->setPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
+		spriteCharacter->SetPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
 		spriteCharacter->SetScale(m_SpriteScale, m_SpriteScale, m_SpriteScale);
 		spriteCharacter->SetColor(1, 1, 1, 1);
 		spriteCharacter->SetGraphicsPipeLine(L"AlphaSprite");
@@ -292,7 +292,7 @@ bool ExplosiveEffect::FrameAction()
 
 				// 行列をMatrixに書き込む
 				m_SpriteCharacterList[i]->SetRotationMatrix(mTotal);
-				m_SpriteCharacterList[i]->setPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
+				m_SpriteCharacterList[i]->SetPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
 				m_SpriteCharacterList[i]->SetScale(m_SpriteScale, m_SpriteScale, m_SpriteScale);
 			}
 			m_IsFirstTime = false;
@@ -351,7 +351,7 @@ void LargeExplosiveEffect::InitAction()
 
 		SpriteCharacter* spriteCharacter = new SpriteCharacter;
 		spriteCharacter->SetRotation(m_EffectRotation.x, m_EffectRotation.y, m_EffectRotation.z);
-		spriteCharacter->setPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
+		spriteCharacter->SetPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
 		spriteCharacter->SetScale(m_SpriteScale, m_SpriteScale, m_SpriteScale);
 		spriteCharacter->SetColor(1, 1, 1, 1);
 		spriteCharacter->SetGraphicsPipeLine(L"AlphaSprite");
@@ -392,7 +392,7 @@ bool LargeExplosiveEffect::FrameAction()
 
 				// 行列をMatrixに書き込む
 				m_SpriteCharacterList[i]->SetRotationMatrix(mTotal);
-				m_SpriteCharacterList[i]->setPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
+				m_SpriteCharacterList[i]->SetPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
 				m_SpriteCharacterList[i]->SetScale(m_SpriteScale, m_SpriteScale, m_SpriteScale);
 			}
 			m_IsFirstTime = false;
@@ -451,7 +451,7 @@ void CanonMuzzleFlashEffect::InitAction()
 
 		SpriteCharacter* spriteCharacter = new SpriteCharacter;
 		spriteCharacter->SetRotation(m_EffectRotation.x, m_EffectRotation.y, m_EffectRotation.z);
-		spriteCharacter->setPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
+		spriteCharacter->SetPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
 		spriteCharacter->SetScale(m_SpriteScale, m_SpriteScale, m_SpriteScale);
 		spriteCharacter->SetColor(1, 1, 1, 1);
 		spriteCharacter->SetGraphicsPipeLine(L"AlphaSprite");
@@ -493,7 +493,7 @@ bool CanonMuzzleFlashEffect::FrameAction()
 
 				// 行列をMatrixに書き込む
 				m_SpriteCharacterList[i]->SetRotationMatrix(mTotal);
-				m_SpriteCharacterList[i]->setPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
+				m_SpriteCharacterList[i]->SetPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
 				m_SpriteCharacterList[i]->SetScale(m_SpriteScale, m_SpriteScale, m_SpriteScale);
 			}
 			m_IsFirstTime = false;
@@ -552,7 +552,7 @@ void ScoutEffect::InitAction()
 
 		SpriteCharacter* spriteCharacter = new SpriteCharacter;
 		spriteCharacter->SetRotation(m_EffectRotation.x, m_EffectRotation.y, m_EffectRotation.z);
-		spriteCharacter->setPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
+		spriteCharacter->SetPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
 		spriteCharacter->SetScale(m_SpriteScale, m_SpriteScale, m_SpriteScale);
 		spriteCharacter->SetColor(1, 1, 1, 1);
 		spriteCharacter->SetGraphicsPipeLine(L"AlphaSprite");
@@ -593,7 +593,7 @@ bool ScoutEffect::FrameAction()
 
 				// 行列をMatrixに書き込む
 				m_SpriteCharacterList[i]->SetRotationMatrix(mTotal);
-				m_SpriteCharacterList[i]->setPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
+				m_SpriteCharacterList[i]->SetPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
 				m_SpriteCharacterList[i]->SetScale(m_SpriteScale, m_SpriteScale, m_SpriteScale);
 			}
 			m_IsFirstTime = false;
@@ -617,7 +617,7 @@ bool ScoutEffect::FrameAction()
 		}
 		for (int i = 0; i < m_SpriteCharacterList.size(); i++)
 		{
-			m_SpriteCharacterList[i]->setPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
+			m_SpriteCharacterList[i]->SetPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
 			m_SpriteCharacterList[i]->SetScale(m_SpriteScale, m_SpriteScale, m_SpriteScale);
 		}
 		for (int i = 0; i < m_EffectSpriteCount; i++)
@@ -658,7 +658,7 @@ void ScoutedEffect::InitAction()
 
 		SpriteCharacter* spriteCharacter = new SpriteCharacter;
 		spriteCharacter->SetRotation(m_EffectRotation.x, m_EffectRotation.y, m_EffectRotation.z);
-		spriteCharacter->setPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
+		spriteCharacter->SetPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
 		spriteCharacter->SetScale(m_SpriteScale, m_SpriteScale, m_SpriteScale);
 		spriteCharacter->SetColor(1, 1, 1, 1);
 		spriteCharacter->SetGraphicsPipeLine(L"AlphaSprite");
@@ -699,7 +699,7 @@ bool ScoutedEffect::FrameAction()
 
 				// 行列をMatrixに書き込む
 				m_SpriteCharacterList[i]->SetRotationMatrix(mTotal);
-				m_SpriteCharacterList[i]->setPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
+				m_SpriteCharacterList[i]->SetPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
 				m_SpriteCharacterList[i]->SetScale(m_SpriteScale, m_SpriteScale, m_SpriteScale);
 			}
 			m_IsFirstTime = false;
@@ -758,7 +758,7 @@ void CircleEffect::InitAction()
 
 		SpriteCharacter* spriteCharacter = new SpriteCharacter;
 		spriteCharacter->SetRotation(m_EffectRotation.x, m_EffectRotation.y, m_EffectRotation.z);
-		spriteCharacter->setPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
+		spriteCharacter->SetPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
 		spriteCharacter->SetScale(m_SpriteScale, m_SpriteScale, m_SpriteScale);
 		spriteCharacter->SetColor(0, 0, 1, 1);
 		spriteCharacter->SetGraphicsPipeLine(L"Sprite");
@@ -798,7 +798,7 @@ bool CircleEffect::FrameAction()
 
 				// 行列をMatrixに書き込む
 				m_SpriteCharacterList[i]->SetRotationMatrix(mTotal);
-				m_SpriteCharacterList[i]->setPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
+				m_SpriteCharacterList[i]->SetPosition(m_EffectPosition.x, m_EffectPosition.y, m_EffectPosition.z);
 				m_SpriteCharacterList[i]->SetScale(m_SpriteScale, m_SpriteScale, m_SpriteScale);
 			}
 			m_IsFirstTime = false;

@@ -45,27 +45,27 @@ void ReadyCharacterHUD::InitAction()
 
     //味方部隊その1
     m_Sprite[0]->SetScale(40.0f, 4.0f, 0.1f);
-    m_Sprite[0]->setPosition(-250.0f, 120.0f, 2.0f);
+    m_Sprite[0]->SetPosition(-250.0f, 120.0f, 2.0f);
 
     //味方部隊その2
     m_Sprite[1]->SetScale(40.0f, 4.0f, 0.1f);
-    m_Sprite[1]->setPosition(-250.0f, 60.0f, 2.0f);
+    m_Sprite[1]->SetPosition(-250.0f, 60.0f, 2.0f);
 
     //味方部隊その3
     m_Sprite[2]->SetScale(40.0f, 4.0f, 0.1f);
-    m_Sprite[2]->setPosition(-250.0f, 0.0f, 2.0f);
+    m_Sprite[2]->SetPosition(-250.0f, 0.0f, 2.0f);
 
     //味方部隊その4
     m_Sprite[3]->SetScale(40.0f, 4.0f, 0.1f);
-    m_Sprite[3]->setPosition(-250.0f, -60.0f, 2.0f);
+    m_Sprite[3]->SetPosition(-250.0f, -60.0f, 2.0f);
 
     //味方部隊その5
     m_Sprite[4]->SetScale(40.0f, 4.0f, 0.1f);
-    m_Sprite[4]->setPosition(-250.0f, -120.0f, 2.0f);
+    m_Sprite[4]->SetPosition(-250.0f, -120.0f, 2.0f);
 
     //ready
     m_Sprite[5]->SetScale(40.0f, 4.0f, 0.1f);
-    m_Sprite[5]->setPosition(-250.0f, -190.0f, 2.0f);
+    m_Sprite[5]->SetPosition(-250.0f, -190.0f, 2.0f);
 }
 
 bool ReadyCharacterHUD::FrameAction()

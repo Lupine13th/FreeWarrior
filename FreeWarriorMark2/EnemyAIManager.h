@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "FieldCharacter.h"
 #include "BattleFieldManager.h"
+#include "BattleSceneManager.h"
 #include "EnemyTypes.h"
 #include "TimeManager.h"
 #include "json.hpp"
@@ -78,6 +79,7 @@ private:
 	string m_JsonFilePath = "LearningAIData.json";	//AIデータの保存ファイルパス
 
 	BattleFieldManager* BFMng = nullptr;
+	BattleSceneManager* BSMng = nullptr;
 public:
 	void InitAction() override;
 	bool FrameAction() override;

@@ -27,7 +27,7 @@ int InFieldCharacterMenuWord::MakeSpriteStringLeftEdge(int startIndex, float ltX
 				m_Sprites[count]->SetColor(BRScene->textcolor.x, BRScene->textcolor.y, BRScene->textcolor.z, 1);
 			}
 
-			m_Sprites[count]->setPosition(ltX, ltY, 0.0f);
+			m_Sprites[count]->SetPosition(ltX, ltY, 0.0f);
 			count++;
 		}
 
@@ -52,7 +52,7 @@ void InFieldCharacterMenuWord::InitAction()
 
 	engine->InitCameraConstantBuffer(chData);
 
-	chData->setPosition(0.0f, 0.0f, 1.9f);
+	chData->SetPosition(0.0f, 0.0f, 1.9f);
 
 	XMVECTOR Eye = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	XMVECTOR At = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);

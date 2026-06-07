@@ -31,7 +31,7 @@ int ReadyCharacterHUDW::MakeSpriteStringLeftEdge(int startIndex, float ltX, floa
 				m_Sprites[count]->SetColor(BRScene->textcolor.x, BRScene->textcolor.y, BRScene->textcolor.z, 1);
 			}
 
-			m_Sprites[count]->setPosition(ltX, ltY, 0.0f);
+			m_Sprites[count]->SetPosition(ltX, ltY, 0.0f);
 
 			
 			count++;

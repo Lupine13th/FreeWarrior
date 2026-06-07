@@ -169,6 +169,7 @@
     <ClInclude Include="BattleCameraController.h" />
     <ClInclude Include="BattleFieldManager.h" />
     <ClInclude Include="BattleReadyScene.h" />
+    <ClInclude Include="BattleSceneManager.h" />
     <ClInclude Include="CameraChangerComponent.h" />
     <ClInclude Include="CameraComponent.h" />
     <ClInclude Include="CharacterEquipment.h" />
@@ -230,6 +231,7 @@
     <ClCompile Include="BattleCameraController.cpp" />
     <ClCompile Include="BattleFieldManager.cpp" />
     <ClCompile Include="BattleReadyScene.cpp" />
+    <ClCompile Include="BattleSceneManager.cpp" />
     <ClCompile Include="CameraChangerComponent.cpp" />
     <ClCompile Include="CameraComponent.cpp" />
     <ClCompile Include="CharacterEquipment.cpp" />

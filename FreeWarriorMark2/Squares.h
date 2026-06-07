@@ -60,6 +60,8 @@ private:
 	const float kOriginScoutEffectPosZ = 80.0f;
 	const float kScoutEffectPosZInterval = -0.55f;
 
+	XMFLOAT3 SquarePosition;
+
 	Animations NowAnimation = Animations::None;
 
 	Squares* NowChara = nullptr;
@@ -71,22 +73,12 @@ private:
 	XMFLOAT3 NextCharaPos = {};
 	XMFLOAT3 NowCharaRot = {};
 	XMFLOAT3 NextCharaRot = {};
-
-	const map<Animations, wstring> kAttackerMoveTexts =
-	{
-		{ Animations::Attack, L"攻撃" },
-		{ Animations::ConcentratedFire, L"集中射撃" },
-		{ Animations::BayonetCharge, L"銃剣突撃" },
-		{ Animations::Scout, L"偵察" }
-	};
 public:
 	
 	int ThereCharaID = -1;	//そのマスにいるキャラクター
 
 	int charaPosX = -1;
 	int charaPosY = -1;
-
-	XMFLOAT3 SqPos;
 
 	bool changeColor = false;
 	bool firstcount = false;
@@ -107,14 +99,22 @@ public:
 	bool FrameAction() override;
 	void FinishAction() override;
 
-	void HitReaction();
-	void AttackReaction();
-
 	void SetSquaresColor(SquareColor color);
-	void SetAnimation(Animations anim, Admin admin, Squares* chara, Squares* next);
+	void SetSquarePosition(float x, float y, float z)
+	{
+		SquarePosition = XMFLOAT3(x, y, z);
+	}
 	void SetSquareID(int index)
 	{
 		m_SquareID = index;
+	}
+	void SetFbxData(FBXCharacterData* fbxData)
+	{
+		fbxD = fbxData;
+	}
+	void SetPlatoon(Platoon* platoon)
+	{
+		chara = platoon;
 	}
 
 	int GetSquareID()
@@ -125,9 +125,17 @@ public:
 	{
 		return m_SquareID;
 	}
+	XMFLOAT3 GetSquarePosition()
+	{
+		return SquarePosition;
+	}
 
-	void SetBattlePosition();
 	void SetPreviousPosition();
+
+	FBXCharacterData* GetFBXData()
+	{
+		return fbxD;
+	}
 
 	Squares* GetNextChara()
 	{
@@ -137,16 +145,10 @@ public:
 	{
 		return NowChara;
 	}
-	wstring GetAttackerMoveText()
+
+	Platoon* GetPlatoon()
 	{
-		if (kAttackerMoveTexts.count(NowAnimation) > 0)
-		{
-			return kAttackerMoveTexts.at(NowAnimation);
-		}
-		else
-		{
-			return L"";
-		}
+		return chara;
 	}
 };
 

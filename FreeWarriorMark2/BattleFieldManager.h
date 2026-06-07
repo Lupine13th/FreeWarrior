@@ -443,6 +443,8 @@ public:
 	bool AttackingPlatoonIsAttackingTerrain(Platoon* attackingchara);
 	bool AttackedPlatoonIsDefenciveTerrain(Platoon* attackingchara);
 	bool IsNotDetectedAndEnemyAdmin(Squares* charaSquare);
+
+	void SetBattleCameraPosition(Squares* attackerSquare, Squares* attackedSquare);
 };
 
 

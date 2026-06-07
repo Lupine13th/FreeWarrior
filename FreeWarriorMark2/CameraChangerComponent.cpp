@@ -75,11 +75,16 @@ void CameraChangerComponent::SetBattleCamera()
 void CameraChangerComponent::SetMainCamera()
 {
 	SceneManager* p_scene = static_cast<SceneManager*>(MyAccessHub::GetMyGameEngine()->GetSceneController());
+	HUDManager* hudMng = MyAccessHub::GetHUDManager();
 	p_scene->SetActiveCameraCompornent(L"AttackerCamera", false);
 	p_scene->SetActiveCameraCompornent(L"DefenderCamera", false);
 	p_scene->SetActiveCameraCompornent(L"MainCamera", true);
 	p_scene->SetActiveCameraCompornent(L"ScoutingCamera", true);
 	BFMng->SetBattleCameraEnable(false);
+	if (hudMng != nullptr && hudMng->GetHUDObject("SuperiorityGaugeHUD") != nullptr)
+	{
+		MyAccessHub::GetHUDManager()->GetHUDObject("SuperiorityGaugeHUD")->SetAnimationState(AnimationState::Init);	//優劣ゲージのアニメーションを初期化
+	}
 }
 
 

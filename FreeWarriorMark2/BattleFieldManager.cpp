@@ -8,12 +8,15 @@
 #include "MyAccessHub.h"
 #include "FlyingCameraController.h"
 #include "EffectGenerator.h"
+#include "BattleSceneManager.h"
 
 #include <cmath> 
 #include <chrono>
 #include <algorithm>
 
 using namespace std::chrono;
+
+class BattleSceneManager;
 
 void BattleFieldManager::InitAction()
 {
@@ -46,12 +49,10 @@ void BattleFieldManager::InitAction()
 bool BattleFieldManager::FrameAction()
 {
 	MyGameEngine* p_engine = MyAccessHub::GetMyGameEngine();
-
 	SceneManager* p_scene = static_cast<SceneManager*>(MyAccessHub::GetMyGameEngine()->GetSceneController());
-
 	KeyBindComponent* keycomp = static_cast<KeyBindComponent*>(p_scene->getKeyComponent());
-
 	FlyingCameraController* Fcam = MyAccessHub::GetFlyingCameraController();
+	BattleSceneManager* BSMng = MyAccessHub::GetBattleSceneManager();
 
 	if (m_CurrentTurn == Turn::First == !p_scene->GetIsLoading())
 	{
@@ -439,12 +440,12 @@ bool BattleFieldManager::FrameAction()
 					if (m_FieldSquaresList[m_TargetID]->chara != nullptr && m_FieldSquaresList[m_TargetID]->chara->GetAdmin() != m_FieldSquaresList[m_SelectID]->chara->GetAdmin())	//ターゲットカーソルが敵のいる位置にある
 					{
 						m_HUDManager->GetHUDObject("BattlePredictionHUD")->SetAnimationState(AnimationState::None);	//攻撃HUDを切る
-						ResetPredectCamera();																		//攻撃HUDを切る
+						ResetPredectCamera();	
 
 						SetAttackingCharacterSquares(m_FieldSquaresList[m_SelectID]);
-						m_FieldSquaresList[m_SelectID]->SetAnimation(Animations::Attack, m_FieldSquaresList[m_SelectID]->chara->GetAdmin(), m_FieldSquaresList[m_SelectID], m_FieldSquaresList[m_TargetID]);
+						//m_FieldSquaresList[m_SelectID]->SetAnimation(Animations::Attack, m_FieldSquaresList[m_SelectID]->chara->GetAdmin(), m_FieldSquaresList[m_SelectID], m_FieldSquaresList[m_TargetID]);
 						Attack(m_AlliesCharacterList[m_FieldSquaresList[m_SelectID]->ThereCharaID], m_EnemyCharacterList[m_FieldSquaresList[m_TargetID]->ThereCharaID]);
-						m_FieldSquaresList[m_TargetID]->SetSquaresColor(SquareColor::NotCursor);
+						BSMng->SetBattlePosition(Animations::Attack, m_FieldSquaresList[m_SelectID]->GetPlatoon(), m_FieldSquaresList[m_TargetID]->GetPlatoon());
 						ResetFieldFromMove();
 						m_Mode = Mode::FieldMode;
 						m_FieldSquaresList[m_SelectID]->chara->SetIsActioned(true);
@@ -540,7 +541,7 @@ bool BattleFieldManager::FrameAction()
 				}
 				else if (keycomp->getCurrentInputState(InputManager::BUTTON_STATE::BUTTON_DOWN, KeyBindComponent::BUTTON_IDS::BTN_OK) && m_SelectID != m_TargetID && m_FieldSquaresList[m_TargetID]->chara == nullptr)	//スペースキーを入力＆ターゲットカーソルの位置に誰もいない
 				{
-					m_FieldSquaresList[m_SelectID]->SetAnimation(Animations::Move, m_FieldSquaresList[m_SelectID]->chara->GetAdmin(), m_FieldSquaresList[m_SelectID], m_FieldSquaresList[m_TargetID]);
+					BSMng->SetMovePosition(m_FieldSquaresList[m_SelectID], m_FieldSquaresList[m_TargetID], m_FieldSquaresList[m_SelectID]->GetFBXData());
 
 					//移動処理
 					Move(m_SelectID, m_TargetID, m_AlliesCharacterList[m_FieldSquaresList[m_SelectID]->ThereCharaID]->GetPlatoonID());
@@ -548,7 +549,6 @@ bool BattleFieldManager::FrameAction()
 					m_FieldSquaresList[m_TargetID]->SetSquaresColor(SquareColor::NotCursor);
 					ResetFieldFromMove();
 					m_Mode = Mode::FieldMode;
-					m_FieldSquaresList[m_TargetID]->chara->SetIsActioned(true);
 
 					ResetHUDs(3);
 				}
@@ -715,14 +715,15 @@ bool BattleFieldManager::FrameAction()
 							switch ((m_AlliesCharacterList[m_FieldSquaresList[m_SelectID]->ThereCharaID]->GetAbilityList()[m_AbillityIndex]))				//選択中のアビリティに応じて戦闘アニメーションを切り替える
 							{
 							case AbilityType::Scout:
-								m_FieldSquaresList[m_SelectID]->SetAnimation(Animations::Scout, m_FieldSquaresList[m_SelectID]->chara->GetAdmin(), m_FieldSquaresList[m_SelectID], m_FieldSquaresList[m_TargetID]);
+								BSMng->SetBattlePosition(Animations::Scout, m_FieldSquaresList[m_SelectID]->GetPlatoon(), m_FieldSquaresList[m_TargetID]->GetPlatoon());
 								ResetHUDs(9);
 								break;
 							case AbilityType::ConcentratedFire:
-								m_FieldSquaresList[m_SelectID]->SetAnimation(Animations::ConcentratedFire, m_FieldSquaresList[m_SelectID]->chara->GetAdmin(), m_FieldSquaresList[m_SelectID], m_FieldSquaresList[m_TargetID]);
+								BSMng->SetBattlePosition(Animations::ConcentratedFire, m_FieldSquaresList[m_SelectID]->GetPlatoon(), m_FieldSquaresList[m_TargetID]->GetPlatoon());
+								ResetHUDs(3);
 								break;
 							case AbilityType::BayonetCharge:
-								m_FieldSquaresList[m_SelectID]->SetAnimation(Animations::BayonetCharge, m_FieldSquaresList[m_SelectID]->chara->GetAdmin(), m_FieldSquaresList[m_SelectID], m_FieldSquaresList[m_TargetID]);
+								BSMng->SetBattlePosition(Animations::BayonetCharge, m_FieldSquaresList[m_SelectID]->GetPlatoon(), m_FieldSquaresList[m_TargetID]->GetPlatoon());
 								ResetHUDs(3);
 								break;
 							}
@@ -840,7 +841,7 @@ bool BattleFieldManager::FrameAction()
 
 	for (int i = 0; i < m_AlliesCharacterList.size(); i++)	//サークルエフェクトは必要かのループ
 	{
-		auto charaPositionSquare = m_FieldSquaresList[m_AlliesCharacterList[i]->GetCharacterPosOnSquares()]->SqPos;
+		auto charaPositionSquare = m_FieldSquaresList[m_AlliesCharacterList[i]->GetCharacterPosOnSquares()]->GetSquarePosition();
 
 		if (!m_AlliesCharacterList[i]->GetIsActioned() && !m_AlliesCharacterList[i]->GetIsDead() && m_CurrentTurn == Turn::Allies)	//移動していない味方キャラがいる場合、サークルエフェクトを再生
 		{
@@ -907,7 +908,7 @@ void BattleFieldManager::UpdateBattleField()
 
 	for (int i = 0; i < m_AlliesCharacterList.size(); i++)
 	{
-		auto charaPositionSquare = m_FieldSquaresList[m_AlliesCharacterList[i]->GetCharacterPosOnSquares()]->SqPos;
+		auto charaPositionSquare = m_FieldSquaresList[m_AlliesCharacterList[i]->GetCharacterPosOnSquares()]->GetSquarePosition();
 		if (m_AlliesCharacterList[i] != nullptr)
 		{
 			if (m_AlliesCharacterList[i]->GetIsActioned())
@@ -936,7 +937,7 @@ void BattleFieldManager::UpdateBattleField()
 
 XMFLOAT3 BattleFieldManager::GetCharaPos(Squares* squ)
 {
-	return squ->SqPos;
+	return squ->GetSquarePosition();
 }
 
 void BattleFieldManager::SetTerrainData()
@@ -988,7 +989,7 @@ void BattleFieldManager::DeleteChara(int deadCharaPos)
 	m_FieldSquaresList[deadCharaPos]->SqAdmin = Admin::None;
 	m_FieldSquaresList[deadCharaPos]->chara = nullptr;
 	m_FieldSquaresList[deadCharaPos]->fbxD->playerData->IsActive = false;
-	m_FieldSquaresList[deadCharaPos]->fbxD->setPosition(0.0f, -100.0f, 0.0f);
+	m_FieldSquaresList[deadCharaPos]->fbxD->SetPosition(0.0f, -100.0f, 0.0f);
 	m_FieldSquaresList[deadCharaPos]->fbxD = nullptr;
 
 	p_engine->GetSoundManager()->play(7);
@@ -1541,7 +1542,7 @@ XMFLOAT3 BattleFieldManager::GetFirstAlliesCharacterPos()
 {
 	if (m_AlliesCharacterList.size() > 0)
 	{
-		return m_FieldSquaresList[m_AlliesCharacterList[0]->GetCharacterPosOnSquares()]->SqPos;
+		return m_FieldSquaresList[m_AlliesCharacterList[0]->GetCharacterPosOnSquares()]->GetSquarePosition();
 	}
 	else
 	{
@@ -1565,7 +1566,13 @@ void BattleFieldManager::Attack(Platoon* attackingchara, Platoon* attackedchara)
 
 	int damage = CalculateDamage(ActionName::Attack, attackingchara, attackedchara);
 
-	m_DamageHUD->SetDamage(damage, attackedchara->GetMaxSoldiers(), attackedchara->GetSoldiers());	//ダメージUIを起動
+	//m_DamageHUD->SetDamage(damage, attackedchara->GetMaxSoldiers(), attackedchara->GetSoldiers());	//ダメージUIを起動
+
+	HUDObject* damageUIobj = m_HUDManager->GetHUDObject("DamageUI");
+	if (DamageUI* damageUI = dynamic_cast<DamageUI*>(damageUIobj))
+	{
+		damageUI->SetDamage(damage, attackedchara->GetMaxSoldiers(), attackedchara->GetSoldiers());
+	}
 
 	attackedchara->SetSoldier(attackedchara->GetSoldiers() - damage);
 	attackingchara->SetIsActioned(true);

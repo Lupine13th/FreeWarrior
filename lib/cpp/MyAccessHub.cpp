@@ -13,3 +13,4 @@ HUDManager* MyAccessHub::m_HUDManager = nullptr;
 EffectGenerator* MyAccessHub::m_EffectGenerator = nullptr;
 FBXResourceManager* MyAccessHub::m_FBXResourceManager = nullptr;
 LoadAnimationHUD* MyAccessHub::m_LoadAnimationHUD = nullptr;
+BattleSceneManager* MyAccessHub::m_BattleSceneManager = nullptr;

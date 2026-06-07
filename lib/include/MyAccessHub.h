@@ -16,6 +16,7 @@ class EffectGenerator;
 class FBXResourceManager;
 class LoadAnimationHUD;
 class SceneManager;
+class BattleSceneManager;
 
 class MyAccessHub
 {
@@ -32,6 +33,7 @@ private:
 	static FBXResourceManager* m_FBXResourceManager;
 	static LoadAnimationHUD* m_LoadAnimationHUD;
 	static SceneManager* m_SceneManager;
+	static BattleSceneManager* m_BattleSceneManager;
 public:
 
 	static void SetMyGameEnegine(MyGameEngine* eng)
@@ -94,6 +96,11 @@ public:
 		m_SceneManager = sceneManager;
 	}
 
+	static void SetBattleSceneManager(BattleSceneManager* battleSceneManager)
+	{
+		m_BattleSceneManager = battleSceneManager;
+	}
+
 	static MyGameEngine* GetMyGameEngine()
 	{
 		return m_engine;
@@ -152,5 +159,10 @@ public:
 	static SceneManager* GetSceneManager()
 	{
 		return m_SceneManager;
+	}
+
+	static BattleSceneManager* GetBattleSceneManager()
+	{
+		return m_BattleSceneManager;
 	}
 };

@@ -44,23 +44,23 @@ void OpeningAnimHUD::InitAction()
 
     o_sprite[0]->SetTextureId(L"RadioTexture");
     o_sprite[0]->SetScale(RadioScale.x, RadioScale.y, 0.1f);
-    o_sprite[0]->setPosition(RadioPos.x, RadioPos.y, 1.0f);
+    o_sprite[0]->SetPosition(RadioPos.x, RadioPos.y, 1.0f);
 
     o_sprite[1]->SetTextureId(L"PaporTexture");
     o_sprite[1]->SetScale(RadioScale.x, RadioScale.y, 0.1f);
-    o_sprite[1]->setPosition(RadioPos.x, RadioPos.y, 2.5f);
+    o_sprite[1]->SetPosition(RadioPos.x, RadioPos.y, 2.5f);
 
     o_sprite[2]->SetTextureId(L"TargetWinTexture");
     o_sprite[2]->SetScale(TarWinScale.x, TarWinScale.y, 0.1f);
-    o_sprite[2]->setPosition(TarWinPos.x, TarWinPos.y, 2.0f);
+    o_sprite[2]->SetPosition(TarWinPos.x, TarWinPos.y, 2.0f);
 
     o_sprite[3]->SetTextureId(L"TargetDefTexture");
     o_sprite[3]->SetScale(TarDefScale.x, TarDefScale.y, 0.1f);
-    o_sprite[3]->setPosition(TarDefPos.x, TarDefPos.y, 2.0f);
+    o_sprite[3]->SetPosition(TarDefPos.x, TarDefPos.y, 2.0f);
 
     o_sprite[4]->SetTextureId(L"FadeInTexture");
     o_sprite[4]->SetScale(FadeScale.x, FadeScale.y, 0.1f);
-    o_sprite[4]->setPosition(FadePos.x, FadePos.y, 2.0f);
+    o_sprite[4]->SetPosition(FadePos.x, FadePos.y, 2.0f);
 }
 
 bool OpeningAnimHUD::FrameAction()
@@ -84,7 +84,7 @@ bool OpeningAnimHUD::FrameAction()
             {
                 OPAnimCount += m_TimeManager->GetDeltaTime();
                 FadePos.x -= 1200.0f * m_TimeManager->GetDeltaTime();
-                o_sprite[4]->setPosition(FadePos.x, FadePos.y, 2.0f);
+                o_sprite[4]->SetPosition(FadePos.x, FadePos.y, 2.0f);
                 pipe->AddRenderObject(o_sprite[4].get());
             }
             else if (OPAnimCount > 1.0f)
@@ -99,15 +99,15 @@ bool OpeningAnimHUD::FrameAction()
             {
                 OPAnimCount += m_TimeManager->GetDeltaTime();
                 RadioPos.x -= 30.0f;
-                o_sprite[0]->setPosition(RadioPos.x, RadioPos.y, 1.0f);
-                o_sprite[1]->setPosition(RadioPos.x, RadioPos.y, 2.5f);
+                o_sprite[0]->SetPosition(RadioPos.x, RadioPos.y, 1.0f);
+                o_sprite[1]->SetPosition(RadioPos.x, RadioPos.y, 2.5f);
             }
             else if (OPAnimCount > 0.5f && OPAnimCount < 0.55f)
             {
                 OPAnimCount += m_TimeManager->GetDeltaTime();
                 RadioPos.x = 30.0f;
-                o_sprite[0]->setPosition(RadioPos.x, RadioPos.y, 1.0f);
-                o_sprite[1]->setPosition(RadioPos.x, RadioPos.y, 2.5);
+                o_sprite[0]->SetPosition(RadioPos.x, RadioPos.y, 1.0f);
+                o_sprite[1]->SetPosition(RadioPos.x, RadioPos.y, 2.5);
             }
             else if (OPAnimCount > 0.55f && OPAnimCount < 1.0f)
             {
@@ -117,10 +117,10 @@ bool OpeningAnimHUD::FrameAction()
                 RadioScale.x += 16.0f;
                 RadioScale.y += 16.0f;
 
-                o_sprite[0]->setPosition(RadioPos.x, RadioPos.y, 1.0f);
+                o_sprite[0]->SetPosition(RadioPos.x, RadioPos.y, 1.0f);
                 o_sprite[0]->SetScale(RadioScale.x, RadioScale.y, 0.1f);
 
-                o_sprite[1]->setPosition(RadioPos.x, RadioPos.y, 2.5f);
+                o_sprite[1]->SetPosition(RadioPos.x, RadioPos.y, 2.5f);
                 o_sprite[1]->SetScale(RadioScale.x, RadioScale.y, 0.1f);
             }
             else if (OPAnimCount > 1.0f)
@@ -140,7 +140,7 @@ bool OpeningAnimHUD::FrameAction()
             {
                 OPAnimCount += m_TimeManager->GetDeltaTime();
                 TarWinPos.y += 7.0f;
-                o_sprite[2]->setPosition(TarWinPos.x, TarWinPos.y, 2.0f);
+                o_sprite[2]->SetPosition(TarWinPos.x, TarWinPos.y, 2.0f);
             }
             else if (OPAnimCount > 2.0f)
             {
@@ -167,7 +167,7 @@ bool OpeningAnimHUD::FrameAction()
                 TarWinScale.x -= 6.0f;
                 TarWinScale.y -= 6.0f;
 
-                o_sprite[2]->setPosition(TarWinPos.x, TarWinPos.y, 2.0f);
+                o_sprite[2]->SetPosition(TarWinPos.x, TarWinPos.y, 2.0f);
                 o_sprite[2]->SetScale(TarWinScale.x, TarWinScale.y, 0.1f);
 
                 pipe->AddRenderObject(o_sprite[2].get());
@@ -178,7 +178,7 @@ bool OpeningAnimHUD::FrameAction()
 
                 TarWinPos.x += 30.0f;
 
-                o_sprite[2]->setPosition(TarWinPos.x, TarWinPos.y, 2.0f);
+                o_sprite[2]->SetPosition(TarWinPos.x, TarWinPos.y, 2.0f);
 
                 pipe->AddRenderObject(o_sprite[2].get());
             }
@@ -194,7 +194,7 @@ bool OpeningAnimHUD::FrameAction()
 
                 TarDefPos.y += 7.0f;
 
-                o_sprite[3]->setPosition(TarDefPos.x, TarDefPos.y, 2.0f);
+                o_sprite[3]->SetPosition(TarDefPos.x, TarDefPos.y, 2.0f);
 
                 pipe->AddRenderObject(o_sprite[3].get());
             }
@@ -221,7 +221,7 @@ bool OpeningAnimHUD::FrameAction()
                 TarDefScale.x -= 6.0f;
                 TarDefScale.y -= 6.0f;
 
-                o_sprite[3]->setPosition(TarDefPos.x, TarDefPos.y, 2.0f);
+                o_sprite[3]->SetPosition(TarDefPos.x, TarDefPos.y, 2.0f);
                 o_sprite[3]->SetScale(TarDefScale.x, TarDefScale.y, 0.1f);
 
                 pipe->AddRenderObject(o_sprite[3].get());
@@ -232,7 +232,7 @@ bool OpeningAnimHUD::FrameAction()
 
                 TarDefPos.x += 30.0f;
 
-                o_sprite[3]->setPosition(TarDefPos.x, TarDefPos.y, 2.0f);
+                o_sprite[3]->SetPosition(TarDefPos.x, TarDefPos.y, 2.0f);
 
                 pipe->AddRenderObject(o_sprite[3].get());
             }
@@ -242,8 +242,8 @@ bool OpeningAnimHUD::FrameAction()
 
                 RadioPos.y -= 15.0f;
 
-                o_sprite[0]->setPosition(RadioPos.x, RadioPos.y, 1.0f);
-                o_sprite[1]->setPosition(RadioPos.x, RadioPos.y, 1.0f);
+                o_sprite[0]->SetPosition(RadioPos.x, RadioPos.y, 1.0f);
+                o_sprite[1]->SetPosition(RadioPos.x, RadioPos.y, 1.0f);
             }
 
             pipe->AddRenderObject(o_sprite[0].get());

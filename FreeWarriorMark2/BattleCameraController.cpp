@@ -15,7 +15,7 @@ void BattleCameraController::InitAction()
 
 	engine->InitCameraConstantBuffer(chData);
 
-	chData->setPosition(0.0f, 0.0f, 0.0f);
+	chData->SetPosition(0.0f, 0.0f, 0.0f);
 
 	XMMATRIX view;
 

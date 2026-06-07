@@ -16,5 +16,4 @@ enum class Animations
 	BayonetCharge,
 	Scout,
 	Damage,
-	m_IsDead
 };

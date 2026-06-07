@@ -87,7 +87,7 @@ void CameraComponent::ChangeCameraRatio(float width, float height)
 void CameraComponent::ChangeCameraPosition(float x, float y, float z)
 {	
 	CharacterData* chData = GetGameObject()->GetCharacterData();
-	chData->setPosition(x, y, z);
+	chData->SetPosition(x, y, z);
 
 	m_UpdateFlg = true;
 }

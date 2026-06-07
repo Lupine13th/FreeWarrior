@@ -2,6 +2,8 @@
 
 void InfantryPlayer::InitAction()
 {
+	BFMng = MyAccessHub::GetBFManager();
+
 	FBXCharacterData* chdata = static_cast<FBXCharacterData*>(GetGameObject()->GetCharacterData());
 
 	float scaleValue = 0.03f;
@@ -10,7 +12,7 @@ void InfantryPlayer::InitAction()
 
 	chdata->SetScaleValue(scaleValue);
 
-	if (m_admin == Admin::Rebel)	//歩兵Fbxの登録　勢力ごとに違うからif分で分岐
+	if (m_Admin == Admin::Rebel)	//歩兵Fbxの登録　勢力ごとに違うからif分で分岐
 	{
 		chdata->LoadMainFBX(L"./Resources/fbx/rebelInfantry.fbx", L"RebelInfantry");
 		chdata->SetScale(scaleValue, scaleValue, scaleValue);
@@ -49,7 +51,7 @@ void InfantryPlayer::InitAction()
 			chdata->GetAnimeFbx(L"DAMAGE_REBEL_INF")->SetMeshUniqueFlag(true, true);
 		}
 	}
-	else if (m_admin == Admin::Imperial)
+	else if (m_Admin == Admin::Imperial)
 	{
 		chdata->LoadMainFBX(L"./Resources/fbx/imperialInfantry.fbx", L"ImperialInfantry");
 		chdata->SetScale(scaleValue, scaleValue, scaleValue);
@@ -93,7 +95,7 @@ void InfantryPlayer::InitAction()
 
 bool InfantryPlayer::FrameAction()
 {
-	if (IsAlive)	//マトリクスの座標から装備品の座標を切り替える
+	if (m_IsAlive)	//マトリクスの座標から装備品の座標を切り替える
 	{
 		m_chData = static_cast<FBXCharacterData*>(GetGameObject()->GetCharacterData());
 		m_chData->UpdateAnimation();
@@ -101,7 +103,7 @@ bool InfantryPlayer::FrameAction()
 		if (m_RightEquipment->GetCharacterData() == nullptr) return false;
 
 		XMMATRIX rightHandMatrix;
-		switch (m_admin)
+		switch (m_Admin)
 		{
 		case Admin::Rebel:
 			rightHandMatrix = m_chData->GetBornMatrix("mixamorig:RightHand");
@@ -113,7 +115,7 @@ bool InfantryPlayer::FrameAction()
 
 		if (m_RightEquipment != nullptr)
 		{
-			switch (m_admin)
+			switch (m_Admin)
 			{
 			case Admin::Rebel:
 				SetMatrixForEquipment(m_RightEquipment, rightHandMatrix, XMFLOAT3(0.0f, -90.0f, -90.0f), XMFLOAT3(5.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
@@ -123,6 +125,8 @@ bool InfantryPlayer::FrameAction()
 				break;
 			}
 		}
+
+		if (m_IsMoving) MovingUpdate();
 
 		m_chData->GetPipeline()->AddRenderObject(m_chData);
 		return true;
@@ -141,16 +145,18 @@ void InfantryPlayer::FinishAction()
 
 void ArtilleryPlayer::InitAction()
 {
+	BFMng = MyAccessHub::GetBFManager();
+
 	FBXCharacterData* chdata = static_cast<FBXCharacterData*>(GetGameObject()->GetCharacterData());
 
 	SetCharacterCameraLabel(chdata, false);
 	
-	if (m_admin == Admin::Rebel)
+	if (m_Admin == Admin::Rebel)
 	{
 		chdata->LoadMainFBX(L"./Resources/fbx/rebelCanon.fbx", L"RebelCanon");
 	}
 
-	else if (m_admin == Admin::Imperial)
+	else if (m_Admin == Admin::Imperial)
 	{
 		chdata->LoadMainFBX(L"./Resources/fbx/imperialCanon.fbx", L"ImperialCanon");
 	}
@@ -165,10 +171,12 @@ void ArtilleryPlayer::InitAction()
 
 bool ArtilleryPlayer::FrameAction()
 {
-	if (IsAlive)
+	if (m_IsAlive)
 	{
-		CharacterData* SqData = GetGameObject()->GetCharacterData();
-		SqData->GetPipeline()->AddRenderObject(SqData);
+
+		if (m_IsMoving) MovingUpdate();
+		m_chData = static_cast<FBXCharacterData*>(GetGameObject()->GetCharacterData());
+		m_chData->GetPipeline()->AddRenderObject(m_chData);
 		return true;
 	}
 	else
@@ -186,6 +194,8 @@ void ArtilleryPlayer::FinishAction()
 
 void MachinegunnerPlayer::InitAction()
 {
+	BFMng = MyAccessHub::GetBFManager();
+
 	FBXCharacterData* chdata = static_cast<FBXCharacterData*>(GetGameObject()->GetCharacterData());
 
 	SetCharacterCameraLabel(chdata, true);
@@ -232,7 +242,7 @@ void MachinegunnerPlayer::InitAction()
 
 bool MachinegunnerPlayer::FrameAction()
 {
-	if (IsAlive)		//マトリクスの座標から装備品の座標を切り替える
+	if (m_IsAlive)		//マトリクスの座標から装備品の座標を切り替える
 	{
 		m_chData = static_cast<FBXCharacterData*>(GetGameObject()->GetCharacterData());
 		m_chData->UpdateAnimation();
@@ -240,7 +250,7 @@ bool MachinegunnerPlayer::FrameAction()
 		if (m_RightEquipment->GetCharacterData() == nullptr) return false;
 
 		XMMATRIX rightHandMatrix;
-		switch (m_admin)
+		switch (m_Admin)
 		{
 		case Admin::Rebel:
 			rightHandMatrix = m_chData->GetBornMatrix("mixamorig:RightHand");
@@ -251,7 +261,7 @@ bool MachinegunnerPlayer::FrameAction()
 		}
 
 		XMMATRIX spineMatrix;
-		switch (m_admin)
+		switch (m_Admin)
 		{
 		case Admin::Rebel:
 			spineMatrix = m_chData->GetBornMatrix("mixamorig:Spine");
@@ -263,7 +273,7 @@ bool MachinegunnerPlayer::FrameAction()
 
 		if (m_RightEquipment != nullptr)
 		{
-			switch (m_admin)
+			switch (m_Admin)
 			{
 			case Admin::Rebel:
 				SetMatrixForEquipment(m_RightEquipment, rightHandMatrix, XMFLOAT3(0.0f, -75.0f, -100.0f), XMFLOAT3(5.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
@@ -275,7 +285,7 @@ bool MachinegunnerPlayer::FrameAction()
 		}
 		if (m_BackEquipment != nullptr)
 		{
-			switch (m_admin)
+			switch (m_Admin)
 			{
 			case Admin::Rebel:
 				SetMatrixForEquipment(m_BackEquipment, spineMatrix, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, -40.0f, 10.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
@@ -285,6 +295,8 @@ bool MachinegunnerPlayer::FrameAction()
 				break;
 			}
 		}
+
+		if (m_IsMoving) MovingUpdate();
 
 		m_chData->GetPipeline()->AddRenderObject(m_chData);
 		return true;
@@ -304,13 +316,15 @@ void MachinegunnerPlayer::FinishAction()
 
 void ScoutPlayer::InitAction()
 {
+	BFMng = MyAccessHub::GetBFManager();
+
 	FBXCharacterData* chdata = static_cast<FBXCharacterData*>(GetGameObject()->GetCharacterData());
 
 	SetCharacterCameraLabel(chdata, true);
 
 	float scaleValue = 0.03f;
 
-	if (m_admin == Admin::Rebel)
+	if (m_Admin == Admin::Rebel)
 	{
 		chdata->LoadMainFBX(L"./Resources/fbx/rebelScout.fbx", L"RebelSco");
 		
@@ -351,7 +365,7 @@ void ScoutPlayer::InitAction()
 			chdata->GetAnimeFbx(L"DAMAGE_REBEL_SCT")->SetMeshUniqueFlag(true, true);
 		}
 	}
-	else if (m_admin == Admin::Imperial)
+	else if (m_Admin == Admin::Imperial)
 	{
 		chdata->LoadMainFBX(L"./Resources/fbx/imperialSco.fbx", L"ImperialSco");
 
@@ -396,7 +410,7 @@ void ScoutPlayer::InitAction()
 
 bool ScoutPlayer::FrameAction()
 {
-	if (IsAlive)		//マトリクスの座標から装備品の座標を切り替える
+	if (m_IsAlive)		//マトリクスの座標から装備品の座標を切り替える
 	{
 		m_chData = static_cast<FBXCharacterData*>(GetGameObject()->GetCharacterData());
 		m_chData->UpdateAnimation();
@@ -405,7 +419,7 @@ bool ScoutPlayer::FrameAction()
 		if (m_RightEquipment->GetCharacterData() == nullptr) return false;
 
 		XMMATRIX rightHandMatrix;
-		switch (m_admin)
+		switch (m_Admin)
 		{
 		case Admin::Rebel:
 			rightHandMatrix = m_chData->GetBornMatrix("mixamorig:RightHand");
@@ -417,7 +431,7 @@ bool ScoutPlayer::FrameAction()
 
 		if (m_RightEquipment != nullptr)
 		{
-			switch (m_admin)
+			switch (m_Admin)
 			{
 			case Admin::Rebel:
 				SetMatrixForEquipment(m_RightEquipment, rightHandMatrix, XMFLOAT3(0.0f, -80.0f, -90.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
@@ -427,6 +441,8 @@ bool ScoutPlayer::FrameAction()
 				break;
 			}
 		}
+
+		if (m_IsMoving) MovingUpdate();
 
 		m_chData->GetPipeline()->AddRenderObject(m_chData);
 		return true;
@@ -446,17 +462,19 @@ void ScoutPlayer::FinishAction()
 
 void ArmoredPlayer::InitAction()
 {
+	BFMng = MyAccessHub::GetBFManager();
+
 	FBXCharacterData* chdata = static_cast<FBXCharacterData*>(GetGameObject()->GetCharacterData());
 	SetCharacterCameraLabel(chdata, false);
 
-	if (m_admin == Admin::Rebel)
+	if (m_Admin == Admin::Rebel)
 	{
 		chdata->LoadMainFBX(L"./Resources/fbx/rebelarm.fbx", L"RebelArm");
 		float scaleValue = 3.00f;
 		chdata->SetScale(scaleValue, scaleValue, scaleValue);
 		chdata->SetScaleValue(scaleValue);
 	}
-	else if (m_admin == Admin::Imperial)
+	else if (m_Admin == Admin::Imperial)
 	{
 		chdata->LoadMainFBX(L"./Resources/fbx/imperialarm.fbx", L"ImperialArm");
 		float scaleValue = 0.03f;
@@ -469,10 +487,11 @@ void ArmoredPlayer::InitAction()
 
 bool ArmoredPlayer::FrameAction()
 {
-	if (IsAlive)
+	if (m_IsAlive)
 	{
-		CharacterData* SqData = GetGameObject()->GetCharacterData();
-		SqData->GetPipeline()->AddRenderObject(SqData);
+		m_chData = static_cast<FBXCharacterData*>(GetGameObject()->GetCharacterData());
+		m_chData->GetPipeline()->AddRenderObject(m_chData);
+		if (m_IsMoving) MovingUpdate();
 		return true;
 	}
 	else
@@ -530,4 +549,50 @@ void PlayerBase::SetCharacterCameraLabel(FBXCharacterData* characterData, bool h
 	characterData->AddCameraLabel(L"ScoutingCamera");
 	characterData->AddCameraLabel(L"AttackerCameraForHUD");
 	characterData->AddCameraLabel(L"DefenderCameraForHUD");
+}
+
+void PlayerBase::SetMoveAnimation(XMFLOAT3 currentPosition, XMFLOAT3 nextPosition)
+{
+	m_IsMoving = true;
+	m_CurrentPosition = currentPosition;
+	m_NextPosition = nextPosition;
+}
+
+void PlayerBase::MovingUpdate()
+{
+	if (m_TimeManager == nullptr)
+	{
+		m_TimeManager = MyAccessHub::GetTimeManager();
+	}
+
+	if (m_CharacterAnimationCount == 0.0f)
+	{
+		//移動アニメーション用に平面の距離を入手
+		m_MoveDistance.x = m_NextPosition.x - m_CurrentPosition.x;
+		m_MoveDistance.y = m_NextPosition.z - m_CurrentPosition.z;
+
+		//内積
+		float angleRad = std::atan2(m_MoveDistance.y, m_MoveDistance.x);
+
+		//内積と現在の回転から移動先の方向に向ける
+		m_chData->SetRotation(0.0f, 90.0f - angleRad * (180.0f / 3.14159265f), 0.0f);
+	}
+
+	if (kMoveAnimationDuration > m_CharacterAnimationCount)	//二秒間移動アニメーション
+	{
+		m_CharacterAnimationCount += m_TimeManager->GetDeltaTime();
+
+		float t = m_CharacterAnimationCount / kMoveAnimationDuration;
+
+		m_chData->SetPosition(m_CurrentPosition.x + t * m_MoveDistance.x, m_CurrentPosition.y, m_CurrentPosition.z + t * m_MoveDistance.y);
+	}
+	else
+	{
+		m_Platoon->SetIsActioned(true);
+		BFMng->CheckMoved();
+		m_chData->SetPosition(m_NextPosition.x, m_NextPosition.y, m_NextPosition.z);
+		m_chData->SetAnimeInit(L"WAIT", m_Platoon);
+		m_CharacterAnimationCount = 0.0f;
+		m_IsMoving = false;
+	}
 }

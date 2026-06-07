@@ -26,7 +26,7 @@ bool SkyDomeComponent::FrameAction()
 	{
 		XMFLOAT3 charaPos = centerCharacter->GetPosition();
 
-		myData->setPosition(charaPos.x, charaPos.y, charaPos.z);
+		myData->SetPosition(charaPos.x, charaPos.y, charaPos.z);
 	}
 
 	myData->GetPipeline()->AddRenderObject(myData);

@@ -70,6 +70,10 @@ void HUDManager::InitAction()
     BattlePredictionHUD* battlePredictionHUD = new BattlePredictionHUD();   //戦闘予想HUD
     GetGameObject()->addComponent(battlePredictionHUD);
     AddHUDObject("BattlePredictionHUD", battlePredictionHUD);
+
+    DamageUI* damageUI = new DamageUI();   //ダメージUI
+    GetGameObject()->addComponent(damageUI);
+    AddHUDObject("DamageUI", damageUI);
 }
 
 bool HUDManager::FrameAction()
@@ -112,22 +116,22 @@ void MeterHUD::InitAction()
         switch (i)
         {
         case 0:
-            m_SpriteList[i]->setPosition(kArrowLeftPosX, kSoldierArrowPosY, OrderInLayer::MoveObject);
+            m_SpriteList[i]->SetPosition(kArrowLeftPosX, kSoldierArrowPosY, OrderInLayer::MoveObject);
             m_SpriteList[i]->SetScale(25.0f, 25.0f, 0.1f);
             m_SpriteList[i]->SetTextureId(L"SoldierBarArrowTexture");
             break;
         case 1:
-            m_SpriteList[i]->setPosition(kArrowLeftPosX, kMoraleArrowPosY, OrderInLayer::MoveObject);
+            m_SpriteList[i]->SetPosition(kArrowLeftPosX, kMoraleArrowPosY, OrderInLayer::MoveObject);
             m_SpriteList[i]->SetScale(25.0f, 25.0f, 0.1f);
             m_SpriteList[i]->SetTextureId(L"SoldierBarArrowTexture");
             break;
         case 2:
-            m_SpriteList[i]->setPosition(kMeterPositionX, kSoldierMeterPositionY, OrderInLayer::BackGround);
+            m_SpriteList[i]->SetPosition(kMeterPositionX, kSoldierMeterPositionY, OrderInLayer::BackGround);
             m_SpriteList[i]->SetScale(200.0f, 200.0f, 0.1f);
             m_SpriteList[i]->SetTextureId(L"SoldierTexture");
             break;
         case 3:
-            m_SpriteList[i]->setPosition(kMeterPositionX, kMoraleMeterPositionY, OrderInLayer::BackGround);
+            m_SpriteList[i]->SetPosition(kMeterPositionX, kMoraleMeterPositionY, OrderInLayer::BackGround);
             m_SpriteList[i]->SetScale(200.0f, 200.0f, 0.1f);
             m_SpriteList[i]->SetTextureId(L"MoraleTexture");
             break;
@@ -329,20 +333,20 @@ void HUDObject::MakeSpriteObject(const wchar_t* textureId, wstring cameraLabel, 
 
 void HUDObject::SetEasingAnimation(SpriteCharacter* sprite, EasingVector vector, float startPos, float endPos, float duration, const std::function<float(float, float, float, float)>& easing)  //イージングアニメーションを設定
 {
-	std::function<void(float)> setter = nullptr;
+	std::function<void(float)> setter = nullptr;    //ラムダ式
 
     switch (vector)
     {
     case EasingVector::Horizontal:  //===================横方向のアニメーション=====================
         setter = [sprite](float x) {
             XMFLOAT3 currentPos = sprite->GetPosition();            //現在の座標を取得
-			sprite->setPosition(x, currentPos.y, currentPos.z);     //X座標のみ更新するラムダ関数を定義
+			sprite->SetPosition(x, currentPos.y, currentPos.z);     //X座標のみ更新するラムダ関数を定義
             };
         break;
     case EasingVector::Vertical:    //===================縦方向のアニメーション=====================
         setter = [sprite](float y) {
             XMFLOAT3 currentPos = sprite->GetPosition();            //現在の座標を取得
-            sprite->setPosition(currentPos.x, y, currentPos.z);     //Y座標のみ更新するラムダ関数を定義
+            sprite->SetPosition(currentPos.x, y, currentPos.z);     //Y座標のみ更新するラムダ関数を定義
             };
         break;
     }
@@ -443,22 +447,22 @@ void StatusHUD::InitAction()
         switch (i)
         {
         case 0:     //ブラウン管のノイズ
-            m_SpriteList[i]->setPosition(380.0f, 200.0f, OrderInLayer::MoveObject);
+            m_SpriteList[i]->SetPosition(380.0f, 200.0f, OrderInLayer::MoveObject);
             m_SpriteList[i]->SetScale(160.0f, 120.0f, 0.1f);
             m_SpriteList[i]->SetTextureId(L"BrownTelevisionNoizeTexture");
             break;
         case 2:     //テレビラベル
-            m_SpriteList[i]->setPosition(380.0f, 155.0f, OrderInLayer::BackGround);
+            m_SpriteList[i]->SetPosition(380.0f, 155.0f, OrderInLayer::BackGround);
             m_SpriteList[i]->SetScale(200.0f, 40.0f, 0.1f);
             m_SpriteList[i]->SetTextureId(L"Sprite00");
             break;
         case 1:     //ブラウン管テレビフレーム
-            m_SpriteList[i]->setPosition(380.0f, 200.0f, OrderInLayer::Text + 0.2f);
+            m_SpriteList[i]->SetPosition(380.0f, 200.0f, OrderInLayer::Text + 0.2f);
             m_SpriteList[i]->SetScale(200.0f, 200.0f, 0.1f);
             m_SpriteList[i]->SetTextureId(L"BrownTelevisiomnFrameImage");
             break;
         case 3:     //テレビの背景
-            m_SpriteList[i]->setPosition(380.0f, 225.0f, OrderInLayer::BackGround + 0.2f);
+            m_SpriteList[i]->SetPosition(380.0f, 225.0f, OrderInLayer::BackGround + 0.2f);
             m_SpriteList[i]->SetCameraLabel(L"BackGroundHUDCamera", 0); //背景用ラベルに切り替え
             m_SpriteList[i]->SetScale(200.0f, 150.0f, 0.1f);
             m_SpriteList[i]->SetTextureId(L"Sprite00");
@@ -730,7 +734,7 @@ int HUDTextObject::MakeSpriteStringLeftEdge(int startIndex, float ltX, float ltY
             m_WordSpriteList[count]->setSpriteIndex(0);                                     //使用UVを初期化
             m_WordSpriteList[count]->SetColor(color.x, color.y, color.z, 1);                //テキストの色を設定
 
-            m_WordSpriteList[count]->setPosition(ltX, ltY, 0.0f);                           //位置を設定(左端から)
+            m_WordSpriteList[count]->SetPosition(ltX, ltY, 0.0f);                           //位置を設定(左端から)
             count++;
         }
 
@@ -765,7 +769,7 @@ int HUDTextObject::MakeSpriteStringRightEdge(int startIndex, float ltX, float lt
         {
             m_WordSpriteList[count]->SetSpritePattern(0, width, height, m_FontMap[*str]);
             m_WordSpriteList[count]->setSpriteIndex(0);
-            m_WordSpriteList[count]->setPosition(startX, ltY, 0.0f);
+            m_WordSpriteList[count]->SetPosition(startX, ltY, 0.0f);
             m_WordSpriteList[count]->SetColor(color.x, color.y, color.z, 1);
             count++;
             startX += width + 2.0f;
@@ -800,7 +804,7 @@ int HUDTextObject::MakeSpriteStringMid(int startIndex, float ltX, float ltY, flo
         {
             m_WordSpriteList[count]->SetSpritePattern(0, width, height, m_FontMap[*str]);
             m_WordSpriteList[count]->setSpriteIndex(0);
-            m_WordSpriteList[count]->setPosition(startX, ltY, 0.0f);
+            m_WordSpriteList[count]->SetPosition(startX, ltY, 0.0f);
             m_WordSpriteList[count]->SetColor(color.x, color.y, color.z, 1);
             count++;
             startX += width + 2.0f;
@@ -880,25 +884,25 @@ void AbilityHUD::InitAction()
         switch (i)
         {
         case 0:
-            m_SpriteList[i]->setPosition(0.0f, 0.0f, OrderInLayer::BackGround);
+            m_SpriteList[i]->SetPosition(0.0f, 0.0f, OrderInLayer::BackGround);
             m_SpriteList[i]->SetScale(500.0f, 500.0f, 0.1f);
             m_SpriteList[i]->SetColor(1.0f, 1.0f, 1.0f, 1);
             m_SpriteList[i]->SetTextureId(L"AbillityBackGroundTexture");
             break;
         case 1:
-            m_SpriteList[i]->setPosition(0.0f, 0.0f, OrderInLayer::MoveObject);
+            m_SpriteList[i]->SetPosition(0.0f, 0.0f, OrderInLayer::MoveObject);
             m_SpriteList[i]->SetScale(400.0f, 400.0f, 0.1f);
             m_SpriteList[i]->SetColor(1.0f, 1.0f, 1.0f, 1);
             m_SpriteList[i]->SetTextureId(L"AbillityNoteTexture");
             break;
         case 2:
-            m_SpriteList[i]->setPosition(0.0f, 0.0f, OrderInLayer::MoveObject);
+            m_SpriteList[i]->SetPosition(0.0f, 0.0f, OrderInLayer::MoveObject);
             m_SpriteList[i]->SetScale(400.0f, 400.0f, 0.1f);
             m_SpriteList[i]->SetColor(1.0f, 1.0f, 1.0f, 1);
             m_SpriteList[i]->SetTextureId(L"AbillityNoteTexture");
             break;
         case 3:
-            m_SpriteList[i]->setPosition(0.0f, 0.0f, OrderInLayer::MoveObject);
+            m_SpriteList[i]->SetPosition(0.0f, 0.0f, OrderInLayer::MoveObject);
             m_SpriteList[i]->SetScale(400.0f, 400.0f, 0.1f);
             m_SpriteList[i]->SetColor(1.0f, 1.0f, 1.0f, 1);
             m_SpriteList[i]->SetTextureId(L"AbillityNoteTexture");
@@ -970,7 +974,7 @@ bool AbilityHUD::FrameAction()
                     {
                         for (int i = 1; i < 4; i++)
                         {
-                            m_SpriteList[i]->setPosition(0.0f, 0.0f, OrderInLayer::BackGround + 0.1f);
+                            m_SpriteList[i]->SetPosition(0.0f, 0.0f, OrderInLayer::BackGround + 0.1f);
                             SetEasingAnimation(m_SpriteList[i].get(), EasingVector::Horizontal, 0.0f, kMaxAbillityNotePositionX, kBackGroundAnimationCount, Tween::EaseOutQuad);
                         }
 
@@ -982,7 +986,7 @@ bool AbilityHUD::FrameAction()
                     {
                         for (int i = 1; i < 4; i++)
                         {
-                            m_SpriteList[i]->setPosition(0.0f, 0.0f, OrderInLayer::MoveObject);
+                            m_SpriteList[i]->SetPosition(0.0f, 0.0f, OrderInLayer::MoveObject);
                             SetEasingAnimation(m_SpriteList[i].get(), EasingVector::Horizontal, kMaxAbillityNotePositionX, kAbillityBackGroundPosition.y, kBackGroundAnimationCount, Tween::EaseOutQuad);
                         }
 
@@ -1003,7 +1007,7 @@ bool AbilityHUD::FrameAction()
                         switch (abillityCount)
                         {
                         case 1:
-                            m_SpriteList[1]->setPosition(0.0f, 0.0f, OrderInLayer::MoveObject);
+                            m_SpriteList[1]->SetPosition(0.0f, 0.0f, OrderInLayer::MoveObject);
                             break;
                         case 2:
                             SetEasingAnimation(m_SpriteList[1].get(), EasingVector::Horizontal, kAbillityBackGroundPosition.x, kDoubleAbillityNotePositionX.x, kBackGroundAnimationCount, Tween::EaseInQuad);
@@ -1109,7 +1113,7 @@ void GuideHUD::InitAction()
         switch (i)
         {
         case 0:
-            m_SpriteList[i]->setPosition(kGuideBackGroundPos.x, kGuideBackGroundPos.y, OrderInLayer::BackGround);
+            m_SpriteList[i]->SetPosition(kGuideBackGroundPos.x, kGuideBackGroundPos.y, OrderInLayer::BackGround);
             m_SpriteList[i]->SetScale(700.0f, 700.0f, 0.1f);
             m_SpriteList[i]->SetTextureId(L"WindowTexture");
             break;
@@ -1201,12 +1205,12 @@ void SideMenuHUD::InitAction()
         case 0:
         case 1:
         case 2:
-            m_SpriteList[i]->setPosition(kSideMenuBackGroundPos.x, kTextPositionY[i], OrderInLayer::MoveObject);
+            m_SpriteList[i]->SetPosition(kSideMenuBackGroundPos.x, kTextPositionY[i], OrderInLayer::MoveObject);
             m_SpriteList[i]->SetScale(400.0f, 50.0f, 0.1f);
             m_SpriteList[i]->SetTextureId(L"Sprite00");
             break;
         case 3:
-            m_SpriteList[i]->setPosition(kSideMenuBackGroundPos.x, kSideMenuBackGroundPos.y, OrderInLayer::BackGround);
+            m_SpriteList[i]->SetPosition(kSideMenuBackGroundPos.x, kSideMenuBackGroundPos.y, OrderInLayer::BackGround);
             m_SpriteList[i]->SetScale(600.0f, 600.0f, 0.1f);
             m_SpriteList[i]->SetTextureId(L"SideMenuTexture");
             break;
@@ -1289,7 +1293,7 @@ void CurrentTerrainHUD::InitAction()
         switch (i)
         {
         case 0:
-            m_SpriteList[i]->setPosition(kBackGroundPos.x, kBackGroundPos.y, OrderInLayer::BackGround);
+            m_SpriteList[i]->SetPosition(kBackGroundPos.x, kBackGroundPos.y, OrderInLayer::BackGround);
             m_SpriteList[i]->SetScale(200.0f, 200.0f, 0.1f);
             m_SpriteList[i]->SetTextureId(L"TerrainHUDTexture");
             break;
@@ -1403,10 +1407,10 @@ void BattleCameraHUD::InitAction()
     MakeSpriteObject(L"BattleCameraHUDTexture", L"HUDCamera", L"AlphaSprite", m_PatternRect, XMFLOAT4(1.0f, 1.0f, 1.0f, 1));    //HUD外枠
     MakeSpriteObject(L"DogtagBaseTexture", L"HUDCamera", L"AlphaSprite", m_PatternRect, XMFLOAT4(1.0f, 1.0f, 1.0f, 1));    //攻撃側行動テキスト背景
 
-    m_SpriteList[0]->setPosition(kBackGroundPos.x, kBackGroundPos.y, OrderInLayer::BackGround);
+    m_SpriteList[0]->SetPosition(kBackGroundPos.x, kBackGroundPos.y, OrderInLayer::BackGround);
     m_SpriteList[0]->SetScale(960.0f, 950.0f, 0.1f);
 
-    m_SpriteList[1]->setPosition(kAttackerTextBackGroundPos.x, kAttackerTextBackGroundPos.y, OrderInLayer::MoveObject);
+    m_SpriteList[1]->SetPosition(kAttackerTextBackGroundPos.x, kAttackerTextBackGroundPos.y, OrderInLayer::MoveObject);
     m_SpriteList[1]->SetScale(200.0f, 100.0f, 0.1f);
 
 
@@ -1422,15 +1426,15 @@ bool BattleCameraHUD::FrameAction()
 
 		int count = 0;
 
-		Squares* attackerSquare = BFMng->GetAttackingCharacterSquares()->GetNowChara();
-        Platoon* attackerCharacterSquare = BFMng->GetAttackingCharacterSquares()->GetNowChara()->chara;
-        Platoon* defenderCharacterSquare = BFMng->GetAttackingCharacterSquares()->GetNextChara()->chara;
+		Squares* attackerSquare = BFMng->GetAttackingCharacterSquares();
+        Platoon* attackerCharacter = BSMng->GetAttackerCharacter();
+        Platoon* defenderCharacter = BSMng->GetDefenderCharacter();
 
-        if (attackerCharacterSquare != nullptr && defenderCharacterSquare != nullptr)
+        if (attackerCharacter != nullptr && defenderCharacter != nullptr)
         {
-            m_TextList["攻撃側"] = (attackerCharacterSquare->GetPlatoonName().c_str());
-            m_TextList["防御側"] = (defenderCharacterSquare->GetPlatoonName().c_str());
-            m_TextList["攻撃側行動"] = attackerSquare->GetAttackerMoveText();
+            m_TextList["攻撃側"] = (attackerCharacter->GetPlatoonName().c_str());
+            m_TextList["防御側"] = (defenderCharacter->GetPlatoonName().c_str());
+            m_TextList["攻撃側行動"] = SetAttackerMoveText(MyAccessHub::GetBattleSceneManager()->GetCurrentAnimation());
 
             count = MakeSpriteStringLeftEdge(count, kAttackerTextPos.x, kAttackerTextPos.y, 30, 45, m_TextList["攻撃側"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
             count = MakeSpriteStringLeftEdge(count, kDefenderTextPos.x, kDefenderTextPos.y, 30, 45, m_TextList["防御側"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
@@ -1496,43 +1500,43 @@ void MainMenuHUD::InitAction()
     }
 
     //=====================文字用ニキシー管のポジション=========================
-    m_SpriteList[0]->setPosition(kNixieTubeDefaultPositionX[1], kNixieTubePositionY[0], m_PosZ + 0.5f);    //攻
-    m_SpriteList[1]->setPosition(kNixieTubeDefaultPositionX[2], kNixieTubePositionY[0], m_PosZ + 0.5f);    //撃
+    m_SpriteList[0]->SetPosition(kNixieTubeDefaultPositionX[1], kNixieTubePositionY[0], m_PosZ + 0.5f);    //攻
+    m_SpriteList[1]->SetPosition(kNixieTubeDefaultPositionX[2], kNixieTubePositionY[0], m_PosZ + 0.5f);    //撃
 
-    m_SpriteList[2]->setPosition(kNixieTubeDefaultPositionX[1], kNixieTubePositionY[1], m_PosZ + 0.5f);    //移
-    m_SpriteList[3]->setPosition(kNixieTubeDefaultPositionX[2], kNixieTubePositionY[1], m_PosZ + 0.5f);    //動
+    m_SpriteList[2]->SetPosition(kNixieTubeDefaultPositionX[1], kNixieTubePositionY[1], m_PosZ + 0.5f);    //移
+    m_SpriteList[3]->SetPosition(kNixieTubeDefaultPositionX[2], kNixieTubePositionY[1], m_PosZ + 0.5f);    //動
 
-    m_SpriteList[4]->setPosition(kNixieTubeDefaultPositionX[1], kNixieTubePositionY[2], m_PosZ + 0.5f);    //行
-    m_SpriteList[5]->setPosition(kNixieTubeDefaultPositionX[2], kNixieTubePositionY[2], m_PosZ + 0.5f);    //動
+    m_SpriteList[4]->SetPosition(kNixieTubeDefaultPositionX[1], kNixieTubePositionY[2], m_PosZ + 0.5f);    //行
+    m_SpriteList[5]->SetPosition(kNixieTubeDefaultPositionX[2], kNixieTubePositionY[2], m_PosZ + 0.5f);    //動
 
-    m_SpriteList[6]->setPosition(kNixieTubeDefaultPositionX[1], kNixieTubePositionY[3], m_PosZ + 0.5f);    //待
-    m_SpriteList[7]->setPosition(kNixieTubeDefaultPositionX[2], kNixieTubePositionY[3], m_PosZ + 0.5f);    //機
+    m_SpriteList[6]->SetPosition(kNixieTubeDefaultPositionX[1], kNixieTubePositionY[3], m_PosZ + 0.5f);    //待
+    m_SpriteList[7]->SetPosition(kNixieTubeDefaultPositionX[2], kNixieTubePositionY[3], m_PosZ + 0.5f);    //機
 
-    m_SpriteList[8]->setPosition(kNixieTubeDefaultPositionX[1], kNixieTubePositionY[4], m_PosZ + 0.5f);    //キ
-    m_SpriteList[9]->setPosition(kNixieTubeDefaultPositionX[2], kNixieTubePositionY[4], m_PosZ + 0.5f);    //ャ
-    m_SpriteList[10]->setPosition(kNixieTubeDefaultPositionX[3], kNixieTubePositionY[4], m_PosZ + 0.5f);   //ン
-    m_SpriteList[11]->setPosition(kNixieTubeDefaultPositionX[4], kNixieTubePositionY[4], m_PosZ + 0.5f);   //セ
-    m_SpriteList[12]->setPosition(kNixieTubeDefaultPositionX[5], kNixieTubePositionY[4], m_PosZ + 0.5f);   //ル
+    m_SpriteList[8]->SetPosition(kNixieTubeDefaultPositionX[1], kNixieTubePositionY[4], m_PosZ + 0.5f);    //キ
+    m_SpriteList[9]->SetPosition(kNixieTubeDefaultPositionX[2], kNixieTubePositionY[4], m_PosZ + 0.5f);    //ャ
+    m_SpriteList[10]->SetPosition(kNixieTubeDefaultPositionX[3], kNixieTubePositionY[4], m_PosZ + 0.5f);   //ン
+    m_SpriteList[11]->SetPosition(kNixieTubeDefaultPositionX[4], kNixieTubePositionY[4], m_PosZ + 0.5f);   //セ
+    m_SpriteList[12]->SetPosition(kNixieTubeDefaultPositionX[5], kNixieTubePositionY[4], m_PosZ + 0.5f);   //ル
 
     //=====================矢印用ニキシー管のポジション=========================
-    m_SpriteList[13]->setPosition(kNixieTubeDefaultPositionX[0], kNixieTubePositionY[0], m_PosZ + 0.5f);
-    m_SpriteList[14]->setPosition(kNixieTubeDefaultPositionX[0], kNixieTubePositionY[1], m_PosZ + 0.5f);
-    m_SpriteList[15]->setPosition(kNixieTubeDefaultPositionX[0], kNixieTubePositionY[2], m_PosZ + 0.5f);
-    m_SpriteList[16]->setPosition(kNixieTubeDefaultPositionX[0], kNixieTubePositionY[3], m_PosZ + 0.5f);
-    m_SpriteList[17]->setPosition(kNixieTubeDefaultPositionX[0], kNixieTubePositionY[4], m_PosZ + 0.5f);
+    m_SpriteList[13]->SetPosition(kNixieTubeDefaultPositionX[0], kNixieTubePositionY[0], m_PosZ + 0.5f);
+    m_SpriteList[14]->SetPosition(kNixieTubeDefaultPositionX[0], kNixieTubePositionY[1], m_PosZ + 0.5f);
+    m_SpriteList[15]->SetPosition(kNixieTubeDefaultPositionX[0], kNixieTubePositionY[2], m_PosZ + 0.5f);
+    m_SpriteList[16]->SetPosition(kNixieTubeDefaultPositionX[0], kNixieTubePositionY[3], m_PosZ + 0.5f);
+    m_SpriteList[17]->SetPosition(kNixieTubeDefaultPositionX[0], kNixieTubePositionY[4], m_PosZ + 0.5f);
 
     //=====================ニキシー管の基盤部分ポジション=========================
-    m_SpriteList[18]->setPosition(kNixieBaseDefaultPositionX, kNixieBasePositionY[0], m_PosZ);
-    m_SpriteList[19]->setPosition(kNixieBaseDefaultPositionX, kNixieBasePositionY[1], m_PosZ);
-    m_SpriteList[20]->setPosition(kNixieBaseDefaultPositionX, kNixieBasePositionY[2], m_PosZ);
-    m_SpriteList[21]->setPosition(kNixieBaseDefaultPositionX, kNixieBasePositionY[3], m_PosZ);
-    m_SpriteList[22]->setPosition(kNixieBaseDefaultPositionX, kNixieBasePositionY[4], m_PosZ);
+    m_SpriteList[18]->SetPosition(kNixieBaseDefaultPositionX, kNixieBasePositionY[0], m_PosZ);
+    m_SpriteList[19]->SetPosition(kNixieBaseDefaultPositionX, kNixieBasePositionY[1], m_PosZ);
+    m_SpriteList[20]->SetPosition(kNixieBaseDefaultPositionX, kNixieBasePositionY[2], m_PosZ);
+    m_SpriteList[21]->SetPosition(kNixieBaseDefaultPositionX, kNixieBasePositionY[3], m_PosZ);
+    m_SpriteList[22]->SetPosition(kNixieBaseDefaultPositionX, kNixieBasePositionY[4], m_PosZ);
 
     //=====================メニューの基盤部分のポジション=========================
-    m_SpriteList[23]->setPosition(kMenuBaseDefaultPositionX, kMenuBasePositionY, m_PosZ);
+    m_SpriteList[23]->SetPosition(kMenuBaseDefaultPositionX, kMenuBasePositionY, m_PosZ);
 
     //=====================メニューのバーのポジション=========================
-    m_SpriteList[24]->setPosition(kMenuGageDefaultPositionX, kMenuGagePositionY[0], m_PosZ + 0.2f);
+    m_SpriteList[24]->SetPosition(kMenuGageDefaultPositionX, kMenuGagePositionY[0], m_PosZ + 0.2f);
 
     m_TextList["攻撃"] = (L"攻撃");
     m_TextList["移動"] = (L"移動");
@@ -1605,7 +1609,7 @@ bool MainMenuHUD::FrameAction()
         break;
 
     case AnimationState::Init:  //ゲージのアニメーション
-        m_SpriteList[24]->setPosition(kMenuGageDefaultPositionX, kMenuGagePositionY[BFMng->GetMenuSelectIndex()], m_PosZ + 0.5f);                                              //Y軸を調整
+        m_SpriteList[24]->SetPosition(kMenuGageDefaultPositionX, kMenuGagePositionY[BFMng->GetMenuSelectIndex()], m_PosZ + 0.5f);                                              //Y軸を調整
         SetEasingAnimation(m_SpriteList[24].get(), EasingVector::Horizontal, kMenuGageDefaultPositionX, kMenuGageMovedPositionX, kMenuAnimationTime, Tween::EaseInQuad);//X軸のアニメーション
 
         renderCount = 25;
@@ -1739,35 +1743,18 @@ void MainMenuHUD::FinishAction()
 
 void DamageEffectHUD::InitAction()
 {
-    for (int i = 0; i < 3; i++)
-    {
-        m_SpriteList.push_back(std::make_unique<SpriteCharacter>());
-        m_SpriteList[i] = std::make_unique<SpriteCharacter>();
-        m_SpriteList[i]->SetCameraLabel(L"HUDCamera", 0);
-        m_SpriteList[i]->SetColor(1.0f, 1.0f, 1.0f, 1);
-        m_SpriteList[i]->SetGraphicsPipeLine(L"AlphaSprite");
-        m_SpriteList[i]->SetSpritePattern(0, 1, 1, m_PatternRect);
-        m_SpriteList[i]->setSpriteIndex(0);
+    MakeSpriteObject(L"DamagedEffectTexture", L"HUDCamera", L"AlphaSprite", m_PatternRect, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f)); //メーター背景
+    MakeSpriteObject(L"DamagedEffectTexture", L"HUDCamera", L"AlphaSprite", m_PatternRect, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));      //メーター矢印
+    MakeSpriteObject(L"DamagedEffectTexture", L"HUDCamera", L"AlphaSprite", m_PatternRect, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));        //テキスト背景
 
-        switch (i)
-        {
-        case 0:
-            m_SpriteList[i]->setPosition(kLowDamageEffectPosition.x, kLowDamageEffectPosition.y, OrderInLayer::BackGround);
-            m_SpriteList[i]->SetScale(kSmallDamageEffectScale, kSmallDamageEffectScale, 0.1f);
-            m_SpriteList[i]->SetTextureId(L"DamagedEffectTexture");
-            break;
-        case 1:
-            m_SpriteList[i]->setPosition(kMidDamageEffectPosition.x, kMidDamageEffectPosition.y, OrderInLayer::BackGround);
-            m_SpriteList[i]->SetScale(kLargeDamageEffectScale, kLargeDamageEffectScale, 0.1f);
-            m_SpriteList[i]->SetTextureId(L"DamagedEffectTexture");
-            break;
-        case 2:
-            m_SpriteList[i]->setPosition(kHighDamageEffectPosition.x, kHighDamageEffectPosition.y, OrderInLayer::BackGround);
-            m_SpriteList[i]->SetScale(kSmallDamageEffectScale, kSmallDamageEffectScale, 0.1f);
-            m_SpriteList[i]->SetTextureId(L"DamagedEffectTexture");
-            break;
-        }
-    }
+    m_SpriteList[0]->SetPosition(kLowDamageEffectPosition.x, kLowDamageEffectPosition.y, OrderInLayer::BackGround);
+    m_SpriteList[0]->SetScale(kSmallDamageEffectScale, kSmallDamageEffectScale, 0.1f);
+
+    m_SpriteList[1]->SetPosition(kMidDamageEffectPosition.x, kMidDamageEffectPosition.y, OrderInLayer::BackGround);
+    m_SpriteList[1]->SetScale(kLargeDamageEffectScale, kLargeDamageEffectScale, 0.1f);
+
+    m_SpriteList[2]->SetPosition(kHighDamageEffectPosition.x, kHighDamageEffectPosition.y, OrderInLayer::BackGround);
+    m_SpriteList[2]->SetScale(kSmallDamageEffectScale, kSmallDamageEffectScale, 0.1f);
 }
 
 bool DamageEffectHUD::FrameAction()
@@ -1848,34 +1835,34 @@ void SuperiorityGaugeHUD::InitAction()
         switch (i)
         {
 		case 0: //ゲージの背景
-            m_SpriteList[i]->setPosition(0.0f, kGagePositionY, OrderInLayer::BackGround);
+            m_SpriteList[i]->SetPosition(0.0f, kGagePositionY, OrderInLayer::BackGround);
             m_SpriteList[i]->SetScale(310.0f, 100.0f, 0.1f);
             m_SpriteList[i]->SetTextureId(L"DogtagBaseTexture");
             break;
         case 1: //味方ゲージ
-            m_SpriteList[i]->setPosition(0.0f, kGagePositionY, OrderInLayer::MoveObject);
+            m_SpriteList[i]->SetPosition(0.0f, kGagePositionY, OrderInLayer::MoveObject);
             m_SpriteList[i]->SetScale(300.0f, 300.0f, 0.1f);
             m_SpriteList[i]->SetTextureId(L"AliesGageTexture");
             break;
 		case 2: //敵ゲージ
-            m_SpriteList[i]->setPosition(0.0f, kGagePositionY, OrderInLayer::MoveObject);
+            m_SpriteList[i]->SetPosition(0.0f, kGagePositionY, OrderInLayer::MoveObject);
             m_SpriteList[i]->SetScale(300.0f, 300.0f, 0.1f);
             m_SpriteList[i]->SetTextureId(L"EnemyGageTexture");
             break;
 		case 3: //ゲージの節　左
-            m_SpriteList[i]->setPosition(-75.0f, kGagePositionY, OrderInLayer::Text);
+            m_SpriteList[i]->SetPosition(-75.0f, kGagePositionY, OrderInLayer::Text);
             m_SpriteList[i]->SetScale(2.0f, 30.0f, 0.1f);
             m_SpriteList[i]->SetColor(1.0f, 1.0f, 0.0f, 1);
             m_SpriteList[i]->SetTextureId(L"Sprite00");
             break;
         case 4: //ゲージの節　中央
-            m_SpriteList[i]->setPosition(0.0f, kGagePositionY, OrderInLayer::Text);
+            m_SpriteList[i]->SetPosition(0.0f, kGagePositionY, OrderInLayer::Text);
             m_SpriteList[i]->SetScale(2.0f, 30.0f, 0.1f);
             m_SpriteList[i]->SetColor(1.0f, 1.0f, 0.0f, 1);
             m_SpriteList[i]->SetTextureId(L"Sprite00");
             break;
 		case 5: //ゲージの節　右
-            m_SpriteList[i]->setPosition(75.0f, kGagePositionY, OrderInLayer::Text);
+            m_SpriteList[i]->SetPosition(75.0f, kGagePositionY, OrderInLayer::Text);
             m_SpriteList[i]->SetScale(2.0f, 30.0f, 0.1f);
             m_SpriteList[i]->SetColor(1.0f, 1.0f, 0.0f, 1);
             m_SpriteList[i]->SetTextureId(L"Sprite00");
@@ -1908,9 +1895,9 @@ bool SuperiorityGaugeHUD::FrameAction()
 
 			m_SpriteList[1]->SetScale(m_GageSizeX, 300.0f, 0.1f);           //味方ゲージのサイズを更新
             m_SpriteList[1]->SetSpritePattern(0, 1, 1, aliesGagePatternRect);
-			m_SpriteList[1]->setPosition(kGageLeftPosition + m_GageSizeX / 2, kGagePositionY, OrderInLayer::MoveObject); //味方ゲージの位置を更新
+			m_SpriteList[1]->SetPosition(kGageLeftPosition + m_GageSizeX / 2, kGagePositionY, OrderInLayer::MoveObject); //味方ゲージの位置を更新
 			m_SpriteList[2]->SetScale(300.0f - m_GageSizeX, 300.0f, 0.1f);  //敵ゲージのサイズを更新
-			m_SpriteList[2]->setPosition(kGageRightPosition - (300.0f - m_GageSizeX) / 2, kGagePositionY, OrderInLayer::MoveObject); //敵ゲージの位置を更新
+			m_SpriteList[2]->SetPosition(kGageRightPosition - (300.0f - m_GageSizeX) / 2, kGagePositionY, OrderInLayer::MoveObject); //敵ゲージの位置を更新
             m_SpriteList[2]->SetSpritePattern(0, 1, 1, enemyGagePatternRect);
 			m_AnimationCount += m_TimeManager->GetDeltaTime();
         }
@@ -1971,7 +1958,7 @@ void LoadAnimationHUD::InitAction()
 
     //背景
     m_SpriteList[0]->SetScale(1000.0f, 800.0f, 0.1f);
-    m_SpriteList[0]->setPosition(0.0f, 0.0f, 1.0f);
+    m_SpriteList[0]->SetPosition(0.0f, 0.0f, 1.0f);
 }
 
 bool LoadAnimationHUD::FrameAction()
@@ -2044,15 +2031,15 @@ void TurnEndHUD::InitAction()
 
     //背景
     m_SpriteList[0]->SetScale(600.0f, 600.0f, 0.1f);
-    m_SpriteList[0]->setPosition(0.0f, -75.0f, OrderInLayer::BackGround);
+    m_SpriteList[0]->SetPosition(0.0f, -75.0f, OrderInLayer::BackGround);
 
     //矢印
     m_SpriteList[1]->SetScale(600.0f, 600.0f, 0.1f);
-    m_SpriteList[1]->setPosition(0.0f, -150.0f, OrderInLayer::MoveObject);
+    m_SpriteList[1]->SetPosition(0.0f, -150.0f, OrderInLayer::MoveObject);
 
     //テキスト背景
     m_SpriteList[2]->SetScale(500.0f, 300.0f, 0.1f);
-    m_SpriteList[2]->setPosition(0.0f, 120.0f, OrderInLayer::BackGround);
+    m_SpriteList[2]->SetPosition(0.0f, 120.0f, OrderInLayer::BackGround);
 }
 
 bool TurnEndHUD::FrameAction()
@@ -2075,8 +2062,8 @@ bool TurnEndHUD::FrameAction()
 			m_DelayCount = 0.0f;
 			SetAnimationState(AnimationState::Init);
 
-            m_SpriteList[0]->setPosition(0.0f, kBackGroundPosY[0], OrderInLayer::BackGround);
-            m_SpriteList[1]->setPosition(0.0f, kArrowPosY[0], OrderInLayer::MoveObject);
+            m_SpriteList[0]->SetPosition(0.0f, kBackGroundPosY[0], OrderInLayer::BackGround);
+            m_SpriteList[1]->SetPosition(0.0f, kArrowPosY[0], OrderInLayer::MoveObject);
         }
         break;
     case AnimationState::Init:  //出現アニメーション
@@ -2178,7 +2165,7 @@ void TurnHUD::InitAction()
 	MakeSpriteObject(L"EnemyTurnHUD", L"HUDCamera", L"AlphaSprite", pattern, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));  //現在のターン表示
 
     m_SpriteList[0]->SetScale(200.0f, 200.0f, 0.1f);
-    m_SpriteList[0]->setPosition(-380.0f, 250.0f, OrderInLayer::BackGround);
+    m_SpriteList[0]->SetPosition(-380.0f, 250.0f, OrderInLayer::BackGround);
 
     m_AnimationPages = 8;
     m_FlipDuration = 0.05f;
@@ -2249,16 +2236,16 @@ void EndingHUD::InitAction()
     MakeSpriteObject(L"NewsPaperWinResultTexture", L"HUDCamera", L"AlphaSprite", pattern, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));        //勝利新聞イメージ
 
     m_SpriteList[0]->SetScale(1000.0f, 700.0f, 0.1f);
-    m_SpriteList[0]->setPosition(0.0f, 0.0f, OrderInLayer::BackGround);
+    m_SpriteList[0]->SetPosition(0.0f, 0.0f, OrderInLayer::BackGround);
 
     m_SpriteList[1]->SetScale(300.0f, 300.0f, 0.1f);
-    m_SpriteList[1]->setPosition(0.0f, 1000.0f, OrderInLayer::MoveObject);
+    m_SpriteList[1]->SetPosition(0.0f, 1000.0f, OrderInLayer::MoveObject);
 
     m_SpriteList[2]->SetScale(550.0f, 550.0f, 0.1f);
-    m_SpriteList[2]->setPosition(0.0f, 0.0f, OrderInLayer::MoveObject);
+    m_SpriteList[2]->SetPosition(0.0f, 0.0f, OrderInLayer::MoveObject);
 
     m_SpriteList[3]->SetScale(550.0f, 550.0f, 0.1f);
-    m_SpriteList[3]->setPosition(0.0f, 0.0f, OrderInLayer::MoveObject + 0.5f);
+    m_SpriteList[3]->SetPosition(0.0f, 0.0f, OrderInLayer::MoveObject + 0.5f);
 
     m_AnimationPages = 7;   //こっちは新聞を閉じる用
     m_FlipDuration = 0.05f;
@@ -2534,25 +2521,25 @@ void BattlePredictionHUD::InitAction()
     MakeSpriteObject(L"BattlePredictBackGroundTexture", L"BackGroundHUDCamera", L"AlphaSprite", pattern, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));       //敵側カメラ背景
 
     m_SpriteList[0]->SetScale(400.0f, 400.0f, 0.1f);
-    m_SpriteList[0]->setPosition(-250.0f, 0.0f, OrderInLayer::BackGround);
+    m_SpriteList[0]->SetPosition(-250.0f, 0.0f, OrderInLayer::BackGround);
 
     m_SpriteList[1]->SetScale(400.0f, 400.0f, 0.1f);
-    m_SpriteList[1]->setPosition(250.0f, 0.0f, OrderInLayer::BackGround);
+    m_SpriteList[1]->SetPosition(250.0f, 0.0f, OrderInLayer::BackGround);
 
     m_SpriteList[2]->SetScale(300.0f, 20.0f, 0.1f);
-    m_SpriteList[2]->setPosition(250.0f, 0.0f, OrderInLayer::MoveObject);
+    m_SpriteList[2]->SetPosition(250.0f, 0.0f, OrderInLayer::MoveObject);
 
     m_SpriteList[3]->SetScale(300.0f, 20.0f, 0.1f);
-    m_SpriteList[3]->setPosition(250.0f, 0.0f, OrderInLayer::MoveObject + 0.5f);
+    m_SpriteList[3]->SetPosition(250.0f, 0.0f, OrderInLayer::MoveObject + 0.5f);
 
     m_SpriteList[4]->SetScale(305.0f, 25.0f, 0.1f);
-    m_SpriteList[4]->setPosition(250.0f, 0.0f, OrderInLayer::BackGround);
+    m_SpriteList[4]->SetPosition(250.0f, 0.0f, OrderInLayer::BackGround);
 
     m_SpriteList[5]->SetScale(230.0f, 230.0f, 0.1f);
-    m_SpriteList[5]->setPosition(-170.0f, 70.0f, OrderInLayer::BackGround);
+    m_SpriteList[5]->SetPosition(-170.0f, 70.0f, OrderInLayer::BackGround);
 
     m_SpriteList[6]->SetScale(230.0f, 230.0f, 0.1f);
-    m_SpriteList[6]->setPosition(170.0f, 70.0f, OrderInLayer::BackGround);
+    m_SpriteList[6]->SetPosition(170.0f, 70.0f, OrderInLayer::BackGround);
 
     SetAnimationState(AnimationState::None);
 }
@@ -2607,7 +2594,7 @@ bool BattlePredictionHUD::FrameAction()
         if (m_AnimationCount == 0.0f)
         {
             m_AnimationCount += m_TimeManager->GetDeltaTime();
-			m_SpriteList[1]->setPosition(250.0f, kDogtagPositionY.x, OrderInLayer::BackGround);
+			m_SpriteList[1]->SetPosition(250.0f, kDogtagPositionY.x, OrderInLayer::BackGround);
             if (BFMng->GetFieldSquaresList()[BFMng->GetTargetID()]->chara != nullptr)
             {
                 if (BFMng->GetFieldSquaresList()[BFMng->GetTargetID()]->chara->GetAdmin() == Admin::Imperial)
@@ -2702,10 +2689,10 @@ bool BattlePredictionHUD::FrameAction()
                 }
 
                 m_SpriteList[2]->SetScale(m_RedBarSizeX, 20.0f, 0.1f);                                  //赤バーのサイズを設定
-                m_SpriteList[2]->setPosition(m_RedBarPositionX, 0.0f, OrderInLayer::MoveObject);        //赤バーの位置を設定
+                m_SpriteList[2]->SetPosition(m_RedBarPositionX, 0.0f, OrderInLayer::MoveObject);        //赤バーの位置を設定
 
                 m_SpriteList[3]->SetScale(m_GreenBarSizeX, 20.0f, 0.1f);                                    //緑バーのサイズを設定
-                m_SpriteList[3]->setPosition(m_GreenBarPositionX, 0.0f, OrderInLayer::MoveObject + 0.5f);   //緑バーの位置を設定
+                m_SpriteList[3]->SetPosition(m_GreenBarPositionX, 0.0f, OrderInLayer::MoveObject + 0.5f);   //緑バーの位置を設定
 
                 if (m_AnimationCount == 0.0f)
                 {
@@ -2779,4 +2766,160 @@ bool BattlePredictionHUD::FrameAction()
 
 void BattlePredictionHUD::FinishAction()
 {
+}
+
+void DamageUI::InitAction()
+{
+    m_FontTextureId = L"JPNHUDTextureVT";       //フォント設定(ニキシー管フォント)
+	m_FontWordList = m_WordList.m_chListJVT;    //フォントに応じた文字リスト設定
+    m_SpriteCount = 50;                         //文字数カウント
+    SetFont(m_FontTextureId, m_FontWordList);
+
+	m_TextList["ダメージ"] = L"";
+
+    MakeSpriteObject(L"Sprite00", L"HUDCamera", L"AlphaSprite", m_PatternRect, XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f));       //HPバー緑色
+    MakeSpriteObject(L"Sprite00", L"HUDCamera", L"AlphaSprite", m_PatternRect, XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f));       //HPバー赤色
+    MakeSpriteObject(L"Sprite00", L"HUDCamera", L"AlphaSprite", m_PatternRect, XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));       //HPバー背景
+
+    m_SpriteList[0]->SetScale(kBarScale.x, kBarScale.y, 0.1f);
+    m_SpriteList[0]->SetPosition(kOriginBarPosition.x, kOriginBarPosition.y, OrderInLayer::MoveObject);
+
+    m_SpriteList[1]->SetScale(kBarScale.x, kBarScale.y, 0.1f);
+    m_SpriteList[1]->SetPosition(kOriginBarPosition.x, kOriginBarPosition.y, OrderInLayer::MoveObject + 0.5f);
+
+    m_SpriteList[2]->SetScale(kBarScale.x + 5.0f, kBarScale.y + 5.0f, 0.1f);
+    m_SpriteList[2]->SetPosition(kOriginBarPosition.x, kOriginBarPosition.y, OrderInLayer::BackGround);
+
+    SetAnimationState(AnimationState::None);
+}
+
+bool DamageUI::FrameAction()
+{
+    MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
+    GraphicsPipeLineObjectBase* pipe = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
+
+	int count = 0;
+
+    switch (m_AnimationState)
+    {
+    default:
+		break;
+    case AnimationState::Init:
+        m_AnimationCount += m_TimeManager->GetDeltaTime();
+        if (m_AnimationCount > 1.0f)
+        {
+            m_AnimationCount = 0.0f;
+            m_AnimationState = AnimationState::Run;
+        }
+        break;
+    case AnimationState::Run:
+        if (m_AnimationCount == 0.0f && m_DamageUIState == DamageUIState::MovingGreen)
+        {
+            m_RedBarSizeX = m_StartRedBarSizeX;     //赤バーの初期サイズを設定
+            m_SpriteList[1]->SetScale(m_RedBarSizeX, kBarScale.y, 0.1f);        //赤バーの初期サイズを設定
+            m_SpriteList[1]->SetPosition(kBarLeftEdgePositionX + m_RedBarSizeX / 2.0f, kOriginBarPosition.y, OrderInLayer::MoveObject + 0.5f);  //赤バーの初期位置(左端からMAXサイズの半分の位置)に設定
+
+            m_DamageTextPosition = {kOriginDamageTextPosition.x, kOriginDamageTextPosition.y };
+
+            m_TextList["ダメージ"] = to_wstring((int)m_CurrentDamage);
+        }
+
+        switch (m_DamageUIState)
+        {
+        default:
+            break;
+        case DamageUIState::MovingGreen:    //緑バーが減る
+        {
+            m_AnimationCount += m_TimeManager->GetDeltaTime();
+
+			float t = m_AnimationCount / 0.5f;  //0.5秒かけてアニメーション
+
+			m_DamageTextPosition.x += 1.0f;    //ダメージテキストを右に移動させる
+			m_DamageTextPosition.y += 0.5f;    //ダメージテキストを上に移動させる
+
+            m_GreenBarSizeX = m_StartGreenBarSizeX + (m_EndGreenBarSizeX - m_StartGreenBarSizeX) * t;
+            m_SpriteList[0]->SetScale(m_GreenBarSizeX, kBarScale.y, 0.1f);
+            m_SpriteList[0]->SetPosition(kBarLeftEdgePositionX + m_GreenBarSizeX / 2.0f, kOriginBarPosition.y, OrderInLayer::MoveObject);
+
+            count = MakeSpriteStringMid(count, m_DamageTextPosition.x, m_DamageTextPosition.y, 30, 72, m_TextList["ダメージ"].c_str(), XMFLOAT3{1.0f, 1.0f, 1.0f});
+
+            for (int i = 0; i < m_SpriteList.size(); i++)
+            {
+                pipe->AddRenderObject(m_SpriteList[i].get());   //HPバー描画
+            }
+
+            for (int i = 0; i < count; i++)
+            {
+                pipe->AddRenderObject(m_WordSpriteList[i].get());   //ダメージテキスト描画
+            }
+
+            if (m_AnimationCount > 0.5f)
+            {
+                m_AnimationCount = 0.0f;
+                m_DamageUIState = DamageUIState::MovingRed;
+            }
+            break;
+        }
+        case DamageUIState::MovingRed:      //赤バーが減る
+        {
+            m_AnimationCount += m_TimeManager->GetDeltaTime();
+
+            float t = m_AnimationCount / 0.5f;
+
+            m_DamageTextPosition.x += 1.0f;    //ダメージテキストを右に移動させる
+            m_DamageTextPosition.y -= 0.5f;    //ダメージテキストを下に移動させる
+
+            m_RedBarSizeX = m_StartRedBarSizeX + (m_EndRedBarSizeX - m_StartRedBarSizeX) * t;
+            m_SpriteList[1]->SetScale(m_RedBarSizeX, kBarScale.y, 0.1f);
+            m_SpriteList[1]->SetPosition(kBarLeftEdgePositionX + m_RedBarSizeX / 2.0f, kOriginBarPosition.y, OrderInLayer::MoveObject + 0.5f);
+
+            count = MakeSpriteStringMid(count, m_DamageTextPosition.x, m_DamageTextPosition.y, 30, 72, m_TextList["ダメージ"].c_str(), XMFLOAT3{ 1.0f, 1.0f, 1.0f });
+
+            for (int i = 0; i < m_SpriteList.size(); i++)
+            {
+                pipe->AddRenderObject(m_SpriteList[i].get());
+            }
+
+            for (int i = 0; i < count; i++)
+            {
+                pipe->AddRenderObject(m_WordSpriteList[i].get());   //ダメージテキスト描画
+            }
+
+            if (m_AnimationCount > 0.5f)
+            {
+                m_AnimationCount = 0.0f;
+                m_DamageUIState = DamageUIState::None;
+                m_AnimationState = AnimationState::Finish;
+            }
+            break;
+        }
+        }
+        break;
+    }
+
+    return true;
+}
+
+void DamageUI::FinishAction()
+{
+}
+
+void DamageUI::SetDamage(float damage, float maxSoldiers, float soldiers)
+{
+    // 残りHPの割合
+    float solPercentNow = soldiers / maxSoldiers;
+    float solPercentAfter = (soldiers - damage) / maxSoldiers;
+    m_CurrentDamage = damage;
+
+    //緑バーの開始と終了のサイズを記録
+    m_StartGreenBarSizeX = kBarScale.x * solPercentNow;
+    m_EndGreenBarSizeX = kBarScale.x * solPercentAfter;
+
+    //赤バーの開始と終了のサイズを記録
+    m_StartRedBarSizeX = m_StartGreenBarSizeX;
+    m_EndRedBarSizeX = m_EndGreenBarSizeX;
+
+    m_AnimationCount = 0.0f;
+    m_DamageUIState = DamageUIState::MovingGreen;
+	m_AnimationState = AnimationState::Init;
 }

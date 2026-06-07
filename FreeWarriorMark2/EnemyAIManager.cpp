@@ -20,6 +20,7 @@ void EnemyAIManager::InitAction()
 {
 	m_TimeManager = MyAccessHub::GetTimeManager();
 	BFMng = MyAccessHub::GetBFManager();
+	BSMng = MyAccessHub::GetBattleSceneManager();
 }
 
 bool EnemyAIManager::FrameAction()
@@ -142,10 +143,10 @@ bool EnemyAIManager::FrameAction()
 		default:
 			break;
 		case EnemyActionType::Attack:
-			BFMng->GetFieldSquaresList()[currentEnemy->GetCharacterPosOnSquares()]->fbxD->SetAnimeInit(L"ATTACK", BFMng->GetFieldSquaresList()[currentEnemy->GetCharacterPosOnSquares()]->chara);
+			BFMng->GetFieldSquaresList()[currentEnemy->GetCharacterPosOnSquares()]->GetFBXData()->SetAnimeInit(L"ATTACK", BFMng->GetFieldSquaresList()[currentEnemy->GetCharacterPosOnSquares()]->GetPlatoon());
 			break;
 		case EnemyActionType::Move:
-			BFMng->GetFieldSquaresList()[currentEnemy->GetCharacterPosOnSquares()]->fbxD->SetAnimeInit(L"WALK", BFMng->GetFieldSquaresList()[currentEnemy->GetCharacterPosOnSquares()]->chara);
+			BFMng->GetFieldSquaresList()[currentEnemy->GetCharacterPosOnSquares()]->GetFBXData()->SetAnimeInit(L"WALK", BFMng->GetFieldSquaresList()[currentEnemy->GetCharacterPosOnSquares()]->GetPlatoon());
 			break;
 		case EnemyActionType::None:
 		case EnemyActionType::Wait:
@@ -175,17 +176,20 @@ bool EnemyAIManager::FrameAction()
 					switch (SelectAttackAction(currentEnemy, BFMng->GetAlliesCharacterList()[currentEnemy->GetAITargetCharacterID()]))
 					{
 						case AbilityType::None:
-							BFMng->GetFieldSquaresList()[currentEnemy->GetCharacterPosOnSquares()]->SetAnimation(Animations::Attack, currentEnemy->GetAdmin(), BFMng->GetFieldSquaresList()[currentEnemy->GetCharacterPosOnSquares()], currentEnemy->GetTargetAISquare());
-							BFMng->Attack(currentEnemy, BFMng->GetAlliesCharacterList()[currentEnemy->GetAITargetCharacterID()]);
+							BFMng->Attack(BFMng->GetFieldSquaresList()[currentEnemy->GetCharacterPosOnSquares()]->GetPlatoon(), currentEnemy->GetTargetAISquare()->GetPlatoon());											//攻撃処理
+							BSMng->SetBattlePosition(Animations::Attack, BFMng->GetFieldSquaresList()[currentEnemy->GetCharacterPosOnSquares()]->GetPlatoon(), currentEnemy->GetTargetAISquare()->GetPlatoon());			//バトルアニメーション
 							break;
 						case AbilityType::ConcentratedFire:
-							BFMng->GetFieldSquaresList()[currentEnemy->GetCharacterPosOnSquares()]->SetAnimation(Animations::ConcentratedFire, currentEnemy->GetAdmin(), BFMng->GetFieldSquaresList()[currentEnemy->GetCharacterPosOnSquares()], currentEnemy->GetTargetAISquare());
+							BFMng->GetAbilities()->ConcentratedFire(BFMng->GetFieldSquaresList()[currentEnemy->GetCharacterPosOnSquares()]->GetPlatoon(), currentEnemy->GetTargetAISquare()->GetPlatoon());					//攻撃処理
+							BSMng->SetBattlePosition(Animations::ConcentratedFire, BFMng->GetFieldSquaresList()[currentEnemy->GetCharacterPosOnSquares()]->GetPlatoon(), currentEnemy->GetTargetAISquare()->GetPlatoon());	//バトルアニメーション
 							break;
 						case AbilityType::BayonetCharge:
-							BFMng->GetFieldSquaresList()[currentEnemy->GetCharacterPosOnSquares()]->SetAnimation(Animations::BayonetCharge, currentEnemy->GetAdmin(), BFMng->GetFieldSquaresList()[currentEnemy->GetCharacterPosOnSquares()], currentEnemy->GetTargetAISquare());
+							BFMng->GetAbilities()->BayonetCharge(BFMng->GetFieldSquaresList()[currentEnemy->GetCharacterPosOnSquares()]->GetPlatoon(), currentEnemy->GetTargetAISquare()->GetPlatoon());					//攻撃処理
+							BSMng->SetBattlePosition(Animations::BayonetCharge, BFMng->GetFieldSquaresList()[currentEnemy->GetCharacterPosOnSquares()]->GetPlatoon(), currentEnemy->GetTargetAISquare()->GetPlatoon());		//バトルアニメーション
 							break;
 						case AbilityType::Scout:
-							BFMng->GetFieldSquaresList()[currentEnemy->GetCharacterPosOnSquares()]->SetAnimation(Animations::Scout, currentEnemy->GetAdmin(), BFMng->GetFieldSquaresList()[currentEnemy->GetCharacterPosOnSquares()], currentEnemy->GetTargetAISquare());
+							BFMng->GetAbilities()->Scout(BFMng->GetFieldSquaresList()[currentEnemy->GetCharacterPosOnSquares()]->GetPlatoon(), currentEnemy->GetTargetAISquare()->GetPlatoon());							//攻撃処理
+							BSMng->SetBattlePosition(Animations::Scout, BFMng->GetFieldSquaresList()[currentEnemy->GetCharacterPosOnSquares()]->GetPlatoon(), currentEnemy->GetTargetAISquare()->GetPlatoon());				//バトルアニメーション
 							break;
 					}
 
@@ -195,7 +199,7 @@ bool EnemyAIManager::FrameAction()
 			case EnemyActionType::Move:	//移動処理
 				NowPos = currentEnemy->GetCharacterPosOnSquares();
 				NextPos = currentEnemy->GetAIMoveSquareID();
-				BFMng->GetFieldSquaresList()[currentEnemy->GetCharacterPosOnSquares()]->SetAnimation(Animations::Move, currentEnemy->GetAdmin(), BFMng->GetFieldSquaresList()[NowPos], BFMng->GetFieldSquaresList()[NextPos]);
+				BSMng->SetMovePosition(BFMng->GetFieldSquaresList()[NowPos], BFMng->GetFieldSquaresList()[NextPos], BFMng->GetFieldSquaresList()[currentEnemy->GetCharacterPosOnSquares()]->GetFBXData());
 				BFMng->Move(NowPos, NextPos, currentEnemy->GetPlatoonID());
 				m_OnlyOneTime = true;
 				break;

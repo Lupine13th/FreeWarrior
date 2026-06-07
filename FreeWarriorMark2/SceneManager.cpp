@@ -34,6 +34,7 @@
 #include "EffectGenerator.h"
 #include "PlayerFBXs.h"
 #include "BattleCameraController.h"
+#include "BattleSceneManager.h"
 
 void SceneManager::ClearSceneObjects()
 {
@@ -54,6 +55,7 @@ void SceneManager::ClearSceneObjects()
 			if (comp == MyAccessHub::GetAIManager()) return true;
 			if (comp == MyAccessHub::GetHUDManager()) return true;
 			if (comp == MyAccessHub::GetFlyingCameraController()) return true;
+			if (comp == MyAccessHub::GetBattleSceneManager()) return true;
 			// 必要ならここに他のグローバル参照を追加
 		}
 		return false;
@@ -122,6 +124,7 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 	TitleScene* m_TitleScene = nullptr;
 	HUDManager* m_HUDManager = nullptr;
 	EffectGenerator* m_EffectGenerator = nullptr;
+	BattleSceneManager* BSMng = nullptr;
 
 	if (IsFirstTime)
 	{
@@ -132,6 +135,7 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 		m_TitleScene = new TitleScene();
 		m_HUDManager = new HUDManager();
 		m_EffectGenerator = new EffectGenerator();
+		BSMng = new BattleSceneManager();
 
 		MyAccessHub::SetBattleFieldManager(BFMng);
 		MyAccessHub::SetEnemyAIManager(AIMng);
@@ -140,6 +144,7 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 		MyAccessHub::SetTitleScene(m_TitleScene);
 		MyAccessHub::SetHUDManager(m_HUDManager);
 		MyAccessHub::SetEffectGenerator(m_EffectGenerator);
+		MyAccessHub::SetBattleSceneManager(BSMng);
 
 		IsFirstTime = false;
 	}
@@ -152,6 +157,7 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 		m_TitleScene = MyAccessHub::GetTitleScene();
 		m_HUDManager = MyAccessHub::GetHUDManager();
 		m_EffectGenerator = MyAccessHub::GetEffectGenerator();
+		BSMng = MyAccessHub::GetBattleSceneManager();
 	}
 	
 
@@ -468,7 +474,7 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 				FBXCharacterData* terrainFbx = new FBXCharacterData();
 				if (FAILED(terrainFbx->LoadMainFBX(L"./Resources/fbx/TerrainSnowField.fbx", L"TerrainSample")))
 					return E_FAIL;
-				terrainFbx->setPosition(0.0f, -8.0f, 0.0f);
+				terrainFbx->SetPosition(0.0f, -8.0f, 0.0f);
 				terrainFbx->SetGraphicsPipeLine(L"StaticFBX");
 				GameObject* terrainObj = new GameObject(terrainFbx);
 				TerrainComponent* trCom = new TerrainComponent();
@@ -499,6 +505,16 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 				FMngObj->addComponent(BFMng);
 
 				engine->AddGameObject(FMngObj);
+
+				engine->ManualRender();
+
+				//バトルシーンマネージャ
+				CharacterData* BSMngData = new CharacterData();
+				GameObject* BSngObj = new GameObject(BSMngData);
+
+				BSngObj->addComponent(BSMng);
+
+				engine->AddGameObject(BSngObj);
 
 				engine->ManualRender();
 
@@ -543,7 +559,7 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 						spriteCharacter->AddCameraLabel(L"DefenderCamera");
 
 						spriteCharacter->SetColor(1, 1, 1, 0.5f);
-						spriteCharacter->setPosition(SpposX, 1.0f, SpposY);
+						spriteCharacter->SetPosition(SpposX, 1.0f, SpposY);
 						spriteCharacter->SetRotation(90.0f, 0.0f, 0.0f);
 
 						squares->charaPosX = X;
@@ -557,7 +573,7 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 							spriteCharacter->SetColor(1.0f, 0.3f, 0.3f, 0.5f);
 						}
 
-						squares->SqPos = XMFLOAT3(SpposX, 0, SpposY);
+						squares->SetSquarePosition(SpposX, 0, SpposY);
 
 						spriteCharacter->SetGraphicsPipeLine(L"AlphaSprite3D");
 
@@ -612,7 +628,7 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 							ForestTerrain* ForestTer = new ForestTerrain();
 							ForestObj = new GameObject(ForestFbx);
 							XMFLOAT3 pos = BFMng->GetCharaPos(BFMng->GetFieldSquaresList()[(X + (Y * 10))]);
-							ForestFbx->setPosition(pos.x, pos.y, pos.z);
+							ForestFbx->SetPosition(pos.x, pos.y, pos.z);
 							ForestFbx->SetRotation(0.0f, 0.0f, 0.0f);
 							ForestObj->addComponent(ForestTer);
 							engine->AddGameObject(ForestObj);
@@ -625,7 +641,7 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 							HillTerrain* HillTer = new HillTerrain();
 							HillObj = new GameObject(HillFbx);
 							XMFLOAT3 pos = BFMng->GetCharaPos(BFMng->GetFieldSquaresList()[(X + (Y * 10))]);
-							HillFbx->setPosition(pos.x, pos.y, pos.z);
+							HillFbx->SetPosition(pos.x, pos.y, pos.z);
 							HillFbx->SetRotation(0.0f, 0.0f, 0.0f);
 							HillObj->addComponent(HillTer);
 							engine->AddGameObject(HillObj);
@@ -638,7 +654,7 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 							RiverTerrain* RiverTer = new RiverTerrain();
 							RiverObj = new GameObject(RiverFbx);
 							XMFLOAT3 pos = BFMng->GetCharaPos(BFMng->GetFieldSquaresList()[(X + (Y * 10))]);
-							RiverFbx->setPosition(pos.x, pos.y, pos.z);
+							RiverFbx->SetPosition(pos.x, pos.y, pos.z);
 							RiverFbx->SetRotation(0.0f, 0.0f, 0.0f);
 							RiverObj->addComponent(RiverTer);
 							engine->AddGameObject(RiverObj);
@@ -651,7 +667,7 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 							TowerTerrain* TowerTer = new TowerTerrain();
 							TowerObj = new GameObject(TowerFbx);
 							XMFLOAT3 pos = BFMng->GetCharaPos(BFMng->GetFieldSquaresList()[(X + (Y * 10))]);
-							TowerFbx->setPosition(pos.x, pos.y, pos.z);
+							TowerFbx->SetPosition(pos.x, pos.y, pos.z);
 							TowerFbx->SetRotation(0.0f, 0.0f, 0.0f);
 							TowerObj->addComponent(TowerTer);
 							engine->AddGameObject(TowerObj);
@@ -690,16 +706,17 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 					}
 
 					rebelPlayer->SetAdmin(Admin::Rebel);
+					rebelPlayer->SetPlatoon(characterData);
 					characterData->SetPlayerBase(rebelPlayer);
 
 					rebelInfObj = new GameObject(rebelInfFbx); //FBXCharacterDataを持たせて初期化
 
 					XMFLOAT3 pos = BFMng->GetCharaPos(BFMng->GetFieldSquaresList()[BFMng->GetAlliesCharacterList()[i]->GetCharacterPosOnSquares()]);
-					rebelInfFbx->setPosition(pos.x, pos.y ,pos.z);
+					rebelInfFbx->SetPosition(pos.x, pos.y ,pos.z);
 					rebelInfFbx->SetRotation(0.0f, 0.0f, 0.0f);
 					BFMng->GetFieldSquaresList()[BFMng->GetAlliesCharacterList()[i]->GetCharacterPosOnSquares()]->fbxD = rebelInfFbx;
-					BFMng->GetFieldSquaresList()[BFMng->GetAlliesCharacterList()[i]->GetCharacterPosOnSquares()]->fbxD->playerData = rebelPlayer;
-					rebelInfObj->addComponent(rebelPlayer); //Unityちゃん本体コンポーネントをセット
+					BFMng->GetFieldSquaresList()[BFMng->GetAlliesCharacterList()[i]->GetCharacterPosOnSquares()]->GetFBXData()->playerData = rebelPlayer;
+					rebelInfObj->addComponent(rebelPlayer); //キャラクターコンポーネントをセット
 					engine->AddGameObject(rebelInfObj); //GameObjectをエンジンに登録
 
 					GenerateEquipment(characterData->GetSoldiersType(), rebelPlayer, Admin::Rebel);
@@ -738,12 +755,13 @@ HRESULT SceneManager::changeGameScene(UINT scene)
 					}
 
 					imperialPlayer->SetAdmin(Admin::Imperial);
+					imperialPlayer->SetPlatoon(characterData);
 					characterData->SetPlayerBase(imperialPlayer);
 
 					imperialInfObj = new GameObject(imperialInfFbx); //FBXCharacterDataを持たせて初期化
 
 					XMFLOAT3 pos = BFMng->GetCharaPos(BFMng->GetFieldSquaresList()[BFMng->GetEnemyCharacterList()[i]->GetCharacterPosOnSquares()]);
-					imperialInfFbx->setPosition(pos.x, pos.y, pos.z);
+					imperialInfFbx->SetPosition(pos.x, pos.y, pos.z);
 					imperialInfFbx->SetRotation(0.0f, 180.0f, 0.0f);
 					BFMng->GetFieldSquaresList()[BFMng->GetEnemyCharacterList()[i]->GetCharacterPosOnSquares()]->fbxD = imperialInfFbx;
 					BFMng->GetFieldSquaresList()[BFMng->GetEnemyCharacterList()[i]->GetCharacterPosOnSquares()]->fbxD->playerData = imperialPlayer;

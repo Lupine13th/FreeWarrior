@@ -59,7 +59,7 @@ void BattleReadyScene::InitAction()
     m_Sprite->SetSpritePattern(0, 10, 10, pattern);
     m_Sprite->SetScale(100.0f, 60.0f, 0.1f);
     m_Sprite->setSpriteIndex(0);
-    m_Sprite->setPosition(0.0f, 0.0f, 2.0f);
+    m_Sprite->SetPosition(0.0f, 0.0f, 2.0f);
     m_Sprite->SetColor(0.0f, 0.0f, 0.0f, 1);
 
     //味方待機部隊設定

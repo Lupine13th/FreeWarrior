@@ -19,7 +19,7 @@ int TitleScene::MakeSpriteStringLeftEdge(int startIndex, float ltX, float ltY, f
             m_WordSprites[count]->SetSpritePattern(0, width, height, m_FontMap[*str]);
             m_WordSprites[count]->setSpriteIndex(0);
             m_WordSprites[count]->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
-            m_WordSprites[count]->setPosition(ltX, ltY, 0.0f);
+            m_WordSprites[count]->SetPosition(ltX, ltY, 0.0f);
             count++;
         }
 
@@ -59,7 +59,7 @@ void TitleScene::InitAction()
     m_Sprite[0]->SetSpritePattern(0, 1, 1, pattern);
     m_Sprite[0]->SetScale(1000.0f, 1000.0f, 0.1f);
     m_Sprite[0]->setSpriteIndex(0);
-    m_Sprite[0]->setPosition(0.0f, -10.0f, 2.0f);
+    m_Sprite[0]->SetPosition(0.0f, -10.0f, 2.0f);
     m_Sprite[0]->SetColor(1.0f, 1.0f, 1.0f, 1);
 
     //選択肢のエフェクトアニメーション
@@ -70,7 +70,7 @@ void TitleScene::InitAction()
     m_Sprite[1]->SetSpritePattern(0, 1, 1, m_PatternRect);
     m_Sprite[1]->SetScale(550.0f, 550.0f, 0.1f);
     m_Sprite[1]->setSpriteIndex(0);
-    m_Sprite[1]->setPosition(0.0f, -10.0f, 1.0f);
+    m_Sprite[1]->SetPosition(0.0f, -10.0f, 1.0f);
     m_Sprite[1]->SetColor(1.0f, 1.0f, 1.0f, 1);
 
     //シーン遷移のフラッシュエフェクト
@@ -81,7 +81,7 @@ void TitleScene::InitAction()
     m_Sprite[2]->SetSpritePattern(0, 1, 1, m_PatternRect);
     m_Sprite[2]->SetScale(1000.0f, 1000.0f, 0.1f);
     m_Sprite[2]->setSpriteIndex(0);
-    m_Sprite[2]->setPosition(0.0f, -10.0f, 0.0f);
+    m_Sprite[2]->SetPosition(0.0f, -10.0f, 0.0f);
     m_Sprite[2]->SetColor(1.0f, 1.0f, 1.0f, 1);
 
     //Text
@@ -191,14 +191,14 @@ bool TitleScene::FrameAction()
 
         if (m_MenuIndex == (int)TitleMenuState::GameStart)      //エフェクトの位置を修正
         {
-			m_Sprite[1]->setPosition(-270.0f, -50.0f, 1.0f);
+			m_Sprite[1]->SetPosition(-270.0f, -50.0f, 1.0f);
         }
 
         count = MakeSpriteStringLeftEdge(count, -400.0f, -200.0f, 50, 80, m_ExitGame.c_str());
 
         if (m_MenuIndex == (int)TitleMenuState::ExitGame)       //エフェクトの位置を修正
         {
-            m_Sprite[1]->setPosition(-270.0f, -150.0f, 1.0f);
+            m_Sprite[1]->SetPosition(-270.0f, -150.0f, 1.0f);
         }
 
         for (int i = 0; i < count; i++)                         

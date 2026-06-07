@@ -67,7 +67,7 @@ public:
 
 	SpriteCharacter()
 	{
-		setPosition(0.0f, 0.0f, 0.0f);
+		SetPosition(0.0f, 0.0f, 0.0f);
 		m_uvArray.clear();
 
 		m_patternIndex = 0;

@@ -29,7 +29,7 @@ void RebelAssaltRifle::InInit(FBXCharacterData* chData)
 {
 	chData->LoadMainFBX(L"./Resources/fbx/RebelAssaltRifle.fbx", L"RebelAssaltRifle");
 	chData->SetScale(1.0f, 1.0f, 1.0f);
-	chData->setPosition(0.0f, 0.0f, 0.0f);
+	chData->SetPosition(0.0f, 0.0f, 0.0f);
 	chData->SetRotation(0.0f, 0.0f, 0.0f);
 }
 
@@ -60,7 +60,7 @@ void ImperialAssaltRifle::InInit(FBXCharacterData* chData)
 {
 	chData->LoadMainFBX(L"./Resources/fbx/ImperialAssaltRifle.fbx", L"ImperialAssaltRifle");
 	chData->SetScale(1.0f, 1.0f, 1.0f);
-	chData->setPosition(0.0f, 0.0f, 0.0f);
+	chData->SetPosition(0.0f, 0.0f, 0.0f);
 	chData->SetRotation(0.0f, 0.0f, 0.0f);
 }
 
@@ -86,7 +86,7 @@ void RebelMachinegun::InInit(FBXCharacterData* chData)
 {
 	chData->LoadMainFBX(L"./Resources/fbx/RebelMachinegun.fbx", L"RebelMachinegun");
 	chData->SetScale(1.0f, 1.0f, 1.0f);
-	chData->setPosition(0.0f, 0.0f, 0.0f);
+	chData->SetPosition(0.0f, 0.0f, 0.0f);
 	chData->SetRotation(0.0f, 0.0f, 0.0f);
 }
 
@@ -112,7 +112,7 @@ void RebelScoutRifle::InInit(FBXCharacterData* chData)
 {
 	chData->LoadMainFBX(L"./Resources/fbx/RebelScoutRifle.fbx", L"RebelScoutRifle");
 	chData->SetScale(1.0f, 1.0f, 1.0f);
-	chData->setPosition(0.0f, 0.0f, 0.0f);
+	chData->SetPosition(0.0f, 0.0f, 0.0f);
 	chData->SetRotation(0.0f, 0.0f, 0.0f);
 }
 
@@ -138,7 +138,7 @@ void ImperialScoutRifle::InInit(FBXCharacterData* chData)
 {
 	chData->LoadMainFBX(L"./Resources/fbx/ImperialScoutRifle.fbx", L"ImperialScoutRifle");
 	chData->SetScale(1.0f, 1.0f, 1.0f);
-	chData->setPosition(0.0f, 0.0f, 0.0f);
+	chData->SetPosition(0.0f, 0.0f, 0.0f);
 	chData->SetRotation(0.0f, 0.0f, 0.0f);
 }
 
@@ -165,7 +165,7 @@ void Backpack::InInit(FBXCharacterData* chData)
 {
 	chData->LoadMainFBX(L"./Resources/fbx/backpackObject.fbx", L"backpackObject");
 	chData->SetScale(1.0f, 1.0f, 1.0f);
-	chData->setPosition(0.0f, 0.0f, 0.0f);
+	chData->SetPosition(0.0f, 0.0f, 0.0f);
 	chData->SetRotation(0.0f, 0.0f, 0.0f);
 }
 

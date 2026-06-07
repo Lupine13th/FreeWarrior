@@ -412,6 +412,7 @@ private:
 protected:
 	float m_ScaleValue = 0.0f;
 public:
+	virtual ~FBXCharacterData() = default;	//デストラクタ
 
 	HRESULT LoadMainFBX(const std::wstring fileName, const std::wstring id);	//メインFBX読み込み
 

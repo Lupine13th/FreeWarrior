@@ -247,8 +247,8 @@ void FlyingCameraController::MoveCamera()	//WASDでのカメラ移動
 
 void FlyingCameraController::SetBattleCam(Squares* attaking, Squares* attacked)	//バトルカメラ切り替え
 {
-	m_AttackingCharacterPos = attaking->SqPos;
-	m_AttackedCharacterPos = attacked->SqPos;
+	m_AttackingCharacterPos = attaking->GetSquarePosition();
+	m_AttackedCharacterPos = attacked->GetSquarePosition();
 	
 	XMFLOAT3 midpos = {		//中点の座標
 		(m_AttackingCharacterPos.x + m_AttackedCharacterPos.x) / 2.0f,

@@ -19,7 +19,7 @@ int DamageHUDW::MakeSpriteStringLeftEdge(int startIndex, float ltX, float ltY, f
 			m_Sprites[count]->SetSpritePattern(0, width, height, m_fontMap[*str]);
 			m_Sprites[count]->setSpriteIndex(0);
 
-			m_Sprites[count]->setPosition(ltX, ltY, 0.0f);
+			m_Sprites[count]->SetPosition(ltX, ltY, 0.0f);
 			count++;
 		}
 
@@ -38,7 +38,7 @@ void DamageHUDW::InitAction()
 
 	engine->InitCameraConstantBuffer(chData);
 
-	chData->setPosition(0.0f, 0.0f, 0.0f);
+	chData->SetPosition(0.0f, 0.0f, 0.0f);
 
 	XMVECTOR Eye = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	XMVECTOR At = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
@@ -103,7 +103,7 @@ void DamageHUDW::InitAction()
 
 bool DamageHUDW::FrameAction()
 {
-	MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
+	/*MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
 	GraphicsPipeLineObjectBase* pipeLine = engine->GetPipelineManager()->GetPipeLineObject(L"Sprite");
 	auto damageHUD = BFMng->GetDamageHUD();
 
@@ -144,7 +144,7 @@ bool DamageHUDW::FrameAction()
 		{
 			pipeLine->AddRenderObject(m_Sprites[i].get());
 		}
-	}
+	}*/
 	return true;
 }
 

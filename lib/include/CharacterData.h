@@ -41,7 +41,7 @@ protected:
 public:
 	CharacterData()
 	{
-		setPosition(0.0f, 0.0f, 0.0f);
+		SetPosition(0.0f, 0.0f, 0.0f);
 		SetRotation(0.0f, 0.0f, 0.0f);
 		SetScale(1.0f, 1.0f, 1.0f);
 
@@ -67,7 +67,7 @@ public:
 		return nullptr;
 	}
 
-	void setPosition(float x, float y, float z)
+	void SetPosition(float x, float y, float z)
 	{
 		position.x = x;
 		position.y = y;
