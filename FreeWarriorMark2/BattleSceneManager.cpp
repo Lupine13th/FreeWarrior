@@ -107,7 +107,9 @@ bool BattleSceneManager::FrameAction()
 		else									//2秒経過後、アニメーション終了処理へ
 		{
 			SetPreviousPosition();									//元のマスの位置へ戻す
-			BFMng->GetCameraChangerCompornent()->SetMainCamera();	//バトルカメラOff＆メインカメラ起動
+			
+			BFMng->CheckDead(m_DefenderCharacter);					//死亡確認
+
 			BFMng->CheckMoved();									//「行動済み」フラグの確認
 			m_CharacterAnimationCount = 0.0f;
 			if (m_AttackerFbxData != nullptr)
@@ -119,6 +121,8 @@ bool BattleSceneManager::FrameAction()
 			{
 				m_DefenderFbxData->SetAnimeInit(L"WAIT", m_DefenderCharacter);	//防御側のアニメーションを待機モーションへ
 			}
+
+			BFMng->GetCameraChangerCompornent()->SetMainCamera();	//バトルカメラOff＆メインカメラ起動
 			m_FlyingCameraController->ChangeCameraPosition();	//カメラ位置をカーソルの位置へ	
 
 			m_SceneState = SceneState::None;

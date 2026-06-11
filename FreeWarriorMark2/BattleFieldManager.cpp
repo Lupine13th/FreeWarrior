@@ -637,6 +637,8 @@ bool BattleFieldManager::FrameAction()
 						m_AbillityMenuState = AbillityMenuState::None;
 						m_AbillityIndex = 0;
 
+						m_FieldSquaresList[m_SelectID]->fbxD->SetAnimeInit(L"WAIT", m_FieldSquaresList[m_SelectID]->chara);							//待機アニメーション
+
 						p_engine->GetSoundManager()->play(6);
 
 						UpdateBattleField();
@@ -828,16 +830,16 @@ bool BattleFieldManager::FrameAction()
 		}
 	}
 
-	if (m_IsAttacking)	//攻撃アニメーション中
-	{
-		m_AttackingCount += m_TimeManager->GetDeltaTime();
-		if (m_AttackingCount > kMaxAttackingCount)
-		{
-			CheckDead(m_AttackedCharacter);
-			m_AttackingCount = 0.0f;
-			m_IsAttacking = false;
-		}
-	}
+	//if (m_IsAttacking)	//攻撃アニメーション中
+	//{
+	//	m_AttackingCount += m_TimeManager->GetDeltaTime();
+	//	if (m_AttackingCount > kMaxAttackingCount)
+	//	{
+	//		CheckDead(m_AttackedCharacter);
+	//		m_AttackingCount = 0.0f;
+	//		m_IsAttacking = false;
+	//	}
+	//}
 
 	for (int i = 0; i < m_AlliesCharacterList.size(); i++)	//サークルエフェクトは必要かのループ
 	{

@@ -152,6 +152,23 @@ bool MeterHUD::FrameAction()
     wstring soldiers;
     wstring morale;
 
+    Platoon* character = nullptr;
+    int currentId = -1;
+
+    if (BFMng->GetCursorState() == CursorState::Select)
+    {
+        currentId = BFMng->GetSelectID();
+    }
+    else if (BFMng->GetCursorState() == CursorState::Target)
+    {
+        currentId = BFMng->GetTargetID();
+    }
+
+    if (currentId != -1 && BFMng->GetFieldSquaresList()[currentId]->chara != nullptr)
+    {
+        character = BFMng->GetFieldSquaresList()[currentId]->chara;
+    }
+
     for (int i = m_ActiveTweenList.size() - 1; i >= 0; --i)
     {
         m_ActiveTweenList[i]->Update(m_TimeManager->GetDeltaTime());
@@ -166,28 +183,27 @@ bool MeterHUD::FrameAction()
     {
     case AnimationState::Init:
     {
-        Platoon* character = nullptr;
-        int currentId = -1;
+        //Platoon* character = nullptr;
+        //int currentId = -1;
 
-        m_DelayCount = 0.0f;
+        //if (BFMng->GetCursorState() == CursorState::Select)
+        //{
+        //    currentId = BFMng->GetSelectID();
+        //}
+        //else if (BFMng->GetCursorState() == CursorState::Target)
+        //{
+        //    currentId = BFMng->GetTargetID();
+        //}
 
-        if (BFMng->GetCursorState() == CursorState::Select)
-        {
-            currentId = BFMng->GetSelectID();
-        }
-        else if (BFMng->GetCursorState() == CursorState::Target)
-        {
-            currentId = BFMng->GetTargetID();
-        }
-
-        if (currentId != -1 && BFMng->GetFieldSquaresList()[currentId]->chara != nullptr)
-        {
-            character = BFMng->GetFieldSquaresList()[currentId]->chara;
-        }
+        //if (currentId != -1 && BFMng->GetFieldSquaresList()[currentId]->chara != nullptr)
+        //{
+        //    character = BFMng->GetFieldSquaresList()[currentId]->chara;
+        //}
 
         if (character != nullptr)
         {
             AnimateBarsTo(character);
+            m_DelayCount = 0.0f;
         }
         break;
     }
@@ -261,7 +277,7 @@ bool MeterHUD::FrameAction()
         count = MakeSpriteStringRightEdge(count, kSoldierTextPos.x, kSoldierTextPos.y, 15, 23, m_TextList["兵数"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
         count = MakeSpriteStringRightEdge(count, kMoraleTextPos.x, kMoraleTextPos.y, 15, 23, m_TextList["士気"].c_str(), XMFLOAT3(1.0f, 1.0f, 1.0f));
 
-        if (BFMng->GetHUDEnableCondition() && BFMng->GetMode() != Mode::AttackMode && BFMng->GetMode() != Mode::AbilityMode)
+        if (BFMng->GetHUDEnableCondition() && BFMng->GetMode() != Mode::AttackMode && BFMng->GetMode() != Mode::AbilityMode && character != nullptr)
         {
             for (int i = 0; i < count; i++)
             {
@@ -928,7 +944,7 @@ void AbilityHUD::InitAction()
 
 bool AbilityHUD::FrameAction()
 {
-    if (BFMng->GetHUDEnableCondition() && BFMng->GetMode() == Mode::AbilityMode && BFMng->GetTargetMode() == TargetMode::None)
+    if (BFMng->GetHUDEnableCondition() && BFMng->GetMode() == Mode::AbilityMode && BFMng->GetTargetMode() == TargetMode::None)  //アビリティモードかつアビリティ選択済みではない
     {
         MyGameEngine* engine = MyAccessHub::GetMyGameEngine();
         GraphicsPipeLineObjectBase* pipeline = engine->GetPipelineManager()->GetPipeLineObject(L"AlphaSprite");
@@ -941,7 +957,7 @@ bool AbilityHUD::FrameAction()
         for (int i = 0; i < 3; i++)
         {
             if (BFMng->GetAlliesCharacterList()[BFMng->GetFieldSquaresList()[BFMng->GetSelectID()]->ThereCharaID] != nullptr)
-
+            {
                 if (BFMng->GetAlliesCharacterList()[BFMng->GetFieldSquaresList()[BFMng->GetSelectID()]->ThereCharaID]->GetAbilityList()[i] != AbilityType::None)
                 {
                     switch (BFMng->GetAlliesCharacterList()[BFMng->GetFieldSquaresList()[BFMng->GetSelectID()]->ThereCharaID]->GetAbilityList()[i])
@@ -958,6 +974,7 @@ bool AbilityHUD::FrameAction()
                     }
                     abillityCount++;
                 }
+            }
         }
 
         switch (m_AnimationState)
@@ -980,7 +997,7 @@ bool AbilityHUD::FrameAction()
                     {
                         for (int i = 1; i < 4; i++)
                         {
-                            m_SpriteList[i]->SetPosition(0.0f, 0.0f, OrderInLayer::BackGround + 0.1f);
+                            m_SpriteList[i]->SetPosition(m_SpriteList[i]->GetPosition().x, m_SpriteList[i]->GetPosition().y, OrderInLayer::BackGround + 0.1f);
                             SetEasingAnimation(m_SpriteList[i].get(), EasingVector::Horizontal, 0.0f, kMaxAbillityNotePositionX, kBackGroundAnimationCount, Tween::EaseOutQuad);
                         }
 
@@ -992,7 +1009,7 @@ bool AbilityHUD::FrameAction()
                     {
                         for (int i = 1; i < 4; i++)
                         {
-                            m_SpriteList[i]->SetPosition(0.0f, 0.0f, OrderInLayer::MoveObject);
+                            m_SpriteList[i]->SetPosition(m_SpriteList[i]->GetPosition().x, m_SpriteList[i]->GetPosition().y, OrderInLayer::MoveObject);
                             SetEasingAnimation(m_SpriteList[i].get(), EasingVector::Horizontal, kMaxAbillityNotePositionX, kAbillityBackGroundPosition.y, kBackGroundAnimationCount, Tween::EaseOutQuad);
                         }
 

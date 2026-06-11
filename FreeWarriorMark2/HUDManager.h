@@ -179,6 +179,8 @@ private:
 
 	float m_SoldierArrowEndPosX = 0.0f;
 	float m_MoraleArrowEndPosX = 0.0f;
+
+	Platoon* character = nullptr;
 public:
 	void InitAction() override;
 	bool FrameAction() override;

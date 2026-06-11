@@ -126,7 +126,7 @@ private:
 	vector<PlayerActionLog> m_PlayerActionLogs;			//プレイヤーの行動ログ
 
 	float m_AttackingCount = 0.0f;						//攻撃アニメーションのカウント
-	const float kMaxAttackingCount = 3.1f;				//攻撃アニメーションのカウント最大値
+	const float kMaxAttackingCount = 2.0f;				//攻撃アニメーションのカウント最大値
 
 	XMFLOAT2 m_StrengthValue = { 5.0f, 5.0f };			//(HPの割合から)互いの戦力
 
