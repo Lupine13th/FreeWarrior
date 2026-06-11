@@ -1348,27 +1348,30 @@ HRESULT FBXDataContainer::LoadBinary(const fs::path& path)
 	ReadBinary(ifs, m_EndTime);
 	ReadBinary(ifs, m_TimePeriod);
 
-	//クラスター/ボーン情報
+	//クラスター(影響を与えるボーン)情報
 	ReadBinary(ifs, m_ClusterCount);
 	ReadBinary(ifs, m_ConstantBufferIndex);
 
+	//ボーン情報
 	size_t boneCnt;
 	ReadBinary(ifs, boneCnt);
 	m_BoneNameList.resize(boneCnt);
 	for (auto& name : m_BoneNameList) ReadString(ifs, name);
 
-	ReadVector(ifs, m_BoneIdList);
+	ReadVector(ifs, m_BoneIdList);				//ボーンID
 
-	ReadVector(ifs, m_IBoneMatrix);
+	ReadVector(ifs, m_IBoneMatrix);				//初期ポーズ逆行列
 
-	m_F4X4Matrix.resize(m_IBoneMatrix.size());
+	m_F4X4Matrix.resize(m_IBoneMatrix.size());	//アニメーション計算用行列
 
+	//ノード情報
 	size_t nodeCnt;
-	ReadBinary(ifs, nodeCnt);
-	m_NodeNameList.resize(nodeCnt);
-	for (auto& name : m_NodeNameList) ReadString(ifs, name);
+	ReadBinary(ifs, nodeCnt);					
 
-	// マテリアル
+	m_NodeNameList.resize(nodeCnt);
+	for (auto& name : m_NodeNameList) ReadString(ifs, name);	//ノード名リスト
+
+	//マテリアル
 	size_t matCnt;
 	ReadBinary(ifs, matCnt);
 	for (size_t i = 0; i < matCnt; i++)
@@ -1376,10 +1379,10 @@ HRESULT FBXDataContainer::LoadBinary(const fs::path& path)
 		std::wstring matId;
 		ReadWString(ifs, matId);
 		auto matCont = make_unique<MaterialContainer>();
-		ifs.read(reinterpret_cast<char*>(matCont->ambient), sizeof(float) * 4);
-		ifs.read(reinterpret_cast<char*>(matCont->diffuse), sizeof(float) * 4);
-		ifs.read(reinterpret_cast<char*>(matCont->specular), sizeof(float) * 4);
-		ReadBinary(ifs, matCont->alpha);
+		ifs.read(reinterpret_cast<char*>(matCont->ambient), sizeof(float) * 4);		//環境光
+		ifs.read(reinterpret_cast<char*>(matCont->diffuse), sizeof(float) * 4); 	//拡散反射光(ベース色)
+		ifs.read(reinterpret_cast<char*>(matCont->specular), sizeof(float) * 4);	//鏡面反射光
+		ReadBinary(ifs, matCont->alpha);											//アルファ値
 
 		// テクスチャ名リストを読み込み
 		auto ReadTexureNameList = [&](std::vector<std::wstring>& list)
@@ -1442,7 +1445,7 @@ HRESULT FBXDataContainer::LoadBinary(const fs::path& path)
 		m_MaterialContainer[matId] = move(matCont);
 	}
 
-	// メッシュ
+	//メッシュ
 	size_t meshCnt;
 	ReadBinary(ifs, meshCnt);
 	for (size_t i = 0; i < meshCnt; i++)

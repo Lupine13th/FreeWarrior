@@ -508,7 +508,10 @@ bool StatusHUD::FrameAction()
         {
             case CursorState::Select:
                 if (selectSquare->chara == nullptr)
-					return true;
+                {
+                    p_scene->SetActiveCameraCompornent(L"ScoutingCamera", false);
+                    return true;
+                }
 
 				if (BFMng->IsNotDetectedAndEnemyAdmin(selectSquare))   //未発見の帝国軍キャラクターを選択した場合はエラー表示
                 {
@@ -518,7 +521,10 @@ bool StatusHUD::FrameAction()
 				break;
             case CursorState::Target:
                 if (targetSquare->chara == nullptr)
+                {
+                    p_scene->SetActiveCameraCompornent(L"ScoutingCamera", false);
                     return true;
+                }
 
                 if (BFMng->IsNotDetectedAndEnemyAdmin(targetSquare))   //未発見の帝国軍キャラクターを選択した場合はエラー表示
                 {

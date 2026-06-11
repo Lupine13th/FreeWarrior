@@ -120,6 +120,8 @@ bool BattleSceneManager::FrameAction()
 				m_DefenderFbxData->SetAnimeInit(L"WAIT", m_DefenderCharacter);	//防御側のアニメーションを待機モーションへ
 			}
 			m_FlyingCameraController->ChangeCameraPosition();	//カメラ位置をカーソルの位置へ	
+
+			m_SceneState = SceneState::None;
 		}
 		
 		break;

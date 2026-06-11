@@ -8,6 +8,12 @@ void Abilities::ConcentratedFire(Platoon* attackingchara, Platoon* attackedchara
 {
 	int damage = BFMng->CalculateDamage(ActionName::ConcentratedFire, attackingchara, attackedchara);
 
+	HUDObject* damageUIobj = MyAccessHub::GetHUDManager()->GetHUDObject("DamageUI");
+	if (DamageUI* damageUI = dynamic_cast<DamageUI*>(damageUIobj))
+	{
+		damageUI->SetDamage(damage, attackedchara->GetMaxSoldiers(), attackedchara->GetSoldiers());
+	}
+
 	BFMng->GetDamageHUD()->SetDamage(damage, attackedchara->GetMaxSoldiers(), attackedchara->GetSoldiers());	//ダメージHUD表示
 
 	attackingchara->SetMorale(attackingchara->GetMorale() - 20);				//攻撃側の士気を減少
@@ -23,6 +29,12 @@ void Abilities::ConcentratedFire(Platoon* attackingchara, Platoon* attackedchara
 void Abilities::BayonetCharge(Platoon* attackingchara, Platoon* attackedchara)	//銃剣突撃アビリティ
 {
 	int damage = BFMng->CalculateDamage(ActionName::ConcentratedFire, attackingchara, attackedchara);
+
+	HUDObject* damageUIobj = MyAccessHub::GetHUDManager()->GetHUDObject("DamageUI");
+	if (DamageUI* damageUI = dynamic_cast<DamageUI*>(damageUIobj))
+	{
+		damageUI->SetDamage(damage, attackedchara->GetMaxSoldiers(), attackedchara->GetSoldiers());
+	}
 
 	BFMng->GetDamageHUD()->SetDamage(damage * 1.2f, attackedchara->GetMaxSoldiers(), attackedchara->GetSoldiers());	//ダメージHUD表示
 
