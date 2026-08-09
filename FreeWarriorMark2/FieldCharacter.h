@@ -157,11 +157,6 @@ public:
 	{
 		m_TargetAISquare = square;
 	};
-	
-	void SetTargetAISquare(int targetSquareId)
-	{
-		m_AITargetCharacterID = targetSquareId;
-	};
 
 	void SetTargetAICharacterID(int targetAICharacterID)
 	{

@@ -37,17 +37,20 @@ enum class PlayerTendency
 
 struct LearningAIData
 {
-	PlayerTendency m_PlayerTendency = PlayerTendency::None;	//プレイヤーの傾向
-	int m_FocusAliesCharacterID = -1;						//攻撃、スキルの対象となるキャラクターID
-	int m_TurnCount = 0;									//ターン数
+	PlayerTendency PlayerTendency = PlayerTendency::None;	//プレイヤーの傾向
+	int FocusAliesCharacterID = -1;						//攻撃、スキルの対象となるキャラクターID
+	int TurnCount = 0;									//ターン数
 };
 
+/// <summary>
+/// 攻撃に必要なデータ構造体
+/// </summary>
 struct EnemyAction
 {
-	AIActionType m_ActionType = AIActionType::None;
-	int m_TargetSqureaID = -1;		//攻撃、スキルの対象となるマスID
-	int m_TargetCharacterID = -1;	//攻撃、スキルの対象となるキャラクターID
-	int m_MoveSquareID = -1;		//移動先のマスID
+	AIActionType ActionType = AIActionType::None;
+	int TargetSquareID = -1;		//攻撃、スキルの対象となるマスID
+	int TargetCharacterID = -1;	//攻撃、スキルの対象となるキャラクターID
+	int MoveSquareID = -1;		//移動先のマスID
 };
 
 class EnemyAIManager:public GameComponent
@@ -63,7 +66,7 @@ private:
 
 	int m_MoveAIcount = 0;
 
-	vector<int> m_NextOccupiedPositionList;	//次に攻撃する敵のIDリスト
+	vector<int> m_NextOccupiedPositionList;	//このターンに移動する予定位置のリスト
 
 	float m_DelayCount = 0.0f;
 
@@ -120,9 +123,9 @@ public:
 
 		nlohmann::json jsonData = nlohmann::json	//新しく保存するデータ
 		{
-			{"turnCount", data.m_TurnCount},
-			{"playerTendency", data.m_PlayerTendency},
-			{"focusAliesCharacterID", data.m_FocusAliesCharacterID}
+			{"turnCount", data.TurnCount},
+			{"playerTendency", data.PlayerTendency},
+			{"focusAliesCharacterID", data.FocusAliesCharacterID}
 		};
 
 		historyData["history"].push_back(jsonData);	//履歴データに追加
@@ -153,12 +156,12 @@ public:
 
 			auto maxTendency = std::max_element(tendencyCount.begin(), tendencyCount.end());	//最も多い傾向を見つける
 
-			data.m_PlayerTendency = static_cast<PlayerTendency>(std::distance(tendencyCount.begin(), maxTendency));	//最も多い傾向をAIデータに設定
-			data.m_FocusAliesCharacterID = jsonData["history"].back()["focusAliesCharacterID"].get<int>();			//最後の行動のfocusAliesCharacterIDをAIデータに設定
+			data.PlayerTendency = static_cast<PlayerTendency>(std::distance(tendencyCount.begin(), maxTendency));	//最も多い傾向をAIデータに設定
+			data.FocusAliesCharacterID = jsonData["history"].back()["focusAliesCharacterID"].get<int>();			//最後の行動のfocusAliesCharacterIDをAIデータに設定
 
-			if ((data.m_PlayerTendency == PlayerTendency::NearDead || data.m_PlayerTendency == PlayerTendency::Leader) && data.m_FocusAliesCharacterID == -1)	//瀕死やリーダーの傾向で、特に注目するキャラクターがいない場合は、防御的な傾向に変更する
+			if ((data.PlayerTendency == PlayerTendency::NearDead || data.PlayerTendency == PlayerTendency::Leader) && data.FocusAliesCharacterID == -1)	//瀕死やリーダーの傾向で、特に注目するキャラクターがいない場合は、防御的な傾向に変更する
 			{
-				data.m_PlayerTendency = PlayerTendency::Defensive;
+				data.PlayerTendency = PlayerTendency::Defensive;
 			}
 		}
 	}
@@ -178,7 +181,7 @@ public:
 	{
 		LearningAIData aiData;
 
-		aiData.m_TurnCount = BFMng->GetTurnCount();
+		aiData.TurnCount = BFMng->GetTurnCount();
 
 		int offenciveCount = 0;	//攻撃、攻撃系スキル、前進の回数
 		int defensiveCount = 0;	//後退、待機、偵察スキルの回数
@@ -236,8 +239,8 @@ public:
 
 		if (minHPPercentage < 0.2f)		//最も兵力の低いキャラクターが2割未満
 		{
-			aiData.m_FocusAliesCharacterID = minHPCharacterID;
-			aiData.m_PlayerTendency = PlayerTendency::NearDead;
+			aiData.FocusAliesCharacterID = minHPCharacterID;
+			aiData.PlayerTendency = PlayerTendency::NearDead;
 			WriteJsonFile(aiData);
 			return;
 		}
@@ -245,13 +248,13 @@ public:
 
 		if (offenciveCount >= defensiveCount)	//攻撃的な行動が多い場合
 		{
-			aiData.m_FocusAliesCharacterID = -1;
-			aiData.m_PlayerTendency = PlayerTendency::Offensive;
+			aiData.FocusAliesCharacterID = -1;
+			aiData.PlayerTendency = PlayerTendency::Offensive;
 
 			if (maxDamageCharacterDamage > 30)	//最大ダメージが30を超えている場合、そのキャラクターを最優先で攻撃するリーダー傾向に設定
 			{
-				aiData.m_FocusAliesCharacterID = maxDamageCharacterID;
-				aiData.m_PlayerTendency = PlayerTendency::Leader;
+				aiData.FocusAliesCharacterID = maxDamageCharacterID;
+				aiData.PlayerTendency = PlayerTendency::Leader;
 			}
 
 			WriteJsonFile(aiData);
@@ -259,8 +262,8 @@ public:
 		}
 		else									//防御的な行動が多い場合
 		{
-			aiData.m_FocusAliesCharacterID = -1;
-			aiData.m_PlayerTendency = PlayerTendency::Defensive;
+			aiData.FocusAliesCharacterID = -1;
+			aiData.PlayerTendency = PlayerTendency::Defensive;
 
 			WriteJsonFile(aiData);
 			return;

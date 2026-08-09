@@ -37,25 +37,27 @@ bool EnemyAIManager::FrameAction()
 
 	if (BFMng->GetCurrentTurn() == Turn::Enemy)	
 	{
+		//初回１フレームの処理
 		if (!m_Firsttime)
 		{
-			p_engine->GetSoundManager()->playBGM(1);
+			p_engine->GetSoundManager()->playBGM(1);	//敵ターンBGM再生
 			ReadJsonFile(m_CurrentAIData);
-			m_NextOccupiedPositionList.clear();	//次のターンの敵の位置を保存するリストをクリア
-			for (int i = 0; i < BFMng->GetAlliesCharacterList().size(); i++)	//
+			m_NextOccupiedPositionList.clear();	//移動予定先リストをクリア
+			for (int i = 0; i < BFMng->GetAlliesCharacterList().size(); i++)	
 			{
 				if (!BFMng->GetAlliesCharacterList()[i]->GetIsDead())
 				{
-					m_NextOccupiedPositionList.push_back(BFMng->GetAlliesCharacterList()[i]->GetCharacterPosOnSquares());	//次のターンのキャラクターの位置を保存するリストに味方の位置を追加
+					m_NextOccupiedPositionList.push_back(BFMng->GetAlliesCharacterList()[i]->GetCharacterPosOnSquares());	//移動予定先リストにプレイヤーユニットの位置を入れる(位置が被らないように)
 				}
 			}
-			m_Firsttime = true;
+			m_Firsttime = true;	//初回処理終了
 		}
+
 		if (!BFMng->GetEnemyCharacterList().empty())
 		{
 			for (int i = 0; i < BFMng->GetEnemyCharacterList().size(); i++)
 			{
-				Platoon* currentEnemy = BFMng->GetEnemyCharacterList()[i];
+				Platoon* currentEnemy = BFMng->GetEnemyCharacterList()[i];	//インデックス数で敵情報を取得
 
 				if (!currentEnemy->GetIsDead())
 				{
@@ -65,49 +67,49 @@ bool EnemyAIManager::FrameAction()
 					//生成した行動の評価
 					EnemyAction bestAction = SelectBestAction(currentEnemy, possibleActions);
 
-					//最も評価の高い行動を設定
+					//最も評価の高い行動の行動タイプによって行動を確定
 					switch (bestAction.m_ActionType)
 					{
 						case AIActionType::Wait:
 							currentEnemy->SetEnemyActionType(EnemyActionType::Wait);
-							currentEnemy->SetTargetAISquare(nullptr);
-							currentEnemy->SetTargetAICharacterID(-1);
-							currentEnemy->SetMoveAISquareID(-1);
+							currentEnemy->SetTargetAISquare(nullptr);	//待機のため標的は空
+							currentEnemy->SetTargetAICharacterID(-1);	//上に同じく
+							currentEnemy->SetMoveAISquareID(-1);		//移動先も空
 							break;
 						case AIActionType::Attack:
 							currentEnemy->SetEnemyActionType(EnemyActionType::Attack);
-							currentEnemy->SetTargetAISquare(BFMng->GetFieldSquaresList()[bestAction.m_TargetSqureaID]);
-							currentEnemy->SetTargetAICharacterID(bestAction.m_TargetCharacterID);
-							currentEnemy->SetMoveAISquareID(-1);
+							currentEnemy->SetTargetAISquare(BFMng->GetFieldSquaresList()[bestAction.m_TargetSqureaID]);	//攻撃する敵の位置を取得
+							currentEnemy->SetTargetAICharacterID(bestAction.m_TargetCharacterID);						//攻撃する敵のIDを取得
+							currentEnemy->SetMoveAISquareID(-1);														//移動先は空
 							break;
 						case AIActionType::Move:
 							currentEnemy->SetEnemyActionType(EnemyActionType::Move);
-							currentEnemy->SetTargetAISquare(nullptr);
-							currentEnemy->SetMoveAISquareID(bestAction.m_MoveSquareID);
-							m_NextOccupiedPositionList.push_back(bestAction.m_MoveSquareID);
+							currentEnemy->SetTargetAISquare(nullptr);						//攻撃位置は空
+							currentEnemy->SetMoveAISquareID(bestAction.m_MoveSquareID);		//対象も空
+							m_NextOccupiedPositionList.push_back(bestAction.m_MoveSquareID);//このユニットの移動予定位置を移動予定先リストに登録
 							break;
 					}
 				}
 			}
 		}
 
-		int movecount = 0;
-		int deadcount = 0;
+		int moveCount = 0;
+		int deadCount = 0;
 
 		for (int i = 0; i < BFMng->GetEnemyCharacterList().size(); i++)		//現在行動決定したキャラクターの数をカウント
 		{
 			if (BFMng->GetEnemyCharacterList()[i]->GetEnemyActionType() != EnemyActionType::None && !BFMng->GetEnemyCharacterList()[i]->GetIsDead())
 			{
-				movecount++;
+				moveCount++;	//行動した敵の数を加算
 			}
 			if (BFMng->GetEnemyCharacterList()[i]->GetIsDead())
 			{
-				deadcount++;
+				deadCount++;	//壊滅した部隊の数を加算
 				ResetAI(BFMng->GetEnemyCharacterList()[i]);
 			}
 		}
 
-		if (movecount == BFMng->GetEnemyCharacterList().size() - deadcount && BFMng->GetCurrentTurn() == Turn::Enemy)	//全キャラクターの行動が決定したらEnemyMoveへ
+		if (moveCount == BFMng->GetEnemyCharacterList().size() - deadCount && BFMng->GetCurrentTurn() == Turn::Enemy)	//全キャラクターの行動が決定したらEnemyMoveへ
 		{
 			BFMng->SetCurrentTurn(Turn::EnemyAction);
 		}
@@ -578,6 +580,12 @@ float EnemyAIManager::CalculateDistance(int currentID, int nextID)
 	return std::abs(currentX - nextX) + std::abs(currentY - nextY);
 }
 
+/// <summary>
+/// 攻撃アクションを選択　士気の値によって行動を使うかを判定する
+/// </summary>
+/// <param name="attackingCharacter">攻撃側</param>
+/// <param name="attackedCharacter">防御側</param>
+/// <returns></returns>
 AbilityType EnemyAIManager::SelectAttackAction(Platoon* attackingCharacter, Platoon* attackedCharacter)
 {
 	struct AbilityScore
@@ -586,11 +594,11 @@ AbilityType EnemyAIManager::SelectAttackAction(Platoon* attackingCharacter, Plat
 		float score;
 	};
 
-	std::vector<AbilityType> currentCharacterAbilities = attackingCharacter->GetAbilityList();
+	std::vector<AbilityType> currentCharacterAbilities = attackingCharacter->GetAbilityList();	//攻撃キャラの行動種類を取得
 
-	std::vector<AbilityScore> abilityScores;
+	std::vector<AbilityScore> abilityScores;	//それぞれの行動種類のスコア
 
-	float maxScore = 0.0f;
+	float maxScore = 0.0f;	//現在の最大スコア
 
 	AbilityType bestAbility = AbilityType::None;
 
