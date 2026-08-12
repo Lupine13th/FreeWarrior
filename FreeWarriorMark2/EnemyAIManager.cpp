@@ -68,7 +68,7 @@ bool EnemyAIManager::FrameAction()
 					EnemyAction bestAction = SelectBestAction(currentEnemy, possibleActions);
 
 					//最も評価の高い行動の行動タイプによって行動を確定
-					switch (bestAction.m_ActionType)
+					switch (bestAction.ActionType)
 					{
 						case AIActionType::Wait:
 							currentEnemy->SetEnemyActionType(EnemyActionType::Wait);
@@ -78,15 +78,15 @@ bool EnemyAIManager::FrameAction()
 							break;
 						case AIActionType::Attack:
 							currentEnemy->SetEnemyActionType(EnemyActionType::Attack);
-							currentEnemy->SetTargetAISquare(BFMng->GetFieldSquaresList()[bestAction.m_TargetSqureaID]);	//攻撃する敵の位置を取得
-							currentEnemy->SetTargetAICharacterID(bestAction.m_TargetCharacterID);						//攻撃する敵のIDを取得
+							currentEnemy->SetTargetAISquare(BFMng->GetFieldSquaresList()[bestAction.TargetSquareID]);	//攻撃する敵の位置を取得
+							currentEnemy->SetTargetAICharacterID(bestAction.TargetCharacterID);						//攻撃する敵のIDを取得
 							currentEnemy->SetMoveAISquareID(-1);														//移動先は空
 							break;
 						case AIActionType::Move:
 							currentEnemy->SetEnemyActionType(EnemyActionType::Move);
 							currentEnemy->SetTargetAISquare(nullptr);						//攻撃位置は空
-							currentEnemy->SetMoveAISquareID(bestAction.m_MoveSquareID);		//対象も空
-							m_NextOccupiedPositionList.push_back(bestAction.m_MoveSquareID);//このユニットの移動予定位置を移動予定先リストに登録
+							currentEnemy->SetMoveAISquareID(bestAction.MoveSquareID);		//対象も空
+							m_NextOccupiedPositionList.push_back(bestAction.MoveSquareID);//このユニットの移動予定位置を移動予定先リストに登録
 							break;
 					}
 				}
@@ -354,7 +354,7 @@ vector<EnemyAction> EnemyAIManager::GeneratePossibleActions(Platoon* currentChar
 
 	//待機アクションは常に可能
 	EnemyAction waitAction;
-	waitAction.m_ActionType = AIActionType::Wait;
+	waitAction.ActionType = AIActionType::Wait;
 	actionList.push_back(waitAction);
 
 	//攻撃アクションの生成
@@ -362,9 +362,9 @@ vector<EnemyAction> EnemyAIManager::GeneratePossibleActions(Platoon* currentChar
 	if (targetPosition != nullptr)
 	{
 		EnemyAction attackAction;
-		attackAction.m_ActionType = AIActionType::Attack;
-		attackAction.m_TargetSqureaID = targetPosition->GetSquareID();
-		attackAction.m_TargetCharacterID = targetPosition->chara->GetPlatoonID();
+		attackAction.ActionType = AIActionType::Attack;
+		attackAction.TargetSquareID = targetPosition->GetSquareID();
+		attackAction.TargetCharacterID = targetPosition->chara->GetPlatoonID();
 
 		actionList.push_back(attackAction);
 	}
@@ -373,9 +373,9 @@ vector<EnemyAction> EnemyAIManager::GeneratePossibleActions(Platoon* currentChar
 	currentCharacter->SetNearestEnemySquare(GetnearCharaPos(15.0f, BFMng->GetFieldSquaresList()[currentCharacter->GetCharacterPosOnSquares()]->charaPosX, BFMng->GetFieldSquaresList()[currentCharacter->GetCharacterPosOnSquares()]->charaPosY));
 
 	//プレイヤーの傾向が瀕死、もしくはリーダーであれば、最も近いプレイヤーキャラクターの位置を最優先で設定
-	if (m_CurrentAIData.m_PlayerTendency == PlayerTendency::NearDead || m_CurrentAIData.m_PlayerTendency == PlayerTendency::Leader)
+	if (m_CurrentAIData.PlayerTendency == PlayerTendency::NearDead || m_CurrentAIData.PlayerTendency == PlayerTendency::Leader)
 	{
-		currentCharacter->SetNearestEnemySquare(BFMng->GetFieldSquaresList()[m_CurrentAIData.m_FocusAliesCharacterID]);
+		currentCharacter->SetNearestEnemySquare(BFMng->GetFieldSquaresList()[m_CurrentAIData.FocusAliesCharacterID]);
 	}
 
 	//BFS(幅優先探索)による移動可能なマスの探索
@@ -406,8 +406,8 @@ vector<EnemyAction> EnemyAIManager::GeneratePossibleActions(Platoon* currentChar
 			if (currentSquareID != startSquareID)	//移動アクション(開始地点以外)
 			{
 				EnemyAction moveAction;
-				moveAction.m_ActionType = AIActionType::Move;
-				moveAction.m_MoveSquareID = currentSquareID;
+				moveAction.ActionType = AIActionType::Move;
+				moveAction.MoveSquareID = currentSquareID;
 				actionList.push_back(moveAction);
 			}
 		}
@@ -450,17 +450,17 @@ float EnemyAIManager::EvaluateAction(Platoon* currentCharacter, const EnemyActio
 	float distance = 0.0f;
 	Squares* targetSquare = nullptr;
 	vector<int> isOccupied;	//移動先に敵がいるかどうかのフラグ
-	switch (action.m_ActionType)
+	switch (action.ActionType)
 	{
 	case AIActionType::Attack:
 		// 攻撃行動 
 		
-		if (action.m_TargetCharacterID != -1)
+		if (action.TargetCharacterID != -1)
 		{
-			switch (m_CurrentAIData.m_PlayerTendency)
+			switch (m_CurrentAIData.PlayerTendency)
 			{
 			case PlayerTendency::Leader:	//リーダーを優先して攻撃するAI
-				if (action.m_TargetCharacterID == m_CurrentAIData.m_FocusAliesCharacterID)
+				if (action.TargetCharacterID == m_CurrentAIData.FocusAliesCharacterID)
 				{
 					score += 2000.0f;
 				}
@@ -470,7 +470,7 @@ float EnemyAIManager::EvaluateAction(Platoon* currentCharacter, const EnemyActio
 				}
 				break;
 			case PlayerTendency::NearDead:	//瀕死のキャラクターを優先して攻撃するAI
-				if (action.m_TargetCharacterID == m_CurrentAIData.m_FocusAliesCharacterID)
+				if (action.TargetCharacterID == m_CurrentAIData.FocusAliesCharacterID)
 				{
 					score += 2000.0f;
 				}
@@ -490,11 +490,11 @@ float EnemyAIManager::EvaluateAction(Platoon* currentCharacter, const EnemyActio
 		break;
 	case AIActionType::Move:
 	{
-		targetSquare = GetnearCharaPos(currentCharacter->GetAttackRenge(), action.m_MoveSquareID % 10, action.m_MoveSquareID / 10);	//移動先からの攻撃範囲に敵がいるかどうか
+		targetSquare = GetnearCharaPos(currentCharacter->GetAttackRenge(), action.MoveSquareID % 10, action.MoveSquareID / 10);	//移動先からの攻撃範囲に敵がいるかどうか
 
 		if (targetSquare == nullptr)	//移動先からの攻撃範囲で敵がいない場合
 		{
-			distance = CalculateDistance(action.m_MoveSquareID, currentCharacter->GetNearestEnemySquare()->GetSquareID());
+			distance = CalculateDistance(action.MoveSquareID, currentCharacter->GetNearestEnemySquare()->GetSquareID());
 			//部隊の兵数が少なければ敵から距離を取るようにする　多ければ近づくようにする
 			if (currentCharacter->GetSoldiers() / currentCharacter->GetMaxSoldiers() > 0.3f)
 			{
@@ -507,14 +507,14 @@ float EnemyAIManager::EvaluateAction(Platoon* currentCharacter, const EnemyActio
 		}
 		else							//移動先からの攻撃範囲に敵がいる場合は一番遠いマスの評価が上がる
 		{
-			distance = CalculateDistance(action.m_MoveSquareID, targetSquare->GetSquareID());
+			distance = CalculateDistance(action.MoveSquareID, targetSquare->GetSquareID());
 
 			score += 1000.0f + distance * 5.0f;
 		}
 
-		if (BFMng->GetFieldSquaresList()[action.m_MoveSquareID]->terrainname != Terrain::Plane && BFMng->GetFieldSquaresList()[currentCharacter->GetCharacterPosOnSquares()]->terrainname == Terrain::Plane)
+		if (BFMng->GetFieldSquaresList()[action.MoveSquareID]->terrainname != Terrain::Plane && BFMng->GetFieldSquaresList()[currentCharacter->GetCharacterPosOnSquares()]->terrainname == Terrain::Plane)
 		{
-			switch (m_CurrentAIData.m_PlayerTendency)
+			switch (m_CurrentAIData.PlayerTendency)
 			{
 				case PlayerTendency::Offensive:	//攻撃的なプレイヤーに対しては平地以外のマスの評価が上がる
 					score += 300.0f;
@@ -524,7 +524,7 @@ float EnemyAIManager::EvaluateAction(Platoon* currentCharacter, const EnemyActio
 
 		if (!m_NextOccupiedPositionList.empty())
 		{
-			auto isOccupied = std::find(m_NextOccupiedPositionList.begin(), m_NextOccupiedPositionList.end(), action.m_MoveSquareID);
+			auto isOccupied = std::find(m_NextOccupiedPositionList.begin(), m_NextOccupiedPositionList.end(), action.MoveSquareID);
 
 			if (isOccupied != m_NextOccupiedPositionList.end())
 			{

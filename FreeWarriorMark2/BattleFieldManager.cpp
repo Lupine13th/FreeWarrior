@@ -1159,6 +1159,40 @@ int BattleFieldManager::CalculateDamage(ActionName action, Platoon* attackingCha
 	return finalDamage;
 }
 
+/// <summary>
+/// 一番弱っているキャラクターを取得
+/// </summary>
+/// <param name="state">どっちのリストを見るか</param>
+/// <returns></returns>
+Platoon* BattleFieldManager::GetWeakenPlatoon(PlatoonListState state)
+{
+	vector<Platoon*> platoonList;	//ユニットのリスト
+
+	int weakestHP = 5000;	//最小HP
+	Platoon* weakestPlatoon = nullptr;	//最小HPのユニット
+
+	switch (state)
+	{
+	case PlatoonListState::Alies:
+		platoonList = m_AlliesCharacterList;	//プレイヤーのリストを取得
+		break;
+	case PlatoonListState::Enemy:
+		platoonList = m_EnemyCharacterList;		//敵のリストを取得
+		break;
+	}
+
+	for (const auto& platoon : platoonList)
+	{
+		if (weakestHP > platoon->GetSoldiers())	//もしこのキャラクターのHPの方が低ければ
+		{
+			weakestHP = platoon->GetSoldiers();	//現在の最小HPをこのキャラクターの値に
+			weakestPlatoon = platoon;			//キャラクター自体も登録
+		}
+	}
+
+	return weakestPlatoon;	//ループ終了後、ここに最弱キャラが入る
+}
+
 bool BattleFieldManager::AttackingPlatoonIsAttackingTerrain(Platoon* attackingChara)	//攻撃側が攻撃向き地形にいるかどうか？
 {
 	if (GetFieldSquaresList()[attackingChara->GetCharacterPosOnSquares()]->terrainname == Terrain::Forest || GetFieldSquaresList()[attackingChara->GetCharacterPosOnSquares()]->terrainname == Terrain::Tower)
@@ -1365,45 +1399,66 @@ void BattleFieldManager::AddTurnCount()
 	m_TurnCount++;
 }
 
+/// <summary>
+/// 移動用アクション作成
+/// </summary>
+/// <param name="currentCharacter">今プレイヤーが動かしたキャラクター</param>
+/// <param name="currentPos">動かす前の位置</param>
+/// <param name="nextPos">動かした後の位置</param>
 void BattleFieldManager::CreateMoveLog(Platoon* currentCharacter, int currentPos, int nextPos)
 {
-	PlayerActionLog playerActionLog;
+	PlayerActionLog playerActionLog;	//新規ログ
 
-	playerActionLog.m_CharacterID = currentCharacter->GetPlatoonID();
-	playerActionLog.m_ActionName = ActionName::Move;
-	playerActionLog.m_DamageDealt = 0;
-	playerActionLog.m_MoveForward = nextPos / 10 - currentPos / 10;
-	playerActionLog.m_HPparcentage = currentCharacter->GetSoldiers() / currentCharacter->GetMaxSoldiers();
+	playerActionLog.m_CharacterID = currentCharacter->GetPlatoonID();	//キャラクターのID
+	playerActionLog.m_ActionName = ActionName::Move;					//アクション名は移動
+	playerActionLog.m_DamageDealt = 0;									//ダメージ値は０
+	playerActionLog.m_MoveForward = nextPos / 10 - currentPos / 10;		//前進値
+	playerActionLog.m_HPparcentage = currentCharacter->GetSoldiers() / currentCharacter->GetMaxSoldiers();	//HPのパーセント
 
-	m_PlayerActionLogs.push_back(playerActionLog);
+	m_PlayerActionLogs.push_back(playerActionLog);	//このターンでのプレイヤー行動ログに登録
 }
 
+/// <summary>
+/// 攻撃用アクション作成
+/// </summary>
+/// <param name="currentCharacter">今プレイヤーが動かしたキャラクター</param>
+/// <param name="damage">与えたダメージ</param>
 void BattleFieldManager::CreateAttackLog(Platoon* currentCharacter, float damage)
 {
-	PlayerActionLog playerActionLog;
+	PlayerActionLog playerActionLog;	//新規ログ
 
-	playerActionLog.m_CharacterID = currentCharacter->GetPlatoonID();
-	playerActionLog.m_ActionName = ActionName::Attack;
-	playerActionLog.m_DamageDealt = damage;
-	playerActionLog.m_MoveForward = 0;
-	playerActionLog.m_HPparcentage = currentCharacter->GetSoldiers() / currentCharacter->GetMaxSoldiers();
+	playerActionLog.m_CharacterID = currentCharacter->GetPlatoonID();	//キャラクターのID
+	playerActionLog.m_ActionName = ActionName::Attack;					//アクション名は攻撃
+	playerActionLog.m_DamageDealt = damage;								//ダメージ値を入力
+	playerActionLog.m_MoveForward = 0;									//前進値は０
+	playerActionLog.m_HPparcentage = currentCharacter->GetSoldiers() / currentCharacter->GetMaxSoldiers();	//HPのパーセント
 
 	m_PlayerActionLogs.push_back(playerActionLog);
 }
 
+/// <summary>
+/// 行動用アクション作成
+/// </summary>
+/// <param name="currentCharacter">今プレイヤーが動かしたキャラクター</param>
+/// <param name="abilityName">使用したアビリティ</param>
+/// <param name="damage">与えたダメージ</param>
 void BattleFieldManager::CreateAbilityLog(Platoon* currentCharacter, ActionName abilityName, float damage)
 {
 	PlayerActionLog playerActionLog;
 
-	playerActionLog.m_CharacterID = currentCharacter->GetPlatoonID();
-	playerActionLog.m_ActionName = abilityName;
-	playerActionLog.m_DamageDealt = damage;
-	playerActionLog.m_MoveForward = 0;
-	playerActionLog.m_HPparcentage = currentCharacter->GetSoldiers() / currentCharacter->GetMaxSoldiers();
+	playerActionLog.m_CharacterID = currentCharacter->GetPlatoonID();	//キャラクターのID
+	playerActionLog.m_ActionName = abilityName;							//アクション名は行動ごとに
+	playerActionLog.m_DamageDealt = damage;								//ダメージ値を入力
+	playerActionLog.m_MoveForward = 0;									//前進値は０
+	playerActionLog.m_HPparcentage = currentCharacter->GetSoldiers() / currentCharacter->GetMaxSoldiers();	//HPのパーセント
 
 	m_PlayerActionLogs.push_back(playerActionLog);
 }
 
+/// <summary>
+/// 待機用アクション作成
+/// </summary>
+/// <param name="currentCharacter"></param>
 void BattleFieldManager::CreateWaitLog(Platoon* currentCharacter)
 {
 	PlayerActionLog playerActionLog;

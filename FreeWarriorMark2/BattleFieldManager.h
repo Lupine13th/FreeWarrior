@@ -90,6 +90,12 @@ enum class AbillityMenuState
 	Target
 };
 
+enum class PlatoonListState
+{
+	Alies,
+	Enemy
+};
+
 struct PlayerActionLog
 {
 	ActionName m_ActionName = ActionName::None;		//行動の名前
@@ -412,6 +418,7 @@ public:
 
 		return nullptr;
 	}
+	
 
 	//==========Method==========
 	void ChangeTurnAllies();
@@ -433,6 +440,8 @@ public:
 	void ResetPredectCamera();
 
 	int CalculateDamage(ActionName action, Platoon* attackingCharacter, Platoon* attackedCharacter);
+
+	Platoon* GetWeakenPlatoon(PlatoonListState state);
 
 	//プレイヤー行動傾向の記録をリセット
 	void ResetPlayerActionLogs()

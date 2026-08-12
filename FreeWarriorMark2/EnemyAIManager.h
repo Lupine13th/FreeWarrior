@@ -28,10 +28,11 @@ enum class AIActionType
 enum class PlayerTendency
 {
 	None,	
-	Offensive,	// 攻撃的
-	Defensive,	// 防御的
-	NearDead,	// 瀕死
-	Leader,		// リーダー
+	Offensive,	//攻撃的
+	Defensive,	//防御的
+	NearDead,	//瀕死
+	Leader,		//リーダー
+	OneByOne,	//各個撃破
 	MAX,
 };
 
@@ -177,11 +178,32 @@ public:
 		}
 	}
 
+	/// <summary>
+	/// 学習データ制作
+	/// </summary>
+	/// <param name="playerLogList"></param>
 	void CreateLearningData(vector<PlayerActionLog> playerLogList)
 	{
-		LearningAIData aiData;
+		LearningAIData aiData;	//新規AIデータ
 
-		aiData.TurnCount = BFMng->GetTurnCount();
+		aiData.TurnCount = BFMng->GetTurnCount();	//現在のターン数
+
+		//for (const auto& log : playerLogList)	//ログごとに処理
+		//{
+		//	switch (log.m_ActionName)
+		//	{
+		//	default:
+		//		break;
+		//	case ActionName::Move:
+		//		float lastDistance;		//移動前の距離
+		//		float currentDistance;	//移動後の距離
+
+		//		//===========「各個撃破」=========
+		//		
+
+		//		break;
+		//	}
+		//}
 
 		int offenciveCount = 0;	//攻撃、攻撃系スキル、前進の回数
 		int defensiveCount = 0;	//後退、待機、偵察スキルの回数
@@ -270,6 +292,12 @@ public:
 		}
 	}
 
+	/// <summary>
+	/// 攻撃アクションを選択　士気の値によって行動を使うかを判定する
+	/// </summary>
+	/// <param name="attackingCharacter">攻撃側</param>
+	/// <param name="attackedCharacter">防御側</param>
+	/// <returns></returns>
 	AbilityType SelectAttackAction(Platoon* attackingCharacter, Platoon* attackedCharacter);
 };
 
