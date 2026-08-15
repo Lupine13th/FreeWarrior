@@ -1403,16 +1403,18 @@ void BattleFieldManager::AddTurnCount()
 /// 移動用アクション作成
 /// </summary>
 /// <param name="currentCharacter">今プレイヤーが動かしたキャラクター</param>
-/// <param name="currentPos">動かす前の位置</param>
-/// <param name="nextPos">動かした後の位置</param>
-void BattleFieldManager::CreateMoveLog(Platoon* currentCharacter, int currentPos, int nextPos)
+/// <param name="previousPos">動かす前の位置</param>
+/// <param name="currentPos">動かした後の位置</param>
+void BattleFieldManager::CreateMoveLog(Platoon* currentCharacter, int previousPos, int currentPos)
 {
 	PlayerActionLog playerActionLog;	//新規ログ
 
 	playerActionLog.m_CharacterID = currentCharacter->GetPlatoonID();	//キャラクターのID
 	playerActionLog.m_ActionName = ActionName::Move;					//アクション名は移動
 	playerActionLog.m_DamageDealt = 0;									//ダメージ値は０
-	playerActionLog.m_MoveForward = nextPos / 10 - currentPos / 10;		//前進値
+	playerActionLog.m_MoveForward = currentPos / 10 - previousPos / 10;		//前進値
+	playerActionLog.m_CurrentPosition = currentPos;							//移動後の位置
+	playerActionLog.m_PreviousPosition = previousPos;						//移動前の位置
 	playerActionLog.m_HPparcentage = currentCharacter->GetSoldiers() / currentCharacter->GetMaxSoldiers();	//HPのパーセント
 
 	m_PlayerActionLogs.push_back(playerActionLog);	//このターンでのプレイヤー行動ログに登録

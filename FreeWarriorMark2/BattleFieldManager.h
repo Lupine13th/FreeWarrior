@@ -102,6 +102,8 @@ struct PlayerActionLog
 
 	int m_CharacterID = -1;							//味方のキャラクターリスト上のID
 	int m_MoveForward = 0;							//前進したマス数
+	int m_CurrentPosition = -1;						//移動後の位置
+	int m_PreviousPosition = -1;					//移動前の位置
 	float m_DamageDealt = 0.0f;						//与えたダメージ
 	float m_HPparcentage = 0.0f;					//行動後のHP割合
 };

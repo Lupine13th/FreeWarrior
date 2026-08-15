@@ -33,6 +33,7 @@ enum class PlayerTendency
 	NearDead,	//瀕死
 	Leader,		//リーダー
 	OneByOne,	//各個撃破
+	PushLine,	//戦線押し
 	MAX,
 };
 
@@ -188,108 +189,161 @@ public:
 
 		aiData.TurnCount = BFMng->GetTurnCount();	//現在のターン数
 
-		//for (const auto& log : playerLogList)	//ログごとに処理
+		map<PlayerTendency, float> tendencyDict = { { PlayerTendency::OneByOne, 0.0f }, { PlayerTendency::PushLine, 0.0f }};	//プレイヤーの行動のそれぞれがどの傾向に近いかをリスト化
+
+		for (const auto& log : playerLogList)	//ログごとに処理
+		{
+			switch (log.m_ActionName)
+			{
+			default:
+				break;
+			case ActionName::Move:		//===============================移動ログ時の処理=================================
+				
+				//==========「各個撃破」=========
+
+				float lastDistance;		//移動前の距離
+				float currentDistance;	//移動後の距離
+				Platoon* weakestChara = BFMng->GetWeakenPlatoon(PlatoonListState::Enemy);	//CPUの一番HPの低いキャラを取得
+				
+				lastDistance = CalculateDistance(weakestChara->GetCharacterPosOnSquares(), log.m_PreviousPosition);		//一番HPが低いキャラと現在のキャラの前の位置を計算
+				currentDistance = CalculateDistance(weakestChara->GetCharacterPosOnSquares(), log.m_CurrentPosition);	//一番HPが低いキャラと現在のキャラの今の位置を計算
+
+				if (lastDistance - currentDistance > 0)	//もし接近してきていたら
+				{
+					tendencyDict[PlayerTendency::OneByOne] += lastDistance - currentDistance;	//接近距離が近いほど「各個撃破」傾向の評価が上がる
+				}
+
+				//==========「各個撃破」=========
+
+
+
+				//==========「戦線押し」=========
+
+				for (const auto& chara : BFMng->GetAlliesCharacterList())
+				{
+					int currentLogCharaPosY = BFMng->GetAlliesCharacterList()[log.m_CharacterID]->GetCharacterPosOnSquares() / 10;	//今のログのキャラのY座標
+
+					int positionGap = std::abs(currentLogCharaPosY - chara->GetCharacterPosOnSquares() / 10);
+
+					if (positionGap <= 2)	//他のキャラとのY座標差が2以内
+					{
+						tendencyDict[PlayerTendency::PushLine] += ((3 - positionGap) * 10);	//近いほど高得点
+					}
+				}
+
+				//==========「戦線押し」=========
+
+				break;
+			case ActionName::Attack:		//===============================攻撃ログ時の処理=================================
+
+				//==========「各個撃破」=========
+				
+				Platoon* weakestChara = BFMng->GetWeakenPlatoon(PlatoonListState::Enemy);	//CPUの一番HPの低いキャラを取得
+
+				if (BFMng->GetAlliesCharacterList()[log.m_CharacterID] == weakestChara)		//もし最もHPの低いキャラクターが選ばれたならば
+				{
+					tendencyDict[PlayerTendency::OneByOne] += 20;							//一旦仮に20追加
+				}
+
+				//==========「各個撃破」=========
+
+
+
+				//==========「戦線押し」=========
+
+				
+
+				//==========「戦線押し」=========
+
+				break;
+			}
+		}
+
+		//int offenciveCount = 0;	//攻撃、攻撃系スキル、前進の回数
+		//int defensiveCount = 0;	//後退、待機、偵察スキルの回数
+		//int minHPCharacterID = -1;	//HP割合が最も低いキャラクターのID
+		//float minHPPercentage = 1.0f;	//HP割合の最小値
+		//int maxDamageCharacterID = -1;	//与えたダメージが最も大きいキャラクターのID
+		//float maxDamageCharacterDamage = 0.0f;	//そのキャラクターが与えたダメージの最大値
+
+		//for (int i = 0; i < playerLogList.size(); i++)
 		//{
-		//	switch (log.m_ActionName)
+		//	if (playerLogList[i].m_ActionName == ActionName::Attack)
 		//	{
-		//	default:
-		//		break;
-		//	case ActionName::Move:
-		//		float lastDistance;		//移動前の距離
-		//		float currentDistance;	//移動後の距離
+		//		offenciveCount++;
+		//	}
+		//	else if (playerLogList[i].m_ActionName == ActionName::Wait)
+		//	{
+		//		defensiveCount++;
+		//	}
+		//	else if (playerLogList[i].m_ActionName == ActionName::ConcentratedFire)
+		//	{
+		//		offenciveCount++;
+		//	}
+		//	else if (playerLogList[i].m_ActionName == ActionName::BayonetCharge)
+		//	{
+		//		offenciveCount++;
+		//	}
+		//	else if (playerLogList[i].m_ActionName == ActionName::Scout)
+		//	{
+		//		defensiveCount++;
+		//	}
+		//	else if (playerLogList[i].m_ActionName == ActionName::Move)
+		//	{
+		//		if (playerLogList[i].m_MoveForward > 0)
+		//		{
+		//			offenciveCount++;
+		//		}
+		//		else if (playerLogList[i].m_MoveForward <= 0)
+		//		{
+		//			defensiveCount++;
+		//		}
+		//	}
 
-		//		//===========「各個撃破」=========
-		//		
+		//	if (playerLogList[i].m_HPparcentage < minHPPercentage)	//最も低い兵力の部隊を更新
+		//	{
+		//		minHPPercentage = playerLogList[i].m_HPparcentage;
+		//		minHPCharacterID = playerLogList[i].m_CharacterID;
+		//	}
 
-		//		break;
+		//	if (playerLogList[i].m_DamageDealt > maxDamageCharacterDamage)	//最も高いダメージを与えた部隊を更新
+		//	{
+		//		maxDamageCharacterDamage = playerLogList[i].m_DamageDealt;
+		//		maxDamageCharacterID = playerLogList[i].m_CharacterID;
 		//	}
 		//}
 
-		int offenciveCount = 0;	//攻撃、攻撃系スキル、前進の回数
-		int defensiveCount = 0;	//後退、待機、偵察スキルの回数
-		int minHPCharacterID = -1;	//HP割合が最も低いキャラクターのID
-		float minHPPercentage = 1.0f;	//HP割合の最小値
-		int maxDamageCharacterID = -1;	//与えたダメージが最も大きいキャラクターのID
-		float maxDamageCharacterDamage = 0.0f;	//そのキャラクターが与えたダメージの最大値
-
-		for (int i = 0; i < playerLogList.size(); i++)
-		{
-			if (playerLogList[i].m_ActionName == ActionName::Attack)
-			{
-				offenciveCount++;
-			}
-			else if (playerLogList[i].m_ActionName == ActionName::Wait)
-			{
-				defensiveCount++;
-			}
-			else if (playerLogList[i].m_ActionName == ActionName::ConcentratedFire)
-			{
-				offenciveCount++;
-			}
-			else if (playerLogList[i].m_ActionName == ActionName::BayonetCharge)
-			{
-				offenciveCount++;
-			}
-			else if (playerLogList[i].m_ActionName == ActionName::Scout)
-			{
-				defensiveCount++;
-			}
-			else if (playerLogList[i].m_ActionName == ActionName::Move)
-			{
-				if (playerLogList[i].m_MoveForward > 0)
-				{
-					offenciveCount++;
-				}
-				else if (playerLogList[i].m_MoveForward <= 0)
-				{
-					defensiveCount++;
-				}
-			}
-
-			if (playerLogList[i].m_HPparcentage < minHPPercentage)	//最も低い兵力の部隊を更新
-			{
-				minHPPercentage = playerLogList[i].m_HPparcentage;
-				minHPCharacterID = playerLogList[i].m_CharacterID;
-			}
-
-			if (playerLogList[i].m_DamageDealt > maxDamageCharacterDamage)	//最も高いダメージを与えた部隊を更新
-			{
-				maxDamageCharacterDamage = playerLogList[i].m_DamageDealt;
-				maxDamageCharacterID = playerLogList[i].m_CharacterID;
-			}
-		}
-
-		if (minHPPercentage < 0.2f)		//最も兵力の低いキャラクターが2割未満
-		{
-			aiData.FocusAliesCharacterID = minHPCharacterID;
-			aiData.PlayerTendency = PlayerTendency::NearDead;
-			WriteJsonFile(aiData);
-			return;
-		}
+		//if (minHPPercentage < 0.2f)		//最も兵力の低いキャラクターが2割未満
+		//{
+		//	aiData.FocusAliesCharacterID = minHPCharacterID;
+		//	aiData.PlayerTendency = PlayerTendency::NearDead;
+		//	WriteJsonFile(aiData);
+		//	return;
+		//}
 
 
-		if (offenciveCount >= defensiveCount)	//攻撃的な行動が多い場合
-		{
-			aiData.FocusAliesCharacterID = -1;
-			aiData.PlayerTendency = PlayerTendency::Offensive;
+		//if (offenciveCount >= defensiveCount)	//攻撃的な行動が多い場合
+		//{
+		//	aiData.FocusAliesCharacterID = -1;
+		//	aiData.PlayerTendency = PlayerTendency::Offensive;
 
-			if (maxDamageCharacterDamage > 30)	//最大ダメージが30を超えている場合、そのキャラクターを最優先で攻撃するリーダー傾向に設定
-			{
-				aiData.FocusAliesCharacterID = maxDamageCharacterID;
-				aiData.PlayerTendency = PlayerTendency::Leader;
-			}
+		//	if (maxDamageCharacterDamage > 30)	//最大ダメージが30を超えている場合、そのキャラクターを最優先で攻撃するリーダー傾向に設定
+		//	{
+		//		aiData.FocusAliesCharacterID = maxDamageCharacterID;
+		//		aiData.PlayerTendency = PlayerTendency::Leader;
+		//	}
 
-			WriteJsonFile(aiData);
-			return;
-		}
-		else									//防御的な行動が多い場合
-		{
-			aiData.FocusAliesCharacterID = -1;
-			aiData.PlayerTendency = PlayerTendency::Defensive;
+		//	WriteJsonFile(aiData);
+		//	return;
+		//}
+		//else									//防御的な行動が多い場合
+		//{
+		//	aiData.FocusAliesCharacterID = -1;
+		//	aiData.PlayerTendency = PlayerTendency::Defensive;
 
-			WriteJsonFile(aiData);
-			return;
-		}
+		//	WriteJsonFile(aiData);
+		//	return;
+		//}
 	}
 
 	/// <summary>
