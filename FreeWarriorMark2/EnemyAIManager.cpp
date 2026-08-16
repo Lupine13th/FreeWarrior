@@ -41,8 +41,8 @@ bool EnemyAIManager::FrameAction()
 		if (!m_Firsttime)
 		{
 			p_engine->GetSoundManager()->playBGM(1);	//敵ターンBGM再生
-			ReadJsonFile(m_CurrentAIData);
-			m_NextOccupiedPositionList.clear();	//移動予定先リストをクリア
+			m_CurrentPlayerTendency = ReadJsonFile();	//プレイヤー傾向をJSONファイルから読み取り
+			m_NextOccupiedPositionList.clear();			//移動予定先リストをクリア
 			for (int i = 0; i < BFMng->GetAlliesCharacterList().size(); i++)	
 			{
 				if (!BFMng->GetAlliesCharacterList()[i]->GetIsDead())
@@ -86,7 +86,7 @@ bool EnemyAIManager::FrameAction()
 							currentEnemy->SetEnemyActionType(EnemyActionType::Move);
 							currentEnemy->SetTargetAISquare(nullptr);						//攻撃位置は空
 							currentEnemy->SetMoveAISquareID(bestAction.MoveSquareID);		//対象も空
-							m_NextOccupiedPositionList.push_back(bestAction.MoveSquareID);//このユニットの移動予定位置を移動予定先リストに登録
+							m_NextOccupiedPositionList.push_back(bestAction.MoveSquareID);	//このユニットの移動予定位置を移動予定先リストに登録
 							break;
 					}
 				}
@@ -372,11 +372,11 @@ vector<EnemyAction> EnemyAIManager::GeneratePossibleActions(Platoon* currentChar
 	//最も近いプレイヤーキャラクターの位置を取得
 	currentCharacter->SetNearestEnemySquare(GetnearCharaPos(15.0f, BFMng->GetFieldSquaresList()[currentCharacter->GetCharacterPosOnSquares()]->charaPosX, BFMng->GetFieldSquaresList()[currentCharacter->GetCharacterPosOnSquares()]->charaPosY));
 
-	//プレイヤーの傾向が瀕死、もしくはリーダーであれば、最も近いプレイヤーキャラクターの位置を最優先で設定
-	if (m_CurrentAIData.PlayerTendency == PlayerTendency::NearDead || m_CurrentAIData.PlayerTendency == PlayerTendency::Leader)
-	{
-		currentCharacter->SetNearestEnemySquare(BFMng->GetFieldSquaresList()[m_CurrentAIData.FocusAliesCharacterID]);
-	}
+	////プレイヤーの傾向が瀕死、もしくはリーダーであれば、最も近いプレイヤーキャラクターの位置を最優先で設定
+	//if (m_CurrentAIData.PlayerTendency == PlayerTendency::NearDead || m_CurrentAIData.PlayerTendency == PlayerTendency::Leader)
+	//{
+	//	currentCharacter->SetNearestEnemySquare(BFMng->GetFieldSquaresList()[m_CurrentAIData.FocusAliesCharacterID]);
+	//}
 
 	//BFS(幅優先探索)による移動可能なマスの探索
 	queue<pair<int, int>> bfsQueue;	//探索用のキュー（マスIDと移動コストのペア）
@@ -457,27 +457,27 @@ float EnemyAIManager::EvaluateAction(Platoon* currentCharacter, const EnemyActio
 		
 		if (action.TargetCharacterID != -1)
 		{
-			switch (m_CurrentAIData.PlayerTendency)
+			switch (m_CurrentPlayerTendency)
 			{
 			case PlayerTendency::Leader:	//リーダーを優先して攻撃するAI
-				if (action.TargetCharacterID == m_CurrentAIData.FocusAliesCharacterID)
-				{
-					score += 2000.0f;
-				}
-				else
-				{
-					score += 1500.0f;
-				}
+				//if (action.TargetCharacterID == m_CurrentAIData.FocusAliesCharacterID)
+				//{
+				//	score += 2000.0f;
+				//}
+				//else
+				//{
+				//	score += 1500.0f;
+				//}
 				break;
 			case PlayerTendency::NearDead:	//瀕死のキャラクターを優先して攻撃するAI
-				if (action.TargetCharacterID == m_CurrentAIData.FocusAliesCharacterID)
-				{
-					score += 2000.0f;
-				}
-				else
-				{
-					score += 1500.0f;
-				}
+				//if (action.TargetCharacterID == m_CurrentAIData.FocusAliesCharacterID)
+				//{
+				//	score += 2000.0f;
+				//}
+				//else
+				//{
+				//	score += 1500.0f;
+				//}
 				break;
 			case PlayerTendency::Offensive:	//攻撃的なプレイヤーに対しては攻撃行動の評価が低くなる
 				score += 1200.0f;
@@ -514,7 +514,7 @@ float EnemyAIManager::EvaluateAction(Platoon* currentCharacter, const EnemyActio
 
 		if (BFMng->GetFieldSquaresList()[action.MoveSquareID]->terrainname != Terrain::Plane && BFMng->GetFieldSquaresList()[currentCharacter->GetCharacterPosOnSquares()]->terrainname == Terrain::Plane)
 		{
-			switch (m_CurrentAIData.PlayerTendency)
+			switch (m_CurrentPlayerTendency)
 			{
 				case PlayerTendency::Offensive:	//攻撃的なプレイヤーに対しては平地以外のマスの評価が上がる
 					score += 300.0f;

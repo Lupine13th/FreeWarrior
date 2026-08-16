@@ -39,9 +39,8 @@ enum class PlayerTendency
 
 struct LearningAIData
 {
-	PlayerTendency PlayerTendency = PlayerTendency::None;	//プレイヤーの傾向
-	int FocusAliesCharacterID = -1;						//攻撃、スキルの対象となるキャラクターID
 	int TurnCount = 0;									//ターン数
+	map<PlayerTendency, float> PlayerTendencyValue;		//プレイヤー傾向ごとの値
 };
 
 /// <summary>
@@ -77,7 +76,9 @@ private:
 	EnemyActionType m_EnemyActionType = EnemyActionType::None;
 	AIMode Mode = AIMode::decide;
 
-	LearningAIData m_CurrentAIData;	//現在のAIデータ
+	//LearningAIData m_CurrentAIData;	//現在のAIデータ
+
+	PlayerTendency m_CurrentPlayerTendency = PlayerTendency::None;	//現在のプレイヤー傾向
 
 	nlohmann::json m_JsonData;	//AIデータのJSON
 
@@ -112,22 +113,26 @@ public:
 	//二点からマンハッタン距離を計算
 	float CalculateDistance(int currentID, int nextID);
 
+	/// <summary>
+	/// JSONファイル作成&書き込み
+	/// </summary>
+	/// <param name="data"></param>
 	void WriteJsonFile(const LearningAIData& data)
 	{
 		nlohmann::json historyData;	//履歴データ
 
 		std::ifstream oldFile(m_JsonFilePath);	//既存のデータを読み込む
-		if (oldFile.is_open())
+		if (oldFile.is_open())					//データが見つかれば
 		{
-			oldFile >> historyData;
+			oldFile >> historyData;				//historyDataに書き込み
 			oldFile.close();
 		}
 
 		nlohmann::json jsonData = nlohmann::json	//新しく保存するデータ
 		{
-			{"turnCount", data.TurnCount},
-			{"playerTendency", data.PlayerTendency},
-			{"focusAliesCharacterID", data.FocusAliesCharacterID}
+			{"TurnCount", data.TurnCount},							//現在のターン数
+			{"OneByOne", data.PlayerTendencyValue[PlayerTendency::OneByOne]},	//「各個撃破」の値を入力
+			{"PushLine", data.PlayerTendencyValue[PlayerTendency::PushLine]}	//「戦線押し」の値を入力
 		};
 
 		historyData["history"].push_back(jsonData);	//履歴データに追加
@@ -140,30 +145,94 @@ public:
 		}
 	}
 
-	void ReadJsonFile(LearningAIData& data)
+	//void ReadJsonFile(LearningAIData& data)
+	//{
+	//	vector<int> tendencyCount((int)PlayerTendency::MAX, 0);		//プレイヤーの傾向のカウント PlayerTendencyの種類の分を0で初期化
+	//	std::ifstream file(m_JsonFilePath);
+	//	if (!file.is_open())	return;	//ファイルが開けない場合は終了
+
+	//	nlohmann::json jsonData;
+	//	file >> jsonData;
+
+	//	if (jsonData.contains("history") && jsonData["history"].is_array())
+	//	{
+	//		//for (int i = 0; i < BFMng->GetTurnCount(); i++)
+	//		//{
+	//		//	jsonData["history"][i]["playerTendency"].get_to(tendencyCount[i]); 
+	//		//}
+
+	//		//auto maxTendency = std::max_element(tendencyCount.begin(), tendencyCount.end());	//最も多い傾向を見つける
+
+	//		//data.PlayerTendency = static_cast<PlayerTendency>(std::distance(tendencyCount.begin(), maxTendency));	//最も多い傾向をAIデータに設定
+	//		//data.FocusAliesCharacterID = jsonData["history"].back()["focusAliesCharacterID"].get<int>();			//最後の行動のfocusAliesCharacterIDをAIデータに設定
+
+	//		//if ((data.PlayerTendency == PlayerTendency::NearDead || data.PlayerTendency == PlayerTendency::Leader) && data.FocusAliesCharacterID == -1)	//瀕死やリーダーの傾向で、特に注目するキャラクターがいない場合は、防御的な傾向に変更する
+	//		//{
+	//		//	data.PlayerTendency = PlayerTendency::Defensive;
+	//		//}
+
+	//		//傾向の値の平均値の1.3倍以上の傾向をプレイヤーの戦術とする
+	//	}
+	//}
+
+	/// <summary>
+	/// JSONファイル読み取り
+	/// </summary>
+	/// <param name="data"></param>
+	PlayerTendency ReadJsonFile()
 	{
-		vector<int> tendencyCount((int)PlayerTendency::MAX, 0);		//プレイヤーの傾向のカウント PlayerTendencyの種類の分を0で初期化
+		LearningAIData data;	//ローカル構造体　ここに書き込んで最終的に返す
 		std::ifstream file(m_JsonFilePath);
-		if (!file.is_open())	return;	//ファイルが開けない場合は終了
+		if (!file.is_open())	return PlayerTendency::None;	//ファイルが開けない場合は終了
 
 		nlohmann::json jsonData;
 		file >> jsonData;
 
 		if (jsonData.contains("history") && jsonData["history"].is_array())
 		{
-			for (int i = 0; i < BFMng->GetTurnCount(); i++)
+			//for (int i = 0; i < BFMng->GetTurnCount(); i++)
+			//{
+			//	jsonData["history"][i]["playerTendency"].get_to(tendencyCount[i]); 
+			//}
+
+			//auto maxTendency = std::max_element(tendencyCount.begin(), tendencyCount.end());	//最も多い傾向を見つける
+
+			//data.PlayerTendency = static_cast<PlayerTendency>(std::distance(tendencyCount.begin(), maxTendency));	//最も多い傾向をAIデータに設定
+			//data.FocusAliesCharacterID = jsonData["history"].back()["focusAliesCharacterID"].get<int>();			//最後の行動のfocusAliesCharacterIDをAIデータに設定
+
+			//if ((data.PlayerTendency == PlayerTendency::NearDead || data.PlayerTendency == PlayerTendency::Leader) && data.FocusAliesCharacterID == -1)	//瀕死やリーダーの傾向で、特に注目するキャラクターがいない場合は、防御的な傾向に変更する
+			//{
+			//	data.PlayerTendency = PlayerTendency::Defensive;
+			//}
+
+			
+
+			float average;	//傾向の平均値
+			float max;		//最大値
+			PlayerTendency tendency;	//最大の傾向
+
+			data.PlayerTendencyValue[PlayerTendency::OneByOne] = jsonData["history"].back()["OneByOne"];	//「各個撃破」の値をJSONから取得
+			data.PlayerTendencyValue[PlayerTendency::PushLine] = jsonData["history"].back()["PushLine"];	//「戦線押し」の値をJSONから取得
+
+			for (const auto& tend : data.PlayerTendencyValue)
 			{
-				jsonData["history"][i]["playerTendency"].get_to(tendencyCount[i]); 
+				average += tend.second;	//平均値に現在の傾向の値を足す
+				if (max < tend.second)	//最大値よりも大きい場合
+				{
+					max = tend.second;	//最大値に入れる
+					tendency = tend.first;	//最大の傾向
+				}
 			}
 
-			auto maxTendency = std::max_element(tendencyCount.begin(), tendencyCount.end());	//最も多い傾向を見つける
+			average /= data.PlayerTendencyValue.size();	//平均値を求めるためにタイプの数で割る
 
-			data.PlayerTendency = static_cast<PlayerTendency>(std::distance(tendencyCount.begin(), maxTendency));	//最も多い傾向をAIデータに設定
-			data.FocusAliesCharacterID = jsonData["history"].back()["focusAliesCharacterID"].get<int>();			//最後の行動のfocusAliesCharacterIDをAIデータに設定
-
-			if ((data.PlayerTendency == PlayerTendency::NearDead || data.PlayerTendency == PlayerTendency::Leader) && data.FocusAliesCharacterID == -1)	//瀕死やリーダーの傾向で、特に注目するキャラクターがいない場合は、防御的な傾向に変更する
+			if (average * 1.3f < max)	//傾向の値の平均値の1.3倍以上の傾向をプレイヤーの戦術とする
 			{
-				data.PlayerTendency = PlayerTendency::Defensive;
+				return tendency;
+			}
+			else
+			{
+				return m_CurrentPlayerTendency;
 			}
 		}
 	}
@@ -252,6 +321,74 @@ public:
 				//==========「戦線押し」=========
 
 				
+
+				//==========「戦線押し」=========
+
+				break;
+			case ActionName::Wait:		//===============================攻撃ログ時の処理=================================
+
+				//==========「各個撃破」=========
+				
+				tendencyDict[PlayerTendency::OneByOne] -= 10;	//待機の場合、「各個撃破」傾向は下がる
+
+				//==========「各個撃破」=========
+
+
+
+				//==========「戦線押し」=========
+
+				for (const auto& chara : BFMng->GetAlliesCharacterList())
+				{
+					int currentLogCharaPosY = BFMng->GetAlliesCharacterList()[log.m_CharacterID]->GetCharacterPosOnSquares() / 10;	//今のログのキャラのY座標
+
+					int positionGap = std::abs(currentLogCharaPosY - chara->GetCharacterPosOnSquares() / 10);
+
+					if (positionGap <= 2)	//他のキャラとのY座標差が2以内
+					{
+						tendencyDict[PlayerTendency::PushLine] += ((3 - positionGap) * 15);	//近いほど高得点　移動時よりも高得点になりやすい
+					}
+				}
+
+				//==========「戦線押し」=========
+
+				break;
+			case ActionName::BayonetCharge:		//===============================特殊攻撃系ログ時の処理=================================
+			case ActionName::ConcentratedFire:
+
+				//==========「各個撃破」=========
+
+				Platoon* weakestChara = BFMng->GetWeakenPlatoon(PlatoonListState::Enemy);	//CPUの一番HPの低いキャラを取得
+
+				if (BFMng->GetAlliesCharacterList()[log.m_CharacterID] == weakestChara)		//もし最もHPの低いキャラクターが選ばれたならば
+				{
+					tendencyDict[PlayerTendency::OneByOne] += 25;							//一旦仮に20追加
+				}
+
+				//==========「各個撃破」=========
+
+
+
+				//==========「戦線押し」=========
+
+
+
+				//==========「戦線押し」=========
+
+				break;
+
+			case ActionName::Scout:					//===============================偵察ログ時の処理=================================
+
+				//==========「各個撃破」=========
+
+				tendencyDict[PlayerTendency::OneByOne] += 5;							//一旦仮に15追加
+
+				//==========「各個撃破」=========
+
+
+
+				//==========「戦線押し」=========
+
+				tendencyDict[PlayerTendency::PushLine] += 15;							//一旦仮に15追加
 
 				//==========「戦線押し」=========
 
